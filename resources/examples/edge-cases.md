@@ -35758,11 +35758,10 @@ the destination is part of the `href`.
 
 :::
 
-## A forced opener of an open kind is literal
+## Braced emphasis can nest its own kind
 
-PART 9 §9 E3. Forced spans push and pop on the same stack as bare ones, so a
-`{X` whose kind is already open is content, and a bare `X` inside a forced span
-of that kind is content under §22.
+PART 9 §9 E3. Braced emphasis can nest another braced span of the same kind.
+A bare delimiter of an already open kind remains content within that scope.
 
 ::: compare
 
@@ -35771,7 +35770,7 @@ a{*{*x*}*}b
 ```
 
 ```html
-<p>a<strong>{*x</strong>*}b</p>
+<p>a<strong><strong>x</strong></strong>b</p>
 ```
 
 :::
@@ -35783,7 +35782,7 @@ a{*{*x*}*}b
 ```
 
 ```html
-<p><strong>a {*b</strong>} c*</p>
+<p><strong>a <strong>b</strong> c</strong></p>
 ```
 
 :::
@@ -35807,7 +35806,7 @@ a{*{*x*}*}b
 ```
 
 ```html
-<p><em>a *b {/c</em>*/}</p>
+<p><em>a <strong>b <em>c</em></strong></em></p>
 ```
 
 :::
@@ -35871,6 +35870,93 @@ A lone delimiter of the span's own kind is content, whether it touches the opene
 <p><em>/x/</em></p>
 <p><mark> =h= </mark></p>
 <p><em> /x/ </em></p>
+```
+
+:::
+
+An empty braced pair is literal text. Its two marks cannot overlap, so the
+three-character spelling has an opener and no closer, and the four-character
+spelling has both and no content.
+
+::: compare
+
+```carve
+{**}
+
+{*}
+```
+
+```html
+<p>{**}</p>
+<p>{*}</p>
+```
+
+:::
+
+Inside a parent of the same kind the empty pair stays literal as a whole,
+closer included, so it cannot end the parent early.
+
+::: compare
+
+```carve
+{*a {**} b*}
+```
+
+```html
+<p><strong>a {**} b</strong></p>
+```
+
+:::
+
+Escaping the brace stops the opener and nothing else: the inner marks stay
+active and pair as ordinary emphasis. Keeping the whole span literal takes an
+escape on every active mark.
+
+::: compare
+
+```carve
+\{*x*}
+
+\{\*x\*\}
+```
+
+```html
+<p>{<strong>x</strong>}</p>
+<p>{*x*}</p>
+```
+
+:::
+
+A closer that was discarded by a matched child is not retried against an
+ancestor. It resolves as an ordinary bare mark followed by a literal brace,
+which leaves the outer opener literal.
+
+::: compare
+
+```carve
+{~a {*x ~>y~} z*}
+```
+
+```html
+<p>{~a <strong>x <s>&gt;y</s>} z</strong></p>
+```
+
+:::
+
+A combined token activates two kinds at once, and E3 treats both as ordinary
+active kinds, so a braced child of either nests inside it.
+
+::: compare
+
+```carve
+/*a {*b*} c*/ x
+
+/*a {/b/} c*/ x
+```
+
+```html
+<p><strong><em>a <strong>b</strong> c</em></strong> x</p>
+<p><strong><em>a <em>b</em> c</em></strong> x</p>
 ```
 
 :::
