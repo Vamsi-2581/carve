@@ -457,8 +457,8 @@
       byte-identical source. A distinction the AST already records --
       `list.bulletChar`, `thematic_break.marker`, a link's or image's `ref`
       and `rawRef`, an `autolink` node, a `footnote_ref` label, an
-      `escaped_text` node, a `raw_inline` format, an authored `id` under
-      `attrs` -- is recoverable from the tree whether or not HTML carried it.
+      `escaped_text` node, a `raw_inline` format, `table.separatorWidths`, an
+      authored `id` under `attrs` -- is recoverable from the tree whether or not HTML carried it.
       These carriers exist because this serialization collapses those
       distinctions, not because the tree lost them. A DISTINCTION THE AST DOES
       NOT RECORD GETS NO CARRIER, and §13a says why.
@@ -511,6 +511,15 @@
                                                   holds the document's
                                                   abbreviation definitions, one
                                                   `*[ABBR]: expansion` per line
+        data-carve-col-widths       <table>       the authored separator-row
+                                                  dash widths, comma-joined,
+                                                  one per separator cell. The
+                                                  AST field it restores is
+                                                  `table.separatorWidths`
+                                                  ([CARVE-P11-066]), whose
+                                                  PRESENCE is the distinction:
+                                                  a table with no separator row
+                                                  writes no attribute
 
       AN ORDERED LIST'S DELIMITER IS `data-delim`, NOT A SECOND CARRIER. §12
       writes the authored delimiter on every render, and an ordered list's
@@ -536,17 +545,24 @@
       distinction the tree discards is to add the PART 12 field FIRST, and then
       this clause follows.
 
-      A TABLE'S SEPARATOR-ROW WIDTHS AND A CONSTRUCT'S VERBATIM SOURCE ARE WHAT
-      THE RULE EXCLUDES, which is why `data-carve-col-widths` and
-      `data-carve-src` are absent from the rows above. Carrying the widths was
-      measured, and the measurement is the argument FOR the rule rather than an
-      exception to it: an engine that added the carrier and a field to hold it
-      turned 37 tests red across 9 files, because the AST JSON writer does not
-      filter to the published field set, the reader refuses an unknown field,
-      and the "parses to the same tree" comparisons are deep equality that a
-      canonical `---` separator cannot satisfy. It is also why a PROMISE needs
-      the field first: without one there is nothing for a reader to check the
-      promise against.
+      THE `data-carve-col-widths` ROW SATISFIES THE CARRIER RULE.
+      `data-carve-col-widths` was absent from this inventory until
+      `table.separatorWidths` existed, and it is listed now because that field
+      does. The order was not a formality: an engine that wrote the carrier
+      WITHOUT the field turned 37 tests red across 9 files, because the AST JSON
+      writer does not filter to the published field set, the reader refuses an
+      unknown field, and the "parses to the same tree" comparisons are deep
+      equality that a canonical `---` separator cannot satisfy. The field
+      answers all three at once, which is why it comes first.
+
+      A CONSTRUCT'S VERBATIM SOURCE IS WHAT THE RULE STILL EXCLUDES, which is
+      why `data-carve-src` is absent from the rows above. It is not awaiting a
+      field: [CARVE-P11-013] rules the glued opener canonical and says the tree
+      records no padding, fence length or fence character, so the one
+      distinction such a carrier is observed to move -- the space in
+      ``` ``` php ``` -- is a spelling this specification has already ruled
+      against keeping. A field for it would reverse that clause rather than add
+      to it.
 
       AN EXTENSION WRITES ITS OWN CARRIERS, under the reserved prefix, for the
       distinctions ITS nodes record. They are scoped to that extension and
@@ -555,6 +571,35 @@
       CARRIER in every other respect: §13b displaces an authored attribute of
       its name, §13c reads its deprecated spelling, and §13d consumes it in
       every import mode.
+
+      A WIDTH IS A POSITIVE INTEGER, AND 1000 IS THE BOUND ON BOTH SIDES OF
+      THE CARRIER. The widths arrive as a comma-joined list in an attribute an
+      importer reads off UNTRUSTED HTML, and the writer spells one `-` per
+      unit, so six characters of attribute buy a megabyte of separator row.
+      That is an amplification the SOURCE side does not have -- an author who
+      types a thousand dashes has already paid for them -- so the bound
+      belongs on the carrier rather than on the field.
+
+      A READER REFUSES THE WHOLE CARRIER -- writing no field at all, which
+      means the `|=` form -- where any entry is empty, contains whitespace,
+      or is not a run of decimal digits, or
+      where any entry is below 1 or exceeds 1000. Not a partial read and not a
+      clamp to the bound: both put a separator row on the page whose widths
+      nobody wrote,
+      and refusing leaves the table correct in its other spelling.
+
+      THE READER COMPARES THE DECIMAL VALUE WITHOUT INTEGER OVERFLOW. Leading
+      zeros do not change that value; a writer emits ordinary decimal integers.
+
+      A WRITER WRITES NO CARRIER where the field is absent, empty, or holds an
+      entry below 1 or above 1000, for the same reason read the other way: a carrier a conforming reader will
+      refuse is a round-trip promise the writer cannot keep. The FIELD itself
+      has no upper bound, because a parse records what the author typed and no
+      amplification happens there.
+
+      THE BOUND IS STATED SO THE ENGINES AGREE ON THE BYTES. 1000 is a round
+      number chosen for parity rather than derived from anything, and no
+      separator row anyone writes approaches it.
 
       A VALUE ESCAPES AS §2 ESCAPES ANY ATTRIBUTE VALUE. §2's text-content
       exception for U+00A0 is not an attribute rule, so a carrier value
