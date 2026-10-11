@@ -11053,7 +11053,6 @@ EOF = (* end of file *) ;
       to the last payload line. A fence ending at EOF without a closer retains
       whether the last payload line had a break; it MUST NOT invent one.
       An unclosed fence with no payload lines also has content "".
-      This rule does not change `raw_block.content`.
 
       An imported or programmatically built code block MAY have content "a"
       without a final break. It is distinct from "a\n". JSON encoding and
@@ -11077,6 +11076,24 @@ EOF = (* end of file *) ;
       HTML import itself preserves the payload and reports no loss for a
       missing final break. An API exposing only the HTML-import report adds
       no diagnostic code for the later canonical writer's inserted break.
+
+      RAW BLOCK CONTENT IS LITERAL PAYLOAD TEXT -- NORMATIVE [CARVE-P12-065].
+      `raw_block.content` contains the literal payload, including its authored
+      final LF, under the same line-ending rules as `code_block.content`.
+      An unterminated payload line contributes no final LF. An empty final
+      marker line at EOF contributes no character. PART 2's outer output
+      trimming does not change this interchange value. There is no separate
+      payload-termination field.
+
+      Every conversion of a raw block to a code block, including the safe
+      escape in CARVE-P10-013 and profile `to_text`, uses `content` directly.
+      A matching raw target omits one final LF from content containing any
+      non-LF character, retaining the existing output convention; content
+      consisting only of LFs retains
+      all of them. This rendering convention does not alter the stored payload.
+      Native formatting that adds a final payload LF MUST report
+      `field-unspellable` for `raw_block.content` on PART 11 section 1d's
+      conversion channel. This is separate from the render-loss report.
 
    3a. THE SERIALIZED TREE IS PRE-RESOLVE -- NORMATIVE [CARVE-P12-005]. It records what the
       AUTHOR WROTE, not what the document resolves to. Reference resolution,

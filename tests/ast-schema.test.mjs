@@ -1568,3 +1568,13 @@ test('table head and foot attributes use the ordinary closed attributes schema',
     assert.equal(validate({ ...doc, children: [{ ...doc.children[0], rowGroups: { ...groups, headAttrs: invalid } }] }), false)
   }
 })
+
+test('raw payload stores literal termination and rejects obsolete metadata', () => {
+  const document = raw => ({ type: 'document', srcByteLength: 3, children: [raw] })
+  const vectors = JSON.parse(readFileSync(resolve(root, 'tests/fixtures/raw-payload-termination.json'), 'utf8'))
+  for (const vector of vectors) assert.equal(validate(document(vector.raw)), true, firstErrors())
+  const raw = { type: 'raw_block', format: 'html', content: 'x\n' }
+  for (const value of [true, false, 0, '', null]) {
+    assert.equal(validate(document({ ...raw, contentTerminated: value })), false)
+  }
+})
