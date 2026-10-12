@@ -355,9 +355,8 @@
       it, because HTML has nowhere to put a definition nobody used; the other
       three do not get to drop content the author wrote.
 
-      A LINK REFERENCE DEFINITION IS COVERED TOO. It was excluded while it was
-      the one definition kind with NO NODE IN THE TREE; PART 12 §10 gives it a
-      node, so all three kinds walk and all three emit.
+      A LINK REFERENCE DEFINITION IS COVERED TOO: PART 12 §10 gives it a node,
+      so all three kinds walk and all three emit.
 
       THE GAP IS REAL AND IS NOT CLOSED BY NARROWING. An unused link reference
       definition survives neither the tree nor a round trip
@@ -427,9 +426,8 @@
       This clause decides only where the named text goes on the targets below.
       Unnamed construct/target pairs remain open, not allowed by omission.
 
-      T1 A FENCE'S TITLE AND LABEL RENDER THE WAY A DIV'S ALREADY DO. This
-         clause writes down an existing rule rather than a new one. A fenced
-         div already surfaces both tokens on every target, which is the
+      T1 A FENCE'S TITLE AND LABEL RENDER THE WAY A DIV'S ALREADY DO. A fenced
+         div surfaces both tokens on every target, which is the
          caption rule `docs/graceful-degradation.md` makes normative for an
          unconsumed label: `::: note "T" [L]` emits `**T**` then `**L**` in
          Markdown, a standalone line each in plain text, and a bold
@@ -517,7 +515,7 @@
         - THE TERM NEVER APPEARS. That is §10a, which this clause leaves
           exactly as it stands.
 
-        - AN AUTHORED `abbr` OUTRANKS THE DEFINITION. PART 9 §9 makes
+        - AN AUTHORED `abbr` OUTRANKS THE DEFINITION. CARVE-P10-003 makes
           `[HTML]{abbr="Custom"}` authoritative and a resolved `abbreviation`
           child contributes only its visible text there, so the definition's
           own expansion reaches no target. `45-inline-extensions-11` pins
@@ -563,7 +561,7 @@
       the writer MUST NOT emit it as `\^ `, which would re-parse as a
       paragraph and break §1's `parse(fmt(x)) == parse(x)`. The other
       direction holds too: a PARAGRAPH whose text begins with a caret,
-      sitting where §4's allowance reaches a group closer above it, keeps its
+      sitting where PART 9 §4's allowance reaches a group closer above it, keeps its
       `\^ ` escape, because bare it would re-parse as the group caption
       (corpus 318-composite-figures-6 holds the detached shape).
 
@@ -638,9 +636,7 @@
       (§7) -- separates the two lists as it always did, and no boundary is
       written.
 
-      NO CARVE SOURCE REACHES THIS, so nothing in the parse-driven corpus can
-      pin it and the fixture is a hand-built payload entering through the AST
-      ingest (tests/an-unspellable-block-does-not-cancel-list-adjacency.test.mjs).
+      NO CARVE SOURCE REACHES THIS: the shape enters through the AST ingest.
 
   10k. THE ROUND-TRIP COMPARISON NORMALIZES A NAMED LIST -- NORMATIVE [CARVE-P11-043].
       A round trip preserves MEANING, not one serialization. Two renderings of
@@ -799,7 +795,7 @@
 
       L1 a cell whose content is one paragraph holds that paragraph's inline
          content;
-      L2 a cell that is a span marker under §5.1 (a lone unescaped `^` or `<`,
+      L2 a cell that is a span marker under extension contract §5.1 (a lone unescaped `^` or `<`,
          no attributes on the item, the paragraph or the text) is the rowspan
          or colspan placeholder of that position, written as the pipe-table
          writer writes a placeholder;
@@ -808,10 +804,10 @@
          hard break written as `<br>` (§9a). A cell with no blocks is empty.
 
       Every list in a row gives cells, in order, and any other block in the
-      row belongs to the cell before it, as §5 renders them. A cell is a header cell when its row is inside
+      row belongs to the cell before it, as extension contract §5 renders them. A cell is a header cell when its row is inside
       `header-rows` or carries `{header-row}`, when its position is inside
-      `header-cols`, or when its item carries `{header}`, each read as §5.1
-      reads it. Its alignment is the item's `align` value, else the
+      `header-cols`, or when its item carries `{header}`, each read as extension
+      contract §5.1 reads it. Its alignment is the item's `align` value, else the
       `aligns` entry for its position. The opener's title is the table's
       caption (§10e), and an unconsumed `[label]` keeps the bold line the
       admonition writing gives it, above the table. `valigns`, `widths`,
@@ -832,9 +828,8 @@
         :::
 
       ONLY A GRID IS A TABLE. The clause applies when the body is exactly one
-      list and each of its items begins with a list. Any other body keeps the
-      writing it had before this clause: the title as a bold line, then the
-      blocks.
+      list and each of its items begins with a list. Any other body is
+      written as an admonition: the title as a bold line, then the blocks.
 
       NO EXTENSION SET DECIDES IT. The target writes the table whether or not a
       processor enabled ListTable for HTML: this target takes no extension set,

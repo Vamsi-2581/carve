@@ -106,7 +106,8 @@
       `one two`, `*a* *b*` and two code spans separated by one space.
 
       A TEXT character that becomes a live delimiter after the join is instead
-      an ESCAPING question governed by §2 through §1a. This clause supplies the
+      an ESCAPING question governed by CARVE-P11-002 and CARVE-P11-006. This clause
+      supplies the
       space and nothing else.
 
       The producer MUST flatten rather than omit the content. It MUST NOT write
@@ -189,8 +190,8 @@
       An importer MUST NOT unwrap a representable same-kind child or report
       structure-unspellable merely for that relationship. Depth-limit
       recovery and other independently unspellable shapes retain their
-      diagnostics. Markdown and Djot export follow their own target
-      contracts; removing this native ceiling does not widen those syntaxes.
+      diagnostics. Markdown export follows its own target contract
+      (CARVE-P11-045); this clause does not widen that syntax.
 
       DECIDED ON THE SPELLING, NEVER ON RESOLUTION -- and PART 9R R7 does not
       change that. R7's promotion phase reads the RESOLVED tree; this clause
@@ -226,10 +227,7 @@
       WRAPPER LOSS IS THE ONLY EQUALITY CARVE-OUT -- NORMATIVE [CARVE-P11-005].
       The paragraph above says what this clause forgives. This
       says what it does NOT, because a checker asserting `parse(fmt(x)) ==
-      parse(x)` has to encode both halves, and stated only as a permission the
-      carve-out acquired one mechanism per engine that reached it -- three
-      engines, three exemptions, none of them written where the next reader
-      would look.
+      parse(x)` has to encode both halves.
 
       THE RULE. The two trees MUST agree once every wrapper this clause names
       is dissolved into its content, on BOTH sides. Nothing else is forgiven: a
@@ -385,7 +383,7 @@
       BARE -- in the same unit, in the same line, beside the escape that stayed.
 
       A WRITER MAY STILL BE UNABLE TO DECIDE AN OCCURRENCE, and §2b's fallback
-      is what it falls back to -- per occurrence now rather than per unit. A
+      is what it falls back to, per occurrence rather than per unit. A
       fallback that spends more escapes than this test asks for is wider than
       the minimum and never narrower, which is the only direction §1 tolerates.
 
@@ -503,7 +501,7 @@
       so W1 and W3 render and parse whole documents.
 
       THAT IS NOT A REASON TO ESCALATE THE WHOLE DOCUMENT, and reading it as
-      one is what §2b now forbids. Where the two parses differ, they differ
+      one is what §2b forbids. Where the two parses differ, they differ
       SOMEWHERE, and W4 takes the conservative spelling only for the smallest
       unit that fails.
 

@@ -175,9 +175,7 @@
         per {~ opener. At a matched frame's closer, a visible top-level ~>
         selects substitution; otherwise the frame is strike. A nested {~
         frame is resolved independently, including in either substitution
-        side. This boundary clarification changes {~a {*x~>y*} b~} from
-        substitution to strike containing strong text x~>y. It does not
-        change the meanings of editorial insertion or deletion.
+        side: {~a {*x~>y*} b~} is strike containing strong text x~>y.
       - `{= … =}` is forced highlight (<mark>), distinct from the raw-inline
         `{=format}` attribute on a code span (`` `x`{=html} ``), which has no
         trailing `=` before the `}`.
@@ -191,9 +189,8 @@
         any bare span: {*x*}{.c} -> <strong class="c">x</strong>. Child and
         parent attribute runs attach independently; neither inherits the
         other's attributes merely because they have the same kind.
-      Existing corpus 01-emphasis-12 and -13 cover earlier forced behavior.
-      New nesting expectations are specified in
-      resources/spec/nested-braced-emphasis-cases.json until corpus rollout.
+      (corpus 01-emphasis-12 and -13;
+      resources/spec/nested-braced-emphasis-cases.json.)
 
    23. LINE BLOCK (VERSE) -- NORMATIVE [CARVE-P9-044] (governs `line_block` in PART 2). A
       `::: |` fenced block preserves the author's per-line layout.
@@ -364,7 +361,7 @@
 
         A TRAILING COMMENT IS A DIFFERENT CONSTRUCT and this clause does not
         reach it. `x %% secret` is `inline_comment` (PART 3, §21), not
-        `comment_line`, and §21's third bullet governs it: inside a verbatim
+        `comment_line`, and CARVE-P9-041's verbatim rule governs it: inside a verbatim
         run there is no comment there at all, only two percent characters in
         content. The asymmetry is deliberate: an engine may leave a `%%`
         standing inside a verbatim run, and may never delete author bytes out
@@ -579,8 +576,7 @@
          This is intentionally SIMILAR TO DJOT'S LENIENCY inside list items:
          any authored column at or beyond Carve's minimum content_column may
          open the block. Top-level block openers remain column-strict, and a
-         line below content_column is unchanged (docs/divergence-from-djot,
-        ).
+         line below content_column is unchanged (docs/divergence-from-djot.md).
       C4 RULE B (TOP LEVEL, ANY INDENT). A bullet (`-`/`*` + space +
          content) opens a list at ANY indentation at the TOP LEVEL -- no
          column-0 restriction (unlike CommonMark, `    - x` is a list, not
@@ -824,8 +820,7 @@
           an unresolved reference likewise renders its literal source.
         - REFUSE the whole operation with a typed failure, as the render
           ceiling below requires.
-        A returned document MUST NOT lack text the author typed. PART 9R R1a
-        records the earlier violation of this rule.
+        A returned document MUST NOT lack text the author typed.
 
         A conformance run needs to know which arm the canonical writer takes
         past the cap, and the answer is "refuse".
@@ -888,13 +883,13 @@
         total work stays O(n): in particular an empty abbreviation term is
         rejected, a reference is not resolved by rescanning the whole output
         per occurrence, and a crossref target is not cloned without bound.
-      I1 FILE INCLUSION. The `{{ … }}` directive (§19) does no I/O in the parser
-        and stays literal until a host configures a resolver (§19 I3). Enabling
+      I1 FILE INCLUSION. The `{{ … }}` directive (CARVE-P6-001) does no I/O in the
+        parser and stays literal until a host configures a resolver (PART 6 I3). Enabling
         it for UNTRUSTED input requires one explicit, absolute containment root
         that never defaults to the process working directory, containment
         decided on the canonical path after symlink resolution, no remote fetch
         without an explicit allowlist, and the cycle, depth, size and call
-        bounds (§19 I6, I10). Included content receives the same sanitization as
+        bounds (PART 6 I6, I10). Included content receives the same sanitization as
         its parent.
         Inclusion MUST remain disabled on server-side rendering paths for
         user-supplied content. If such a host offers inclusion, it MUST require

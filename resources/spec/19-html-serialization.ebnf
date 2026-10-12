@@ -12,7 +12,7 @@
       key=value order. All classes accumulate (space-joined) into one
       `class` slot at its first-appearance position. An element with no
       effective attributes emits none. (A top-level heading's id moves
-      to <section> and its other attributes do not, §13; with the
+      to <section> and its other attributes do not, CARVE-P9-019; with the
       `sections` option off, or for a heading inside a container, the id
       stays on the <h*> with the rest.) A mandatory base class (math `math inline|display`,
       a task list's `task-list`, §11) is prepended to that class slot.
@@ -21,7 +21,7 @@
       its OWN marker or destination is not "generated" in the sense below:
       it is part of the element's shape rather than something added on top
       of what the author wrote. `<ol>`'s `type` and `start` (fixed by the
-      first item's marker, §11 N2), a link's `href`, an image's `src` and
+      first item's marker, PART 9 §11 N2), a link's `href`, an image's `src` and
       `alt` are all structural. They are emitted BEFORE the authored
       attributes, and the authored order then follows unchanged:
         > {k=v .attr}  -> <ol type="a" k="v" class="attr">
@@ -45,18 +45,16 @@
       The structural attribute examples match reference djot --
       `<ol type="a" class="attr">`, `<ol start="5" class="attr">`,
       `<a href="…" class="c" id="i" k="v">`, `<img alt="a" src="…"
-      class="c">`, `<ul class="task-list c">` -- and it is the same
-      placement PART 10 §1 already states for a mention, where the
-      structural `href` precedes the author's `data-role` and `id`.
-      SO THE DISCRIMINATOR IS THREE-WAY, not two: structural leads,
-      authored follows in source order, engine-minted follows that.
+      class="c">`, `<ul class="task-list c">`. A mention's link form places
+      its structural `href` before the author's `data-role` and `id` the
+      same way (PART 3, ATTRIBUTES ON A MENTION OR TAG).
 
       A GENERATED ATTRIBUTE JOINS AT THE END. The two rules above cover
       an all-authored Attrs and an all-programmatic one; the MIXED case
       is a generated attribute added to attributes the author wrote, and
       it takes the authored order first, then the generated attribute.
       In practice this is one attribute -- the auto-slug id an unwrapped
-      heading carries (§13):
+      heading carries (CARVE-P9-019):
         > {a=b .c}     -> <h1 a="b" class="c" id="Auto">
         > # Auto
       An attribute the author WROTE keeps its authored position even
@@ -69,16 +67,10 @@
 
       A RENDER ANNOTATION IS EMITTED LAST -- after the generated
       attribute, not merely after the authored ones. The one such
-      annotation in the core is `data-source-line` (§13-adjacent, the
-      `sourceLine` render option), which records where a block was
-      written rather than describing the element:
+      annotation in the core is `data-source-line` (the `sourceLine` render
+      option), which records where a block was written rather than
+      describing the element:
         > ## Nested   -> <h2 id="Nested" data-source-line="1">
-      This is a THIRD category, and stating it is what stops an engine
-      from being conformant and divergent at once. An engine that
-      appends the stamp at RENDER time gets the order for free, because the
-      stamp is written outside the attribute walk; an engine that attaches it
-      at PARSE time carries it inside the authored run, where the "generated
-      last" rule alone would put the id behind it.
 
       TEXT-BLOCK ALIGNMENT IS A SEMANTIC ATTRIBUTE. On `<p>`, `<div>` and
       `<h1>` through `<h6>`, an authored `align` key whose trimmed,
@@ -175,7 +167,7 @@
       section in `docs/extension-contract.md` fixes where its generated lines sit and
       may not redraw this boundary.
 
-   5. PARAGRAPH WRAPPING follows the tight/loose rule (§17): a tight list
+   5. PARAGRAPH WRAPPING follows the tight/loose rule (PART 9 §17): a tight list
       item's text has no <p>; a loose item's paragraphs are wrapped.
 
    6. CODE. A fenced code block is `<pre><code[ class="language-X"]>` +
@@ -220,8 +212,8 @@
 
    8. STABLE STRINGS. Mentions and tags render as inert `<span>`s (no link)
       when no URL template is configured; a configured template links to them. The footnote
-      backlink glyph is `↩` (§16). Math wraps content in `\(…\)` /
-      `\[…\]` inside `<span class="math inline|display">` (§18).
+      backlink glyph is `↩` (CARVE-P9-025). Math wraps content in `\(…\)` /
+      `\[…\]` inside `<span class="math inline|display">` (CARVE-P9-036).
 
    9. SEMANTIC SPAN ATTRIBUTES -- NORMATIVE [CARVE-P10-003]. On an ordinary `[content]{attrs}`
       span, three attribute names are reserved HTML rendering sugar: `abbr`,
@@ -319,9 +311,8 @@
       contract is `docs/extensions.md` §8: when it is enabled the four names
       behave exactly as §9's three do, under the same nesting order, the same
       value mapping for `dfn`, the same attribute riding, and the same
-      hardening. The extension accepts `:name[…]` for all seven names as a
-      soft-deprecated form scheduled for removal in 0.2; writers use the
-      compact spelling.
+      hardening. The extension also accepts `:name[…]` for all seven names;
+      writers use the compact spelling.
 
       A core implementation MUST NOT turn an arbitrary extension name into an
       HTML tag: outside `SemanticSpan`, every `:name[…]` keeps the generic
@@ -329,10 +320,8 @@
       bibliographic `[@key]` citation, which is the Citations extension's.
 
    11. A TASK LIST AND ITS NAMED TASK STATES NAME THEMSELVES -- NORMATIVE [CARVE-P10-009].
-      PART 2 admits seven task states and §2's box has two
-      positions, so `[-]`, `[_]`, `[>]` and `[?]` rendered bytes identical to
-      `[ ]`: the distinction the author made survived the file (PART 11 §6g)
-      and died at the renderer, out of reach of any stylesheet. The item
+      PART 2 admits seven task states and the rendered checkbox has two
+      positions. So that the authored state reaches the output, the item
       carries `data-task-state` holding the authored character:
 
         - [-] dropped   ->  <li data-task-state="-"><input type="checkbox"
@@ -382,7 +371,7 @@
       one this clause writes.
 
       AN IMPORTER CONSUMES IT, and consuming is not the same as dropping a
-      DERIVED attribute (PART 9 §16a). The checkbox `<input>` is already
+      DERIVED attribute (CARVE-P9-065). The checkbox `<input>` is already
       consumed into the item's state rather than kept as content; this
       attribute is the other half of that state and is read the same way. It
       is what lets a document survive a render-and-import cycle: without it
@@ -399,23 +388,20 @@
       than a vocabulary this spec can translate.
 
    12. AN ORDERED LIST'S DELIMITER NAMES ITSELF ON THE LIST -- NORMATIVE
-      [CARVE-P10-014]. PART 2 admits `.` and `)` after an ordered marker and
-      §1 carries only `type` and `start`, so `1)` and `1.` rendered identical
-      bytes: the distinction the author made survived the file (PART 11 §6)
-      and died at the renderer, out of reach of any stylesheet. The list
+      [CARVE-P10-014]. PART 2 admits `.` and `)` after an ordered marker, and
+      `type` and `start` (§1) do not say which the author wrote. The list
       carries `data-delim` holding the authored character:
 
         1) first   ->  <ol data-delim=")">
                          <li>first</li>
                        </ol>
 
-      ONLY WHERE THE AST RECORDS A DELIMITER, which is the same rule PART 11
-      §6 states for the field: a `delim` of `.` is absent there and carries no
-      attribute here, because the default needs no spelling, and such a list's
-      bytes are unchanged by this clause.
+      ONLY WHERE THE AST RECORDS A DELIMITER. PART 12 §3 records `list.delim`
+      only where it is not the default: a `.` is absent there and carries no
+      attribute here, and such a list's bytes are unchanged by this clause.
 
       ON THE `<ol>`, NOT ON THE `<li>`. The delimiter is a property of the
-      LIST, fixed once by its first item's marker (§11 N2), so a nested list
+      LIST, fixed once by its first item's marker (PART 9 §11 N2), so a nested list
       derives its own from its own marker and does not inherit the attribute.
 
       IT IS A STRUCTURAL ATTRIBUTE and leads the authored ones (§1), beside
@@ -426,8 +412,7 @@
       and a value outside PART 2's enumeration is not one this clause writes.
 
       AN IMPORTER CONSUMES IT, as §11 says of `data-task-state` and for the
-      same reason: without it a rendered `1)` imports back as `1.`, silently,
-      because both spellings rendered the same bytes before this clause. A
+      same reason: without it a rendered `1)` imports back as `1.`. A
       value outside PART 2's enumeration is an author attribute, not a
       delimiter.
 
@@ -600,16 +585,6 @@
 
         {.c #mine}      ->  <section id="mine" data-carve-explicit-id
         # H                 data-carve-id-slot="1">
-
-      THE `data-carve-col-widths` ROW SATISFIES THE CARRIER RULE.
-      `data-carve-col-widths` was absent from this inventory until
-      `table.separatorWidths` existed, and it is listed now because that field
-      does. The order was not a formality: an engine that wrote the carrier
-      WITHOUT the field turned 37 tests red across 9 files, because the AST JSON
-      writer does not filter to the published field set, the reader refuses an
-      unknown field, and the "parses to the same tree" comparisons are deep
-      equality that a canonical `---` separator cannot satisfy. The field
-      answers all three at once, which is why it comes first.
 
       A CONSTRUCT'S VERBATIM SOURCE IS WHAT THE RULE STILL EXCLUDES, which is
       why `data-carve-src` is absent from the rows above. It is not awaiting a
@@ -834,9 +809,8 @@
       RAW HTML REMAINS MODE-GATED. A `data-carve-raw` value naming format
       `html` reconstructs raw HTML only in `roundtrip` import mode. A carrier
       must not restore markup the selected mode filtered out. Other raw-inline
-      formats, inert in HTML output, may reconstruct in every import mode.
-      This is the value-validation ruling on carve#2918, applying this
-      clause's trust boundary and §12's invalid-enumeration precedent.
+      formats, inert in HTML output, may reconstruct in every import mode
+      (carve#2918).
 
    13f. ONE OPTION SWITCHES EVERY TARGET'S CARRIERS -- NORMATIVE
       [CARVE-P10-018]. Roundtrip export is the only switch for the carriers
