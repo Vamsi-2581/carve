@@ -559,8 +559,7 @@
           "attribute": "data-carve-generated-id",
           "element": "section"
         }
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "unlisted-prefixed-attributes",
@@ -819,8 +818,7 @@
           "attribute": "data-carve-generated-id",
           "element": "h1"
         }
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "authored-heading-id-in-quote",
@@ -882,8 +880,7 @@
       ],
       "returnedSourceFragments": [
         "[r][] and [r][]"
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "tight-list-attributed-later-paragraph",
@@ -1279,8 +1276,7 @@
         "semantic",
         "roundtrip"
       ],
-      "requiresDiagnostic": false,
-      "aheadOfPin": true
+      "requiresDiagnostic": false
     },
     {
       "id": "contradictory-footnote-pair",
@@ -1333,8 +1329,7 @@
         "code": "attribute-dropped",
         "severity": "warning"
       },
-      "diagnosticControlHtml": "<section id=\"mine\"><h1>H</h1></section>",
-      "aheadOfPin": true
+      "diagnosticControlHtml": "<section id=\"mine\"><h1>H</h1></section>"
     },
     {
       "id": "contradictory-escaped-raw",
@@ -1358,8 +1353,7 @@
         "code": "attribute-dropped",
         "severity": "warning"
       },
-      "diagnosticControlHtml": "<p><span>*</span></p>",
-      "aheadOfPin": true
+      "diagnosticControlHtml": "<p><span>*</span></p>"
     },
     {
       "id": "id-slot-without-explicit-id",
@@ -1405,8 +1399,7 @@
         "roundtrip"
       ],
       "requiresDiagnostic": true,
-      "diagnosticControlHtml": "<section id=\"mine\" data-carve-explicit-id data-carve-id-slot=\"1\"><h1 class=\"c\">H</h1></section>",
-      "aheadOfPin": true
+      "diagnosticControlHtml": "<section id=\"mine\" data-carve-explicit-id data-carve-id-slot=\"1\"><h1 class=\"c\">H</h1></section>"
     },
     {
       "id": "retired-source-alias-consumed",
@@ -1496,8 +1489,7 @@
       "importModes": [
         "roundtrip"
       ],
-      "requiresDiagnostic": false,
-      "aheadOfPin": true
+      "requiresDiagnostic": false
     }
   ],
   "footnoteRecoveryResource": "footnote-carrier-recovery-fixtures.json",
@@ -1532,32 +1524,28 @@
       "source": "[a](/u){data-carve-ref=x}\n",
       "attribute": "data-carve-ref",
       "value": null,
-      "defaultValue": "x",
-      "aheadOfPin": true
+      "defaultValue": "x"
     },
     {
       "id": "tight-name-dropped-on-heading",
       "source": "{data-carve-tight=x}\n# T\n",
       "attribute": "data-carve-tight",
       "value": null,
-      "defaultValue": "x",
-      "aheadOfPin": true
+      "defaultValue": "x"
     },
     {
       "id": "marker-name-dropped-on-heading",
       "source": "{data-marker=x}\n# T\n",
       "attribute": "data-marker",
       "value": null,
-      "defaultValue": "x",
-      "aheadOfPin": true
+      "defaultValue": "x"
     },
     {
       "id": "deprecated-alias-name-dropped",
       "source": "[a](/u){data-djot-ref=x}\n",
       "attribute": "data-djot-ref",
       "value": null,
-      "defaultValue": "x",
-      "aheadOfPin": true
+      "defaultValue": "x"
     },
     {
       "id": "unreserved-name-kept-on-heading",
@@ -1720,8 +1708,7 @@
       ],
       "lossCodes": [
         "definition-list-flattened"
-      ],
-      "aheadOfPin": true
+      ]
     }
   ]
 }
