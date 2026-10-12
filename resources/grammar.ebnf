@@ -3143,10 +3143,9 @@ ellipsis = "..." ;    (* → … *)
    LEFT-FLANKING-ONLY shape -- whitespace before, word after -- is the one no
    dash wants and every flag has.
 
-   THE SPACE CLASS IS PART 7'S, and that is not the host language's `\s`. A
-   VERTICAL TAB and a FORM FEED are CONTENT in Carve, so `---<VT>` converts or
-   stays literal exactly as `---!` does. A NO-BREAK SPACE counts as a space
-   here, the same question quote flanking asks.
+   "WHITESPACE" HERE IS `typography_flank`, below, and not the host
+   language's `\s`. A VERTICAL TAB and a FORM FEED are CONTENT in Carve, so
+   `---<VT>` converts or stays literal exactly as `---!` does.
 
    ELLIPSIS IS NOT COVERED. `wait... really` is the ordinary use and it is
    word-then-whitespace; an ellipsis terminates a clause where a dash joins two
@@ -3177,14 +3176,14 @@ smart_quote = '"' | "'" ;
    Letters and digits are judged by Unicode code point, so a character
    outside the Basic Multilingual Plane is a letter like any other.
 
-   A quote OPENS after start-of-content, whitespace (space, tab, CR, LF,
-   NBSP U+00A0, or a soft or hard line break), or `( [ { = : - – — /`, or
+   A quote OPENS after start-of-content, a `typography_flank` character,
+   or `( [ { = : - – — /`, or
    an opening curly quote `“` or `‘`. Otherwise it CLOSES. The opening set
    applies to both quote characters: `"'q'"` renders `“‘q’”`.
    A single quote before an ASCII digit is an APOSTROPHE: `'90s` renders `’90s`.
 
    R1. AFTER A DASH (`-`, `–`, or `—`), a quote CLOSES when the next source
-   character is absent, whitespace as above, or one of `" ' . , ; : ! ? ) ]`.
+   character is absent, a `typography_flank` character, or one of `" ' . , ; : ! ? ) ]`.
    Otherwise it opens. Thus `"Wait---" he said.` renders `“Wait—” he said.`,
    while `he said—"Go"` renders `he said—“Go”`.
 
@@ -3206,8 +3205,8 @@ smart_quote = '"' | "'" ;
    the span. Thus `'I told 'em so,' he said.` renders `‘I told ’em so,’ he said.`
    An opener before anything else opens as usual and, if no span is open,
    starts one that is never demoted: `'*bold* text` keeps its opening quote.
-   A closing single quote whose previous character is not whitespace closes
-   the span. A mid-word apostrophe (previous and next are letters or numbers,
+   A closing single quote whose previous character is not a
+   `typography_flank` character closes the span. A mid-word apostrophe (previous and next are letters or numbers,
    or next is an ASCII digit) never closes it: `'Jane's dog'` is `‘Jane’s dog’`.
    At the END OF CONTENT, demote a still-open span's opener to an apostrophe
    if it was followed by a letter or number. EXCEPTIONS: retain an opener at
@@ -3238,6 +3237,13 @@ typographic_symbol = "(c)" | "(r)" | "(tm)" | "+-" ;
 (* --- Breaks --- *)
 hard_break = '\', newline ;  (* backslash at end of line *)
 soft_break = newline ;        (* regular line ending within paragraph *)
+
+(* TYPOGRAPHY FLANK. The one class smart typography reads a neighbor
+   character through, for dash runs (CARVE-P3-021) and quote direction
+   (CARVE-P3-023): space, tab, line feed, carriage return, no-break space
+   U+00A0, and a soft or hard line break. *)
+typography_flank = whitespace | newline | no_break_space | soft_break | hard_break ;
+no_break_space = (* U+00A0 NO-BREAK SPACE *) ;
 (* ============================================================================
    PART 4: ATTRIBUTES
    ============================================================================ *)
