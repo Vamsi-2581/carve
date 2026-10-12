@@ -1275,6 +1275,11 @@ term_continuation_line = inline_content, newline ;
    A list marker is not term text: PART 9 §24 C4 lets it open at any column, so it
    ends the term.
 
+   A term that is the deepest leaf takes a following unprefixed or
+   below-column plain line as lazy text, as an open paragraph does
+   (CARVE-P0-006): after `> :: t` or `> - :: t`, an unprefixed `tail` folds
+   into the term.
+
    The invisible lines follow the same two bands (PART 9 §24 C3, AN INVISIBLE
    LINE FOLDS LIKE ANY OTHER):
 
