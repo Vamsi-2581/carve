@@ -51,7 +51,7 @@ parsing English prose:
 
 - `layout-transitions.json` restates every ownership boundary transition of `CARVE-P0-003`; the clause governs.
 - `paragraph-interruption.json` partitions interrupting and non-interrupting constructs.
-- `target-capabilities.json` records cross-target preservation behavior.
+- `target-capabilities.json` restates a sample of PART 11's cross-target rules, one row per named clause; the clause governs.
 - `rules.json` assigns stable identifiers and an implementation scope to every
   normative clause. The generated [normative rule index](./rules/) provides
   focused views without making any rule optional.

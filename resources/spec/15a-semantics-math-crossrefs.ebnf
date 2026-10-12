@@ -80,7 +80,7 @@
         resolver receives the exact parsed name and returns a complete
         destination, so the processor MUST NOT encode or interpolate that
         result a second time. Both template and resolver destinations MUST pass
-        the PART 9 section 25 URL-scheme denylist; a denied destination is
+        the CARVE-P9-054 URL-scheme denylist; a denied destination is
         UNRESOLVED and renders the inert span. The callback is host code, not a
         permission to perform network or database access: a host that does so
         owns authentication, authorization, timeouts, request bounds, and

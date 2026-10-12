@@ -82,7 +82,7 @@
       quotes). ONE EXCEPTION: a NO-BREAK SPACE (U+00A0) in text content
       serializes as `&nbsp;`, the one entity beyond the three, so it
       renders visibly distinct from an ordinary space with no external
-      CSS -- matching the escaped-space spelling `\ ` (PART 3) and a line
+      CSS -- matching the escaped-space spelling `\ ` (CARVE-P12-004) and a line
       block's preserved indentation (PART 9 §23), both of which already
       serialize the same way. No other entities are produced. This
       describes only the QUOTING of values that survive filtering:
@@ -261,7 +261,7 @@
       This rule changes only HTML rendering. The AST remains an ordinary `span`
       carrying the authored attributes, plain and ANSI targets render its
       inline content, and the canonical writer emits the span with its
-      attributes, an empty-string one spelled bare per PART 11 §6c.
+      attributes, an empty-string one spelled bare per CARVE-P11-012.
 
       Accessible ruby is NOT reserved here: PART 12 §32 gives it structured
       base/annotation children rather than a single inline container.
@@ -272,7 +272,7 @@
       generic `<span class="ext-samp">` fallback.
 
       They are the `SemanticSpan` extension, Tier-2 and off by default, whose
-      contract is `docs/extensions.md` §8: when it is enabled the four names
+      contract is `docs/extension-contract.md` §11: when it is enabled the four names
       behave exactly as §9's three do, under the same nesting order, the same
       value mapping for `dfn`, the same attribute riding, and the same
       hardening. The extension also accepts `:name[…]` for all seven names;
@@ -408,8 +408,8 @@
         marker`                authored character, written
                                only where it is not `-`
         an authored heading    `data-carve-explicit-id`,        the attribute-line
-        `id` under `attrs`     presence, on the `<section>`     marker (PART 11
-                               where CARVE-P9-019 wraps one     §10t)
+        `id` under `attrs`     presence, on the `<section>`     marker
+                               where CARVE-P9-019 wraps one     (CARVE-P11-067)
                                and on the `<h1>`-`<h6>` where
                                it does not
         that id's slot in      `data-carve-id-slot` on          inside the
@@ -461,37 +461,37 @@
         keeps its `<p>`
         an element-less        none                             the opener and
         container: its kind,                                    closer markers
-        title, attributes                                       (PART 11 §10s)
+        title, attributes                                       (CARVE-P11-063)
         and nesting
         a block's attribute    none                             the attribute-line
-        line that reaches no                                    marker (§10t)
+        line that reaches no                                    marker (CARVE-P11-067)
         element of the
         Markdown output
         a definition list,     none                             the term, `:` and
         outermost only                                          closing markers
-                                                                (§10t)
+                                                                (CARVE-P11-067)
         a caption line         none                             the caption marker
-                                                                (§10s, §10t)
+                                                                (CARVE-P11-063, CARVE-P11-067)
 
       THE SHARED RULES hold for both columns:
 
       S1 OFF BY DEFAULT on every surface. The default bytes are the ones §1
          to §12 and PART 11 pin, and enabling the option neither removes nor
          reorders anything those sections write.
-      S2 ONE OPTION SWITCHES BOTH TARGETS (§13f).
+      S2 ONE OPTION SWITCHES BOTH TARGETS (CARVE-P10-018).
       S3 A CARRIER VALUE IS UNTRUSTED INPUT. Finding a carrier in a document
          is not a reason to trust that document, and export selects no import
-         mode (§13e).
+         mode (CARVE-P10-017).
       S4 A VALUE OUTSIDE ITS GRAMMAR IS NOT A CARRIER, AND IT IS REPORTED.
          Nothing is rebuilt from it. How much falls with it differs by
          target: an HTML import drops that one carrier and keeps the others
-         (§13e); a Markdown import that finds its marker set damaged reads
+         (CARVE-P10-017); a Markdown import that finds its marker set damaged reads
          the whole file as plain Markdown (CARVE-P11-063).
       S5 CONTRADICTORY CARRIERS RESTORE NEITHER MEANING. The pairs are the
-         closed list in §13d.
+         closed list in CARVE-P10-021.
       S6 CONSUMED IN EVERY IMPORT MODE. An HTML import consumes the carriers
          whatever its mode and writes no reserved name back, with the one
-         exception §13d names. A Markdown import reads the markers where
+         exception CARVE-P10-021 names. A Markdown import reads the markers where
          `markdown` is the source format (CARVE-P11-063).
 
       WHAT IT GUARANTEES IS RECOVERY OF THE NAMED DISTINCTIONS, not
@@ -506,7 +506,7 @@
       they hold the Carve opener and closer lines VERBATIM, fence width
       included (CARVE-P11-063).
 
-      WHAT IT DOES NOT PROMISE IS A RAW BLOCK. §13a names no carrier for one,
+      WHAT IT DOES NOT PROMISE IS A RAW BLOCK. CARVE-P10-016 names no carrier for one,
       so a raw block whose format this target cannot write is dropped under
       this option exactly as it is without it, and the render reports the
       dropped format as a diagnostic in both cases. ENABLING THE OPTION NEVER
@@ -547,7 +547,7 @@
       A LABEL VALUE IS THE `label` PRODUCTION'S INTERIOR. `data-carve-label`
       holds what PART 2 writes between `[` and `]`, so a reader validates it
       against that production before rebuilding the fence label: a value that
-      holds `]`, a line break, or is empty is not a carrier, and §13e's rule
+      holds `]`, a line break, or is empty is not a carrier, and CARVE-P10-017's rule
       for an invalid value applies.
 
         ```php [Example]     ->  <pre data-carve-label="Example"><code
@@ -563,7 +563,7 @@
       attributes in their authored order and counts from 0. A writer MUST omit
       the carrier at 0, where the id leads. A reader places the id at that
       slot. A slot larger than the heading's attribute count, like any other
-      value, is not a carrier (§13e) and the id leads.
+      value, is not a carrier (CARVE-P10-017) and the id leads.
 
         {.c #mine}      ->  <section id="mine" data-carve-explicit-id
         # H                 data-carve-id-slot="1">
@@ -583,8 +583,8 @@
       what the CORE qualifier above leaves room for. An extension's contract
       MAY place a core carrier name on its own element, and defines its
       meaning there. AN EXTENSION CARRIER IS A
-      CARRIER in every other respect: §13b displaces an authored attribute of
-      its name, §13c reads its deprecated spelling, and §13d consumes it in
+      CARRIER in every other respect: CARVE-P10-019 displaces an authored attribute of
+      its name, CARVE-P10-020 reads its deprecated spelling, and CARVE-P10-021 consumes it in
       every import mode.
 
       A WIDTH IS A POSITIVE INTEGER, AND 1000 IS THE BOUND ON BOTH SIDES OF
@@ -657,7 +657,7 @@
       ONE NAME IS RESERVED WITHOUT A ROW. The core target writes no
       `data-carve-src`, and an importer consumes it in every mode and rebuilds
       nothing from its value. So under roundtrip export an authored one is
-      dropped with §13b's `carrier-attribute-dropped` row, and default export
+      dropped with CARVE-P10-019's `carrier-attribute-dropped` row, and default export
       passes it through untouched.
 
       THE SPEC'S OWN ATTRIBUTES ARE NOT CARRIERS. A task list's `task-list`
@@ -668,8 +668,8 @@
 
    13b. ROUNDTRIP EXPORT DROPS AN AUTHORED RESERVED NAME AND REPORTS IT --
       NORMATIVE [CARVE-P10-019]. Under roundtrip export an authored attribute
-      whose name is a reserved name from §13a, or the deprecated `data-djot-`
-      spelling of one, which §13c has every importer consume, IS DROPPED ON
+      whose name is a reserved name from CARVE-P10-016, or the deprecated `data-djot-`
+      spelling of one, which CARVE-P10-020 has every importer consume, IS DROPPED ON
       EVERY NODE, whether or not that node writes a carrier of that name. A node that
       writes a carrier of that name still writes it. Default export passes
       the authored attribute through.
@@ -688,7 +688,7 @@
       for.
 
    13c. AN IMPORTER READS THE DEPRECATED `data-djot-` SPELLING -- NORMATIVE
-      [CARVE-P10-020]. The prefixed names in §13a were spelled `data-djot-`
+      [CARVE-P10-020]. The prefixed names in CARVE-P10-016 were spelled `data-djot-`
       before this clause, and documents exported by released engines carry
       that spelling. So, for every prefixed name in the inventory:
 
@@ -697,7 +697,7 @@
 
         AN IMPORTER ACCEPTS EITHER SPELLING, and `data-carve-` wins where one
         element carries both. `data-djot-` is DEPRECATED: it is read for
-        compatibility and consumed exactly as §13d consumes the canonical
+        compatibility and consumed exactly as CARVE-P10-021 consumes the canonical
         spelling, so a document that arrives carrying it leaves without it.
 
       THE ALIAS IS NOT A SECOND SET OF NAMES. A `data-djot-` name this
@@ -707,14 +707,14 @@
       prefix.
 
       `data-djot-src` IS THE ONE ALIAS OF THE ROWLESS NAME. It is reserved and
-      consumed like `data-carve-src` (§13a), in every import mode, and nothing
+      consumed like `data-carve-src` (CARVE-P10-016), in every import mode, and nothing
       is rebuilt from its value.
 
    13d. EVERY IMPORT MODE CONSUMES THE INVENTORY AND WRITES NO RESERVED NAME
       BACK -- NORMATIVE [CARVE-P10-021]. Consuming a carrier reconstructs
       syntax the AST can already express, so it is not a trust decision and
       is not gated on an import mode. `safe` import consumes every name in
-      §13a, in either spelling, exactly as `roundtrip` import does.
+      CARVE-P10-016, in either spelling, exactly as `roundtrip` import does.
 
       A RESERVED NAME NEVER LEAVES AS AN AUTHORED ATTRIBUTE. An importer that
       consumed a carrier does not then write its name into the reconstructed
@@ -737,12 +737,12 @@
       for the pair, and excludes both reserved names from authored attributes.
       `data-carve-autolink` beside `data-carve-ref` on one `<a>` imports as an
       inline link. A PAIR NOT ON THE LIST IS NOT A CONTRADICTION. This applies
-      in every import mode and to the deprecated aliases in §13c. Value
-      validation under §13e comes first: an invalid value is not a carrier
+      in every import mode and to the deprecated aliases in CARVE-P10-020. Value
+      validation under CARVE-P10-017 comes first: an invalid value is not a carrier
       and contradicts nothing.
 
       A `data-carve-id-slot` WITHOUT `data-carve-explicit-id` on the same
-      element is not a carrier, and §13e applies.
+      element is not a carrier, and CARVE-P10-017 applies.
 
       THE FOOTNOTE PAIR IS THE FIRST INSTANCE. An endnote carrying both a
       valid `data-carve-footnote-label` and `data-carve-inline-footnote` asks
@@ -753,16 +753,16 @@
       mode and alias controls are in
       `resources/footnote-carrier-recovery-fixtures.json`.
 
-      ONE CARRIER IS THE EXCEPTION, and §13e is why. `data-carve-raw` RETURNS
+      ONE CARRIER IS THE EXCEPTION, and CARVE-P10-017 is why. `data-carve-raw` RETURNS
       ITS PAYLOAD VERBATIM as a raw inline, so consuming it is not
       reconstructing syntax the tree already expresses -- it decides that
       foreign content may re-enter the document as raw. That stays on the
       importer's own trust setting, and an importer that declines it drops the
       carrier and takes the span's text.
 
-      WHAT THE MODE DECIDES IS NOTHING ELSE. Every other name in §13a is
+      WHAT THE MODE DECIDES IS NOTHING ELSE. Every other name in CARVE-P10-016 is
       consumed whatever the mode, and reconstruction of raw HTML outside a
-      carrier is §13e's question rather than this clause's.
+      carrier is CARVE-P10-017's question rather than this clause's.
 
       AN IMPORT PUBLISHES `attrs.order` ON A HEADING where its
       `data-carve-explicit-id` or `data-carve-id-slot` carrier supplies it.
@@ -783,7 +783,7 @@
       A VALUE OUTSIDE ITS GRAMMAR OR CARRIER ENUMERATION IS NOT A CARRIER.
       The reader drops the invalid value with a diagnostic and keeps the
       reserved name out of the reconstructed document's authored attributes
-      (§13d). It does not rebuild syntax from an invalid value.
+      (CARVE-P10-021). It does not rebuild syntax from an invalid value.
 
       RAW HTML REMAINS MODE-GATED. A `data-carve-raw` value naming format
       `html` reconstructs raw HTML only in `roundtrip` import mode. A carrier

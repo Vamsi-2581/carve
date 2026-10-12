@@ -25,7 +25,7 @@ include_directive = "{{", space+, include_path, [[space+], include_section], [in
    An UNTERMINATED quote does not open a run. It falls back to the unquoted
    reading, so it can never pair with a quote further along the line, and the
    closer is again the first "}}" - which is what leaves a malformed directive
-   as the literal text section 19 says it is. *)
+   as the literal text CARVE-P6-001 says it is. *)
 include_path = bare_include_path | quoted_include_path ;
 bare_include_path = {character - ('#' | '@' | '}' | ' ' | newline)}+ ;
 (* A path carrying a space is DOUBLE-QUOTED, and only then: the bare form stops

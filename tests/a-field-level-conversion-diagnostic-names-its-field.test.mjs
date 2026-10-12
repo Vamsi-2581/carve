@@ -115,7 +115,7 @@ const REPORTS = {
 for (const [id, expected] of Object.entries(REPORTS)) {
   test(`${id} names the channel and what it reports there`, () => {
     const text = clauseText(id).replace(/\n\s+/g, ' ')
-    assert.match(text, /PART 11 §1d channel/, `${id} must point its loss at the section 1d channel`)
+    assert.match(text, /CARVE-P11-046 channel/, `${id} must point its loss at the section 1d channel`)
     for (const token of expected) {
       assert.ok(text.includes(token), `${id} must name ${token}`)
     }

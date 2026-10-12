@@ -219,7 +219,7 @@
         how a stanza carries an EMPTY verse line, the blank line being the one
         spelling that would end the stanza instead. Both are observable in the
         tree and in the HTML, which is why the canonical writer may not drop
-        either (PART 11 §7c).
+        either (CARVE-P11-020).
 
         AN INLINE CONSTRUCT IS NOT A DEPTH THE RULE STOPS AT -- NORMATIVE [CARVE-P9-046].
         The subject is the SOFT break, so the only question at a boundary is
@@ -231,8 +231,8 @@
         same two lines get with no emphasis around them.
 
         THE CONVERSION IS IN THE TREE, NOT ONLY IN THE HTML. A stanza's bare
-        newline is a `hard_break` NODE (PART 12), which is what lets PART 11
-        §7c spell one as a bare newline at all - "re-reading that newline
+        newline is a `hard_break` NODE (PART 12), which is what lets
+        CARVE-P11-020 spell one as a bare newline at all - "re-reading that newline
         yields the SAME TREE" is a statement about nodes.
 
         THE TWO EXEMPTIONS ABOVE ARE DIFFERENT IN KIND, NOT IN DEPTH. A
@@ -313,7 +313,7 @@
         the empty verse line as a NEWLINE, like every other break it swallows.
 
         REMOVED FROM THE RENDER, NOT FROM THE TREE. The line is a `comment`
-        node like any other comment (§21a, PART 12), so the canonical writer
+        node like any other comment (CARVE-P9-042, PART 12), so the canonical writer
         emits it back UNCHANGED and at the SAME column. A writer that indents
         it by a space to stop the line re-reading as a comment publishes the
         very text the removal exists to hide, because in verse a leading run
@@ -336,7 +336,7 @@
         CARVE-P11-020.
 
         A TRAILING COMMENT IS A DIFFERENT CONSTRUCT and this clause does not
-        reach it. `x %% secret` is `inline_comment` (PART 3, §21), not
+        reach it. `x %% secret` is `inline_comment` (PART 3, CARVE-P9-041), not
         `comment_line`, and CARVE-P9-041's verbatim rule governs it: inside a verbatim
         run there is no comment there at all, only two percent characters in
         content. The asymmetry is deliberate: an engine may leave a `%%`
@@ -743,7 +743,7 @@
         silent truncation, a partial document or the host's stack-overflow error.
         This applies PART 12 §9(b)'s ingest rule to rendering, including the
         canonical writer. The derived ceiling exceeds the parser's bound in
-        its own unit, so parsed trees cannot reach it; §9(b) already rejects
+        its own unit, so parsed trees cannot reach it; CARVE-P12-028(b) already rejects
         ingested trees deeper than the parser's limit. Trees built through the
         API can reach it and MUST receive that failure.
 

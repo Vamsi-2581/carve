@@ -89,7 +89,7 @@ code_span_content = (* any chars except a closing backtick_run of equal count *)
    block, NOT a language tag -- EXCEPT the exact form `{=format}`, which is
    raw inline passthrough (raw_inline below, PART 9 §20). Any OTHER `{…}` is
    consumed AND applied -- `\`c\`{.x}` -> `<code class="x">c</code>`, and
-   `#id`/`key=value` likewise. The STRICT attribute rule (§14) applies here and
+   `#id`/`key=value` likewise. The STRICT attribute rule (CARVE-P9-020) applies here and
    to IMAGE trailing attrs exactly as to any other inline attribute. Explicit
    ids and classes admit a leading ASCII digit; a digit-leading key or any
    otherwise invalid payload makes the block literal. *)
@@ -103,11 +103,11 @@ raw_inline = backtick_run, code_span_content, backtick_run, '{=', format_name, '
 
 (* --- Literal Inline (PART 9 §27) --- *)
 (* A `!` PREFIX on a verbatim code span is an inline literal, mirroring
-   `math_inline = '$', code_span` (§18). The span content is HTML-ESCAPED and
+   `math_inline = '$', code_span` (CARVE-P9-036). The span content is HTML-ESCAPED and
    emitted by EVERY renderer (never dropped), but WITHOUT the `<code>` wrapper
    -- it is prose, not code. The trailing `[attribute_run]` is the ORDINARY
    code-span attribute block: with attributes an emitted `<span>` carries them,
-   with none bare escaped text is emitted. Unlike `{=format}` (raw_inline, §20)
+   with none bare escaped text is emitted. Unlike `{=format}` (raw_inline, CARVE-P9-040)
    the content is escaped and never target-routed. The `!` binds to a following
    backtick run only; `!` elsewhere (and `![` opening an image) is unaffected,
    so a literal `!` immediately before a backtick run is written `\!`. *)
@@ -385,7 +385,7 @@ reference_definition = '[', reference_label, ']', ':', space+, link_destination,
 
        text
 
-   `.a` floats past the definition and lands on `<p class="a">text</p>` (A2a);
+   `.a` floats past the definition and lands on `<p class="a">text</p>` (PART 9 §15 A2a);
    `.b` attributes the definition and reaches every link resolving `ex`.
 
    THE DEFINITION IS A NODE, so these attributes are serialized ONCE on it

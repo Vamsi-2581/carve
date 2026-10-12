@@ -6,7 +6,7 @@
       presentation concern, so `[>` is unclaimed and `[>foo]` is literal
       text (docs/dismissed-syntax.md). Numbering, which definition wins,
       collection inside containers, unresolved references and unreferenced
-      definitions are PART 9R R2 and §17 L6; the rendering rules below stay
+      definitions are PART 9R R2 and CARVE-P9-034; the rendering rules below stay
       normative here.
       - A body is the def line plus any following lines indented to column 2
         or more (PART 9 §24 C1 column arithmetic -- a tab reaching column 2
@@ -185,7 +185,7 @@
 
          are both LOOSE, and so are the same documents with the closer
          written. The state of the container above the blank does not enter
-         this question either, which is the same property PART 0 S4 already
+         this question either, which is the same property PART 0 O2 already
          states for where the item ENDS.
 
          An INTERIOR fence blank does not loosen the list: content follows it

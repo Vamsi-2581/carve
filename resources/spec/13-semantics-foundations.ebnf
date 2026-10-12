@@ -27,12 +27,12 @@
       (a captioned code block is a numbered LISTING), a standalone
       display-math block (a numbered EQUATION; the block must be solely the
       `$$`…`` span), the CLOSING fence of a bare `::: figure` container
-      (a composite FIGURE GROUP -- §4c), or the CLOSING fence of a
+      (a composite FIGURE GROUP -- CARVE-P9-001), or the CLOSING fence of a
       `quote_block`. The allowance is the same for all
       seven: adjacent OR exactly one blank line attaches, two blank lines
       detach and leave the `^ ` line an ordinary paragraph.
       A STRUCTURAL-ONLY LINE between host and marker detaches too, and is
-      not one of the blanks that allowance counts -- see §4d.
+      not one of the blanks that allowance counts -- see CARVE-P9-080.
 
       THE SEVENTH IS THE SECOND SPELLING OF THE SECOND. `quote_block` is a
       block quote and captions as a figure. Like `figure_group`, its caption
@@ -151,7 +151,7 @@
       nothing a caption could be about, so it is not a captionable host. This
       says nothing about hosts delimited by an explicit closing fence, whose
       caption attaches at the closer: a zero-panel `::: figure` still carries
-      its group caption (§4c).
+      its group caption (CARVE-P9-001).
 
       A STRUCTURAL-ONLY LINE INSIDE AN ALREADY-OPEN CONTAINER CHANGES NOTHING.
       `> q` followed by a bare `>` is one quote with content, and it still
@@ -263,7 +263,7 @@
 
          A CONTINUATION ROW LEAVES NO PARAGRAPH OPEN -- NORMATIVE [CARVE-P9-003].
          A container's last block remains a table after a continuation row.
-         Under S4, a following flush-left line ends the container and becomes
+         Under CARVE-P0-009, a following flush-left line ends the container and becomes
          a document paragraph, as after a standard row. This applies to lists,
          quotes and definition bodies.
 
@@ -271,12 +271,12 @@
          is prose, opens a paragraph and a following flush-left line folds lazily
          (corpus 326-...-26 and -28).
 
-         A QUOTE IS ASKED ITS OWN BODY. Apply S4 to the quote's entire body,
+         A QUOTE IS ASKED ITS OWN BODY. Apply CARVE-P0-009 to the quote's entire body,
          rather than peeling one physical line. Its last block determines
          whether a paragraph remains open.
 
          A QUOTE INSIDE A QUOTE IS ASKED THE SAME QUESTION. Follow the last
-         child quote recursively to its own last block (PART 0 S4).
+         child quote recursively to its own last block (CARVE-P0-009).
       T7 GFM DELIMITER ROW -- NORMATIVE [CARVE-P9-004]. delimiter_row(R) := R is EXACTLY
          the SECOND row of the table AND every cell matches delimiter_cell
          (optional ws, optional `:`, one or more `-`, optional `:`,
@@ -374,14 +374,14 @@
 
          THE CLOSING PIPE IS NOT A TERMINATOR. `|=|` and `|{#x}|` carry no
          run; an empty marked cell is `|= |` and `|{#x} |` -- which is what
-         §6e's canonical writer already emits, and what `|> |` already
+         CARVE-P11-014's canonical writer already emits, and what `|> |` already
          required of the alignment run. NEITHER IS A TAB: PART 7 gives a tab
          no padding role inline, so `|=<TAB>h |` is content too.
 
          AN ESCAPE REACHES THE OTHER READING where a space cannot. `|\= a |`
          is a data cell whose content is a literal `= a`, unchanged here.
 
-         `|=a |` and `|{#x}=R|` are data-cell content. §6e's writer emits a
+         `|=a |` and `|{#x}=R|` are data-cell content. CARVE-P11-014's writer emits a
          space after every prefix.
 
          TABLE MARKER-PADDING DIAGNOSTICS SHARE ONE ID -- NORMATIVE [CARVE-P9-009]. The id is
