@@ -2064,8 +2064,8 @@ b
 
 :::
 
-A definition **term** is bounded the same way. It holds inline content, not a
-paragraph, so there is nothing for the next line to continue.
+A definition **term** is an ordinary line, so it leaves the quote open for lazy
+text and the next line folds into the term (`CARVE-P2-028`).
 
 ::: compare
 
@@ -2077,10 +2077,10 @@ paragraph, so there is nothing for the next line to continue.
 ```html
 <blockquote>
   <dl>
-    <dt>t</dt>
+    <dt>t
+~</dt>
   </dl>
 </blockquote>
-<p>~</p>
 ```
 
 :::
@@ -41032,9 +41032,9 @@ p</code></li>
 
 ## A nested quoted term leaves no paragraph for a lazy line
 
-PART 0 S4 asks whether the innermost quoted block holds an open paragraph.
-A definition term holds inline content, so the unmarked line starts outside
-both quotes.
+PART 0 S4 asks whether the innermost quoted leaf accepts lazy text. A
+definition term is an ordinary line and accepts it, so the unmarked line folds
+into the term (`CARVE-P2-028`).
 
 ::: compare
 
@@ -41047,11 +41047,11 @@ tail
 <blockquote>
   <blockquote>
     <dl>
-      <dt>term</dt>
+      <dt>term
+tail</dt>
     </dl>
   </blockquote>
 </blockquote>
-<p>tail</p>
 ```
 
 :::
@@ -49416,6 +49416,74 @@ b
   </li>
 </ul>
 <p>flush</p>
+```
+
+:::
+
+## A quoted term takes a lazy line
+
+A term is an ordinary line wherever it is written, so an unmarked plain line
+after it folds into the term, under a quote, a quoted item or an item-hosted
+quote alike (`CARVE-P2-028`, markup-carve/carve-js#2860).
+
+::: compare
+
+```carve
+> :: t
+tail
+```
+
+```html
+<blockquote>
+  <dl>
+    <dt>t
+tail</dt>
+  </dl>
+</blockquote>
+```
+
+:::
+
+::: compare
+
+```carve
+> - :: t
+tail
+```
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <dl>
+        <dt>t
+tail</dt>
+      </dl>
+    </li>
+  </ul>
+</blockquote>
+```
+
+:::
+
+::: compare
+
+```carve
+- > :: term
+tail
+```
+
+```html
+<ul>
+  <li>
+    <blockquote>
+      <dl>
+        <dt>term
+tail</dt>
+      </dl>
+    </blockquote>
+  </li>
+</ul>
 ```
 
 :::

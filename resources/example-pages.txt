@@ -409,6 +409,7 @@ index: examples/edge-cases/index.md
   a-container-whose-table-ends-on-a-joined-header-row
   a-quote-inside-a-quote-is-asked-what-it-ends-on
   a-nested-quoted-term-leaves-no-paragraph-for-a-lazy-line
+  a-quoted-term-takes-a-lazy-line
   a-fence-in-a-quote-stores-no-continuation-claim
   a-fence-a-container-inside-a-quote-holds-open-stores-no-claim
   a-shifted-fence-in-a-quoted-item-stores-no-continuation-claim

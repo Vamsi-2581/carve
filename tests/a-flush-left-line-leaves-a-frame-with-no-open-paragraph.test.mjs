@@ -6,7 +6,6 @@ import { renderDoc } from '../scripts/spec/html.mjs'
 const shapes = [
   ['marker-line quoted fence', '- > ```\n  > x\n  > ```'],
   ['unclosed quoted fence', '- intro\n  > ```'],
-  ['marker-line quoted term', '- > :: term'],
   ['nested heading after comment', '- - intro\n  %% c\n    # h'],
   ['nested quoted footnote', '- > - - x\n  >     [^f]: note'],
 ]
@@ -32,14 +31,14 @@ for (const depth of [0, 1, 2]) {
   }
   test(`marker-line term matches direct quote at depth ${depth}`, () => {
     for (const prefix of [wrap('- > :: term'), wrap('> :: term')]) {
-      assert.deepEqual(parse(prefix + 'tail\n').blocks, [...parse(prefix).blocks, ...parse('tail\n').blocks])
+      assert.match(renderDoc(parse(prefix + 'tail\n')), /<dt>term\ntail<\/dt>/)
     }
   })
   test(`comment before heading matches a heading without comment at depth ${depth}`, () => {
-    assert.equal(renderDoc(parse(wrap(shapes[3][1]) + 'tail\n')), renderDoc(parse(wrap('- - intro\n    # h') + 'tail\n')))
+    assert.equal(renderDoc(parse(wrap(shapes[2][1]) + 'tail\n')), renderDoc(parse(wrap('- - intro\n    # h') + 'tail\n')))
   })
   test(`quoted nested note matches a marker-line note at depth ${depth}`, () => {
-    for (const prefix of [wrap(shapes[4][1]), wrap('- [^f]: note')]) {
+    for (const prefix of [wrap(shapes[3][1]), wrap('- [^f]: note')]) {
       assert.deepEqual(parse(prefix + 'tail\n').blocks, [...parse(prefix).blocks, ...parse('tail\n').blocks])
     }
   })

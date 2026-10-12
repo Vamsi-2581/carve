@@ -1566,7 +1566,7 @@ function opensParagraph(text, atBlockPosition = false, tableOpen = false, memo =
     // along unchanged.
     if (budget-- <= 0) return true
     if (QUOTE.test(text)) { text = QUOTE.exec(text)[1] ?? ''; openTable = false; inQuote = true; continue }
-    if (HEADING.test(text) || HR.test(text) || (inQuote && DEFLIST_TERM.test(text))) return finish(false)
+    if (HEADING.test(text) || HR.test(text)) return finish(false)
     if (inQuote && atBlockPosition && ((FENCE.test(text) && parseFenceInfo(FENCE.exec(text)[2]) !== null) ||
         isColonBlockOpener(text))) return finish(false)
     // A LIST MARKER is asked the SAME question about what it carries, for the
@@ -1893,7 +1893,7 @@ function hostAdvance(h, line, paraOpen) {
   const meas = indentCols(line)
   if (meas.col === 0 && DEFLIST_TERM.test(meas.rest)) h.descriptionTerm = true
   const description = h.descriptionTerm && meas.col === 0 && /^:( +)(.*)$/.exec(meas.rest)
-  if (description && !paraOpen && matchMarkerAt(indentCols(description[2]))) {
+  if (description && matchMarkerAt(indentCols(description[2]))) {
     const lead = markerFenceSummary(description[2], new Map())
     if (lead) {
       const column = 1 + description[1].length + lead.col
@@ -1984,7 +1984,7 @@ function hostedBlockAt(h, inner, popped) {
   const column = h.columns.at(-1)
   if (inner.col < column) return false
   const text = inner.rest
-  return HEADING.test(text) || HR.test(text) || text[0] === '|' || DEFLIST_TERM.test(text) ||
+  return HEADING.test(text) || HR.test(text) || text[0] === '|' ||
     isDefinitionOrAttributeLine(text)
 }
 
@@ -3757,6 +3757,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
       const qHost = hostLadder()
       let openComment = null // exact-width comment fence opened inside the quote
       let qOpenPara = false // does the quote currently end in an open paragraph?
+      let qTermOpen = false
       let qPara = [] // its lines, for SS12's absorption test below
       /*
        * IS A TABLE OPEN INSIDE THE QUOTE? -- PART 9 SS5 T6 (carve#1348).
@@ -3946,8 +3947,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
                 return settle(false, depth)
               }
             }
-            return settle(!DEFLIST_TERM.test(tail) &&
-              !isColonBlockOpener(tail) && opensParagraph(tail, true, false, prefixMemo(state, lines, idx).paragraph), depth)
+            return settle(!isColonBlockOpener(tail) && opensParagraph(tail, true, false, prefixMemo(state, lines, idx).paragraph), depth)
           }
         }
         while (QUOTE.test(text)) {
@@ -3987,8 +3987,6 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           depth++
           if (QUOTE.test(inner.rest)) text = inner.rest
           if (!QUOTE.test(text)) {
-            // A term has inline content, but no paragraph for a lazy fold.
-            // Match the direct quote classifier below.
             if (state.blockDepth + depth >= MAX_NESTING_DEPTH) return settle(text.trim() !== '', depth)
             if (hostedBlockAt(host, inner, popped) || isDefinitionOrAttributeLine(inner.rest)) return settle(false, depth)
             // A bare colon run closes the claim unless this level's own
@@ -4003,7 +4001,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
               stack.push(colon[1].length)
             }
             return settle(absorbedColon || (!COLON_CLOSER.test(text) &&
-              !DEFLIST_TERM.test(text) && !(atStart && isColonBlockOpener(text)) &&
+              !(atStart && isColonBlockOpener(text)) &&
               opensParagraph(text, atStart, before, prefixMemo(state, lines, idx).paragraph)), depth)
           }
         }
@@ -4090,6 +4088,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           const c = COMMENT_FENCE_BODY.exec(l)
           if (c && c[1].length === openComment) openComment = null
           qOpenPara = false
+          qTermOpen = false
           qTableOpen = false
           clearNested()
           qPara = []
@@ -4102,6 +4101,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         // ordinary line read as payload.
         if (hostFenceStep(qHost, l)) {
           qOpenPara = false
+          qTermOpen = false
           qTableOpen = false
           clearNested()
           qPara = []
@@ -4123,6 +4123,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         if (blockStart) qPara = []
         if (state.blockDepth + (qHost.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(qHost, inner0, (width, floor) => openComment === null && quotedCommentCloser(idx, 1, width, floor), blockStart, qPara, MAX_NESTING_DEPTH - state.blockDepth - (qHost.columns.length - 1), (run, column, past) => closerFollows(idx, 1, run, column, past))) {
           qOpenPara = false
+          qTermOpen = false
           qTableOpen = false
           clearNested()
           qPara = []
@@ -4222,15 +4223,26 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             (isBlank(l) || HEADING.test(l) || HR.test(l) || isOpener || hostedBlock ||
              isColonParagraphInterrupt(l) || COLON_CLOSER.test(l) ||
              l[0] === '|' || l[0] === '{' || contRow || nestedQuoteEnds || nestedItemEnds ||
-             DEFLIST_TERM.test(l) || isLinkDef(l) || COMMENT_LINE.test(l) ||
+             isLinkDef(l) || COMMENT_LINE.test(l) ||
              FOOTNOTE_DEF.test(l))) {
           qOpenPara = false
+          qTermOpen = false
           qPara = []
         } else {
           if (!qOpenPara) qPara = []
           qOpenPara = true
           qPara.push(l)
         }
+        let leaf = l
+        for (let depth = 0; l.includes(':: ') && depth < MAX_NESTING_DEPTH; depth++) {
+          const quote = QUOTE.exec(leaf)
+          const marker = matchMarkerAt(indentCols(leaf))
+          if (quote) leaf = quote[1] ?? ''
+          else if (marker) leaf = marker.text
+          else break
+        }
+        // PART 0 T leaves a term open for plain lazy text.
+        qTermOpen = qOpenPara && (DEFLIST_TERM.test(leaf) || qTermOpen)
       }
       while (i < n) {
         // The MARKER is `>` plus a space, or `>` alone - the same rule the
@@ -4298,7 +4310,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         // UNFRAMED for exactly this reason, so a comment reaching a nested quote
         // still arrives as itself.
         if (lines[i] !== undefined && qOpenPara && !bodyEndsWrappedAttr(inner) && !isBlank(lines[i]) &&
-            !COMMENT_LINE.test(lines[i]) &&
+            !COMMENT_LINE.test(lines[i]) && (!qTermOpen || foldablePlainLine(stripLazy(lines[i]).trimStart())) &&
             !peekInterrupts(i) && !COLON_CLOSER.test(lines[i]) && !CAPTION.test(lines[i])) {
           // lazy continuation folds into the open quoted paragraph (SS10 I6)
           //
