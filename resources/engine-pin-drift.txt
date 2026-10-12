@@ -41,3 +41,5 @@
 559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-4  a tab inside a footnote label is content (PART 9R R2, carve#2978 ruling 2); the pin collapses it (carve-js#2858)
 559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-5  a tab after a definition's separator run makes the line a paragraph (CARVE-P3-009, carve#2978 ruling 3); the pin skips it (carve-js#2859)
 560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-2  the line below a description that ends on a code block leaves the list (CARVE-P0-009); the pin keeps it in the item (carve-js#2855)
+561-a-line-block-payload-span-pairs-past-the-content-column  two fence runs past the content column in a line-block payload pair as one inline span (ruled on carve-php#3137); the pin opens a code span and a div at the second run (carve-js#2861)
+561-a-line-block-payload-span-pairs-past-the-content-column-2  two fence runs past the content column in a line-block payload pair as one inline span (ruled on carve-php#3137); the pin opens a code span and a div at the second run (carve-js#2861)

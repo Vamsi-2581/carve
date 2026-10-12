@@ -934,7 +934,7 @@ function findColonCloser(lines, openIdx, len) {
     // nothing and opens nothing (carve#450). The span is skipped from the line
     // AFTER its opener, because an opener with no info string is closer-shaped
     // itself and would otherwise end the span where it began.
-    const span = opaqueSpanEnd(lines, j)
+    const span = top.mode === 'line-block' ? lineBlockSpanEnd(lines, j) : opaqueSpanEnd(lines, j)
     if (span !== -1) {
       j = span
       continue
@@ -985,6 +985,44 @@ function opaqueSpanEnd(lines, idx) {
     }
   }
   return -1
+}
+
+// A line-block payload is inline content, so a span in it pairs wherever its
+// lines start: indentation is payload, not a column (ruled on carve-php#3137).
+// The pure runs are indexed once per body, each row with the widest run at or
+// below it, so an opener with no closer ahead costs one lookup.
+const payloadRuns = new WeakMap()
+function lineBlockSpanEnd(lines, idx) {
+  const fence = FENCE.exec((lines[idx] ?? '').replace(/^[ \t]+/, ''))
+  if (fence && parseFenceInfo(fence[2]) !== null) {
+    let runs = payloadRuns.get(lines)
+    if (!runs) {
+      runs = { '`': [], '~': [] }
+      for (let j = 0; j < lines.length; j++) {
+        const c = PURE_FENCE.exec((lines[j] ?? '').replace(/^[ \t]+/, ''))
+        if (c) runs[c[1][0]].push({ j, width: c[1].length, widest: 0 })
+      }
+      for (const rows of Object.values(runs)) {
+        let widest = 0
+        for (let k = rows.length - 1; k >= 0; k--) widest = rows[k].widest = Math.max(widest, rows[k].width)
+      }
+      payloadRuns.set(lines, runs)
+    }
+    const rows = runs[fence[1][0]]
+    let lo = 0
+    let hi = rows.length
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1
+      if (rows[mid].j <= idx) lo = mid + 1
+      else hi = mid
+    }
+    if (lo < rows.length && rows[lo].widest >= fence[1].length) {
+      while (rows[lo].width < fence[1].length) lo++
+      return rows[lo].j
+    }
+    return -1
+  }
+  return opaqueSpanEnd(lines, idx)
 }
 
 // A colon opener that names its container: `::: note`, not a bare run and not
@@ -1998,9 +2036,11 @@ function hostColonStep(h, inner, bodyFollows, commentCloses = () => false, marke
   const top = stack.at(-1)
   if (top?.mode === 'line-block') {
     if (comment && commentCloses(comment[1].length, top.base)) h.colonComment = comment[1].length
+    // Payload is inline, so its span pairs at any column past the host's
+    // (ruled on carve-php#3137).
     const fence = FENCE.exec(inner.rest)
-    if (inner.col === top.column && fence && parseFenceInfo(fence[2]) !== null && (codeCloses(fence[1], inner.col) || codeCloses(fence[1], top.base))) {
-      h.fence = { run: fence[1], column: inner.col, host: top.base }
+    if (inner.col >= top.column && fence && parseFenceInfo(fence[2]) !== null && codeCloses(fence[1], top.base, true)) {
+      h.fence = { run: fence[1], column: inner.col, host: top.base, payload: true }
     }
   }
   const bare = COLON_CLOSER.test(inner.rest)
@@ -2065,7 +2105,7 @@ function hostFenceStep(h, line) {
   }
   const c = PURE_FENCE.exec(meas.rest)
   if (c && c[1][0] === h.fence.run[0] && c[1].length >= h.fence.run.length &&
-      (meas.col === h.fence.host || meas.col === h.fence.column)) h.fence = null
+      (h.fence.payload || meas.col === h.fence.host || meas.col === h.fence.column)) h.fence = null
   return true
 }
 
@@ -3791,7 +3831,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
        * carve#2509 ruled out.
        */
       const qPureFences = []
-      const closerFollows = (idx, markers, run, column) => {
+      const closerFollows = (idx, markers, run, column, past = false) => {
         // A level's container ends where a line stops supplying its marker, so
         // the index covers one RUN of lines that reach `markers` and is rebuilt
         // when a query lands past it: a pure fence in a LATER quote at the same
@@ -3835,8 +3875,18 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           layoutWork.fenceCloserLookahead += j - idx
           st = qPureFences[markers] = { chars, end: j }
         }
+        // `past`: a closer at the column or any column past it.
+        if (past) {
+          for (const [key, rows] of st.chars) {
+            if (key[0] === run[0] && Number(key.slice(1)) >= column && closerIn(rows, idx, run)) return true
+          }
+          return false
+        }
         const rows = st.chars.get(`${run[0]}${column}`)
         if (!rows) return false
+        return closerIn(rows, idx, run)
+      }
+      const closerIn = (rows, idx, run) => {
         // Queries arrive in line order, so the cursor only moves forward and its
         // total travel is the row count however many openers ask.
         while (rows.cursor < rows.at.length && rows.at[rows.cursor].j <= idx) {
@@ -3908,7 +3958,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
               // (its own depth-invariance row).
               const host = qNestedHost[depth - 1] ??= hostLadder()
               const { inner } = hostAdvance(host, tail, false)
-              if (state.blockDepth + depth + (host.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(host, inner, floor => colonBodyFollows(idx, depth + 1, floor), (width, floor) => quotedCommentCloser(idx, depth + 1, width, floor), true, [], MAX_NESTING_DEPTH - state.blockDepth - depth - (host.columns.length - 1), (run, column) => closerFollows(idx, depth + 1, run, column))) {
+              if (state.blockDepth + depth + (host.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(host, inner, floor => colonBodyFollows(idx, depth + 1, floor), (width, floor) => quotedCommentCloser(idx, depth + 1, width, floor), true, [], MAX_NESTING_DEPTH - state.blockDepth - depth - (host.columns.length - 1), (run, column, past) => closerFollows(idx, depth + 1, run, column, past))) {
                 qNestedTable[depth - 1] = false
                 return settle(false, depth)
               }
@@ -3938,7 +3988,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           qNestedTable[depth] = tableRunStep(before, text)
           const { inner, blockStart, popped } = hostAdvance(host, text, qNestedPara[depth] ?? false)
           if (blockStart) qNestedParaLines[depth] = []
-          if (state.blockDepth + depth + 1 + (host.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(host, inner, floor => colonBodyFollows(idx, depth + 2, floor), (width, floor) => quotedCommentCloser(idx, depth + 2, width, floor), blockStart, qNestedParaLines[depth] ?? [], MAX_NESTING_DEPTH - state.blockDepth - depth - 1 - (host.columns.length - 1), (run, column) => closerFollows(idx, depth + 2, run, column))) {
+          if (state.blockDepth + depth + 1 + (host.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(host, inner, floor => colonBodyFollows(idx, depth + 2, floor), (width, floor) => quotedCommentCloser(idx, depth + 2, width, floor), blockStart, qNestedParaLines[depth] ?? [], MAX_NESTING_DEPTH - state.blockDepth - depth - 1 - (host.columns.length - 1), (run, column, past) => closerFollows(idx, depth + 2, run, column, past))) {
             qNestedTable[depth] = false
             return settle(false, depth + 1)
           }
@@ -4114,7 +4164,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         const { meas, inner: inner0, blockStart, popped } = hostAdvance(qHost, l, qOpenPara)
         if (blockStart) qPara = []
         if (state.blockDepth + (qHost.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(qHost, inner0, floor => colonBodyFollows(idx, 1, floor),
-          (width, floor) => openComment === null && quotedCommentCloser(idx, 1, width, floor), blockStart, qPara, MAX_NESTING_DEPTH - state.blockDepth - (qHost.columns.length - 1), (run, column) => closerFollows(idx, 1, run, column))) {
+          (width, floor) => openComment === null && quotedCommentCloser(idx, 1, width, floor), blockStart, qPara, MAX_NESTING_DEPTH - state.blockDepth - (qHost.columns.length - 1), (run, column, past) => closerFollows(idx, 1, run, column, past))) {
           qOpenPara = false
           qTableOpen = false
           clearNested()
@@ -5329,10 +5379,13 @@ function collectItems(lines, i, list, state, ind, meas) {
     let leadTerm = DEFLIST_TERM.test(head.text.replace(/^[ \t]+/, ''))
     let pendingHeadTerm = DEFLIST_TERM.test(head.text) ? i : null
     const insideFence = () => fence.opaque !== null || fence.colon.length !== 0
+    // Which open colon containers are line blocks: their payload is inline, so
+    // a span in it pairs wherever its lines start (ruled on carve-php#3137).
+    const colonLineBlock = []
     const trackFence = (line, opens, index) => {
       if (fence.opaque) {
         if (fence.opaque.kind === 'code') {
-          const c = PURE_FENCE.exec(line)
+          const c = PURE_FENCE.exec(fence.opaque.payload ? line.replace(/^[ \t]+/, '') : line)
           if (c && c[1][0] === fence.opaque.run[0] && c[1].length >= fence.opaque.run.length) {
             fence.opaque = null
           }
@@ -5352,17 +5405,19 @@ function collectItems(lines, i, list, state, ind, meas) {
         return
       }
 
-      const code = FENCE.exec(line)
+      const payload = fence.colon.length !== 0 && colonLineBlock.at(-1) === true
+      const unindented = payload ? line.replace(/^[ \t]+/, '') : line
+      const code = FENCE.exec(unindented)
       if (code && parseFenceInfo(code[2]) !== null) {
         // `opens` is §10 I4's answer for this line. The SPAN is tracked either
         // way, because the interior-blank rule (carve#1383) reads it and a
         // fence-shaped line the paragraph absorbed still runs to the same
         // place; what the flag records is whether a verbatim BODY exists for
         // §24 S2 to want.
-        fence.opaque = { kind: 'code', run: code[1], opens }
+        fence.opaque = { kind: 'code', run: code[1], opens, payload }
         return
       }
-      const comment = COMMENT_FENCE_BODY.exec(line)
+      const comment = COMMENT_FENCE_BODY.exec(unindented)
       if (comment) {
         // §28 AGAIN, AND THIS IS WHERE THE SPAN IS DECIDED (carve#1914). A
         // code fence records `opens` because §10 I4 can refuse to let it
@@ -5379,12 +5434,22 @@ function collectItems(lines, i, list, state, ind, meas) {
       const closer = COLON_CLOSER.exec(line)
       if (closer) {
         const len = closer[1].length
-        if (fence.colon.length !== 0 && len === fence.colon[fence.colon.length - 1]) fence.colon.pop()
-        else fence.colon.push(len)
+        if (fence.colon.length !== 0 && len === fence.colon[fence.colon.length - 1]) {
+          fence.colon.pop()
+          colonLineBlock.length = fence.colon.length
+        } else if (!payload) {
+          fence.colon.push(len)
+          colonLineBlock[fence.colon.length - 1] = false
+        }
         return
       }
+      if (payload) return
       const colon = COLON_FENCE.exec(line)
-      if (colon && parseColonOpener(colon[2]) !== null) fence.colon.push(colon[1].length)
+      const opener = colon && parseColonOpener(colon[2])
+      if (opener) {
+        fence.colon.push(colon[1].length)
+        colonLineBlock[fence.colon.length - 1] = opener.mode === 'line-block'
+      }
     }
     // A verbatim body a DESCENDANT container opened. `fence` tracks the item's
     // OWN column, because that is where its closer has to be written, so an
