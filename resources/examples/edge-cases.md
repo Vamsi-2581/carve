@@ -34790,13 +34790,9 @@ after
 
 ## An unterminated fence on a nested lead in a description body owns its body
 
-A fence's content is not re-scanned for structure, so an unterminated code
-fence opened on a nested item's LEAD line owns every line below it - including a
-flush-left closing fence, which becomes body text. markup-carve/carve#1900 ruled
-this for the LIST-ITEM host; the description body is the same construct one host
-over. The oracle used to leave the fence EMPTY, demote the body to a paragraph in
-the description body, and open a SECOND document-level fence on the flush-left
-closer - a `pre` no source line asked for (markup-carve/carve#1947).
+A flush-left line leaves the description body and its nested fence.
+CARVE-P0-013 and CARVE-P0-018 give both hosts the same boundary
+(markup-carve/carve#2973).
 
 ::: compare
 
@@ -34813,18 +34809,18 @@ code
   <dd>
     <ul>
       <li>
-        <pre><code class="language-x">code
-```
-</code></pre>
+        <pre><code class="language-x"></code></pre>
       </li>
     </ul>
   </dd>
 </dl>
+<p>code
+<code></code></p>
 ````
 
 :::
 
-The tilde spelling owns its body the same way.
+The tilde spelling has the same boundary.
 
 ::: compare
 
@@ -34841,18 +34837,18 @@ code
   <dd>
     <ul>
       <li>
-        <pre><code class="language-x">code
-~~~
-</code></pre>
+        <pre><code class="language-x"></code></pre>
       </li>
     </ul>
   </dd>
 </dl>
+<p>code
+~~~</p>
 ````
 
 :::
 
-An info-less fence does too; the flush-left closer is still its content.
+A fence without an info string also leaves the flush-left lines outside.
 
 ::: compare
 
@@ -34869,20 +34865,18 @@ code
   <dd>
     <ul>
       <li>
-        <pre><code>code
-```
-</code></pre>
+        <pre><code></code></pre>
       </li>
     </ul>
   </dd>
 </dl>
+<p>code
+<code></code></p>
 ````
 
 :::
 
-The fence owns the body only to the END of the description body: a new term
-closes the body above it, and the fence with it, so a second term is a second
-term and not fence content.
+The flush-left paragraph also ends the first description list.
 
 ::: compare
 
@@ -34901,11 +34895,13 @@ code
   <dd>
     <ul>
       <li>
-        <pre><code class="language-x">code
-</code></pre>
+        <pre><code class="language-x"></code></pre>
       </li>
     </ul>
   </dd>
+</dl>
+<p>code</p>
+<dl>
   <dt>t2</dt>
   <dd>plain</dd>
 </dl>
@@ -47402,7 +47398,7 @@ x
 
 Raw fences and deeper marker stacks answer the same question. A nested heading
 or table also leaves no paragraph open in a description body. The last control
-keeps an unfinished nested fence whose following run is below its own column.
+leaves the below-column run outside the description body and its nested fence.
 
 ````carve
 - - ```=html
@@ -47585,12 +47581,12 @@ x
   <dd>
     <ul>
       <li>
-        <pre><code>```
-</code></pre>
+        <pre><code></code></pre>
       </li>
     </ul>
   </dd>
 </dl>
+<pre><code></code></pre>
 ```
 
 :::

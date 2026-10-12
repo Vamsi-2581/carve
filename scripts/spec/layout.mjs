@@ -1938,6 +1938,18 @@ function hostLadder() {
  */
 function hostAdvance(h, line, paraOpen) {
   const meas = indentCols(line)
+  if (meas.col === 0 && DEFLIST_TERM.test(meas.rest)) h.descriptionTerm = true
+  const description = h.descriptionTerm && meas.col === 0 && /^:( +)(.*)$/.exec(meas.rest)
+  if (description && !paraOpen && matchMarkerAt(indentCols(description[2]))) {
+    const lead = markerFenceSummary(description[2], new Map())
+    if (lead) {
+      const column = 1 + description[1].length + lead.col
+      h.columns.push(column)
+      h.markerCols.push(1 + description[1].length)
+      h.kinds.push('item')
+      return { meas, inner: { col: column, rest: markerFreeContent(description[2]) }, blockStart: true, popped: false }
+    }
+  }
   if (h.colons?.at(-1)?.mode === 'line-block' && meas.col >= h.colons.at(-1).base) {
     return { meas, inner: meas, blockStart: false, popped: false }
   }
@@ -2306,10 +2318,6 @@ function descriptionCloserAhead(run, lines, from, bodyColumn, endsBodyAt) {
   return false
 }
 
-// An unterminated code fence on a nested item's lead owns the rest of a
-// description body just as it owns the rest of a list item. A closer belongs
-// to that nested item only when it reaches the item's content column; a
-// flush-left fence-shaped line is payload, not a closer.
 function descriptionLeadHasUnterminatedNestedFence(line, lines, start, bodyColumn, endsBodyAt) {
   let text = line
   let contentColumn = bodyColumn
@@ -3256,6 +3264,15 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           // rest -- matching the real output the corpus pins for all engines.
           // (`:  \+` stays a literal `+`, never a marker.)
           const bodyLines = []
+          const measurement = state.opaqueMeasurement
+          const parentOrigins = measurement?.origins.get(lines)
+          const markerLead = matchMarkerAt(indentCols(dm[2])) && markerFenceSummary(dm[2], new Map())
+          const bodyOrigins = parentOrigins === undefined || !markerLead ? undefined : []
+          if (bodyOrigins) measurement.origins.set(bodyLines, bodyOrigins)
+          const pushBody = (text, row = i) => {
+            bodyLines.push(text)
+            if (bodyOrigins) bodyOrigins.push(typeof parentOrigins === 'number' ? parentOrigins + row : parentOrigins[row])
+          }
           // The fold question is asked of the body AS IT WILL BE READ (§10 I5,
           // carve#1911): a block opener past the body's column is rebased to
           // the body's own column 0 before the body is parsed, so asking the
@@ -3268,7 +3285,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           // `:  ` never swallows the following flush-left block.
           let pullPending = CONT_MARKER.test(trimWs(dm[2]))
           if (!pullPending) {
-            bodyLines.push(stripIndent(dm[2]).replace(/[ \t]+$/, ''))
+            pushBody(stripIndent(dm[2]).replace(/[ \t]+$/, ''), i - 1)
           }
           const endsBodyAt = (at) => {
             const cur = lines[at] ?? ''
@@ -3276,17 +3293,16 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
               (isBlank(cur) && !isDefinitionContinuationLine(lines[at + 1], bodyColumn))
           }
           let openFence = -1
-          const nestedLeadOwnsBody = descriptionLeadHasUnterminatedNestedFence(
+          const nestedLeadFenceUnterminated = descriptionLeadHasUnterminatedNestedFence(
             bodyLines[0] ?? '', lines, i, bodyColumn, endsBodyAt,
           )
           while (i < n) {
             const cur = lines[i] ?? ''
-            if (nestedLeadOwnsBody) {
+            if (nestedLeadFenceUnterminated) {
               if (endsBodyAt(i)) break
               const measured = indentCols(cur)
-              bodyLines.push(measured.col >= bodyColumn
-                ? dedentMeasured(measured, cur, bodyColumn).text
-                : LAZY + measured.rest)
+              if (measured.rest !== '' && measured.col < bodyColumn) break
+              pushBody(dedentMeasured(measured, cur, bodyColumn).text)
               i++
               continue
             }
@@ -3294,7 +3310,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             if (isBlank(cur)) {
               // a blank before an indented line is an internal paragraph break;
               // otherwise the blank ends this definition body.
-              if (isDefinitionContinuationLine(lines[i + 1], bodyColumn)) { bodyLines.push(dedent(cur, bodyColumn)); i++; continue }
+              if (isDefinitionContinuationLine(lines[i + 1], bodyColumn)) { pushBody(dedent(cur, bodyColumn)); i++; continue }
               break
             }
             if (CONT_MARKER.test(cur)) {
@@ -3314,7 +3330,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
               // comment spelling of the same document left it outside.
               i++
               if (!attachesFlushLeft(ind(i))) break
-              bodyLines.push('')
+              pushBody('')
               pullPending = true
               continue
             }
@@ -3323,7 +3339,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
               // `dedent` carries a tab that STRADDLES the margin back as the
               // spaces it bought past column 3, so `<TAB>x` (column 4) arrives
               // one column in, exactly as ` x` after three spaces would.
-              bodyLines.push(dedent(cur, bodyColumn))
+              pushBody(dedent(cur, bodyColumn))
               pullPending = false
               i++
               continue
@@ -3357,7 +3373,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // first-block marker, or a lazy continuation of the open paragraph.
             if (pullPending) {
               const end = attachedBlockEnd(lines, i, state, attachmentBoundary(lines), ind(i))
-              for (let k = i; k < end; k++) bodyLines.push(lines[k])
+              for (let k = i; k < end; k++) pushBody(lines[k], k)
               pullPending = false
               i = end
               continue
@@ -3450,7 +3466,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // carve#2488: a comment inside a span this body already holds is not
             // "a comment below the column" - see `bodyHoldsOpenCommentSpan`.
             if (COMMENT_LINE.test(dedented) && bodyHoldsOpenCommentSpan(asRead(bodyLines))) {
-              bodyLines.push(keptCommentDelimiter(cur))
+              pushBody(keptCommentDelimiter(cur))
               i++
               continue
             }
@@ -3482,7 +3498,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
                 !startsVisibleBlock(dedented) &&
                 (isLinkDef(dedented) || FOOTNOTE_DEF.test(dedented) ||
                  ABBR_DEF.test(dedented) || tryAttrLine([dedented], 0) !== null)) {
-              bodyLines.push(LAZY + dedented)
+              pushBody(LAZY + dedented)
               i++
               continue
             }
@@ -3513,7 +3529,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             const lazyFence = !foldablePlain(dedented) && FENCE.test(dedented) &&
               !(FENCE.test(cur) && hasCloser(lines, i))
             if ((foldablePlain(dedented) || lazyFence || BULLET.test(dedented) || isOrderedMarkerLine(dedented)) && bodyLeavesParagraphOpen(asRead(bodyLines))) {
-              bodyLines.push(lazyFence ? LAZY + dedented : dedented)
+              pushBody(lazyFence ? LAZY + dedented : dedented)
               i++
               continue
             }
@@ -3522,6 +3538,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           const normalizedBody = state.authoredBodyBases
             ? normalizeAuthoredBodyBases(bodyLines, state)
             : bodyLines
+          if (bodyOrigins && normalizedBody !== bodyLines) measurement.origins.set(normalizedBody, bodyOrigins)
           if (openFence !== -1) (state.fenceOpensAt ??= new WeakMap()).set(normalizedBody, new Set([openFence]))
           node.items.push({ ddBlocks: normalizedBody.length ? parseBlocks(inheritFinalBreak(lines, normalizedBody, i, state), state, false) : [] })
           continue
@@ -4654,7 +4671,9 @@ function markMeasuredOpaque(state, lines, from, to) {
   // Direct fence rows are already covered by the extent scan below.
   // Capture marker-line fences only after the reader admitted CODE or RAW.
   const openerOrigin = typeof origins === 'number' ? origins + from : origins[from]
-  if (openerOrigin === undefined || matchMarkerAt(indentCols(measurement.sourceLines[openerOrigin])) === null) return
+  if (openerOrigin === undefined) return
+  const sourceLead = indentCols(measurement.sourceLines[openerOrigin]).rest.replace(/^: +/, '')
+  if (matchMarkerAt(indentCols(sourceLead)) === null) return
   measurement.markerFenceEnd.set(lines, to)
   for (let index = from; index < to; index++) {
     const origin = typeof origins === 'number' ? origins + index : origins[index]
@@ -5633,7 +5652,11 @@ function collectItems(lines, i, list, state, ind, meas) {
       // ownership for a below-column follower - the marker-line `%%` spelling
       // already answers that way and the two spellings stay together.
       if (fence.opaque?.kind === 'comment') fence.opaque.markerLine = true
-      else nestedOpaque = markerComment(head.text.trimStart(), i)
+      else {
+        nestedOpaque = markerComment(head.text.trimStart(), i)
+        const lead = markerFenceSummary(head.text, prefixMemo(state, lines, i).markerFence ??= new Map())
+        if (!nestedOpaque && headSubMarker && lead) nestedOpaque = { kind: 'code', run: lead.run, col: lead.col }
+      }
     }
     i++
     // FIRST-BLOCK form (SS17 L4): a bare `+` as the sole marker-line content
