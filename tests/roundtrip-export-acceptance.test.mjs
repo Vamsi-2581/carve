@@ -168,6 +168,13 @@ test('task hooks remain ordinary output without preservation export', () => {
   for (const state of ['x', '-', '_', '>', '?']) assert.ok(htmlAttributes(html).some((attr) => attr.name === 'data-task-state' && attr.value === state), state)
 })
 
+// A row that declares a loss says its return is degraded, so its HTML cannot
+// equal the source's; every other row must come back rendering the same.
+function assertMarkdownReturn(fixture, returned) {
+  assertProjection(parse(returned), fixture.expectedNodes)
+  if ((fixture.lossCodes ?? []).length) return
+  assert.equal(carveToHtml(returned).trim(), carveToHtml(fixture.source).trim())
+}
 for (const fixture of fixtures.markdownExportImport) test(`shared Markdown export: ${fixture.id}`, aheadOfPin(fixture, () => {
   assertProjection(parse(fixture.source), fixture.expectedNodes)
   const ordinary = carveToMarkdown(fixture.source)
@@ -177,10 +184,17 @@ for (const fixture of fixtures.markdownExportImport) test(`shared Markdown expor
   for (const fragment of fixture.carrierFragments) assert.ok(exported.includes(fragment), fragment)
   const codes = carveToMarkdownWithReport(fixture.source, { roundtrip: true }).losses.map((row) => row.code)
   for (const code of fixture.lossCodes ?? []) assert.ok(codes.includes(code), code)
-  const imported = migrateMarkdown(exported)
-  assertProjection(parse(imported.value), fixture.expectedNodes)
-  assert.equal(carveToHtml(imported.value).trim(), carveToHtml(fixture.source).trim())
+  assertMarkdownReturn(fixture, migrateMarkdown(exported).value)
 }))
+
+test('a Markdown row without a declared loss still fails when its HTML moves', () => {
+  const lossless = fixtures.markdownExportImport.filter((row) => !(row.lossCodes ?? []).length)
+  assert.ok(lossless.length > 0, 'no lossless Markdown row is left to compare')
+  for (const fixture of lossless) {
+    assertMarkdownReturn(fixture, fixture.source)
+    assert.throws(() => assertMarkdownReturn(fixture, `${fixture.source}\nmoved\n`), { code: 'ERR_ASSERTION' }, fixture.id)
+  }
+})
 
 test('shared acceptance cases have distinct identities and explicit assertions', () => {
   const ids = new Set()
