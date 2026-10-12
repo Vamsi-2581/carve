@@ -89,9 +89,9 @@ Return to the [rule index](./) or read the complete [formal grammar](../grammar)
 | [`CARVE-P4-006`](https://github.com/markup-carve/carve/blob/main/resources/spec/08-attributes.ebnf#L187) | 4 | A QUOTED VALUE STOPS AT THE NEWLINE |
 | [`CARVE-P4-007`](https://github.com/markup-carve/carve/blob/main/resources/spec/08-attributes.ebnf#L124) | 4 | A `class` KEY-VALUE IS A SPELLING OF THE CLASS SLOT |
 | [`CARVE-P7-001`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L23) | 7 | A TAB IS SYNTAX ONLY IN THE LEADING RUN |
-| [`CARVE-P7-002`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L58) | 7 | MARKER SEPARATORS AND PADDING SLOTS |
-| [`CARVE-P7-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L128) | 7 | ONE WHITESPACE DEFINITION, IN EVERY CONSTRUCT |
-| [`CARVE-P7-004`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L184) | 7 | ESCAPE CONTEXTS |
+| [`CARVE-P7-002`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L60) | 7 | MARKER SEPARATORS AND PADDING SLOTS |
+| [`CARVE-P7-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L130) | 7 | ONE WHITESPACE DEFINITION, IN EVERY CONSTRUCT |
+| [`CARVE-P7-004`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L186) | 7 | ESCAPE CONTEXTS |
 | [`CARVE-P9-002`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L210) | 9 | T5 SPAN WALK |
 | [`CARVE-P9-069`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L237) | 9 | THE ROW ABOVE IS A LINE, NOT A `<tr>` |
 | [`CARVE-P9-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L264) | 9 | A CONTINUATION ROW LEAVES NO PARAGRAPH OPEN |
