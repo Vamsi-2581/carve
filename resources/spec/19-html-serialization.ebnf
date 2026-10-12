@@ -502,9 +502,9 @@
       A DISTINCTION THE AST DOES NOT RECORD GETS NO HTML CARRIER, and the way
       to add one is to add the PART 12 field FIRST. That is what makes the
       HTML column DERIVABLE: a reader checks it against the tree instead of
-      trusting the list. THE MARKDOWN CONTAINER MARKERS ARE BUILT DIFFERENTLY:
-      they hold the Carve opener and closer lines VERBATIM, fence width
-      included (CARVE-P11-063).
+      trusting the list. THE MARKDOWN CONTAINER MARKERS FOLLOW THE SAME RULE:
+      each holds the opener or closer the canonical writer spells, so no
+      authored fence width or padding is carried (CARVE-P11-063).
 
       WHAT IT DOES NOT PROMISE IS A RAW BLOCK. CARVE-P10-016 names no carrier for one,
       so a raw block whose format this target cannot write is dropped under
