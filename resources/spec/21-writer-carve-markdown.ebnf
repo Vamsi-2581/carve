@@ -550,7 +550,10 @@
       the canonical writer and does not follow §2. It has a different
       re-parser to answer to, so it escapes on a different rule:
 
-      M1 Markdown metacharacters in text are escaped, unconditionally.
+      M1 Markdown metacharacters in text are escaped. THE SET IS CLOSED:
+         `\`, `` ` ``, `*`, `~` and `]` are escaped unconditionally; `_`,
+         `[`, `#`, `<` and `>` are escaped where §8a says; and §8d to §8i
+         name the remaining contextual escapes.
       M2 An `escaped_text` node is emitted AS AN ESCAPE, whatever the
          character. The author escaped it; the escape carries intent the
          character alone does not.
@@ -607,8 +610,8 @@
       M1e `<` IS ESCAPED WHEN THE EMITTED LINE WOULD READ IT AS MARKUP --
           NORMATIVE [CARVE-P11-024]. A `<` is escaped with a BACKSLASH when the next character
           is an ASCII letter, `/`, `!` or `?`, and left alone otherwise. `>`
-          takes nothing here: mid-line it is inert in every flavour, and at the
-          start of a line it is a block quote marker, which M1 already covers.
+          IS ESCAPED ONLY AT A LINE'S CONTENT POSITION, where it is a block
+          quote marker (§8d). Mid-line it is inert and is emitted bare.
 
           THE HAZARD IS RAW HTML, and it is real. CommonMark and GFM both admit
           it, so a document whose text contains `<b>` emits a line a reader

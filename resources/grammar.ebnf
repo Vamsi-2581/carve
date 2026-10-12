@@ -8897,14 +8897,12 @@ EOF = (* end of file *) ;
         spelling.
 
         The CARET is also unconditional, for a different reason: it opens
-        nothing on its own, but its escape carries information the AST records
-        separately. A text node whose LEADING caret came from an escape is
-        marked as such, so an image followed by a caret line stays a paragraph
-        instead of being promoted to a figure. Comparing that mark in W3 would
-        escalate every document whose text begins with a caret; ignoring it
-        would silently turn the image case into a figure. Escaping the caret in
-        BOTH forms keeps the two renders identical on that point, at the cost
-        of one escape on a character that is rare in prose.
+        nothing on its own, but a LEADING caret decides whether the block
+        above it takes a caption. Escaped, an image followed by a caret line
+        stays a paragraph; bare, the two lines are a figure. The tree records
+        no field for the escape (CARVE-P11-010). Escaping the caret in BOTH
+        forms keeps the two renders identical on that point, at the cost of
+        one escape on a character that is rare in prose.
 
         SEARCH COST BELONGS TO THE STRATEGY, NOT THE OUTPUT -- NORMATIVE [CARVE-P11-010], and the
         difference is §4's own. This section names the sets W1 renders
@@ -9569,7 +9567,10 @@ EOF = (* end of file *) ;
       the canonical writer and does not follow §2. It has a different
       re-parser to answer to, so it escapes on a different rule:
 
-      M1 Markdown metacharacters in text are escaped, unconditionally.
+      M1 Markdown metacharacters in text are escaped. THE SET IS CLOSED:
+         `\`, `` ` ``, `*`, `~` and `]` are escaped unconditionally; `_`,
+         `[`, `#`, `<` and `>` are escaped where §8a says; and §8d to §8i
+         name the remaining contextual escapes.
       M2 An `escaped_text` node is emitted AS AN ESCAPE, whatever the
          character. The author escaped it; the escape carries intent the
          character alone does not.
@@ -9626,8 +9627,8 @@ EOF = (* end of file *) ;
       M1e `<` IS ESCAPED WHEN THE EMITTED LINE WOULD READ IT AS MARKUP --
           NORMATIVE [CARVE-P11-024]. A `<` is escaped with a BACKSLASH when the next character
           is an ASCII letter, `/`, `!` or `?`, and left alone otherwise. `>`
-          takes nothing here: mid-line it is inert in every flavour, and at the
-          start of a line it is a block quote marker, which M1 already covers.
+          IS ESCAPED ONLY AT A LINE'S CONTENT POSITION, where it is a block
+          quote marker (§8d). Mid-line it is inert and is emitted bare.
 
           THE HAZARD IS RAW HTML, and it is real. CommonMark and GFM both admit
           it, so a document whose text contains `<b>` emits a line a reader
@@ -10096,13 +10097,6 @@ EOF = (* end of file *) ;
       A LINK REFERENCE DEFINITION IS COVERED TOO: PART 12 §10 gives it a node,
       so all three kinds walk and all three emit.
 
-      THE GAP IS REAL AND IS NOT CLOSED BY NARROWING. An unused link reference
-      definition survives neither the tree nor a round trip
-      through the AST, and now explicitly not the non-HTML targets. So
-      `carve --markdown` on a document that is only `[lbl]: /u` emits nothing,
-      and the URL the author wrote is gone -- the same content loss §10a
-      exists to prevent, reached by a different route.
-
           [^n]: %         ->  markdown  [^n]: %
                               plain     [^n]: %
                               html      (nothing)
@@ -10120,13 +10114,11 @@ EOF = (* end of file *) ;
       empty cell: adding one changes both the re-parsed tree and the rendered
       table, so §1a makes rectangular alignment yield.
 
-      Where a delimiter row is required to promote the first row to a header,
-      that delimiter carries exactly one cell for each cell in the HEADER ROW,
-      not one for each column reached by a wider body row. Its job is to mark
-      that row as a header; extending it to the table width both manufactures
-      header cells and can stop the delimiter from matching the row it belongs
-      to. Native `=` header markers remain preferred wherever they can express
-      the header, including when a later body row is wider.
+      A SEPARATOR ROW IS WRITTEN ONLY WHERE THE TREE RECORDS ONE. Its cell
+      count is the entry count of `table.separatorWidths` (CARVE-P11-066),
+      neither the header row's width nor the table's. Without the field the
+      header is written with native `=` markers, including when a later body
+      row is wider.
 
   10c. ADJACENT BLOCKS THAT WOULD MERGE KEEP THE CONTINUATION MARKER --
        NORMATIVE [CARVE-P11-030]. In a tight list item, deciding whether to retain `+` is a
@@ -10326,9 +10318,10 @@ EOF = (* end of file *) ;
       item is indented by TWO ASCII SPACES for each list ancestor. The target
       may discard marker style and tight/loose layout, but it MUST NOT flatten
       parent, child, and grandchild items into siblings: indentation is the
-      plain-text representation of that structure. ANSI and canonical Carve
-      use the same two-space depth step; plain text differs only by omitting
-      presentation styling, not by erasing hierarchy.
+      plain-text representation of that structure. ANSI uses the same
+      two-space depth step. Canonical Carve does not: it indents a nested
+      list to its parent marker's width (CARVE-P11-027, PART 9 §24 C3), two
+      columns under a bullet and three or more under an ordered marker.
 
       THE TIGHT/LOOSE LICENCE IS THIS TARGET'S, and its ground is this target's
       reach: plain text has no way to spell the distinction, so there is nothing

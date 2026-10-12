@@ -358,13 +358,6 @@
       A LINK REFERENCE DEFINITION IS COVERED TOO: PART 12 §10 gives it a node,
       so all three kinds walk and all three emit.
 
-      THE GAP IS REAL AND IS NOT CLOSED BY NARROWING. An unused link reference
-      definition survives neither the tree nor a round trip
-      through the AST, and now explicitly not the non-HTML targets. So
-      `carve --markdown` on a document that is only `[lbl]: /u` emits nothing,
-      and the URL the author wrote is gone -- the same content loss §10a
-      exists to prevent, reached by a different route.
-
           [^n]: %         ->  markdown  [^n]: %
                               plain     [^n]: %
                               html      (nothing)
@@ -382,13 +375,11 @@
       empty cell: adding one changes both the re-parsed tree and the rendered
       table, so §1a makes rectangular alignment yield.
 
-      Where a delimiter row is required to promote the first row to a header,
-      that delimiter carries exactly one cell for each cell in the HEADER ROW,
-      not one for each column reached by a wider body row. Its job is to mark
-      that row as a header; extending it to the table width both manufactures
-      header cells and can stop the delimiter from matching the row it belongs
-      to. Native `=` header markers remain preferred wherever they can express
-      the header, including when a later body row is wider.
+      A SEPARATOR ROW IS WRITTEN ONLY WHERE THE TREE RECORDS ONE. Its cell
+      count is the entry count of `table.separatorWidths` (CARVE-P11-066),
+      neither the header row's width nor the table's. Without the field the
+      header is written with native `=` markers, including when a later body
+      row is wider.
 
   10c. ADJACENT BLOCKS THAT WOULD MERGE KEEP THE CONTINUATION MARKER --
        NORMATIVE [CARVE-P11-030]. In a tight list item, deciding whether to retain `+` is a
@@ -588,9 +579,10 @@
       item is indented by TWO ASCII SPACES for each list ancestor. The target
       may discard marker style and tight/loose layout, but it MUST NOT flatten
       parent, child, and grandchild items into siblings: indentation is the
-      plain-text representation of that structure. ANSI and canonical Carve
-      use the same two-space depth step; plain text differs only by omitting
-      presentation styling, not by erasing hierarchy.
+      plain-text representation of that structure. ANSI uses the same
+      two-space depth step. Canonical Carve does not: it indents a nested
+      list to its parent marker's width (CARVE-P11-027, PART 9 §24 C3), two
+      columns under a bullet and three or more under an ordered marker.
 
       THE TIGHT/LOOSE LICENCE IS THIS TARGET'S, and its ground is this target's
       reach: plain text has no way to spell the distinction, so there is nothing

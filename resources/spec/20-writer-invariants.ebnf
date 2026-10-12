@@ -522,14 +522,12 @@
         spelling.
 
         The CARET is also unconditional, for a different reason: it opens
-        nothing on its own, but its escape carries information the AST records
-        separately. A text node whose LEADING caret came from an escape is
-        marked as such, so an image followed by a caret line stays a paragraph
-        instead of being promoted to a figure. Comparing that mark in W3 would
-        escalate every document whose text begins with a caret; ignoring it
-        would silently turn the image case into a figure. Escaping the caret in
-        BOTH forms keeps the two renders identical on that point, at the cost
-        of one escape on a character that is rare in prose.
+        nothing on its own, but a LEADING caret decides whether the block
+        above it takes a caption. Escaped, an image followed by a caret line
+        stays a paragraph; bare, the two lines are a figure. The tree records
+        no field for the escape (CARVE-P11-010). Escaping the caret in BOTH
+        forms keeps the two renders identical on that point, at the cost of
+        one escape on a character that is rare in prose.
 
         SEARCH COST BELONGS TO THE STRATEGY, NOT THE OUTPUT -- NORMATIVE [CARVE-P11-010], and the
         difference is §4's own. This section names the sets W1 renders
