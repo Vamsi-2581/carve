@@ -162,8 +162,9 @@ digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
    the same terminal. The CONTINUATION MARKER takes none:
    `continuation_marker = '+', newline`, so any character between the
    `+` and the line end is content and the line is not a marker. The
-   block-attribute line takes `opt_ws`, `attr_separator` and `continuation`,
-   all three built from `whitespace`. A VERTICAL TAB or a FORM FEED in any of
+   block-attribute line takes `attr_pad` and `attr_separator`, built from
+   `space`, and `continuation`, whose indentation is `whitespace`. A VERTICAL
+   TAB or a FORM FEED in any of
    those positions is therefore CONTENT, and each construct's own rule reads
    it as content: MARKER REQUIRES CONTENT (PART 2) is satisfied by it, an
    emptiness test is not satisfied by its absence, and a line holding one is

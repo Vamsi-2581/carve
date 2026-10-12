@@ -1486,9 +1486,9 @@ export function parseAttrList(text) {
 }
 
 // The same, for a standalone attribute LINE, which may span lines: PART 9's
-// `block_attributes` separates with `attr_separator = (whitespace |
-// continuation), opt_ws` where an inline block's `opt_ws` is "spaces/tabs only,
-// no line breaks". One rule served both for a while, so the oracle read
+// `block_attributes` separates with `attr_separator = (space | continuation),
+// attr_pad`, where an inline block's `attr_pad` admits no line break. One rule
+// served both for a while, so the oracle read
 // `*x*{.a<NEWLINE>.b}` as an attribute block where all three engines leave it
 // literal text (carve#878).
 export function parseBlockAttrList(text) {

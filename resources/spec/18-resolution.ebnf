@@ -56,8 +56,9 @@
       `#{slug}` of the FIRST heading with that text. linkDefs WINS on a
       tie, so an explicit `[label]: url` definition always beats a
       same-named heading. Against the heading index, the label and the
-      heading text are both trimmed, their internal whitespace runs
-      collapsed to one space, NFC-NORMALIZED, and then compared EXACTLY:
+      heading text both take the label key above (runs of U+0020 only, so a
+      tab in either is content), are NFC-NORMALIZED, and are then compared
+      EXACTLY:
       `[Café][]` finds `# Cafe` + U+0301, while `[getting started][]`
       does not find `# Getting Started` and stays literal (corpus
       173-implicit-heading-references-with-no-definition).

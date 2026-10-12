@@ -14,19 +14,19 @@ attribute_list = attribute, {space+, attribute} ;
 attribute_run = attributes, {attributes} ;
 (* interior padding is accepted: `{ .a }` and `{.a  .b}` are valid inline
    attribute blocks. The terminal is `space`, NOT `whitespace`: see
-   THE INLINE INTERIOR IS SPACE-ONLY below. block_attributes pads and
-   separates differently, and deliberately. *)
-(* THE INLINE INTERIOR IS SPACE-ONLY, THE BLOCK-ATTRIBUTE LINE IS NOT --
-   NORMATIVE [CARVE-P4-001]. Every whitespace slot of the INLINE block takes
-   `space`: the run after `{`, the run between two attributes, the run
-   before `}`, the boundary after an unquoted value, and the blessed empty
-   block `{ }`. All five sit inline, so no exception has to be written. A TAB
-   IS SYNTAX ONLY IN THE LEADING RUN (PART 7).
+   ATTRIBUTE PADDING IS SPACE-ONLY below. block_attributes takes the same
+   terminal and also admits a line break. *)
+(* ATTRIBUTE PADDING IS SPACE-ONLY -- NORMATIVE [CARVE-P4-001]. Every slot
+   inside an attribute block that sits within a line takes `space`: the run
+   after `{`, the run between two attributes, the run before `}`, the boundary
+   after an unquoted value, and the blessed empty block `{ }`. That holds for
+   the inline block and for `block_attributes` alike, because A TAB IS SYNTAX
+   ONLY IN THE LEADING RUN (PART 7). `{.a<TAB>.b}` on a line of its own is
+   paragraph text.
 
-   `block_attributes` keeps `whitespace` in its three slots: after a
-   `continuation`, the next line's leading run IS indentation. The distinction
-   is POSITIONAL: inline padding is space-only; leading indentation retains
-   its ordinary whitespace definition.
+   `block_attributes` adds one position: after a `continuation`, the next
+   line's leading run IS indentation, measured in columns, and takes
+   `whitespace`.
 
    A newline inside a quoted value is governed by A QUOTED VALUE STOPS AT THE
    NEWLINE below. *)
@@ -170,8 +170,9 @@ boolean_attribute = identifier - ('_', {character}) ;
 attribute_value = unquoted_value | quoted_value ;
 unquoted_value = ( character - '}' - '|' - '"' - "'" - '\' - ' ' - '\t' - newline )+ ;
 (* THE EXCLUSIONS ARE WHAT WOULD END OR RESTRUCTURE THE BLOCK, and quoting is
-   required for exactly those: `}` closes the block, a space or a tab is the
-   separator before the next attribute, a quote opens a quoted value, a bare `|`
+   required for exactly those: `}` closes the block, a space is the separator
+   before the next attribute and a tab is no part of a block, a quote opens a
+   quoted value, a bare `|`
    would end a table cell, and a `\` needs the quoted form, the only one that
    resolves escapes. Everything else needs
    no quoting, so a version string (`v1.2`), a namespaced token (`xml:lang`) and
@@ -202,24 +203,22 @@ block_attributes = '{', opt_pad, attribute, {attr_separator, attribute}, opt_pad
    + `.a}`, `{.a` + newline + `}` and `{.a` + newline + `.b}` are all block
    attributes, and the paragraph below takes `class="a"` or `class="a b"`
    accordingly. The INLINE `attributes` production pads with
-   `attr_pad = {space}`, which admits neither a tab nor a line break. *)
+   `attr_pad = {space}` alone, which admits no line break. *)
 (* block_attributes requires AT LEAST ONE attribute -- there is NO block-level
    blessed-empty form (unlike the inline `[text]{}` span, which is blessed).
    A bare `{}` line is therefore NOT a block-attribute block; it stays a
    literal paragraph (`<p>{}</p>`). *)
-attr_pad = {space} ;                     (* INLINE attribute-block padding:
-                                            spaces only, no tab and no line
-                                            break -- it sits inline *)
-opt_ws = {whitespace} ;                  (* spaces/tabs only, no line breaks.
-                                            BLOCK-LEVEL ONLY:
-                                            read by opt_pad, attr_separator
-                                            and continuation, never by the
-                                            inline `attributes` production *)
-opt_pad = opt_ws, [continuation] ;       (* block-attribute padding: spaces/tabs,
+attr_pad = {space} ;                     (* attribute-block padding within a
+                                            line: spaces only, no tab and no
+                                            line break *)
+opt_ws = {whitespace} ;                  (* a LEADING indentation run, spaces
+                                            and tabs. Read by continuation
+                                            only *)
+opt_pad = attr_pad, [continuation] ;     (* block-attribute padding: spaces,
                                             then AT MOST ONE line break plus its
                                             indentation -- a blank line ends the
                                             block and is never interior padding *)
-attr_separator = (whitespace | continuation), opt_ws ;  (* one ws OR one line break *)
+attr_separator = (space | continuation), attr_pad ;  (* one space OR one line break *)
 continuation = newline, opt_ws ;         (* a single line break + indent; NOT a blank line *)
 (* AN IMPORTER READS A BRACE RUN'S CONTINUATION ONLY WHERE IT IS INDENTED --
    NORMATIVE [CARVE-P4-008]. The `continuation` above is Carve's own, and it
