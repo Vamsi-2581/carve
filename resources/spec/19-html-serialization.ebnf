@@ -483,10 +483,10 @@
          is not a reason to trust that document, and export selects no import
          mode (CARVE-P10-017).
       S4 A VALUE OUTSIDE ITS GRAMMAR IS NOT A CARRIER, AND IT IS REPORTED.
-         Nothing is rebuilt from it. How much falls with it differs by
-         target: an HTML import drops that one carrier and keeps the others
-         (CARVE-P10-017); a Markdown import that finds its marker set damaged reads
-         the whole file as plain Markdown (CARVE-P11-063).
+         Nothing is rebuilt from it, and only that carrier falls with it on
+         both targets (CARVE-P10-017, CARVE-P11-063). A Markdown marker set
+         whose opener and closer pairing breaks reads the whole file as plain
+         Markdown (CARVE-P11-063).
       S5 CONTRADICTORY CARRIERS RESTORE NEITHER MEANING. The pairs are the
          closed list in CARVE-P10-021.
       S6 CONSUMED IN EVERY IMPORT MODE. An HTML import consumes the carriers

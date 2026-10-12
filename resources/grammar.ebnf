@@ -7900,10 +7900,10 @@ EOF = (* end of file *) ;
          is not a reason to trust that document, and export selects no import
          mode (CARVE-P10-017).
       S4 A VALUE OUTSIDE ITS GRAMMAR IS NOT A CARRIER, AND IT IS REPORTED.
-         Nothing is rebuilt from it. How much falls with it differs by
-         target: an HTML import drops that one carrier and keeps the others
-         (CARVE-P10-017); a Markdown import that finds its marker set damaged reads
-         the whole file as plain Markdown (CARVE-P11-063).
+         Nothing is rebuilt from it, and only that carrier falls with it on
+         both targets (CARVE-P10-017, CARVE-P11-063). A Markdown marker set
+         whose opener and closer pairing breaks reads the whole file as plain
+         Markdown (CARVE-P11-063).
       S5 CONTRADICTORY CARRIERS RESTORE NEITHER MEANING. The pairs are the
          closed list in CARVE-P10-021.
       S6 CONSUMED IN EVERY IMPORT MODE. An HTML import consumes the carriers
@@ -10410,16 +10410,22 @@ EOF = (* end of file *) ;
       setting, and this is not the byte-identical source round trip CARVE-P11-043's
       comparison governs.
 
-      A DAMAGED MARKER SET IMPORTS AS PLAIN MARKDOWN, NEVER A GUESS. A
-      Markdown editor that deleted one marker, reordered two, left the set
-      unbalanced or moved a caption marker off the closer it belongs to has
+      AN INVALID PAYLOAD DROPS ONLY ITS OWN MARKER. A marker whose payload is
+      not an opener, closer or caption line it can stand for is not a carrier:
+      it stays an ordinary comment, the import reports it with a diagnostic as
+      an invalid HTML carrier is reported (CARVE-P10-017), and the rest of the
+      set restores unless its pairing breaks.
+
+      A DAMAGED SET, ONE WHOSE PAIRING BREAKS, IMPORTS AS PLAIN MARKDOWN,
+      NEVER A GUESS. A Markdown editor that deleted one marker, reordered two,
+      left the set unbalanced or moved a caption marker off the closer it belongs to has
       destroyed the structure the markers recorded, and a reconstruction that
       is wrong is worse than a fallback that is honest.
       The import reads the file as ordinary Markdown, comments and all, and
       reports one `carrier-markers-damaged` diagnostic on the migration
       report (`resources/migration-report-schema.json`) with `degraded`
-      fidelity and `fallback` confidence. There is no partial reconstruction
-      and no per-marker recovery.
+      fidelity and `fallback` confidence. Only a damaged set falls back as a
+      whole.
 
       WHAT THIS CLAUSE DOES NOT COVER, so a reader does not look for it here.
       A construct whose Markdown output already holds an element needs no
