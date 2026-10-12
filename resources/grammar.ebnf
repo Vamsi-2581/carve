@@ -337,8 +337,10 @@
         EVERY RECOGNIZED BLOCK OPENER QUALIFIES, the line-block opener
         `::: |` included. A colon body has no prefix, so it answers as its
         host does: inside a colon body an indentation container hosts, an
-        opener past the column opens on its authored base where no
-        paragraph of that body is open above it.
+        opener past the column opens on its authored base, and closes a
+        paragraph of that body open above it, as in every indentation host
+        (CARVE-P2-017). So under `- a` / `  ::: box`, a code fence run at
+        column 4 opens a code block in the box.
 
         OWNERSHIP PRECEDES REBASING. While an authored block is open, a
         nested body's opener at its own content column is owned by that
