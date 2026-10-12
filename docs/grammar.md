@@ -49,7 +49,7 @@ that require one file, but it is not edited directly.
 The adjacent structured artifacts make closed rule sets inspectable without
 parsing English prose:
 
-- `layout-transitions.json` defines every ownership boundary transition.
+- `layout-transitions.json` restates every ownership boundary transition of `CARVE-P0-003`; the clause governs.
 - `paragraph-interruption.json` partitions interrupting and non-interrupting constructs.
 - `target-capabilities.json` records cross-target preservation behavior.
 - `rules.json` assigns stable identifiers and an implementation scope to every
