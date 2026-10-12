@@ -5439,6 +5439,7 @@ function collectItems(lines, i, list, state, ind, meas) {
     // span sits at (carve#2526). One run is remembered and the first
     // matching-width run at any column clears it, which is O(1) per line.
     let belowSpan = null
+    let belowSpanClosed = false
     // §10 I4 for such a fence: at block start it runs to the end of its
     // container, after a paragraph only when a closer follows at its own
     // column. A run indented past that column is payload (CARVE-P2-006).
@@ -5991,6 +5992,12 @@ function collectItems(lines, i, list, state, ind, meas) {
         colonLineBlock.at(-1) === true
       const nm = inPayload ? null : matchMarkerAt(lm)
       if (col >= contentCol) {
+        // A completed span ends the paragraph for a new matched body line,
+        // while its below-column continuation claim remains available.
+        if (belowSpanClosed && !COMMENT_LINE.test(line)) {
+          closePara()
+          belowSpanClosed = false
+        }
         // A line at a known descendant item's column belongs to that item.
         // Leave its authored indentation intact here so the recursive list
         // parser, which knows the descendant's content column, rebases it.
@@ -6168,7 +6175,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // span would be reopened here and its own closer lost.
         const belowEnd = belowSpan !== null ? COMMENT_FENCE.exec(dedented) : null
         const belowCloser = belowEnd !== null && belowEnd[1].length === belowSpan.run.length
-        if (belowCloser) belowSpan = null
+        if (belowCloser) { belowSpan = null; belowSpanClosed = true }
         const inNestedComment = commentHoldsLine(nestedOpaque, dmeas)
         const inCommentSpan = fence.opaque?.kind === 'comment' || inNestedComment
         if (!belowCloser && !inNestedComment) trackFence(dedented, opens, i)
@@ -6505,6 +6512,7 @@ function collectItems(lines, i, list, state, ind, meas) {
       if (nm && columnOwner(nm.indent) === 'below' && deepestParagraphOpen() && itemLines.length > 0) {
         // a marker BELOW the content column folds as lazy item text
         // (PART 9 SS24 C3; list markers never interrupt, SS10 I2)
+        belowSpanClosed = false
         pushLine(LAZY + lm.rest, LAZY_MEAS(lm.rest))
         i++
         continue
@@ -6512,6 +6520,7 @@ function collectItems(lines, i, list, state, ind, meas) {
       // A retained item still requires its content column for a child list.
       if (nm && columnOwner(nm.indent) === 'below' && !deepestParagraphOpen() &&
           afterComment && itemLines.length > 0) {
+        belowSpanClosed = false
         pushLine(LAZY + lm.rest, LAZY_MEAS(lm.rest))
         startPara()
         i++
@@ -6605,7 +6614,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // carve#2509 and carve#2527 each measured going quadratic here.
         if (!spanBefore) {
           const run = COMMENT_FENCE_BODY.exec(lm.rest)
-          if (run && belowSpan !== null && run[1].length === belowSpan.run.length) belowSpan = null
+          if (run && belowSpan !== null && run[1].length === belowSpan.run.length) { belowSpan = null; belowSpanClosed = true }
           else if (run && belowSpan === null) belowSpan = { run: run[1] }
         }
         i++
@@ -6676,6 +6685,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           descLive = false
           deepestIsDescendant = false
         }
+        belowSpanClosed = false
         pushLine(LAZY + lm.rest, LAZY_MEAS(lm.rest))
         i++
         continue

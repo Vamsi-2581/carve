@@ -41629,9 +41629,10 @@ at the same column, which has always answered this way and is the spelling the
 fence form now agrees with.
 
 The last case is a BLOCK OPENER rather than a follower: an unterminated code fence
-at the item's content column. The span leaves the paragraph as it found it, so the
-fence interrupts nothing and absorbs `tail`, which is the answer the same document
-with its closer one column further left already gave.
+at the item's content column. The span closed the item's paragraph, so the fence
+opens a code block, and `tail` supplies no prefix to the fence's host and leaves
+the list (`CARVE-P0-013`, ruled on markup-carve/carve#2973). The span written at
+the content column answers the same.
 
 ::: compare
 
@@ -41790,10 +41791,10 @@ tail
 `````html
 <ul>
   <li>item
-    <pre><code>tail
-</code></pre>
+    <pre><code></code></pre>
   </li>
 </ul>
+<p>tail</p>
 `````
 
 :::
