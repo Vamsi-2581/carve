@@ -2462,8 +2462,8 @@ reference_definition = '[', reference_label, ']', ':', space+, link_destination,
 
    is NOT a definition, and a `[a][]` below it does not resolve.
 
-   THE LINE ENDING is `whitespace` -- `' ' | '\t'` -- the same terminal
-   `blank_line = {whitespace}` takes (PART 1). So `[a]: /u<SP>` and
+   A LINE-FINAL RUN of spaces and tabs is dropped before the production reads
+   the line (CARVE-P7-001 item 5). So `[a]: /u<SP>` and
    `[a]: /u<TAB>` are still definitions, while `[a]: /u<NBSP>`,
    `[a]: /u<U+2000>` and `[a]: /u<FF>` are not: every one of those is CONTENT,
    and content after the production is exactly what the anchor rejects. An
@@ -2584,7 +2584,10 @@ url_autolink = url ;  (* the same token the destination slot reads *)
 email_autolink = {email_char}+, '@', {email_char}+, '.', {letter}+ ;
 
 auto_text_link = "</#", crossref_id, '>' ;  (* cross-reference with auto text *)
-crossref_id = {character - ('>' | whitespace | newline)}+ ;
+crossref_id = {character - ('>' | space | newline)}+ ;
+(* A space ends the token and a tab does not (CARVE-P7-001): `</#a<TAB>b>` is
+   a cross-reference whose id holds the tab. No id does, so it names nothing
+   and stays literal. *)
 (* The crossref id token accepts NON-ASCII characters: automatic heading ids
    PRESERVE Unicode and case (`# Café Notes` -> `Café-Notes`), so `</#Café-Notes>`
    must be writable. Resolution is EXACT (PART 9R R4): no case fold and no
@@ -3243,19 +3246,19 @@ attribute_list = attribute, {space+, attribute} ;
 attribute_run = attributes, {attributes} ;
 (* interior padding is accepted: `{ .a }` and `{.a  .b}` are valid inline
    attribute blocks. The terminal is `space`, NOT `whitespace`: see
-   THE INLINE INTERIOR IS SPACE-ONLY below. block_attributes pads and
-   separates differently, and deliberately. *)
-(* THE INLINE INTERIOR IS SPACE-ONLY, THE BLOCK-ATTRIBUTE LINE IS NOT --
-   NORMATIVE [CARVE-P4-001]. Every whitespace slot of the INLINE block takes
-   `space`: the run after `{`, the run between two attributes, the run
-   before `}`, the boundary after an unquoted value, and the blessed empty
-   block `{ }`. All five sit inline, so no exception has to be written. A TAB
-   IS SYNTAX ONLY IN THE LEADING RUN (PART 7).
+   ATTRIBUTE PADDING IS SPACE-ONLY below. block_attributes takes the same
+   terminal and also admits a line break. *)
+(* ATTRIBUTE PADDING IS SPACE-ONLY -- NORMATIVE [CARVE-P4-001]. Every slot
+   inside an attribute block that sits within a line takes `space`: the run
+   after `{`, the run between two attributes, the run before `}`, the boundary
+   after an unquoted value, and the blessed empty block `{ }`. That holds for
+   the inline block and for `block_attributes` alike, because A TAB IS SYNTAX
+   ONLY IN THE LEADING RUN (PART 7). `{.a<TAB>.b}` on a line of its own is
+   paragraph text.
 
-   `block_attributes` keeps `whitespace` in its three slots: after a
-   `continuation`, the next line's leading run IS indentation. The distinction
-   is POSITIONAL: inline padding is space-only; leading indentation retains
-   its ordinary whitespace definition.
+   `block_attributes` adds one position: after a `continuation`, the next
+   line's leading run IS indentation, measured in columns, and takes
+   `whitespace`.
 
    A newline inside a quoted value is governed by A QUOTED VALUE STOPS AT THE
    NEWLINE below. *)
@@ -3399,8 +3402,9 @@ boolean_attribute = identifier - ('_', {character}) ;
 attribute_value = unquoted_value | quoted_value ;
 unquoted_value = ( character - '}' - '|' - '"' - "'" - '\' - ' ' - '\t' - newline )+ ;
 (* THE EXCLUSIONS ARE WHAT WOULD END OR RESTRUCTURE THE BLOCK, and quoting is
-   required for exactly those: `}` closes the block, a space or a tab is the
-   separator before the next attribute, a quote opens a quoted value, a bare `|`
+   required for exactly those: `}` closes the block, a space is the separator
+   before the next attribute and a tab is no part of a block, a quote opens a
+   quoted value, a bare `|`
    would end a table cell, and a `\` needs the quoted form, the only one that
    resolves escapes. Everything else needs
    no quoting, so a version string (`v1.2`), a namespaced token (`xml:lang`) and
@@ -3431,24 +3435,22 @@ block_attributes = '{', opt_pad, attribute, {attr_separator, attribute}, opt_pad
    + `.a}`, `{.a` + newline + `}` and `{.a` + newline + `.b}` are all block
    attributes, and the paragraph below takes `class="a"` or `class="a b"`
    accordingly. The INLINE `attributes` production pads with
-   `attr_pad = {space}`, which admits neither a tab nor a line break. *)
+   `attr_pad = {space}` alone, which admits no line break. *)
 (* block_attributes requires AT LEAST ONE attribute -- there is NO block-level
    blessed-empty form (unlike the inline `[text]{}` span, which is blessed).
    A bare `{}` line is therefore NOT a block-attribute block; it stays a
    literal paragraph (`<p>{}</p>`). *)
-attr_pad = {space} ;                     (* INLINE attribute-block padding:
-                                            spaces only, no tab and no line
-                                            break -- it sits inline *)
-opt_ws = {whitespace} ;                  (* spaces/tabs only, no line breaks.
-                                            BLOCK-LEVEL ONLY:
-                                            read by opt_pad, attr_separator
-                                            and continuation, never by the
-                                            inline `attributes` production *)
-opt_pad = opt_ws, [continuation] ;       (* block-attribute padding: spaces/tabs,
+attr_pad = {space} ;                     (* attribute-block padding within a
+                                            line: spaces only, no tab and no
+                                            line break *)
+opt_ws = {whitespace} ;                  (* a LEADING indentation run, spaces
+                                            and tabs. Read by continuation
+                                            only *)
+opt_pad = attr_pad, [continuation] ;     (* block-attribute padding: spaces,
                                             then AT MOST ONE line break plus its
                                             indentation -- a blank line ends the
                                             block and is never interior padding *)
-attr_separator = (whitespace | continuation), opt_ws ;  (* one ws OR one line break *)
+attr_separator = (space | continuation), attr_pad ;  (* one space OR one line break *)
 continuation = newline, opt_ws ;         (* a single line break + indent; NOT a blank line *)
 (* AN IMPORTER READS A BRACE RUN'S CONTINUATION ONLY WHERE IT IS INDENTED --
    NORMATIVE [CARVE-P4-008]. The `continuation` above is Carve's own, and it
@@ -3472,6 +3474,9 @@ continuation = newline, opt_ws ;         (* a single line break + indent; NOT a 
    ============================================================================ *)
 
 abbreviation_definition = "*[", abbreviation_term, "]:", space+, abbreviation_expansion, newline ;
+(* DOCUMENT LEVEL ONLY: the line is a definition only as a direct child of the
+   document. In a block quote, a list item or a div it is paragraph text
+   (CARVE-P12-026). *)
 abbreviation_term = (letter | digit)+ ;
 (* a term is a SINGLE alphanumeric word -- a bracketed term containing
    punctuation or spaces (`*[e.g.]:`, `*[HTTP API]:`) is NOT a definition;
@@ -3926,13 +3931,19 @@ digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
      4. INSIDE VERBATIM CONTENT -- fenced code and inline code spans -- a tab
         is PRESERVED verbatim and never expanded. Stated in full at TABS IN
         CODE (PART 2) and pinned by corpus tabs-in-code-preserved.
+     5. A LINE-FINAL RUN of spaces and tabs is INSIGNIFICANT. It is dropped
+        before anything reads the line, so no production sees it and 3 applies
+        to what precedes it: `{.a}<TAB>` is an attribute line and
+        `[a]: /u<TAB>` a definition. CARVE-P2-025 names the two places the
+        drop does not reach, a verbatim payload line and the run a line block
+        has already turned into content.
 
-   Every other mention of a tab in this grammar APPLIES one of those four
-   sentences to one construct; none of them restates it. Two of the four keep
+   Every other mention of a tab in this grammar APPLIES one of those five
+   sentences to one construct; none of them restates it. Three of the five keep
    an operational home this clause does not duplicate: the walk that turns a
    run into a column, the content column a marker establishes and the
-   straddling tab at a dedent boundary are PART 9 §24 (C1, C3, C5), and 4 is
-   PART 2. MARKER SEPARATORS AND PADDING SLOTS below is 3 applied to every
+   straddling tab at a dedent boundary are PART 9 §24 (C1, C3, C5), and 4 and
+   5 are PART 2. MARKER SEPARATORS AND PADDING SLOTS below is 3 applied to every
    whitespace slot in this grammar that sits inline.
 
    Computing indentation still requires a per-line tab-stop walk. Source
@@ -3946,7 +3957,8 @@ digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
    FIRST, the leading run itself. `indent = whitespace, {whitespace}` is where
    a tab belongs, and `blank_line = {whitespace}` is the degenerate case of the
    same position -- no non-whitespace character precedes either one. A leading
-   run is tabs OR spaces, never both.
+   run may mix spaces and tabs; it is measured in columns (CARVE-P7-001 items
+   1 and 2).
 
    SECOND, everything after it. Whitespace past the first non-whitespace
    character of a line falls into one of two ROLES. The roles are still worth
@@ -4045,8 +4057,9 @@ digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
    the same terminal. The CONTINUATION MARKER takes none:
    `continuation_marker = '+', newline`, so any character between the
    `+` and the line end is content and the line is not a marker. The
-   block-attribute line takes `opt_ws`, `attr_separator` and `continuation`,
-   all three built from `whitespace`. A VERTICAL TAB or a FORM FEED in any of
+   block-attribute line takes `attr_pad` and `attr_separator`, built from
+   `space`, and `continuation`, whose indentation is `whitespace`. A VERTICAL
+   TAB or a FORM FEED in any of
    those positions is therefore CONTENT, and each construct's own rule reads
    it as content: MARKER REQUIRES CONTENT (PART 2) is satisfied by it, an
    emptiness test is not satisfied by its absence, and a line holding one is
@@ -4460,9 +4473,10 @@ EOF = (* end of file *) ;
          else (first line, or after the second) is an ordinary row whose
          `-` runs are inline content (`---` may smart-render as an em
          dash). Native `|=` header cells and `<`/`>`/`~` alignment markers
-         may COEXIST with a delimiter row; a single column carrying BOTH a
-         native marker AND a delimiter colon has UNSPECIFIED alignment (do
-         not combine on one column). Corpus 09-tables-3 pins effect 2.
+         may COEXIST with a delimiter row. Where one column carries both, THE
+         MARKER WINS OVER THE DELIMITER COLON (CARVE-P12-039): a marker on the
+         head-row cell sets the column, and a marker on a body cell sets that
+         cell. Corpus 09-tables-3 pins effect 2.
       T8 ROW ATTRIBUTES -- NORMATIVE [CARVE-P9-005]. A `{…}` GLUED to a row's closing `|`
          (no intervening space) sets that row's `<tr>` attributes -- the
          row-level twin of a cell's attribute block, same syntax, same
@@ -7122,8 +7136,9 @@ EOF = (* end of file *) ;
       `#{slug}` of the FIRST heading with that text. linkDefs WINS on a
       tie, so an explicit `[label]: url` definition always beats a
       same-named heading. Against the heading index, the label and the
-      heading text are both trimmed, their internal whitespace runs
-      collapsed to one space, NFC-NORMALIZED, and then compared EXACTLY:
+      heading text both take the label key above (runs of U+0020 only, so a
+      tab in either is content), are NFC-NORMALIZED, and are then compared
+      EXACTLY:
       `[Café][]` finds `# Cafe` + U+0301, while `[getting started][]`
       does not find `# Getting Started` and stays literal (corpus
       173-implicit-heading-references-with-no-definition).
