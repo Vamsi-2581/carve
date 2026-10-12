@@ -3732,7 +3732,8 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             const left = s.startsWith(':')
             const right = s.endsWith(':')
             const col = node.rows[0].cells[ci]
-            if (!col) return
+            // CARVE-P12-039: a head-row marker sets the column before delimiter colons.
+            if (!col || col.align !== null) return
             if (left && right) col.align = 'center'
             else if (left) col.align = 'left'
             else if (right) col.align = 'right'
