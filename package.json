@@ -11,7 +11,7 @@
     "spec:write": "node scripts/spec-source.mjs --write",
     "spec:check": "node scripts/spec-source.mjs --check && node scripts/grammar-character-check.mjs",
     "spec:rules:write": "node scripts/spec-rule-index.mjs --write",
-    "spec:rules:check": "node scripts/spec-rules.mjs --check && node scripts/spec-rule-index.mjs --check",
+    "spec:rules:check": "node scripts/spec-rules.mjs --check && node scripts/spec-rule-index.mjs --check && node scripts/spec-references.mjs",
     "roles:write": "node scripts/generate-node-roles.mjs",
     "roles:check": "node scripts/generate-node-roles.mjs --check",
     "html-import:check": "node --test tests/html-import-contract.check.mjs",
