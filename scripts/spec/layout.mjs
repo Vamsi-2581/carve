@@ -1914,11 +1914,11 @@ function hostAdvance(h, line, paraOpen) {
   // of its innermost KIND moved a quoted line out of a `dd` that keeps it
   // (raised by codex review).
   const siblingItem = h.markerCols.some((col, k) => col === meas.col && h.kinds[k] === 'item')
-  // Plain text at a parent item's column can lazily continue its sublist.
+  // Plain text below a nested item's column can lazily continue its paragraph.
   // Keep that sublist for the next fence lookup; the lazy line did not close it.
   const lazyItemLine = paraOpen && h.kinds.at(-1) === 'item' &&
     (h.columns.length === 2 || h.colons?.length ||
-      (h.kinds.at(-2) === 'item' && meas.col >= h.columns.at(-2))) && matchMarkerAt(meas) === null &&
+      h.kinds.at(-2) === 'item') && matchMarkerAt(meas) === null &&
     !FENCE.test(meas.rest) && !COLON_FENCE.test(meas.rest) &&
     !DEFLIST_TERM.test(meas.rest) && opensParagraph(meas.rest)
   // A marker at or left of an item's own marker column ends that item and

@@ -507,6 +507,7 @@ index: examples/edge-cases/index.md
   a-line-block-payload-span-pairs-past-the-content-column
   a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph
   an-opener-past-a-hosted-container-s-column-opens-there
+  a-closed-fence-in-a-quoted-sub-item-after-a-lazy-line-leaves-no-paragraph
   a-caption-scope-resets-at-a-structural-only-line
   a-quote-after-an-escaped-quote-closes
   a-combined-bold-italic-span-may-cross-a-line
