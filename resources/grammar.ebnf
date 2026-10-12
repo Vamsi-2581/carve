@@ -10549,11 +10549,11 @@ EOF = (* end of file *) ;
       heading the target does not write as a heading (one flattened into a
       table cell) is not a target, and a fragment naming no heading is CARVE-P11-049's.
 
-      NO ANCHOR CAN DANGLE, which is carve#352's rule kept by other means. The
-      target writes no anchor at all, and the reader derives each slug from
-      text the target wrote, so every link to a heading resolves in a GFM
-      reader. A heading whose text removes to nothing has the empty slug, and
-      a link to it is written `#`, or `#-1` and so on for a repeat.
+      NO ANCHOR CAN DANGLE. The target writes no anchor at all, and the
+      reader derives each slug from text the target wrote, so every link to a
+      heading resolves in a GFM reader (carve#352). A heading whose text
+      removes to nothing has the empty slug, and a link to it is written `#`,
+      or `#-1` and so on for a repeat.
 
       A CROSS-REFERENCE CONTRIBUTES NOTHING TO THE TEXT, as PART 2 says: by the
       time this target runs, resolution has replaced `</#a>` with a link
