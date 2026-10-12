@@ -294,9 +294,11 @@
          `-` runs are inline content (`---` may smart-render as an em
          dash). Native `|=` header cells and `<`/`>`/`~` alignment markers
          may COEXIST with a delimiter row. Where one column carries both, THE
-         MARKER WINS OVER THE DELIMITER COLON (CARVE-P12-039): a marker on the
-         head-row cell sets the column, and a marker on a body cell sets that
-         cell. Corpus 09-tables-3 pins effect 2.
+         MARKER WINS OVER THE DELIMITER COLON (CARVE-P12-039): a marker on a
+         head-row cell sets the whole column, header and body cells, and a
+         marker on a body cell sets that cell alone. So `|=> a |` over
+         `|:-- |` right-aligns column a in the header and the body. Corpus
+         09-tables-3 pins effect 2.
       T8 ROW ATTRIBUTES -- NORMATIVE [CARVE-P9-005]. A `{…}` GLUED to a row's closing `|`
          (no intervening space) sets that row's `<tr>` attributes -- the
          row-level twin of a cell's attribute block, same syntax, same

@@ -337,8 +337,10 @@
         EVERY RECOGNIZED BLOCK OPENER QUALIFIES, the line-block opener
         `::: |` included. A colon body has no prefix, so it answers as its
         host does: inside a colon body an indentation container hosts, an
-        opener past the column opens on its authored base where no
-        paragraph of that body is open above it.
+        opener past the column opens on its authored base, and closes a
+        paragraph of that body open above it, as in every indentation host
+        (CARVE-P2-017). So under `- a` / `  ::: box`, a code fence run at
+        column 4 opens a code block in the box.
 
         OWNERSHIP PRECEDES REBASING. While an authored block is open, a
         nested body's opener at its own content column is owned by that
@@ -348,10 +350,10 @@
         same rule; their construct clauses only define the minimum column and
         attachment boundary.
 
-     X1 COMMENT RETENTION. After a line comment consumed below the content
-        column of a list item, a definition body or a footnote body, a
-        noninterrupting follower below that column remains in the container
-        and starts a new paragraph (CARVE-P9-053). This is retained ownership,
+     X1 COMMENT RETENTION. Only a line comment consumed BELOW the content
+        column of a list item, a definition body or a footnote body retains:
+        after one, a noninterrupting follower below that column remains in
+        the container and starts a new paragraph (CARVE-P9-053). This is retained ownership,
         not a fold and not a continuation claim: the comment closed the
         paragraph (T). Its limits:
           - A sibling marker is recognized first. A retained list marker
@@ -364,8 +366,9 @@
             comment is classified in the enclosing context.
           - Retention describes the most recent boundary, not the next
             visible line across arbitrary invisible boundaries. A following
-            blank clears it. A comment at or above the content column grants
-            none and clears earlier retention.
+            blank clears it. A comment at or above the content column retains
+            nothing and clears earlier retention, so in `- inner` / `  %% c` /
+            ` code` the line ` code` leaves the item.
           - An interrupting opener below the content column is classified
             outside the container.
           - An unmatched `%%%` fence is a line comment and follows this rule.
@@ -1272,6 +1275,11 @@ term_continuation_line = inline_content, newline ;
    A list marker is not term text: PART 9 §24 C4 lets it open at any column, so it
    ends the term.
 
+   A term that is the deepest leaf takes a following unprefixed or
+   below-column plain line as lazy text, as an open paragraph does
+   (CARVE-P0-006): after `> :: t` or `> - :: t`, an unprefixed `tail` folds
+   into the term.
+
    The invisible lines follow the same two bands (PART 9 §24 C3, AN INVISIBLE
    LINE FOLDS LIKE ANY OTHER):
 
@@ -1881,6 +1889,11 @@ line_block_body = stanza, {blank_line, stanza} ;
 stanza = line_block_line, {line_block_line} ;
 line_block_line = {whitespace}, inline_content, newline ;
 (* the leading whitespace is PRESERVED in output -- PART 9 §23 *)
+(* A PAYLOAD LINE IS INLINE CONTENT WHATEVER IT LOOKS LIKE AND WHATEVER HOSTS
+   THE BLOCK. A line shaped like a fence run, a heading or a table row opens
+   nothing, so an unclosed line block takes a following lazy line after it
+   exactly as after a plain `x`, and two fence runs past the content column
+   pair as one inline span in every payload, not only on a marker line. *)
 
 (* --- Local hard-break block -- a RECOGNIZED `:::` type for authors who want
    Markdown-like visible line breaks locally without the full line-block verse
@@ -2083,8 +2096,12 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    `--strict-losses`, offer a machine-readable JSON report, and permit the
    explicit exceptions `--allow-loss raw-format-dropped`,
    `--allow-loss ruby-flattened`,
-   `--allow-loss editorial-comment-flattened` and
-   `--allow-loss carrier-attribute-dropped`. Import-loss reports
+   `--allow-loss editorial-comment-flattened`,
+   `--allow-loss carrier-attribute-dropped` and
+   `--allow-loss definition-list-flattened`. The list is closed:
+   `destination-denied` is not waivable, because a blanked destination is a
+   policy refusal that a different profile avoids, not a loss the target
+   cannot avoid (CARVE-P9-054). Import-loss reports
    are separate: they describe source-to-AST migration, while this report
    describes AST-to-target rendering. *)
 
@@ -3136,10 +3153,9 @@ ellipsis = "..." ;    (* → … *)
    LEFT-FLANKING-ONLY shape -- whitespace before, word after -- is the one no
    dash wants and every flag has.
 
-   THE SPACE CLASS IS PART 7'S, and that is not the host language's `\s`. A
-   VERTICAL TAB and a FORM FEED are CONTENT in Carve, so `---<VT>` converts or
-   stays literal exactly as `---!` does. A NO-BREAK SPACE counts as a space
-   here, the same question quote flanking asks.
+   "WHITESPACE" HERE IS `typography_flank`, below, and not the host
+   language's `\s`. A VERTICAL TAB and a FORM FEED are CONTENT in Carve, so
+   `---<VT>` converts or stays literal exactly as `---!` does.
 
    ELLIPSIS IS NOT COVERED. `wait... really` is the ordinary use and it is
    word-then-whitespace; an ellipsis terminates a clause where a dash joins two
@@ -3170,14 +3186,14 @@ smart_quote = '"' | "'" ;
    Letters and digits are judged by Unicode code point, so a character
    outside the Basic Multilingual Plane is a letter like any other.
 
-   A quote OPENS after start-of-content, whitespace (space, tab, CR, LF,
-   NBSP U+00A0, or a soft or hard line break), or `( [ { = : - – — /`, or
+   A quote OPENS after start-of-content, a `typography_flank` character,
+   or `( [ { = : - – — /`, or
    an opening curly quote `“` or `‘`. Otherwise it CLOSES. The opening set
    applies to both quote characters: `"'q'"` renders `“‘q’”`.
    A single quote before an ASCII digit is an APOSTROPHE: `'90s` renders `’90s`.
 
    R1. AFTER A DASH (`-`, `–`, or `—`), a quote CLOSES when the next source
-   character is absent, whitespace as above, or one of `" ' . , ; : ! ? ) ]`.
+   character is absent, a `typography_flank` character, or one of `" ' . , ; : ! ? ) ]`.
    Otherwise it opens. Thus `"Wait---" he said.` renders `“Wait—” he said.`,
    while `he said—"Go"` renders `he said—“Go”`.
 
@@ -3199,8 +3215,8 @@ smart_quote = '"' | "'" ;
    the span. Thus `'I told 'em so,' he said.` renders `‘I told ’em so,’ he said.`
    An opener before anything else opens as usual and, if no span is open,
    starts one that is never demoted: `'*bold* text` keeps its opening quote.
-   A closing single quote whose previous character is not whitespace closes
-   the span. A mid-word apostrophe (previous and next are letters or numbers,
+   A closing single quote whose previous character is not a
+   `typography_flank` character closes the span. A mid-word apostrophe (previous and next are letters or numbers,
    or next is an ASCII digit) never closes it: `'Jane's dog'` is `‘Jane’s dog’`.
    At the END OF CONTENT, demote a still-open span's opener to an apostrophe
    if it was followed by a letter or number. EXCEPTIONS: retain an opener at
@@ -3231,6 +3247,13 @@ typographic_symbol = "(c)" | "(r)" | "(tm)" | "+-" ;
 (* --- Breaks --- *)
 hard_break = '\', newline ;  (* backslash at end of line *)
 soft_break = newline ;        (* regular line ending within paragraph *)
+
+(* TYPOGRAPHY FLANK. The one class smart typography reads a neighbor
+   character through, for dash runs (CARVE-P3-021) and quote direction
+   (CARVE-P3-023): space, tab, line feed, carriage return, no-break space
+   U+00A0, and a soft or hard line break. *)
+typography_flank = whitespace | newline | no_break_space | soft_break | hard_break ;
+no_break_space = (* U+00A0 NO-BREAK SPACE *) ;
 (* ============================================================================
    PART 4: ATTRIBUTES
    ============================================================================ *)
@@ -3935,9 +3958,11 @@ digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
      5. A LINE-FINAL RUN of spaces and tabs is INSIGNIFICANT. It is dropped
         before anything reads the line, so no production sees it and 3 applies
         to what precedes it: `{.a}<TAB>` is an attribute line and
-        `[a]: /u<TAB>` a definition. CARVE-P2-025 names the two places the
-        drop does not reach, a verbatim payload line and the run a line block
-        has already turned into content.
+        `[a]: /u<TAB>` a definition. TWO EXCEPTIONS (CARVE-P2-025): a
+        verbatim payload line, and a line-block body line, where CARVE-P9-044
+        MEDIAL GAPS first turns a trailing run of two or more columns into
+        no-break-space content; a one-column run there is dropped as anywhere
+        else.
 
    Every other mention of a tab in this grammar APPLIES one of those five
    sentences to one construct; none of them restates it. Three of the five keep
@@ -4475,9 +4500,11 @@ EOF = (* end of file *) ;
          `-` runs are inline content (`---` may smart-render as an em
          dash). Native `|=` header cells and `<`/`>`/`~` alignment markers
          may COEXIST with a delimiter row. Where one column carries both, THE
-         MARKER WINS OVER THE DELIMITER COLON (CARVE-P12-039): a marker on the
-         head-row cell sets the column, and a marker on a body cell sets that
-         cell. Corpus 09-tables-3 pins effect 2.
+         MARKER WINS OVER THE DELIMITER COLON (CARVE-P12-039): a marker on a
+         head-row cell sets the whole column, header and body cells, and a
+         marker on a body cell sets that cell alone. So `|=> a |` over
+         `|:-- |` right-aligns column a in the header and the body. Corpus
+         09-tables-3 pins effect 2.
       T8 ROW ATTRIBUTES -- NORMATIVE [CARVE-P9-005]. A `{…}` GLUED to a row's closing `|`
          (no intervening space) sets that row's `<tr>` attributes -- the
          row-level twin of a cell's attribute block, same syntax, same
@@ -5489,7 +5516,12 @@ EOF = (* end of file *) ;
                        <a href="#{refId}" role="doc-backlink"
                           aria-label="{name}">↩</a>.
         First reference to note n has refId `fnref{n}`; a k-th (k>1)
-        repeat uses `fnref{n}-{k}` and adds another backlink. The
+        repeat uses `fnref{n}-{k}` and adds another backlink.
+        INSIDE LINK TEXT A REFERENCE IS NOT A LINK, since links never nest
+        (PART 3): it renders `<sup id="{refId}">{n}</sup>`, keeps its ordinal
+        and its backlink, and its trailing `{attrs}` and
+        `data-carve-footnote-label` go on that `<sup>`. So `[t[^1]][r]` renders
+        `<a href="/u">t<sup id="fnref1">1</sup></a>`. The
         backlink glyph is the plain return arrow `↩` (Carve's choice;
         djot appends a variation selector).
         THE BACKLINK CARRIES AN ACCESSIBLE NAME -- NORMATIVE [CARVE-P9-026]. With the
@@ -5572,17 +5604,14 @@ EOF = (* end of file *) ;
             (an inline note always takes a fresh anonymous number; it cannot
             be re-referenced). Renders the same noteref + an `<li id="fn{n}">`
             in the one endnotes section, content as one `<p>` + backlink.
-          * A trailing `{attrs}` attaches to the noteref `<a>` (like a
-            reference note).
+          * A trailing `{attrs}` attaches to the noteref `<a>`, or to the
+            `<sup>` inside link text (like a reference note).
           * Empty or whitespace-only (`^[]`, `^[ ]`) is literal; an unclosed
             `^[…` is literal.
         PRECEDENCE (PART 8): `^[` opens an inline note, and a `^` not
         immediately before `[` opens none. Consequences:
         `^[x]^` is a note then a literal `^`; `\^[x]` is literal; a `^` not
         immediately followed by `[` is plain text.
-      - LIMITATION: a footnote (reference `[^1]` or inline `^[…]`) inside link
-        text (`[t[^1]](u)`) or inside a heading later cloned by a `</#id>`
-        crossref nests an <a> in an <a>; avoid footnotes in those positions.
 
    16a. ENGINE-WRITTEN LABELS are defined in the full PART 9 §16a clause below.
 
@@ -7304,7 +7333,8 @@ EOF = (* end of file *) ;
       self-reference (`# A </#a>`) and a mutual cycle (`# A </#b>` +
       `# B </#a>`) each resolve once (corpus "Cyclic cross-reference resolves
       to one level"). Cloning keeps the heading's markup:
-      `# *Setup*` yields `<a href="#…"><strong>Setup</strong></a>`. A `</#id>`
+      `# *Setup*` yields `<a href="#…"><strong>Setup</strong></a>`. A footnote
+      reference is not cloned: `# Head[^1]` yields `Head`. A `</#id>`
       to an id that is neither a heading nor a numbered target is unresolved
       and renders literally.
       WHAT IS CLONED IS THE HEADING'S INLINE NODES -- NORMATIVE [CARVE-P9R-005].
@@ -7841,7 +7871,8 @@ EOF = (* end of file *) ;
         an `autolink` node     `data-carve-autolink` on `<a>`,  none
                                presence
         `footnote_ref.label`   `data-carve-footnote-label` on   none
-                               the reference `<a>` and the
+                               the reference `<a>` (its `<sup>`
+                               inside link text) and the
                                endnote `<li>`: the authored
                                label, which [CARVE-P12-047]
                                names and spells, not `id`
@@ -7897,10 +7928,10 @@ EOF = (* end of file *) ;
          is not a reason to trust that document, and export selects no import
          mode (CARVE-P10-017).
       S4 A VALUE OUTSIDE ITS GRAMMAR IS NOT A CARRIER, AND IT IS REPORTED.
-         Nothing is rebuilt from it. How much falls with it differs by
-         target: an HTML import drops that one carrier and keeps the others
-         (CARVE-P10-017); a Markdown import that finds its marker set damaged reads
-         the whole file as plain Markdown (CARVE-P11-063).
+         Nothing is rebuilt from it, and only that carrier falls with it on
+         both targets (CARVE-P10-017, CARVE-P11-063). A Markdown marker set
+         whose opener and closer pairing breaks reads the whole file as plain
+         Markdown (CARVE-P11-063).
       S5 CONTRADICTORY CARRIERS RESTORE NEITHER MEANING. The pairs are the
          closed list in CARVE-P10-021.
       S6 CONSUMED IN EVERY IMPORT MODE. An HTML import consumes the carriers
@@ -7916,9 +7947,9 @@ EOF = (* end of file *) ;
       A DISTINCTION THE AST DOES NOT RECORD GETS NO HTML CARRIER, and the way
       to add one is to add the PART 12 field FIRST. That is what makes the
       HTML column DERIVABLE: a reader checks it against the tree instead of
-      trusting the list. THE MARKDOWN CONTAINER MARKERS ARE BUILT DIFFERENTLY:
-      they hold the Carve opener and closer lines VERBATIM, fence width
-      included (CARVE-P11-063).
+      trusting the list. THE MARKDOWN CONTAINER MARKERS FOLLOW THE SAME RULE:
+      each holds the opener or closer the canonical writer spells, so no
+      authored fence width or padding is carried (CARVE-P11-063).
 
       WHAT IT DOES NOT PROMISE IS A RAW BLOCK. CARVE-P10-016 names no carrier for one,
       so a raw block whose format this target cannot write is dropped under
@@ -8965,8 +8996,9 @@ EOF = (* end of file *) ;
       ahead of it is glued the same way (```"src/app.js"), and so is the raw
       passthrough selector (```=html, PART 9 §20).
 
-      PART 2 ALREADY NAMES THE FORM: `fenced_code_block` calls the glued
-      spelling canonical; a reader accepts either spacing (CARVE-P11-011).
+      PART 2 ALREADY NAMES THE FORM: its `fenced_code_block` production
+      calls the glued spelling canonical, and a reader accepts either spacing
+      there.
       THE TREE RECORDS NO SLOT: `code_block` records no padding, fence length
       or fence character (PART 12 §3), so the writer chooses the canonical form.
 
@@ -9802,7 +9834,10 @@ EOF = (* end of file *) ;
       three do not get to drop content the author wrote.
 
       A LINK REFERENCE DEFINITION IS COVERED TOO: PART 12 §10 gives it a node,
-      so all three kinds walk and all three emit.
+      so all three kinds walk and all three emit. A REFERENCED link definition
+      writes no line on Markdown, because the inlined `[it](/url)` already
+      carries its destination; that is CARVE-P11-033's test, one design for
+      both.
 
           [^n]: %         ->  markdown  [^n]: %
                               plain     [^n]: %
@@ -9926,7 +9961,9 @@ EOF = (* end of file *) ;
       IS referenced.
 
       This clause decides where the consumed definition line goes on those
-      three targets and what plain text emits. Unnamed pairs remain open.
+      three targets and what plain text emits. Unnamed pairs remain open. Its
+      test, below, is the one that drops a referenced link definition on
+      Markdown (CARVE-P11-028).
 
       T1 MARKDOWN KEEPS THE LINE, and keeps the expansion beside it.
          `*[TERM]: expansion` is the spelling PHP Markdown Extra uses
@@ -10314,8 +10351,10 @@ EOF = (* end of file *) ;
       and no attribute of its own reaches the output, so nothing there says a
       container was present. Under the CARRIER MODE, which is roundtrip export
       on this target, the target brackets
-      each one with an HTML comment carrying the Carve opener and the Carve
-      closer VERBATIM. CARVE-P10-015 states the option, the table of both
+      each one with an HTML comment carrying the opener and the closer the
+      canonical writer spells, widened to the nesting depth, not the author's
+      lines: `::::: note   "T"` is carried as `::: note "T"` at the top level.
+      CARVE-P10-015 states the option, the table of both
       targets' carriers and the rules they share; this clause and CARVE-P11-067 state
       the marker syntax and what is particular to this target.
 
@@ -10400,23 +10439,30 @@ EOF = (* end of file *) ;
       THE ROUND TRIP IS WHAT THE MODE BUYS. A document this target writes
       with the mode on, imported back with `markdown` as the source format,
       returns every container the set names: its kind, its title, its
-      attributes, and the nesting its fence widths record. It promises no
+      attributes, and its nesting, which the import re-derives from the
+      block structure. It promises no
       more than that. A construct outside the set degrades exactly as it does
       with the mode off, a document
       holding no element-less container gains no comment under either
       setting, and this is not the byte-identical source round trip CARVE-P11-043's
       comparison governs.
 
-      A DAMAGED MARKER SET IMPORTS AS PLAIN MARKDOWN, NEVER A GUESS. A
-      Markdown editor that deleted one marker, reordered two, left the set
-      unbalanced or moved a caption marker off the closer it belongs to has
+      AN INVALID PAYLOAD DROPS ONLY ITS OWN MARKER. A marker whose payload is
+      not an opener, closer or caption line it can stand for is not a carrier:
+      it stays an ordinary comment, the import reports it with a diagnostic as
+      an invalid HTML carrier is reported (CARVE-P10-017), and the rest of the
+      set restores unless its pairing breaks.
+
+      A DAMAGED SET, ONE WHOSE PAIRING BREAKS, IMPORTS AS PLAIN MARKDOWN,
+      NEVER A GUESS. A Markdown editor that deleted one marker, reordered two,
+      left the set unbalanced or moved a caption marker off the closer it belongs to has
       destroyed the structure the markers recorded, and a reconstruction that
       is wrong is worse than a fallback that is honest.
       The import reads the file as ordinary Markdown, comments and all, and
       reports one `carrier-markers-damaged` diagnostic on the migration
       report (`resources/migration-report-schema.json`) with `degraded`
-      fidelity and `fallback` confidence. There is no partial reconstruction
-      and no per-marker recovery.
+      fidelity and `fallback` confidence. Only a damaged set falls back as a
+      whole.
 
       WHAT THIS CLAUSE DOES NOT COVER, so a reader does not look for it here.
       A construct whose Markdown output already holds an element needs no

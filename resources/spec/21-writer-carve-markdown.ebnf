@@ -106,8 +106,9 @@
       ahead of it is glued the same way (```"src/app.js"), and so is the raw
       passthrough selector (```=html, PART 9 §20).
 
-      PART 2 ALREADY NAMES THE FORM: `fenced_code_block` calls the glued
-      spelling canonical; a reader accepts either spacing (CARVE-P11-011).
+      PART 2 ALREADY NAMES THE FORM: its `fenced_code_block` production
+      calls the glued spelling canonical, and a reader accepts either spacing
+      there.
       THE TREE RECORDS NO SLOT: `code_block` records no padding, fence length
       or fence character (PART 12 §3), so the writer chooses the canonical form.
 
