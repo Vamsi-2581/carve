@@ -34790,13 +34790,9 @@ after
 
 ## An unterminated fence on a nested lead in a description body owns its body
 
-A fence's content is not re-scanned for structure, so an unterminated code
-fence opened on a nested item's LEAD line owns every line below it - including a
-flush-left closing fence, which becomes body text. markup-carve/carve#1900 ruled
-this for the LIST-ITEM host; the description body is the same construct one host
-over. The oracle used to leave the fence EMPTY, demote the body to a paragraph in
-the description body, and open a SECOND document-level fence on the flush-left
-closer - a `pre` no source line asked for (markup-carve/carve#1947).
+A flush-left line leaves the description body and its nested fence.
+CARVE-P0-013 and CARVE-P0-018 give both hosts the same boundary
+(markup-carve/carve#2973).
 
 ::: compare
 
@@ -34813,18 +34809,18 @@ code
   <dd>
     <ul>
       <li>
-        <pre><code class="language-x">code
-```
-</code></pre>
+        <pre><code class="language-x"></code></pre>
       </li>
     </ul>
   </dd>
 </dl>
+<p>code
+<code></code></p>
 ````
 
 :::
 
-The tilde spelling owns its body the same way.
+The tilde spelling has the same boundary.
 
 ::: compare
 
@@ -34841,18 +34837,18 @@ code
   <dd>
     <ul>
       <li>
-        <pre><code class="language-x">code
-~~~
-</code></pre>
+        <pre><code class="language-x"></code></pre>
       </li>
     </ul>
   </dd>
 </dl>
+<p>code
+~~~</p>
 ````
 
 :::
 
-An info-less fence does too; the flush-left closer is still its content.
+A fence without an info string also leaves the flush-left lines outside.
 
 ::: compare
 
@@ -34869,20 +34865,18 @@ code
   <dd>
     <ul>
       <li>
-        <pre><code>code
-```
-</code></pre>
+        <pre><code></code></pre>
       </li>
     </ul>
   </dd>
 </dl>
+<p>code
+<code></code></p>
 ````
 
 :::
 
-The fence owns the body only to the END of the description body: a new term
-closes the body above it, and the fence with it, so a second term is a second
-term and not fence content.
+The flush-left paragraph also ends the first description list.
 
 ::: compare
 
@@ -34901,11 +34895,13 @@ code
   <dd>
     <ul>
       <li>
-        <pre><code class="language-x">code
-</code></pre>
+        <pre><code class="language-x"></code></pre>
       </li>
     </ul>
   </dd>
+</dl>
+<p>code</p>
+<dl>
   <dt>t2</dt>
   <dd>plain</dd>
 </dl>
@@ -47402,7 +47398,7 @@ x
 
 Raw fences and deeper marker stacks answer the same question. A nested heading
 or table also leaves no paragraph open in a description body. The last control
-keeps an unfinished nested fence whose following run is below its own column.
+leaves the below-column run outside the description body and its nested fence.
 
 ````carve
 - - ```=html
@@ -47585,12 +47581,12 @@ x
   <dd>
     <ul>
       <li>
-        <pre><code>```
-</code></pre>
+        <pre><code></code></pre>
       </li>
     </ul>
   </dd>
 </dl>
+<pre><code></code></pre>
 ```
 
 :::
@@ -48535,6 +48531,481 @@ see [t][a]
 
 ```html
 <p>see <a href="/u">t</a></p>
+```
+
+:::
+
+## A description keeps a block at its body column whatever leads the item
+
+A list item whose marker line is a definition term. A block that reaches the
+description body's column stays in the description, after a blank and without
+one, exactly as it does when ordinary text leads the item (`CARVE-P0-018`,
+`CARVE-P2-028`, ruled on markup-carve/carve-php#3174). The description ends on
+that block and holds no paragraph, so the line below leaves the list
+(`CARVE-P0-009`).
+
+::: compare
+
+````carve
+- :: term
+  : definition
+
+    ```
+    code
+    ```
+after
+````
+
+```html
+<ul>
+  <li>
+    <dl>
+      <dt>term</dt>
+      <dd>
+        <p>definition</p>
+        <pre><code>code
+</code></pre>
+      </dd>
+    </dl>
+  </li>
+</ul>
+<p>after</p>
+```
+
+````carve
+- :: term
+  : desc
+      ```
+      code
+      ```
+after
+````
+
+```html
+<ul>
+  <li>
+    <dl>
+      <dt>term</dt>
+      <dd>
+        <p>desc</p>
+        <pre><code>code
+</code></pre>
+      </dd>
+    </dl>
+  </li>
+</ul>
+<p>after</p>
+```
+
+````carve
+> - :: term
+>   : definition
+>
+>     ```
+>     code
+>     ```
+after
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <dl>
+        <dt>term</dt>
+        <dd>
+          <p>definition</p>
+          <pre><code>code
+</code></pre>
+        </dd>
+      </dl>
+    </li>
+  </ul>
+</blockquote>
+<p>after</p>
+```
+
+:::
+
+The same line below a description or a quote in an item that ends on a code
+block. No paragraph is open at the deepest frame, so no surviving frame adopts
+the line (`CARVE-P0-009`).
+
+::: compare
+
+````carve
+- intro
+  :: term
+  : definition
+
+    ```
+    code
+    ```
+after
+````
+
+```html
+<ul>
+  <li>intro
+    <dl>
+      <dt>term</dt>
+      <dd>
+        <p>definition</p>
+        <pre><code>code
+</code></pre>
+      </dd>
+    </dl>
+  </li>
+</ul>
+<p>after</p>
+```
+
+````carve
+- intro
+  > ```
+  > code
+  > ```
+after
+````
+
+```html
+<ul>
+  <li>intro
+    <blockquote>
+      <pre><code>code
+</code></pre>
+    </blockquote>
+  </li>
+</ul>
+<p>after</p>
+```
+
+:::
+
+The controls. A paragraph at the body's column keeps the description open for
+the line below, and a block at the item's own column after a blank is the
+item's.
+
+:::: compare
+
+````carve
+- :: term
+  : definition
+
+    para
+after
+````
+
+```html
+<ul>
+  <li>
+    <dl>
+      <dt>term</dt>
+      <dd>
+        <p>definition</p>
+        <p>para
+after</p>
+      </dd>
+    </dl>
+  </li>
+</ul>
+```
+
+````carve
+- :: term
+  : definition
+
+  ```
+  code
+  ```
+after
+````
+
+```html
+<ul>
+  <li>
+    <dl>
+      <dt>term</dt>
+      <dd>definition</dd>
+    </dl>
+    <pre><code>code
+</code></pre>
+  </li>
+</ul>
+<p>after</p>
+```
+
+::::
+
+## A line-block payload span pairs past the content column
+
+Two fence-shaped runs written past the content column in a line-block payload.
+The payload is inline content, so the runs pair as one span and the colon run
+between them is payload, exactly as at the content column (ruled on
+markup-carve/carve-php#3137). The line block closes at the second `:::`, and
+the lines after it read as they do in the content-column spelling.
+
+::::: compare
+
+````carve
+> - ::: |
+>     ```
+>   :::
+>     ```
+>   :::
+>   :::bad
+>   :::
+- tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="line-block">
+        <p>&nbsp;&nbsp;<code>
+:::
+&nbsp;&nbsp;</code></p>
+      </div>
+      :::bad
+:::
+- tail
+    </li>
+  </ul>
+</blockquote>
+```
+
+````carve
+- ::: |
+    ```
+  :::
+    ```
+  :::
+  para
+tail
+````
+
+```html
+<ul>
+  <li>
+    <div class="line-block">
+      <p>&nbsp;&nbsp;<code>
+:::
+&nbsp;&nbsp;</code></p>
+    </div>
+    para
+tail
+  </li>
+</ul>
+```
+
+:::::
+
+The control. A lone run pairs with nothing, so the first `:::` closes the line
+block.
+
+::::: compare
+
+````carve
+- ::: |
+    ```
+  :::
+  para
+tail
+````
+
+```html
+<ul>
+  <li>
+    <div class="line-block">
+      <p>&nbsp;&nbsp;<code></code></p>
+    </div>
+    para
+tail
+  </li>
+</ul>
+```
+
+:::::
+
+## A quoted item that ends on a block past its column holds no paragraph
+
+An opener past a nested item's content column inside a quote. The heading is
+rebased into the item (`CARVE-P0-004`), which then holds no paragraph, so no
+frame of the quote adopts the line below (`CARVE-P0-009`,
+markup-carve/carve#2960). The second document has a fence under an absorbed
+run of the other fence character: the tilde fence has a closer and opens.
+
+::::: compare
+
+````carve
+> - b
+>   - c
+>       # h
+tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>b
+      <ul>
+        <li>c
+          <h1 id="h">h</h1>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</blockquote>
+<p>tail</p>
+```
+
+````carve
+> - a
+>     ```
+>     ~~~
+>     code
+>     ~~~
+tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>a
+<code></code>
+      <pre><code>code
+</code></pre>
+    </li>
+  </ul>
+</blockquote>
+<p>tail</p>
+```
+
+:::::
+
+The control. Text past the column establishes no base and the paragraph stays
+open.
+
+::::: compare
+
+````carve
+> - b
+>   - c
+>       text
+tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>b
+      <ul>
+        <li>c
+text
+tail</li>
+      </ul>
+    </li>
+  </ul>
+</blockquote>
+```
+
+:::::
+
+A marker in a line-block payload is payload. It opens no sublist and the run
+after it opens no code block, so the line below folds into the payload as it
+does after any other payload line.
+
+::::: compare
+
+````carve
+- ::: |
+  - ```
+tail
+````
+
+```html
+<ul>
+  <li>
+    <div class="line-block">
+      <p>- <code>
+tail</code></p>
+    </div>
+  </li>
+</ul>
+```
+
+:::::
+
+## A paragraph in a held container does not loosen the item
+
+PART 9 section 17 L1 counts the item's own paragraphs. A second paragraph
+in its description body keeps the item tight. The control puts the second
+paragraph in the item itself, which makes it loose (carve#2988).
+
+::: compare
+
+```carve
+- intro
+  :: term
+  : body
+
+    text
+```
+
+```html
+<ul>
+  <li>intro
+    <dl>
+      <dt>term</dt>
+      <dd>
+        <p>body</p>
+        <p>text</p>
+      </dd>
+    </dl>
+  </li>
+</ul>
+```
+
+```carve
+- :: term
+  : body
+
+    text
+```
+
+```html
+<ul>
+  <li>
+    <dl>
+      <dt>term</dt>
+      <dd>
+        <p>body</p>
+        <p>text</p>
+      </dd>
+    </dl>
+  </li>
+</ul>
+```
+
+```carve
+- intro
+  :: term
+  : body
+
+  text
+```
+
+```html
+<ul>
+  <li><p>intro</p>
+    <dl>
+      <dt>term</dt>
+      <dd>body</dd>
+    </dl>
+    <p>text</p>
+  </li>
+</ul>
 ```
 
 :::

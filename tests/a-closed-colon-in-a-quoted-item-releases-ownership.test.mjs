@@ -224,14 +224,15 @@ for (const depth of [1, 2]) for (const run of ['%%%', '```', '~~~']) {
 
 for (const depth of [1, 2]) for (const run of ['```', '~~~']) {
   const quote = '> '.repeat(depth)
-  test(`an indented ${run} payload opens no opaque span at quote depth ${depth}`, () => {
+  // Line-block payload is inline content, so the indented runs pair as they do
+  // at the content column (ruled on carve-php#3137).
+  test(`an indented ${run} payload pairs as at the content column at quote depth ${depth}`, () => {
     const source = `${quote}- ::: |\n${quote}    ${run}\n${quote}  :::\n${quote}    ${run}\n${quote}  :::\n${quote}  :::bad\n${quote}  :::\n- tail\n`
     const document = parse(source)
-    assert.equal(document.blocks.length, 2)
+    assert.equal(document.blocks.length, 1)
     let owner = document.blocks[0]
     for (let n = 0; n < depth; n++) owner = owner.children[0]
-    assert.deepEqual(owner.items[0].blocks, [{t: 'line-block', lines: [`  ${run}`]}, {t: 'code', lang: '', title: null, text: ':::\n:::bad\n:::\n'}])
-    assert.deepEqual(document.blocks[1], parse('- tail\n').blocks[0])
+    assert.deepEqual(owner.items[0].blocks, [{t: 'line-block', lines: [`  ${run}`, ':::', `  ${run}`]}, {t: 'para', lines: [':::bad', ':::', '- tail']}])
   })
   test(`an authored line-block base locates a paired ${run} span at quote depth ${depth}`, () => {
     const source = `${quote}- a\n${quote}    ::: |\n${quote}    ${run}\n${quote}    :::\n${quote}    ${run}\n${quote}  :::\n${quote}  :::bad\n${quote}  :::\n- tail\n`
