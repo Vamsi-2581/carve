@@ -22,7 +22,12 @@
                        <a href="#{refId}" role="doc-backlink"
                           aria-label="{name}">↩</a>.
         First reference to note n has refId `fnref{n}`; a k-th (k>1)
-        repeat uses `fnref{n}-{k}` and adds another backlink. The
+        repeat uses `fnref{n}-{k}` and adds another backlink.
+        INSIDE LINK TEXT A REFERENCE IS NOT A LINK, since links never nest
+        (PART 3): it renders `<sup id="{refId}">{n}</sup>`, keeps its ordinal
+        and its backlink, and its trailing `{attrs}` and
+        `data-carve-footnote-label` go on that `<sup>`. So `[t[^1]][r]` renders
+        `<a href="/u">t<sup id="fnref1">1</sup></a>`. The
         backlink glyph is the plain return arrow `↩` (Carve's choice;
         djot appends a variation selector).
         THE BACKLINK CARRIES AN ACCESSIBLE NAME -- NORMATIVE [CARVE-P9-026]. With the
@@ -105,17 +110,14 @@
             (an inline note always takes a fresh anonymous number; it cannot
             be re-referenced). Renders the same noteref + an `<li id="fn{n}">`
             in the one endnotes section, content as one `<p>` + backlink.
-          * A trailing `{attrs}` attaches to the noteref `<a>` (like a
-            reference note).
+          * A trailing `{attrs}` attaches to the noteref `<a>`, or to the
+            `<sup>` inside link text (like a reference note).
           * Empty or whitespace-only (`^[]`, `^[ ]`) is literal; an unclosed
             `^[…` is literal.
         PRECEDENCE (PART 8): `^[` opens an inline note, and a `^` not
         immediately before `[` opens none. Consequences:
         `^[x]^` is a note then a literal `^`; `\^[x]` is literal; a `^` not
         immediately followed by `[` is plain text.
-      - LIMITATION: a footnote (reference `[^1]` or inline `^[…]`) inside link
-        text (`[t[^1]](u)`) or inside a heading later cloned by a `</#id>`
-        crossref nests an <a> in an <a>; avoid footnotes in those positions.
 
    16a. ENGINE-WRITTEN LABELS are defined in the full PART 9 §16a clause below.
 

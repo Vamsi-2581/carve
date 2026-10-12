@@ -427,7 +427,8 @@
         an `autolink` node     `data-carve-autolink` on `<a>`,  none
                                presence
         `footnote_ref.label`   `data-carve-footnote-label` on   none
-                               the reference `<a>` and the
+                               the reference `<a>` (its `<sup>`
+                               inside link text) and the
                                endnote `<li>`: the authored
                                label, which [CARVE-P12-047]
                                names and spells, not `id`
