@@ -427,6 +427,11 @@ line_block_body = stanza, {blank_line, stanza} ;
 stanza = line_block_line, {line_block_line} ;
 line_block_line = {whitespace}, inline_content, newline ;
 (* the leading whitespace is PRESERVED in output -- PART 9 §23 *)
+(* A PAYLOAD LINE IS INLINE CONTENT WHATEVER IT LOOKS LIKE AND WHATEVER HOSTS
+   THE BLOCK. A line shaped like a fence run, a heading or a table row opens
+   nothing, so an unclosed line block takes a following lazy line after it
+   exactly as after a plain `x`, and two fence runs past the content column
+   pair as one inline span in every payload, not only on a marker line. *)
 
 (* --- Local hard-break block -- a RECOGNIZED `:::` type for authors who want
    Markdown-like visible line breaks locally without the full line-block verse
