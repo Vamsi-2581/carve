@@ -21,11 +21,11 @@ Return to the [rule index](./) or read the complete [formal grammar](../grammar)
 | [`CARVE-P11-004`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L132) | 11 | A WRAPPER ITS OWN CONTENT SPELLS AWAY IS A DECLARED CEILING |
 | [`CARVE-P11-005`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L227) | 11 | WRAPPER LOSS IS THE ONLY EQUALITY CARVE-OUT |
 | [`CARVE-P11-046`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L277) | 11 | THE CONVERSION-DIAGNOSTICS CHANNEL |
-| [`CARVE-P11-006`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L324) | 11 | THE ESCAPING RULE |
-| [`CARVE-P11-007`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L369) | 11 | ESCAPE MINIMALITY STILL APPLIES INSIDE AN ESCALATED UNIT |
-| [`CARVE-P11-008`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L390) | 11 | THE WRITER DOES NOT SUBSTITUTE ONE CONSTRUCT FOR ANOTHER |
-| [`CARVE-P11-009`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L411) | 11 | THE SCOPE OF AN ESCALATION IS THE SMALLEST UNIT THAT FAILS |
-| [`CARVE-P11-010`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L532) | 11 | SEARCH COST BELONGS TO THE STRATEGY, NOT THE OUTPUT |
+| [`CARVE-P11-006`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L329) | 11 | THE ESCAPING RULE |
+| [`CARVE-P11-007`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L374) | 11 | ESCAPE MINIMALITY STILL APPLIES INSIDE AN ESCALATED UNIT |
+| [`CARVE-P11-008`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L395) | 11 | THE WRITER DOES NOT SUBSTITUTE ONE CONSTRUCT FOR ANOTHER |
+| [`CARVE-P11-009`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L416) | 11 | THE SCOPE OF AN ESCALATION IS THE SMALLEST UNIT THAT FAILS |
+| [`CARVE-P11-010`](https://github.com/markup-carve/carve/blob/main/resources/spec/20-writer-invariants.ebnf#L537) | 11 | SEARCH COST BELONGS TO THE STRATEGY, NOT THE OUTPUT |
 | [`CARVE-P11-011`](https://github.com/markup-carve/carve/blob/main/resources/spec/21-writer-carve-markdown.ebnf#L54) | 11 | A FRONTMATTER OPENER IS WRITTEN `---yaml` |
 | [`CARVE-P11-012`](https://github.com/markup-carve/carve/blob/main/resources/spec/21-writer-carve-markdown.ebnf#L66) | 11 | AN EMPTY-STRING ATTRIBUTE IS WRITTEN AS A BOOLEAN |
 | [`CARVE-P11-013`](https://github.com/markup-carve/carve/blob/main/resources/spec/21-writer-carve-markdown.ebnf#L95) | 11 | A CODE FENCE OPENER IS WRITTEN GLUED TO ITS INFO STRING |

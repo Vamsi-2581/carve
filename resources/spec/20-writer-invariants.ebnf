@@ -311,6 +311,11 @@
       every target at once, and it is the only one of the two that can name a
       field.
 
+      ONE LOSS IS REPORTED ON BOTH. A `ruby` node the canonical writer
+      flattens is `ruby-flattened` on the render-loss report and
+      `structure-unspellable`, node `ruby`, on this channel. The two codes
+      name one loss, one per channel.
+
       THE RENDER-LOSS FLAGS DO NOT REACH IT. `--strict-losses` and `--allow-loss`
       gate the `CARVE-P2-024` report, and neither grows a name for a code here. A
       producer without a diagnostic channel still writes the output its clause
