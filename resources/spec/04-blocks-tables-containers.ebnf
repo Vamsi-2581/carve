@@ -602,9 +602,8 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    of `block`, its `pos` when recorded, and NO `format`. Only the Markdown
    target reports this code.
 
-   The canonical Carve writer preserves authored destinations under PART 11
-   and contributes no `destination-denied` row for them. PART 9 §25 binds the
-   consumer that renders the emitted source, not its interchange serialization.
+   The canonical Carve writer contributes no `destination-denied` row
+   (CARVE-P9-054).
 
    A LOSS RECORDS WHAT THE SELECTED TARGET DOES NOT RENDER, not what its
    output drops and not every raw or ruby node in the tree. A raw inline

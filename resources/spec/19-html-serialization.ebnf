@@ -5,34 +5,52 @@
    These conventions define the exact bytes the corpus pins. On any
    disagreement the corpus wins.
 
-   1. ATTRIBUTE ORDER. Attributes serialize in the AUTHOR's source order
-      (the recorded `order`; see the RENDER ORDER rule in PART 4 and
-      PART 9 §12-style note). An Attrs built programmatically with no
-      recorded order falls back to a fixed `class`, then `id`, then
-      key=value order. All classes accumulate (space-joined) into one
-      `class` slot at its first-appearance position. An element with no
-      effective attributes emits none. (A top-level heading's id moves
-      to <section> and its other attributes do not, CARVE-P9-019; with the
-      `sections` option off, or for a heading inside a container, the id
-      stays on the <h*> with the rest.) A mandatory base class (math `math inline|display`,
-      a task list's `task-list`, §11) is prepended to that class slot.
+   1. ATTRIBUTE ORDER. An element's attributes are written in FIVE RANKS, in
+      this order:
 
-      A STRUCTURAL ATTRIBUTE LEADS. An attribute the element derives from
-      its OWN marker or destination is not "generated" in the sense below:
-      it is part of the element's shape rather than something added on top
-      of what the author wrote. `<ol>`'s `type` and `start` (fixed by the
-      first item's marker, PART 9 §11 N2), a link's `href`, an image's `src` and
-      `alt` are all structural. They are emitted BEFORE the authored
-      attributes, and the authored order then follows unchanged:
+      R1 STRUCTURAL. What the element derives from its OWN marker,
+         destination or resolution: `<ol>`'s `type` and `start` (PART 9 §11
+         N2) and then its `data-delim` (§12), a link's `href`, an image's
+         `src` and `alt`, a task item's `data-task-state` (§11) and, under
+         roundtrip export, the carriers of §13, which follow the element's
+         other structural attributes.
+      R2 A MANDATORY BASE CLASS, where the author wrote no class: math's
+         `math inline|display`, an admonition's, a task list's `task-list`
+         (§11) and a core div's directive-kind class. Where the author did
+         write a class, the base class is prepended inside that class slot
+         instead.
+      R3 AUTHORED, in the author's source order (the recorded `order`; PART
+         4 RENDER ORDER). All classes accumulate, space-joined, into one
+         `class` slot at its first-appearance position. An Attrs built
+         programmatically with no recorded order falls back to `class`, then
+         `id`, then key=value order.
+      R4 GENERATED. What the engine mints on top of the authored set: the
+         auto-slug id an unwrapped heading carries (CARVE-P9-019) and, where
+         the author wrote no class, a marker-derived class such as
+         `line-block` or a diagram fence's class, and an extension wrapper's
+         `toc`, `glossary`, `index`, `tabs` or `code-group` class.
+      R5 A RENDER ANNOTATION. The one in the core is `data-source-line` (the
+         `sourceLine` render option), which records where a block was written.
+
         > {k=v .attr}  -> <ol type="a" k="v" class="attr">
         > a. alpha
-      WHERE THE AUTHOR WROTE NO CLASS there is no slot to keep, and the
-      position splits TWO WAYS. A MANDATORY BASE CLASS LEADS: math's
-      `math inline|display`, an admonition's, `task-list`, and a core div's
-      directive-kind class. A marker-derived class such as `line-block` or a
-      diagram fence's class trails every authored attribute. An extension
-      wrapper's `toc`, `glossary`, `index`, `tabs`, or `code-group` class also
-      trails every authored attribute.
+        > {a=b .c}     -> <h1 a="b" class="c" id="Auto">
+        > # Auto
+        > {#x a=b}     -> <h1 id="x" a="b">
+        > # Written
+        > ## Nested    -> <h2 id="Nested" data-source-line="1">
+
+      THE RANK IS PROVENANCE, NOT THE ATTRIBUTE'S NAME. An id the author wrote
+      keeps its authored position; an id the engine minted follows the
+      authored run. An element with no effective attributes emits none.
+
+      A top-level heading's id moves to <section> and its other attributes do
+      not (CARVE-P9-019); with the `sections` option off, or for a heading
+      inside a container, the id stays on the <h*> with the rest.
+
+      A MENTION OR TAG IS THE STATED EXCEPTION: its structural class leads and
+      the link form's `href` is second (PART 3, ATTRIBUTES ON A MENTION OR
+      TAG).
 
       DIRECTIVE CLASSES FOLLOW ELEMENT OWNERSHIP -- NORMATIVE [CARVE-P10-011].
       With no authored class slot, a directive-kind class leads on a core
@@ -41,36 +59,6 @@
       abstains when there are no terms, so an empty index renders
       `<div class="index" id="ix" k="v">`, while a populated index
       renders `<ul id="ix" k="v" class="index">`.
-
-      The structural attribute examples match reference djot --
-      `<ol type="a" class="attr">`, `<ol start="5" class="attr">`,
-      `<a href="…" class="c" id="i" k="v">`, `<img alt="a" src="…"
-      class="c">`, `<ul class="task-list c">`. A mention's link form places
-      its structural `href` before the author's `data-role` and `id` the
-      same way (PART 3, ATTRIBUTES ON A MENTION OR TAG).
-
-      A GENERATED ATTRIBUTE JOINS AT THE END. The two rules above cover
-      an all-authored Attrs and an all-programmatic one; the MIXED case
-      is a generated attribute added to attributes the author wrote, and
-      it takes the authored order first, then the generated attribute.
-      In practice this is one attribute -- the auto-slug id an unwrapped
-      heading carries (CARVE-P9-019):
-        > {a=b .c}     -> <h1 a="b" class="c" id="Auto">
-        > # Auto
-      An attribute the author WROTE keeps its authored position even
-      when it is the id, because it is not generated:
-        > {#x a=b}      -> <h1 id="x" a="b">
-        > # Written
-      So the discriminator is provenance, not the attribute's name: the
-      author's own order is never rearranged, and anything the engine
-      minted follows it. Pinned by the corpus.
-
-      A RENDER ANNOTATION IS EMITTED LAST -- after the generated
-      attribute, not merely after the authored ones. The one such
-      annotation in the core is `data-source-line` (the `sourceLine` render
-      option), which records where a block was written rather than
-      describing the element:
-        > ## Nested   -> <h2 id="Nested" data-source-line="1">
 
       TEXT-BLOCK ALIGNMENT IS A SEMANTIC ATTRIBUTE. On `<p>`, `<div>` and
       `<h1>` through `<h6>`, an authored `align` key whose trimmed,
@@ -249,43 +237,20 @@
         `[x]{}`                  ->  `<span>x</span>`
         `[x]{onclick="e"}`       ->  `<span>x</span>`
 
-      PART 9 §25 is an ATTRIBUTE policy: it removes attributes
-      and never the element the author wrote, so a span with no semantic name
-      renders its `<span>` whether or not anything survives hardening, and
-      corpus `108-security-hardening-8` and `-10` pin those bytes. A semantic
-      name is not an attribute that was removed - it never reaches the output
-      as one. It RENAMES the element the author wrote, and the author's
-      attributes ride the element they were written on rather than a wrapper
-      the author did not write.
+      A span with no semantic name renders its `<span>` whether or not
+      anything survives PART 9 §25 hardening, which removes attributes and
+      never the element (corpus `108-security-hardening-8` and `-10`).
 
       THE REGISTRY HOLDS NO ELEMENT CARVE ALREADY SPELLS INLINE -- NORMATIVE [CARVE-P10-006].
-      A name is reserved only where the language offers no OTHER INLINE
-      SPELLING for that element -- no second way to wrap a run of text where it
-      stands. `code` and `mark` do not qualify: a code span (`` `x` ``) writes
-      `<code>` and the highlight syntax (`=x=`) writes `<mark>`, each the same
-      authoring gesture on the same run. (The inline literal `` !`x` `` is not
-      a third spelling of `<code>`: §27 drops the wrapper, which is the point
-      of it.) A code span is VERBATIM (`` `*b*` `` -> `<code>*b*</code>`),
-      whereas `:code[*b*]` would parse its body and produce
-      `<code><strong>b</strong></code>`, giving one tag two content models.
+      `code` and `mark` are not reserved: a code span writes `<code>` and the
+      highlight syntax writes `<mark>`. `abbr` is reserved although a
+      document-level `*[HTML]: …` definition also emits `<abbr>`: the
+      definition expands every occurrence of its term, and the attribute
+      marks one.
 
-      THE TEST IS THE SPELLING, NOT THE TAG, and `abbr` is why it has to be
-      said. A document-level `*[HTML]: …` definition also emits `<abbr>`, and
-      that does NOT disqualify the name: a definition is a different mechanism
-      at a different level. It expands EVERY occurrence of its term
-      automatically and document-wide, and cannot mark one.
-      `[HTML]{abbr="Custom"}` marks exactly one, with its own title, while the
-      definition keeps expanding the rest; `[WHO]{abbr="World Health
-      Organization"}` marks a term no definition declares; `[HTML]{abbr}` marks
-      an abbreviation with no expansion at all. None of those is writable with
-      `*[…]:`.
-
-      THE CORE SEMANTIC NAMES ARE CLOSED -- NORMATIVE [CARVE-P10-007]. A name
-      is core when it preserves otherwise-lost authored data or a core clause
-      already governs its interaction. Core recognizes exactly `abbr`, `time`,
-      and `kbd`; `kbd` is also retained for its broad use across comparable
-      systems. `samp`, `var`, `cite`, and `dfn` meet neither criterion and
-      belong to the SemanticSpan extension described in §10.
+      THE CORE SEMANTIC NAMES ARE CLOSED -- NORMATIVE [CARVE-P10-007]. Core
+      recognizes exactly `abbr`, `time` and `kbd`. `samp`, `var`, `cite` and
+      `dfn` belong to the SemanticSpan extension described in §10.
 
       An explicit `abbr` attribute is authoritative over automatic abbreviation
       expansion inside that span. A resolved `abbreviation` child contributes
@@ -302,8 +267,7 @@
       base/annotation children rather than a single inline container.
 
    10. THE OTHER SEMANTIC NAMES ARE AN EXTENSION -- NORMATIVE [CARVE-P10-008]. `samp`, `var`,
-      `cite` and `dfn` carry no data and collide with no core clause, so they
-      are not core: a conformant core renders `[x]{samp}` as an ordinary
+      `cite` and `dfn` are not core: a conformant core renders `[x]{samp}` as an ordinary
       boolean attribute (`<span samp="">x</span>`) and `:samp[x]` through the
       generic `<span class="ext-samp">` fallback.
 

@@ -1,63 +1,26 @@
 (* ============================================================================
-   8b. THE MARKDOWN TARGET'S AUTHORED ESCAPE NARROWS TOO -- NORMATIVE [CARVE-P11-025]. §8a
-      narrowed M1 and left M2 as written. M2 narrows on the same finding, and
-      on a test of the same shape:
-
-      M2a AN `escaped_text` NODE IS EMITTED AS AN ESCAPE WHEN ITS CHARACTER
-          COULD BE READ AS MARKUP AT THE POSITION THE WRITER HAS REACHED ON
-          THE EMITTED LINE, or when it is one of the smart-punctuation
-          triggers `"`, `'`, `-` and `.`. Otherwise the character is emitted
-          BARE.
-      M2b `#` IS READ AS MARKUP ONLY AT A LINE'S CONTENT POSITION, where it
-          opens an ATX heading. An `escaped_text` hash anywhere else on the
-          line is emitted bare. A LINE'S CONTENT POSITION IS AFTER ITS
-          CONTAINER PREFIX: the position is measured on the EMITTED LINE, so
-          every prefix the writer put in front of the content is passed over
-          before the test is decided -- a block quote marker, a list or task
-          marker, a definition marker, the alignment §10 gives a continuation
-          line -- in whatever combination and to whatever depth the writer
-          emitted them. Column 0 is the content position of a line NO
-          container encloses, and of no other line.
-      M2c NOTHING ELSE NARROWS. M1, M3 and §8a are untouched, and a character
-          Markdown reads as markup at that position keeps M2 as written.
+   8b. THE MARKDOWN TARGET'S AUTHORED ESCAPE NARROWS TOO -- NORMATIVE [CARVE-P11-025]. Row
+      M2 of §8's table keeps an `escaped_text` node's escape wherever its
+      character could be read as markup at the position the writer has
+      reached (M2a). `#` is its ONLY narrowing (M2b): a hash is read as markup
+      only at a line's content position, where it opens an ATX heading. A `[`
+      can open a link at any position, so its escape is kept everywhere.
 
         a -- b        ->  a – b
         a \-\- b      ->  a -- b
 
-      `"`, `'`, `-` and `.` are not Markdown metacharacters, so M1 never
-      reached them and M1's narrowing cannot either. M2a names them so the
-      clause that narrows M2 cannot be read as dropping the reason M2 exists.
+      A LINE'S CONTENT POSITION IS AFTER ITS CONTAINER PREFIX. It is measured
+      on the EMITTED LINE: every prefix the writer put in front of the
+      content is passed over first (a block quote marker, a list or task
+      marker, a definition marker, the alignment §10 gives a continuation
+      line), in whatever combination and to whatever depth. Column 0 is the
+      content position of a line NO container encloses, and of no other
+      line. A container this target flattens (a colon fence, a
+      definition-list body) contributes no prefix. This writer re-prefixes
+      every container line, so lazy continuation does not arise.
 
-      THE `[` CASE §8a LEANS ON IS UNTOUCHED, and M2a is written positionally
-      so that it is. A `[` can open a link at any position on a line, so M2a
-      keeps its escape everywhere. `#` is the character that differs, because
-      its reading is positional and every position but one is inert.
-
-      A CONTAINER PREFIX IS PART OF THE LINE, WHICH IS WHY M2b MEASURES ON IT.
-      M2b is this clause's ONLY narrowing; M2a otherwise keeps the escape
-      and M2c closes the set. The block content
-      alone omits the prefix a reader receives; §10 likewise fixes the emitted
-      continuation line before §2 decides which characters need escapes.
-
-      STATED OVER THE LINE, NOT AS A LIST OF CONTAINERS THAT COUNT:
-
-      - A container this target FLATTENS contributes no prefix and needs no
-        exemption. A colon fence emits no marker and a definition-list body
-        emits no indent, so a hash in either lands at column 0 and its escape
-        was already kept.
-      - A container this target DOES prefix is covered whatever its kind,
-        depth or mixture -- `> > `, `- > `, `- [ ] `, `[^a]: `, `   1. ` --
-        without naming any of them.
-
-      Lazy continuation is a parser concept; this writer re-prefixes every
-      container line, so M2b always sees the emitted prefix.
-
-      NARROWING BY POSITION IS UNCHANGED, WHICH IS THE HALF THAT IS EASY TO
-      LOSE. Moving the position does not widen M2b into "an escape behind a
-      prefix is kept". The narrowing holds inside a container exactly as it
-      does outside one, and so does a hash that stands AT the content position
-      but opens no heading, since M2b's reading is CommonMark's and a run
-      closed by a letter is not one:
+      THE NARROWING HOLDS BEHIND A PREFIX AS IT DOES AT COLUMN 0, and a hash
+      at the content position that opens no heading is bare too:
 
         > C\# is a language      ->  > C# is a language
         - issue \#123 fixed      ->  - issue #123 fixed
@@ -113,26 +76,17 @@
         Markdown    <del> </del>
 
    8d. A CONTEXTUAL ESCAPE READS THE EMITTED LINE ACROSS NODES --
-      NORMATIVE [CARVE-P11-050]. Every test above and below that decides an escape by a
-      NEIGHBORING character (M1b, M1c, M1e, M1f, M2b, §8e to §8i) reads the
-      character the writer emits at that position, whichever node emits it:
-      the rest of the same text node, the text of a following span, emphasis
-      or link label, or the writer's own markup. A node boundary is not a line
-      boundary, and a test that stops at the end of the text node passes
-      content through as markup.
+      NORMATIVE [CARVE-P11-050]. Every row of §8's table that decides an
+      escape by a NEIGHBORING character or by a position reads the character
+      the writer emits there, whichever node emits it: the rest of the same
+      text node, the text of a following span, emphasis or link label, or the
+      writer's own markup. A node boundary is not a line boundary.
 
         [<]{.p}[h1]{.nt}[>]{.p}Heading     ->  \<h1>Heading
         [-]{.p}[ x]{.x}                    ->  \- x
 
-      THE HAZARD IS RAW HTML FIRST. Syntax-highlighted code puts every token
-      in its own span, so `<`, the tag name and `>` arrive as three nodes, and
-      a `<` tested against its own node alone is emitted bare: the Markdown
-      carries a live tag the document only showed as text. That is the class
-      PART 9 §25 rules out on the other targets.
-
-      A `>` AT A LINE'S CONTENT POSITION is a block quote marker under M1
-      whatever follows it, so it is escaped whether the rest of its line comes
-      from its own node or another.
+      A `>` AT A LINE'S CONTENT POSITION is escaped whether the rest of its
+      line comes from its own node or another.
 
    8e. AN AMPERSAND THAT WOULD READ AS A CHARACTER REFERENCE IS ESCAPED --
       NORMATIVE [CARVE-P11-051]. Carve has no character references: `&amp;`

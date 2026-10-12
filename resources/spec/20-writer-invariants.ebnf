@@ -12,10 +12,8 @@
 
       The first is about the AST, not the bytes: `fmt` MAY normalize the
       author's spelling (indentation, marker alignment, escape form) but MUST
-      NOT change what the document says. This includes authored destinations
-      whose schemes PART 9 §25 denies at rendered URL sinks: canonical source
-      preserves them and reports no `destination-denied` loss. A consumer
-      rendering that source applies the denylist at its own sinks. The second
+      NOT change what the document says. Authored destinations are preserved,
+      denied schemes included (CARVE-P9-054). The second
       forbids growth -- a value that gains an escape per pass violates it,
       which is how over-escaping is usually first noticed.
 
@@ -322,9 +320,7 @@
       requires: the channel is what a producer MAY expose, never a condition on
       writing.
 
-      A render-time refusal MUST NOT appear in conversion diagnostics or render
-      losses; only lint can report it, so a host reading only the JSON reports
-      cannot observe it.
+      A render-time refusal appears on neither channel (CARVE-P2-024).
 
    2. THE ESCAPING RULE -- NORMATIVE [CARVE-P11-006]. A character is escaped IF AND ONLY IF
       omitting the escape would change the re-parsed AST.
