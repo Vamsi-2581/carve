@@ -3946,7 +3946,8 @@ digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
    FIRST, the leading run itself. `indent = whitespace, {whitespace}` is where
    a tab belongs, and `blank_line = {whitespace}` is the degenerate case of the
    same position -- no non-whitespace character precedes either one. A leading
-   run is tabs OR spaces, never both.
+   run may mix spaces and tabs; it is measured in columns (CARVE-P7-001 items
+   1 and 2).
 
    SECOND, everything after it. Whitespace past the first non-whitespace
    character of a line falls into one of two ROLES. The roles are still worth
