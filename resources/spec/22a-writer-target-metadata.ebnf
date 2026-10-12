@@ -36,9 +36,11 @@
       block this target writes as its children alone: no element, no marker
       and no attribute of its own reaches the output, so nothing there says a
       container was present. Under the CARRIER MODE, which is roundtrip export
-      (PART 10 §13) on this target and is OFF by default, the target brackets
+      on this target, the target brackets
       each one with an HTML comment carrying the Carve opener and the Carve
-      closer VERBATIM:
+      closer VERBATIM. CARVE-P10-015 states the option, the table of both
+      targets' carriers and the rules they share; this clause and §10t state
+      the marker syntax and what is particular to this target.
 
         ::: note                 ->  <!-- carve: ::: note -->
         An admonition body.          An admonition body.
@@ -123,7 +125,7 @@
       returns every container the set names: its kind, its title, its
       attributes, and the nesting its fence widths record. It promises no
       more than that. A construct outside the set degrades exactly as it does
-      with the mode off, the mode off changes no byte, a document
+      with the mode off, a document
       holding no element-less container gains no comment under either
       setting, and this is not the byte-identical source round trip §10k's
       comparison governs.
