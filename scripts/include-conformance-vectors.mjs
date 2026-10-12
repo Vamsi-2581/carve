@@ -157,7 +157,7 @@ export const vectors = [
   },
   {
     name: 'i01-section-after-a-tab',
-    description: 'A tab separates the path from the section name, as whitespace does everywhere else in the directive.',
+    description: 'A tab is content (CARVE-P7-001), not padding: a bare path keeps it, so the path is `child` plus a tab and does not resolve.',
     rules: ['I1', 'slot-adjacency'],
     mode: 'virtual',
     resolver: 'virtual',
@@ -1058,7 +1058,7 @@ export const vectors = [
   // --- I1 the directive's padding is a RUN ---------------------------------
   {
     name: 'i01-padding-is-a-run-of-whitespace',
-    description: 'Extra spaces and tabs around the path are padding, not a reason to leave the directive literal.',
+    description: 'Extra spaces around the path are padding; a tab is content (CARVE-P7-001), so a directive padded with tabs is literal text.',
     rules: ['I1'],
     mode: 'virtual',
     resolver: 'virtual',
@@ -1070,7 +1070,7 @@ export const vectors = [
   },
   {
     name: 'i01-padding-is-required-on-both-sides',
-    description: 'One whitespace character is required on each side: {{c.crv}} and {{ c.crv}} are literal text.',
+    description: 'One space is required on each side: {{c.crv}} and {{ c.crv}} are literal text.',
     rules: ['I1'],
     mode: 'virtual',
     resolver: 'virtual',

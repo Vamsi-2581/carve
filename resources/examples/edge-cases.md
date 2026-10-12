@@ -2064,8 +2064,8 @@ b
 
 :::
 
-A definition **term** is bounded the same way. It holds inline content, not a
-paragraph, so there is nothing for the next line to continue.
+A definition **term** is an ordinary line, so it leaves the quote open for lazy
+text and the next line folds into the term (`CARVE-P2-028`).
 
 ::: compare
 
@@ -2077,10 +2077,10 @@ paragraph, so there is nothing for the next line to continue.
 ```html
 <blockquote>
   <dl>
-    <dt>t</dt>
+    <dt>t
+~</dt>
   </dl>
 </blockquote>
-<p>~</p>
 ```
 
 :::
@@ -8374,7 +8374,9 @@ once, and they do different things.
 
 ## A comment ends the paragraph it sits under
 
-Staying open is not the same as staying in the same *paragraph*. A comment renders nothing, but it is still a block boundary: the line after it begins the item's **second** paragraph. A tight list renders both readings identically, which is why the distinction needs a loose one to show at all - and why the rule went unstated while the sentence above it appeared to promise the opposite.
+A comment at the item's content column closes its paragraph and retains nothing
+(`CARVE-P0-009` X1, `CARVE-P9-053`). The following below-column line opens a
+document paragraph, and the next list starts after it.
 
 ::: compare
 
@@ -8388,10 +8390,11 @@ Staying open is not the same as staying in the same *paragraph*. A comment rende
 
 ```html
 <ul>
-  <li><p>a</p>
-    <p>b</p>
-  </li>
-  <li><p>c</p></li>
+  <li>a</li>
+</ul>
+<p>b</p>
+<ul>
+  <li>c</li>
 </ul>
 ```
 
@@ -14057,9 +14060,9 @@ ways in one parse, with a paragraph open that ` y` would then have folded into.
 
 ## A below-column marker after a comment, where no paragraph is open
 
-A comment closes the paragraph. When the item retains the following line,
-its content column still sets the minimum indentation for a child list.
-A marker below that column starts paragraph text inside the retained item.
+A comment closes the paragraph. At the content column it retains nothing
+(`CARVE-P0-009` X1, `CARVE-P9-053`), so a following below-column marker starts
+a separate list.
 
 ::: compare
 
@@ -14073,9 +14076,10 @@ A marker below that column starts paragraph text inside the retained item.
 
 ```html
 <ul>
-  <li>a
-    - s
-  </li>
+  <li>a</li>
+</ul>
+<ul>
+  <li>s</li>
 </ul>
 ```
 
@@ -14095,10 +14099,11 @@ Ordered markers follow the same column rule:
 
 ```html
 <ul>
-  <li>a
-    1. o
-  </li>
+  <li>a</li>
 </ul>
+<ol>
+  <li>o</li>
+</ol>
 ```
 
 :::
@@ -14117,10 +14122,9 @@ A heading-shaped line below the content column is also paragraph text:
 
 ```html
 <ul>
-  <li>a
-    # h
-  </li>
+  <li>a</li>
 </ul>
+<p># h</p>
 ```
 
 :::
@@ -17159,18 +17163,9 @@ x ^[a [^1]{.k} c]
 
 ## A footnote in link text nests the anchors
 
-PART 9 §16 records this as a LIMITATION: a footnote "inside link text
-(`[t[^1]](u)`) or inside a heading later cloned by a `</#id>` crossref nests an
-`<a>` in an `<a>`; avoid footnotes in those positions."
-
-That is advice about what an author should expect, and it states the outcome. It
-does not put the document outside the language: the noteref lands where it was
-written, inside the link text, and the note takes its number from the one
-document-order sequence like any other.
-
-Both note forms reach it the same way, which is what makes the pairing worth
-pinning - the executable spec rendered the inline form and refused the reference
-one (markup-carve/carve#1188).
+Under PART 9 §16 and markup-carve/carve#2978 Q12, a footnote in link text
+renders as a `<sup>` with its reference id and authored attributes. It counts
+toward reference ordinals, and its endnote keeps the backlink to that id.
 
 ::: compare
 
@@ -17181,7 +17176,7 @@ a [t[^1]](/u) b
 ```
 
 ```html
-<p>a <a href="/u">t<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></a> b</p>
+<p>a <a href="/u">t<sup id="fnref1">1</sup></a> b</p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
@@ -17201,7 +17196,7 @@ a [t^[n]](/u) b
 ```
 
 ```html
-<p>a <a href="/u">t<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></a> b</p>
+<p>a <a href="/u">t<sup id="fnref1">1</sup></a> b</p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
@@ -17216,18 +17211,9 @@ a [t^[n]](/u) b
 
 ## A footnote in reference link text nests the anchors too
 
-The PART 9 §16 limitation is about LINK TEXT, not about one spelling of a
-link: "a footnote (reference `[^1]` or inline `^[…]`) inside link text
-(`[t[^1]](u)`) or inside a heading later cloned by a `</#id>` crossref nests an
-`<a>` in an `<a>`". A reference tail reaches the same place by a different
-route, and reaches the same answer - the noteref lands where it was written and
-the note draws its number from the one document-order sequence.
-
-The neighboring section pins the inline-tail half of that cross. This one pins
-the reference-tail half, which the executable spec used to refuse: its own
-resolution frame carried the link text through a JSON payload, and
-`JSON.stringify` escaped the frame's field separator, so the footnote pass never
-saw the noteref sitting in it (markup-carve/carve#1195).
+Under PART 9 §16 and markup-carve/carve#2978 Q12, a footnote in link text
+renders as a `<sup>` with its reference id and authored attributes. It counts
+toward reference ordinals, and its endnote keeps the backlink to that id.
 
 ::: compare
 
@@ -17240,7 +17226,7 @@ a [t[^1]][r] b
 ```
 
 ```html
-<p>a <a href="/u">t<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></a> b</p>
+<p>a <a href="/u">t<sup id="fnref1">1</sup></a> b</p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
@@ -17262,7 +17248,7 @@ a [t^[n]][r] b
 ```
 
 ```html
-<p>a <a href="/u">t<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></a> b</p>
+<p>a <a href="/u">t<sup id="fnref1">1</sup></a> b</p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
@@ -17286,7 +17272,7 @@ a [t[^1]][r] c [^1] b
 ```
 
 ```html
-<p>a <a href="/u">t<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></a> c <a id="fnref1-2" href="#fn1" role="doc-noteref"><sup>1</sup></a> b</p>
+<p>a <a href="/u">t<sup id="fnref1">1</sup></a> c <a id="fnref1-2" href="#fn1" role="doc-noteref"><sup>1</sup></a> b</p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
@@ -17378,7 +17364,7 @@ a [^1] b
   <hr>
   <ol>
     <li id="fn1">
-      <p>see <a href="/u">t<a id="fnref2" href="#fn2" role="doc-noteref"><sup>2</sup></a></a><a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+      <p>see <a href="/u">t<sup id="fnref2">2</sup></a><a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
     </li>
     <li id="fn2">
       <p>two<a href="#fnref2" role="doc-backlink" aria-label="Back to reference">↩</a></p>
@@ -23466,9 +23452,9 @@ tail
 
 ## What a content-column block does not reach
 
-Two controls, both unchanged and both unanimous. BELOW the content column at a
-NONZERO column, the following line reaches the item only through the lazy fold,
-and §24 C3's comment exception keeps that path open:
+A comment at the content column closes the item's paragraph and retains
+nothing (`CARVE-P0-009` X1, `CARVE-P9-053`). The following below-column line
+opens a document paragraph:
 
 ::: compare
 
@@ -23480,10 +23466,9 @@ and §24 C3's comment exception keeps that path open:
 
 ```html
 <ul>
-  <li>a
-    b
-  </li>
+  <li>a</li>
 </ul>
+<p>b</p>
 ```
 
 :::
@@ -32523,20 +32508,19 @@ y
 :::
 ## A degraded comment fence leaves a lazy follower where the line form does
 
-§28 says an opener with no exact-width closer ahead opens NO block, so there is
-no verbatim body under it and nothing for the item's collector to stop at. A
-line that would lazily continue the item's paragraph past a `%%` line comment
-therefore continues it past a degraded fence too
-(markup-carve/carve#1914).
+§28 says an opener with no exact-width closer ahead opens NO block and becomes
+a line comment. At or past the content column, both forms close the item's
+paragraph and retain nothing (`CARVE-P0-009` X1, `CARVE-P9-053`). A following
+below-column line opens a document paragraph.
 
 Section 443 pins the band where the follower sits at column 0 or at the content
-column; section 445 pins the container's own column 0. This is the third
-follower shape: a LAZY line, below the content column or continuing a paragraph
-inside the item, which those sections left out.
+column; section 445 pins the container's own column 0. These rows show
+a below-column line outside the item and a lazy continuation of a paragraph
+opened at the content column.
 
 The reported document. `- x` hands out at column 2, the unterminated fence is
-written there, and `y` at column 1 is below the column - a lazy continuation of
-the item's paragraph.
+written there, and `y` at column 1 is below the column and opens a document
+paragraph.
 
 ::: compare
 
@@ -32548,10 +32532,9 @@ the item's paragraph.
 
 ```html
 <ul>
-  <li>x
-    y
-  </li>
+  <li>x</li>
 </ul>
+<p>y</p>
 ```
 
 :::
@@ -32569,10 +32552,9 @@ substitution requires the row above to have.
 
 ```html
 <ul>
-  <li>x
-    y
-  </li>
+  <li>x</li>
 </ul>
+<p>y</p>
 ```
 
 :::
@@ -32623,7 +32605,8 @@ y
 :::
 
 The band moves with the CONTENT column, not with column 2. An ordered marker
-hands out at 3, so the fence is at 3 and the lazy follower at 2.
+hands out at 3, so the fence is at 3 and the below-column follower at 2 opens
+a document paragraph.
 
 ::: compare
 
@@ -32635,10 +32618,9 @@ hands out at 3, so the fence is at 3 and the lazy follower at 2.
 
 ```html
 <ol>
-  <li>x
-    y
-  </li>
+  <li>x</li>
 </ol>
+<p>y</p>
 ```
 
 :::
@@ -32655,16 +32637,15 @@ A padded marker hands out at 4.
 
 ```html
 <ul>
-  <li>x
-    y
-  </li>
+  <li>x</li>
 </ul>
+<p>y</p>
 ```
 
 :::
 
-Past the content column it is still one line comment, and the follower is still
-the item's.
+Past the content column it is still one line comment, and the follower opens
+a document paragraph.
 
 ::: compare
 
@@ -32676,17 +32657,17 @@ the item's.
 
 ```html
 <ul>
-  <li>x
-    y
-  </li>
+  <li>x</li>
 </ul>
+<p>y</p>
 ```
 
 :::
 
 A fence that DOES close is not reached by §28 at all - it is an ordinary comment
-block. It ends the paragraph under it and leaves the item open in the same way,
-so this row is what the band answers rather than what the fallback path does.
+block. At the content column it ends the paragraph under it and retains
+nothing, so the below-column follower opens a document paragraph
+(`CARVE-P0-009` X1, `CARVE-P9-053`).
 
 ::: compare
 
@@ -32699,10 +32680,9 @@ so this row is what the band answers rather than what the fallback path does.
 
 ```html
 <ul>
-  <li>x
-    y
-  </li>
+  <li>x</li>
 </ul>
+<p>y</p>
 ```
 
 :::
@@ -41032,9 +41012,9 @@ p</code></li>
 
 ## A nested quoted term leaves no paragraph for a lazy line
 
-PART 0 S4 asks whether the innermost quoted block holds an open paragraph.
-A definition term holds inline content, so the unmarked line starts outside
-both quotes.
+PART 0 S4 asks whether the innermost quoted leaf accepts lazy text. A
+definition term is an ordinary line and accepts it, so the unmarked line folds
+into the term (`CARVE-P2-028`).
 
 ::: compare
 
@@ -41047,11 +41027,11 @@ tail
 <blockquote>
   <blockquote>
     <dl>
-      <dt>term</dt>
+      <dt>term
+tail</dt>
     </dl>
   </blockquote>
 </blockquote>
-<p>tail</p>
 ```
 
 :::
@@ -42399,19 +42379,12 @@ start of its text and after a tab.
 
 ## A band paragraph after an invisible line leaves the item loose
 
-PART 9 §17 L1b reads tightness over the item's blocks and the blank lines
-between them and names no column, so the authored column of a second paragraph
-cannot decide it. A follower in the band between the marker column and the
-content column answers L1b exactly as one at the content column does, and
-`186-an-invisible-line-does-not-cancel-a-blank-line-separation` pins that answer
-LOOSE.
-
-The first pair is the narrowest band. The second widens it to three columns
-under a four-wide marker and the third is its content-column twin, which agrees.
-The fourth writes the invisible line as a `%%%` span. The last pair is §17 L2's
-half of the rule: a sub-list in the band ATTACHES, so it consumes the separation
-and the item stays tight, which is what the same tree written at the content
-column already answered (carve#2548).
+A comment at the content column retains nothing, so the below-column followers
+in the first two rows open document paragraphs (`CARVE-P0-009` X1,
+`CARVE-P9-053`). The third row's content-column follower is the item's second
+paragraph, and the blank-line separation makes the item loose (PART 9 §17 L1b).
+The fourth row's comment fence also leaves the follower outside the item, and
+the last row's below-column marker starts a separate list.
 
 ::: compare
 
@@ -42424,10 +42397,9 @@ column already answered (carve#2548).
 
 ````html
 <ul>
-  <li><p>t</p>
-    <p>z</p>
-  </li>
+  <li>t</li>
 </ul>
+<p>z</p>
 ````
 
 :::
@@ -42443,10 +42415,9 @@ column already answered (carve#2548).
 
 ````html
 <ol start="10">
-  <li><p>t</p>
-    <p>z</p>
-  </li>
+  <li>t</li>
 </ol>
+<p>z</p>
 ````
 
 :::
@@ -42483,10 +42454,9 @@ column already answered (carve#2548).
 
 ````html
 <ul>
-  <li><p>t</p>
-    <p>z</p>
-  </li>
+  <li>t</li>
 </ul>
+<p>z</p>
 ````
 
 :::
@@ -42503,10 +42473,13 @@ column already answered (carve#2548).
 
 ````html
 <ul>
-  <li><p>t</p>
-    <p>- b</p>
-  </li>
-  <li><p>s</p></li>
+  <li>t</li>
+</ul>
+<ul>
+  <li>b</li>
+</ul>
+<ul>
+  <li>s</li>
 </ul>
 ````
 
@@ -48170,17 +48143,9 @@ its column (markup-carve/carve#2950).
 
 ## A line retained after a comment opens a paragraph
 
-After a comment, an item keeps a following line that falls below its content
-column, as the start of a paragraph (PART 9 §24 C3). That paragraph is open at
-the deepest frame, so a later below-column line continues it (`CARVE-P0-009`).
-In a quote the unprefixed line folds into the innermost open paragraph, and a
-list marker is no exclusion (`CARVE-P2-008`, markup-carve/carve-js#2772).
-
-The ruled source of markup-carve/carve-js#2772. The comment span sits at the
-child's content column and the fence run below it is one column short, so the
-item retains it as the start of a paragraph. The run has no closer and is an
-inline code span, and `- tail` folds into it. The second source spells the child
-with a container on its marker line and reads the same way.
+A comment at or past an item’s content column closes its paragraph and grants
+no retention to a following below-column line; only a comment consumed below
+that column grants retention (`CARVE-P0-009` X1, `CARVE-P9-053`).
 
 ::: compare
 
@@ -48201,16 +48166,17 @@ with a container on its marker line and reads the same way.
     <li>
       <div class="box">
         <ul>
-          <li>inner
-            <code>
-code
-- tail</code>
-          </li>
+          <li>inner</li>
         </ul>
+        <pre><code>code
+</code></pre>
       </div>
     </li>
   </ul>
 </blockquote>
+<ul>
+  <li>tail</li>
+</ul>
 ```
 
 ````carve
@@ -48232,22 +48198,25 @@ code
         <ul>
           <li>
             <div class="inner">
-              <p><code>
-code
-- tail</code></p>
+
             </div>
           </li>
         </ul>
+        <pre><code>code
+</code></pre>
       </div>
     </li>
   </ul>
 </blockquote>
+<ul>
+  <li>tail</li>
+</ul>
 ```
 
 :::
 
-The same fold without the code span and without the quote: the retained line is
-a paragraph of the inner item, and the flush-left line continues it.
+The below-column line belongs to the outer item after the sublist, and the
+flush-left line continues its paragraph.
 
 ::: compare
 
@@ -48263,20 +48232,18 @@ tail
 <ul>
   <li>a
     <ul>
-      <li>inner
-        code
-tail
-      </li>
+      <li>inner</li>
     </ul>
+    code
+tail
   </li>
 </ul>
 ```
 
 :::
 
-Two controls. A marker at the list's own column is a sibling item before any
-fold is considered, and a line at document column 0 right after the comment is
-not retained at all.
+The below-column line opens a document paragraph. A following list marker
+does not interrupt it; a line at document column 0 also leaves the item.
 
 ::: compare
 
@@ -48289,11 +48256,10 @@ not retained at all.
 
 ```html
 <ul>
-  <li>inner
-    code
-  </li>
-  <li>tail</li>
+  <li>inner</li>
 </ul>
+<p>code
+- tail</p>
 ```
 
 ````carve
@@ -48320,7 +48286,7 @@ owns the line: an opener past the content column of a hosted container, and a
 fence closer written after its item had ended (markup-carve/carve#2925).
 
 A named colon opener written past the content column inside a container an item
-hosts. The box holds no paragraph, so the opener is recognized and takes its
+hosts. The opener is recognized and takes its
 authored column as the base of that one block (`CARVE-P0-004`,
 markup-carve/carve-php#3137). The quoted spelling reads the same way, and with
 the box left unclosed the line below still leaves the quote.
@@ -48374,8 +48340,8 @@ tail
 
 :::
 
-The control. Under a paragraph of the box the same line is over-indented text,
-which establishes no base.
+Under a paragraph of the box the same opener closes the paragraph and
+establishes its own base (`CARVE-P2-017`, `CARVE-P0-004`).
 
 :::: compare
 
@@ -48393,10 +48359,10 @@ tail
 <ul>
   <li>
     <div class="box">
-      <p>text
-::: note
-x
-:::</p>
+      <p>text</p>
+      <aside class="admonition note" aria-label="Note">
+        <p>x</p>
+      </aside>
     </div>
   </li>
 </ul>
@@ -49172,8 +49138,8 @@ a </#no	pe> b
 ## An opener past a hosted container's column opens there
 
 A recognized block opener past the content column of a colon container that a
-list item hosts takes its authored column as the base of that one block, where
-the container holds no open paragraph (`CARVE-P0-004`, ruled on
+list item hosts takes its authored column as the base of that one block
+(`CARVE-P0-004`, `CARVE-P2-017`, ruled on
 markup-carve/carve#2973). The line-block spelling, a code fence and a heading
 open like a named container does, with the container on the marker line or
 below it, quoted or not.
@@ -49245,8 +49211,8 @@ tail
 
 ::::
 
-The control. Under a paragraph of the container the same lines are
-over-indented text.
+Under a paragraph of the container the same opener closes the paragraph
+and opens its block (`CARVE-P2-017`, `CARVE-P0-004`).
 
 :::: compare
 
@@ -49264,10 +49230,10 @@ tail
 <ul>
   <li>
     <div class="box">
-      <p>text
-::: |
-x
-:::</p>
+      <p>text</p>
+      <div class="line-block">
+        <p>x</p>
+      </div>
     </div>
   </li>
 </ul>
@@ -49302,3 +49268,501 @@ column belongs to the item and opens there too.
 ```
 
 ::::
+
+## A description marker followed by a no-break space has content
+
+The content test after a description marker ignores a space and a tab and
+nothing else (`CARVE-P2-027`). A no-break space after the separator is
+content, so the line opens a description that holds it, alone or before text.
+
+::: compare
+
+```carve
+:: t
+:  x
+```
+
+```html
+<dl>
+  <dt>t</dt>
+  <dd>&nbsp;x</dd>
+</dl>
+```
+
+```carve
+:: t
+:  
+```
+
+```html
+<dl>
+  <dt>t</dt>
+  <dd>&nbsp;</dd>
+</dl>
+```
+
+:::
+
+The control. A marker followed by spaces only has no content and folds into
+the term.
+
+::: compare
+
+```carve
+:: t
+:   
+```
+
+```html
+<dl>
+  <dt>t
+:</dt>
+</dl>
+```
+
+:::
+
+## A closed fence in a quoted sub-item after a lazy line leaves no paragraph
+
+A lazy line folds into the paragraph of the nested item, and a fence at that
+item's column then closes it. The closed code block leaves no paragraph in any
+frame, so the unmarked line below closes the quote and the list
+(`CARVE-P0-009`, markup-carve/carve#2973). The unquoted spelling reads the
+same way.
+
+::: compare
+
+````carve
+> - a
+>   - c
+> b
+>     ```
+>     y
+>     ```
+flush
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>a
+      <ul>
+        <li>c
+b
+          <pre><code>y
+</code></pre>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</blockquote>
+<p>flush</p>
+```
+
+````carve
+- a
+  - c
+b
+    ```
+    y
+    ```
+flush
+````
+
+```html
+<ul>
+  <li>a
+    <ul>
+      <li>c
+b
+        <pre><code>y
+</code></pre>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>flush</p>
+```
+
+:::
+
+## A quoted term takes a lazy line
+
+A term is an ordinary line wherever it is written, so an unmarked plain line
+after it folds into the term, under a quote, a quoted item or an item-hosted
+quote alike (`CARVE-P2-028`, markup-carve/carve-js#2860).
+
+::: compare
+
+```carve
+> :: t
+tail
+```
+
+```html
+<blockquote>
+  <dl>
+    <dt>t
+tail</dt>
+  </dl>
+</blockquote>
+```
+
+:::
+
+::: compare
+
+```carve
+> - :: t
+tail
+```
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <dl>
+        <dt>t
+tail</dt>
+      </dl>
+    </li>
+  </ul>
+</blockquote>
+```
+
+:::
+
+::: compare
+
+```carve
+- > :: term
+tail
+```
+
+```html
+<ul>
+  <li>
+    <blockquote>
+      <dl>
+        <dt>term
+tail</dt>
+      </dl>
+    </blockquote>
+  </li>
+</ul>
+```
+
+:::
+
+## An at-column comment retains nothing
+
+A comment at or past the content column closes the item’s paragraph and grants
+no retention to the following below-column line (`CARVE-P0-009` X1,
+`CARVE-P9-053`).
+
+::: compare
+
+````carve
+> - ::: box
+>   - ::: inner
+>     %% c
+>    text
+tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <ul>
+          <li>
+            <div class="inner">
+
+            </div>
+          </li>
+        </ul>
+        <p>text
+tail</p>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+```
+
+````carve
+- inner
+  %% c
+ code
+- tail
+````
+
+```html
+<ul>
+  <li>inner</li>
+</ul>
+<p>code
+- tail</p>
+```
+
+:::
+
+## A shifted fence in a quoted container's body stores no continuation claim
+
+A fence that opens past a quoted container’s body column leaves no paragraph
+for an unmarked line to continue (`CARVE-P0-013`, `CARVE-P0-006`).
+
+::: compare
+
+````carve
+> - ::: box
+>    ```
+>    code
+tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <pre><code>code
+</code></pre>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+<p>tail</p>
+```
+
+````carve
+> > - ::: box
+> >   - inner
+> >     %% c
+> >    ```
+> >    code
+- tail
+````
+
+```html
+<blockquote>
+  <blockquote>
+    <ul>
+      <li>
+        <div class="box">
+          <ul>
+            <li>inner</li>
+          </ul>
+          <pre><code>code
+</code></pre>
+        </div>
+      </li>
+    </ul>
+  </blockquote>
+</blockquote>
+<ul>
+  <li>tail</li>
+</ul>
+```
+
+:::
+
+## An opener past a hosted container's column interrupts its open paragraph
+
+A recognized opener past an item-hosted colon body's column interrupts its
+open paragraph as it does in an item (`CARVE-P2-017`, `CARVE-P0-004`).
+
+:::: compare
+
+````carve
+- ::: box
+  text
+   # h
+  :::
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+      <p>text</p>
+      <h1 id="h">h</h1>
+    </div>
+  </li>
+</ul>
+```
+
+````carve
+> - ::: box
+>   text
+>    ```
+>    x
+>    ```
+>   :::
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <p>text</p>
+        <pre><code>x
+</code></pre>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+```
+
+::::
+
+## A footnote reference in link text keeps its id on the sup
+
+PART 9 §16 and markup-carve/carve#2978 Q12 place the reference id and authored
+attributes on the `<sup>` inside link text. Repeated references keep distinct
+ids and backlinks. An authored `data-carve-footnote-label` stays on that carrier.
+
+::: compare
+
+```carve
+a [t[^1]{.x}](/u) c [^1] b
+
+[^1]: n
+```
+
+```html
+<p>a <a href="/u">t<sup id="fnref1" class="x">1</sup></a> c <a id="fnref1-2" href="#fn1" role="doc-noteref"><sup>1</sup></a> b</p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>n<a href="#fnref1" role="doc-backlink" aria-label="Back to reference 1">↩<sup>1</sup></a> <a href="#fnref1-2" role="doc-backlink" aria-label="Back to reference 2">↩<sup>2</sup></a></p>
+    </li>
+  </ol>
+</section>
+```
+
+:::
+
+::: compare
+
+```carve
+a [t[^named]{data-carve-footnote-label="named"}][r] b
+
+[r]: /u
+
+[^named]: n
+```
+
+```html
+<p>a <a href="/u">t<sup id="fnref1" data-carve-footnote-label="named">1</sup></a> b</p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>n<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+    </li>
+  </ol>
+</section>
+```
+
+:::
+
+## A head-row alignment marker sets the whole column
+
+CARVE-P12-039 (markup-carve/carve#2978 Q14): a head-row alignment marker sets
+the whole column and wins over a delimiter colon. A body-cell marker overrides
+only its own cell. Columns without a head marker keep delimiter alignment.
+
+::: compare
+
+```carve
+|=> a |= b |
+|:-- |:-- |
+| 1 | 2 |
+```
+
+```html
+<table>
+  <thead>
+    <tr><th scope="col" style="text-align: right;">a</th><th scope="col" style="text-align: left;">b</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="text-align: right;">1</td><td style="text-align: left;">2</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+|=~ a |= b |
+|--: |:-- |
+| 1 |> 2 |
+| 3 | 4 |
+```
+
+```html
+<table>
+  <thead>
+    <tr><th scope="col" style="text-align: center;">a</th><th scope="col" style="text-align: left;">b</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="text-align: center;">1</td><td style="text-align: right;">2</td></tr>
+    <tr><td style="text-align: center;">3</td><td style="text-align: left;">4</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+## A line block takes a lazy line whatever its last payload line
+
+An unclosed line block keeps a following lazy line in its quote even when its
+payload looks like a fence or heading (carve-php#3237). The payload is inline
+content.
+
+::: compare
+
+````carve
+> ::: |
+> ```
+> x
+after
+````
+
+```html
+<blockquote>
+  <div class="line-block">
+    <p><code>
+x
+after</code></p>
+  </div>
+</blockquote>
+```
+
+:::
+
+::: compare
+
+````carve
+> ::: |
+> # h
+> x
+after
+````
+
+```html
+<blockquote>
+  <div class="line-block">
+    <p># h<br>
+x<br>
+after</p>
+  </div>
+</blockquote>
+```
+
+:::

@@ -69,10 +69,10 @@ tail
 <ul>
   <li>
     <div class="box">
-      <p>text
-::: |
-x
-:::</p>
+      <p>text</p>
+      <div class="line-block">
+        <p>x</p>
+      </div>
     </div>
   </li>
 </ul>
