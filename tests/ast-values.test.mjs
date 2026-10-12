@@ -150,7 +150,8 @@ const LAST_MEASURED = new Map([
   ['list.tight', 3],
   ['footnote_ref.label', 1],
   ['footnote_ref.number', 1],
-  ['text.value', 1],
+  ['text.value', 2],
+  ['table_cell.align', 2],
 ])
 
 /** A measurement of `count` distinct documents - the reconciler counts them. */
@@ -196,10 +197,10 @@ test('and a real divergence the shipped file does not declare is caught', () => 
   // declaration; neither one asserts that the file as shipped still lets an
   // undeclared divergence through.
   const measured = asMeasured(LAST_MEASURED)
-  measured.set('table_cell.align', new Set(['a.crv', 'b.crv']))
+  measured.set('heading.level', new Set(['a.crv', 'b.crv']))
   const problems = reconcileDeclared(measured, shippedDeclaration())
   assert.equal(problems.length, 1)
-  assert.match(problems[0], /^NEW\s+table_cell\.align diverges in 2 document\(s\)/)
+  assert.match(problems[0], /^NEW\s+heading\.level diverges in 2 document\(s\)/)
 })
 
 test('every declared row names a fully qualified engine issue', () => {

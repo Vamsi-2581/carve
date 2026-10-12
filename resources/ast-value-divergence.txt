@@ -47,4 +47,5 @@
 list.tight  3  carve-rs loosens an item whose description body holds a second paragraph; markup-carve/carve-rs#2583
 footnote_ref.label  1  carve-php reads a nested footnote definition as item text and numbers the references differently; markup-carve/carve-php#3240
 footnote_ref.number  1  the same document as the `footnote_ref.label` row; markup-carve/carve-php#3240
-text.value  1  carve-js and carve-rs read a heading past an item-hosted container's column as text; markup-carve/carve-js#2875
+text.value  2  carve-js and carve-rs read a heading past an item-hosted container's column as text; markup-carve/carve-js#2875, markup-carve/carve-js#2881
+table_cell.align  2  carve-php lets the delimiter colon win over a head-row alignment marker, section 574; markup-carve/carve-php#3249

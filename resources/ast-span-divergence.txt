@@ -48,8 +48,8 @@
 # and neither engine has a row to answer for. The document arrived with
 # markup-carve/carve#2426.
 
-list (extent)  1  carve-php opens at the parent content column, carve-js and carve-rs at the marker; both conformant under markup-carve/carve#1928
-list_item (extent)  1  carve-php opens at the parent content column, carve-js and carve-rs at the marker; both conformant under markup-carve/carve#1928
+list (extent)  9  carve-php opens at the parent content column in section 503, both conformant under markup-carve/carve#1928; the other eight are section 556, 557 and 570 rows the pinned engines read before their rulings: markup-carve/carve-js#2838, markup-carve/carve-js#2879, markup-carve/carve-php#3178, markup-carve/carve-php#3240, markup-carve/carve-php#3242, markup-carve/carve-rs#2533, markup-carve/carve-rs#2536
+list_item (extent)  9  the same nine documents as the `list` row; markup-carve/carve#1928, markup-carve/carve-js#2838, markup-carve/carve-js#2879, markup-carve/carve-php#3178, markup-carve/carve-php#3240, markup-carve/carve-php#3242, markup-carve/carve-rs#2533, markup-carve/carve-rs#2536
 
 # THE ROWS BELOW are not that case. On each the engines read the source into
 # different trees, because the corpus is ahead of one or more of them, and the
@@ -63,6 +63,9 @@ list_item (extent)  1  carve-php opens at the parent content column, carve-js an
 # markup-carve/carve-js#2772 and the pin move past markup-carve/carve-js#2838.
 definition_list (extent)  2  carve-rs ends the description above a blank-separated code block at its body column; markup-carve/carve-rs#2582
 definition_description (extent)  2  the same two documents as the `definition_list` row; markup-carve/carve-rs#2582
-paragraph (extent)  2  carve-php moves a nested note's code blocks into the item, markup-carve/carve-php#3240; carve-js ends the item above a retained line, markup-carve/carve-js#2772
+paragraph (extent)  5  carve-php moves a nested note's code blocks into the item, markup-carve/carve-php#3240; carve-js ends the item above a retained line, markup-carve/carve-js#2879; carve-php keeps a line after an at-column comment, markup-carve/carve-php#3242; an opener past a hosted colon body and a footnote reference in link text, ahead of the pin, markup-carve/carve-js#2881, markup-carve/carve-js#2882
 footnote_ref (extent)  1  carve-php reads the nested footnote definition as item text, so its reference list differs; markup-carve/carve-php#3240
-text (extent)  1  carve-js and carve-rs read a heading past an item-hosted container's column as text; markup-carve/carve-js#2875
+text (extent)  3  carve-js and carve-rs read a heading past an item-hosted container's column as text, markup-carve/carve-js#2875, markup-carve/carve-js#2881; carve-php places a footnote reference in link text, markup-carve/carve-js#2882
+admonition (extent)  1  section 570: carve-rs ends the outer container above the line an at-column comment no longer retains and carve-php keeps it in the inner one; markup-carve/carve-js#2879, markup-carve/carve-php#3242
+footnote (extent)  1  carve-php ends a note referenced from link text early, section 573; markup-carve/carve-js#2882
+hard_break (extent)  1  carve-php ends a line-block break before the next line's quote prefix, section 575; markup-carve/carve-php#3251
