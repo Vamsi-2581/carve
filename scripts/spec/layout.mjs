@@ -5399,6 +5399,20 @@ function collectItems(lines, i, list, state, ind, meas) {
     // follow it (carve#2411), so none of them opens an authored base.
     let leadTerm = DEFLIST_TERM.test(head.text.replace(/^[ \t]+/, ''))
     let pendingHeadTerm = DEFLIST_TERM.test(head.text) ? i : null
+    const measureHeadTerm = () => {
+      const candidate = [head.text]
+      for (let at = headIndex + 1; at < lines.length; at++) {
+        const measured = ind(at)
+        if (measured.col <= baseIndent && matchMarkerAt(measured)) break
+        if (isBlank(lines[at]) && at + 1 < lines.length && !isBlank(lines[at + 1]) &&
+          ind(at + 1).col < contentCol) break
+        candidate.push(measured.col < contentCol
+          ? lines[at] : dedentMeasured(measured, lines[at], contentCol).text)
+      }
+      authoredBlockLimit = headIndex + authoredBlockEnd(candidate, 0, 0, state)
+      authoredContainer = true
+      pendingHeadTerm = null
+    }
     const insideFence = () => fence.opaque !== null || fence.colon.length !== 0
     // Which open colon containers are line blocks: their payload is inline, so
     // a span in it pairs wherever its lines start (ruled on carve-php#3137).
@@ -5902,6 +5916,19 @@ function collectItems(lines, i, list, state, ind, meas) {
           break
         }
         if (col >= contentCol && !(nm && nm.indent >= contentCol)) {
+          if (pendingHeadTerm !== null) measureHeadTerm()
+          if (authoredContainer && pendingAuthoredBlock !== null) {
+            authoredBlockLimit = authoredBlockEnd(lines, pendingAuthoredBlock, contentCol, state)
+            pendingAuthoredBlock = null
+          }
+          // A paragraph inside a held container is not the item's own
+          // second paragraph (PART 9 section 17 L1, carve#2988).
+          if (authoredContainer && authoredBlockLimit !== null && j < authoredBlockLimit) {
+            if (!descendantFence) pushLine('', BLANK_MEAS)
+            closePara()
+            i = j
+            continue
+          }
           if ((subCol >= 0 && col >= subCol) || (headSubCol >= 0 && col >= headSubCol)) {
             // Content at or past the first sub-list's content column belongs to
             // the SUB-LIST, not this item -- a blank inside the sub-list must
@@ -6068,18 +6095,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // column like one written below it, so its description keeps what
         // reaches the body column (CARVE-P0-018, CARVE-P2-028).
         if (pendingHeadTerm !== null && mayOpenAuthoredBlock) {
-          const candidate = [head.text]
-          for (let at = headIndex + 1; at < lines.length; at++) {
-            const measured = ind(at)
-            if (measured.col <= baseIndent && matchMarkerAt(measured)) break
-            if (isBlank(lines[at]) && at + 1 < lines.length && !isBlank(lines[at + 1]) &&
-              ind(at + 1).col < contentCol) break
-            candidate.push(measured.col < contentCol
-              ? lines[at] : dedentMeasured(measured, lines[at], contentCol).text)
-          }
-          authoredBlockLimit = headIndex + authoredBlockEnd(candidate, 0, 0, state)
-          authoredContainer = true
-          pendingHeadTerm = null
+          measureHeadTerm()
         }
         if (pendingAuthoredBlock !== null && mayOpenAuthoredBlock) {
           authoredBlockLimit = authoredBlockEnd(lines, pendingAuthoredBlock, contentCol, state)
