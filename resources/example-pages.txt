@@ -330,6 +330,7 @@ index: examples/edge-cases/index.md
   a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text
   a-band-paragraph-after-an-invisible-line-leaves-the-item-loose
   a-paragraph-in-a-held-container-does-not-loosen-the-item
+  a-description-marker-followed-by-a-no-break-space-has-content
 
 [edge-containers] Containers, quotes and fences
 > Divs, block quotes, code and comment fences: nesting, lazy continuation, absorption and what closes what.

@@ -3175,7 +3175,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         !isOrderedMarkerLine(cur) &&
         !isCodeBlockOpener(cur) &&
         !CAPTION.test(cur)
-      const isEntry = (s) => /^::?[ ](?=[ \t]*\S)/.test(s) && !/^:::/.test(s)
+      const isEntry = (s) => /^::?[ ](?=[ \t]*[^ \t\n\r])/.test(s) && !/^:::/.test(s)
       // A definition/term line folded into an open item BELOW its content column
       // arrives LAZY-framed (the item-fold pass at C3). A `:  def` marker is a
       // LENIENT def-list entry: it attaches as a fresh <dd> to its open term even
