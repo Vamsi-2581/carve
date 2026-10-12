@@ -35,7 +35,9 @@ for (const depth of [0, 1, 2]) for (const nesting of [0, 1, 2]) for (const follo
     const marker = ' '.repeat(2 * nesting)
     lines.push(marker + '- para', marker + '  ```', marker + '  code', blank ? marker + '  ' : '', marker + follower, marker + '  ```')
     const source = lines.map((line) => (blank ? '> '.repeat(depth) + line : ('> '.repeat(depth) + line).trimEnd())).join('\n') + '\n'
-    assert.ok(!html(source).includes('<pre>'), html(source))
+    // The first run closes nothing, so `code` is no code block's payload. The
+    // last run may open one of its own past the outer item's column.
+    assert.ok(!html(source).includes('<pre><code>code'), html(source))
   })
   test(`without the blank the run is searched past the line and closes the fence: depth ${depth}, nesting ${nesting}, ${follower}`, () => {
     const lines = []
