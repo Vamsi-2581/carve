@@ -1104,15 +1104,16 @@ export function commentFenceOpensSpan(lines, index) {
 /**
  * Advance a list collector's after-comment flag from classified line facts.
  * Paragraph closure, prefix availability and span tracking remain with the caller.
- * A marker-line span closer preserves the flag it arrived with.
+ * A span closer preserves its opener's retention decision (CARVE-P9-053).
+ * Only comments consumed below the content column grant retention (CARVE-P0-009 X1).
  */
 export function afterCommentTransition(previous, {
-  belowCloser = false, spanClosed = false, markerLine = false,
-  inCommentSpan = false, comment = false, blank = false,
+  belowCloser = false, spanClosed = false,
+  inCommentSpan = false, comment = false, belowComment = false, blank = false,
 }) {
-  if (belowCloser || (spanClosed && !markerLine)) return true
+  if (belowCloser) return true
   if (spanClosed || inCommentSpan) return previous
-  if (comment) return true
+  if (comment) return belowComment
   return blank ? previous : false
 }
 
@@ -1906,7 +1907,12 @@ function hostAdvance(h, line, paraOpen) {
   if (h.colons?.at(-1)?.mode === 'line-block' && meas.col >= h.colons.at(-1).base) {
     return { meas, inner: meas, blockStart: false, popped: false }
   }
-  if (meas.rest === '' || h.colonComment || COMMENT_LINE.test(meas.rest)) return { meas, inner: meas, blockStart: false, popped: false }
+  if (meas.rest === '' || h.colonComment || COMMENT_LINE.test(meas.rest)) {
+    if (COMMENT_LINE.test(meas.rest) && !h.colonComment) {
+      h.retainedComment = meas.col > 0 && meas.col < h.columns.at(-1)
+    }
+    return { meas, inner: meas, blockStart: false, popped: false }
+  }
   // ONLY A LIST ITEM'S PARAGRAPH GIVES WAY. `- d` / `  - x` opens a sublist, so
   // the marker interrupts; the same marker at a DESCRIPTION or FOOTNOTE body's
   // column under its open paragraph is ordinary text, and both bodies take the
@@ -1916,7 +1922,10 @@ function hostAdvance(h, line, paraOpen) {
   const siblingItem = h.markerCols.some((col, k) => col === meas.col && h.kinds[k] === 'item')
   // Plain text below a nested item's column can lazily continue its paragraph.
   // Keep that sublist for the next fence lookup; the lazy line did not close it.
-  const lazyItemLine = paraOpen && h.kinds.at(-1) === 'item' &&
+  const retainedFenceText = h.retainedComment && h.kinds.at(-1) === 'item' &&
+    meas.col > h.markerCols.at(-1) && meas.col < h.columns.at(-1) && FENCE.test(meas.rest)
+  h.retainedComment = false
+  const lazyItemLine = retainedFenceText || paraOpen && h.kinds.at(-1) === 'item' &&
     (h.columns.length === 2 || h.colons?.length ||
       h.kinds.at(-2) === 'item') && matchMarkerAt(meas) === null &&
     !FENCE.test(meas.rest) && !COLON_FENCE.test(meas.rest) &&
@@ -2078,8 +2087,7 @@ function hostFenceStep(h, line) {
 // under the current paragraph still leaves a possible closer to account for.
 function hostFenceOpener(h, inner, canOpen = () => true) {
   const column = h.columns.at(-1)
-  const colon = h.colons?.at(-1)
-  if (colon && column === colon.base && inner.col > colon.column) return null
+  if (inner.col < column) return null
   if (h.unclaimed !== null && h.unclaimed.host > column) h.unclaimed = null
   const f = FENCE.exec(inner.rest)
   const opener = f && parseFenceInfo(f[2]) !== null ? f : null
@@ -3000,7 +3008,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             i = comment.end
           } else i++
           commentScanFrom = bodyLines.length
-          afterComment = afterCommentTransition(afterComment, { comment: true })
+          afterComment = afterCommentTransition(afterComment, { comment: true, belowComment: measured.col < FOOTNOTE_BODY_COLUMN })
         } else if (afterComment &&
             !startsVisibleBlock(lines[i]) && !isTableRow(lines[i]) &&
             !COLON_FENCE.test(lines[i]) && !(FENCE.test(lines[i]) && hasCloser(lines, i))) {
@@ -3443,7 +3451,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
                 i = comment.end
               } else i++
               ddScanFrom = bodyLines.length
-              afterComment = afterCommentTransition(afterComment, { comment: true })
+              afterComment = afterCommentTransition(afterComment, { comment: true, belowComment: authoredCol < bodyColumn })
               continue
             }
             if (afterComment && !startsVisibleBlock(cur) &&
@@ -5606,8 +5614,7 @@ function collectItems(lines, i, list, state, ind, meas) {
       absorbedFenceSeen = { run: f[1], col: dmeas.col }
       return null
     }
-    // A comment closes the leaf paragraph but leaves the item frame available.
-    // This flag records that explicit transition for the next ownership step.
+    // Only a below-column comment grants a continuation claim after closure.
     let afterComment = false
     // The run of a code fence opened while an absorbed opener is still tracked.
     let fenceUnderAbsorbed = null
@@ -6276,6 +6283,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           belowCloser,
           inCommentSpan,
           comment: !belowCloser && !inCommentSpan && COMMENT_LINE.test(dedented),
+          belowComment: lm.col < contentCol,
           blank: dmeas.rest === '',
         })
         // record the first sub-list's content column (carve#322)
@@ -6623,7 +6631,6 @@ function collectItems(lines, i, list, state, ind, meas) {
         // Only the closing half is asked: an OPENER at this column opens no span
         // here, and the branch above owns that question.
         const spanBefore = fence.opaque?.kind === 'comment' || nestedOpaque?.kind === 'comment'
-        const spanFromMarkerLine = fence.opaque?.markerLine === true || nestedOpaque?.markerLine === true
         if (fence.opaque) trackFence(lm.rest, false, i)
         // The DESCENDANT span's closer arrives here too, below this column, so
         // the tracker above never sees it.
@@ -6643,7 +6650,6 @@ function collectItems(lines, i, list, state, ind, meas) {
           closePara()
           afterComment = afterCommentTransition(afterComment, {
             spanClosed: true,
-            markerLine: spanFromMarkerLine,
           })
         }
         // An opener written HERE locates the span below every content column,

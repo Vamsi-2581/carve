@@ -390,6 +390,10 @@ const INVENTORY = [
   // The line-final run on the first line is the case: without it each is corpus 253-2.
   { base: '564-a-line-final-run-of-spaces-and-tabs-is-dropped-before-the-line-is-read', crv: ['trailing-WS'], html: [] },
   { base: '564-a-line-final-run-of-spaces-and-tabs-is-dropped-before-the-line-is-read-2', crv: ['trailing-TAB'], html: [] },
+  // The no-break space after the marker is the case: without it the marker has no content.
+  { base: '567-a-description-marker-followed-by-a-no-break-space-has-content', crv: ['NBSP'], html: [] },
+  { base: '567-a-description-marker-followed-by-a-no-break-space-has-content-2', crv: ['NBSP'], html: [] },
+  { base: '567-a-description-marker-followed-by-a-no-break-space-has-content-3', crv: ['trailing-WS'], html: [] },
 ]
 
 function scan(text) {
