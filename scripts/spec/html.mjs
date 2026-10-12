@@ -1497,8 +1497,19 @@ function resolveFootnotes(html, ctx) {
    * was really providing. Position still decides between two frames, because
    * a single `replace` walks the string once, left to right.
    */
-  const substitute = (s) =>
-    s.replace(FOOTNOTE_FRAMES, (m, json, payload, attrs) => {
+  const substitute = (s) => {
+    const anchors = [...s.matchAll(/<!--[\s\S]*?(?:-->|$)|<(script|style|textarea)\b(?:"[^"]*"|'[^']*'|[^'">])*?>[\s\S]*?(?:<\/\1\s*>|$)|<\/?a\b(?:"[^"]*"|'[^']*'|[^'">])*>/gi)]
+      .filter(([tag]) => /^<\/?a\b/i.test(tag))
+    let anchorIndex = 0
+    let anchorDepth = 0
+    return s.replace(FOOTNOTE_FRAMES, (m, json, payload, attrs, offset) => {
+      while (anchorIndex < anchors.length && anchors[anchorIndex].index < offset) {
+        anchorDepth += anchors[anchorIndex][0].startsWith('</') ? -1 : 1
+        anchorIndex++
+      }
+      const carrier = (id, n, attributes) => anchorDepth > 0
+        ? `<sup id="${id}"${attributes}>${n}</sup>`
+        : `<a id="${id}" href="#fn${n}" role="doc-noteref"${attributes}><sup>${n}</sup></a>`
       if (json !== undefined) {
         let parsed
         try {
@@ -1510,7 +1521,7 @@ function resolveFootnotes(html, ctx) {
         order.push({ inline: inlineNotes.length })
         inlineNotes.push(parsed.content)
         const n = order.length
-        return `<a id="fnref${n}" href="#fn${n}" role="doc-noteref"${parsed.attrs}><sup>${n}</sup></a>`
+        return carrier(`fnref${n}`, n, parsed.attrs)
       }
       const label = payload
       if (/[\r\n]/.test(label)) return `[^${label}]`
@@ -1524,8 +1535,9 @@ function resolveFootnotes(html, ctx) {
       const k = (counts.get(key) ?? 0) + 1
       counts.set(key, k)
       const refId = k === 1 ? `fnref${n}` : `fnref${n}-${k}`
-      return `<a id="${refId}" href="#fn${n}" role="doc-noteref"${attrs}><sup>${n}</sup></a>`
+      return carrier(refId, n, attrs)
     })
+  }
   html = substitute(html)
   ctx.resolvedFootnoteCount = order.length
   if (order.length === 0) {

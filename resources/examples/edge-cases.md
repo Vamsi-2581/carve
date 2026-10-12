@@ -17163,18 +17163,9 @@ x ^[a [^1]{.k} c]
 
 ## A footnote in link text nests the anchors
 
-PART 9 §16 records this as a LIMITATION: a footnote "inside link text
-(`[t[^1]](u)`) or inside a heading later cloned by a `</#id>` crossref nests an
-`<a>` in an `<a>`; avoid footnotes in those positions."
-
-That is advice about what an author should expect, and it states the outcome. It
-does not put the document outside the language: the noteref lands where it was
-written, inside the link text, and the note takes its number from the one
-document-order sequence like any other.
-
-Both note forms reach it the same way, which is what makes the pairing worth
-pinning - the executable spec rendered the inline form and refused the reference
-one (markup-carve/carve#1188).
+Under PART 9 §16 and markup-carve/carve#2978 Q12, a footnote in link text
+renders as a `<sup>` with its reference id and authored attributes. It counts
+toward reference ordinals, and its endnote keeps the backlink to that id.
 
 ::: compare
 
@@ -17185,7 +17176,7 @@ a [t[^1]](/u) b
 ```
 
 ```html
-<p>a <a href="/u">t<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></a> b</p>
+<p>a <a href="/u">t<sup id="fnref1">1</sup></a> b</p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
@@ -17205,7 +17196,7 @@ a [t^[n]](/u) b
 ```
 
 ```html
-<p>a <a href="/u">t<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></a> b</p>
+<p>a <a href="/u">t<sup id="fnref1">1</sup></a> b</p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
@@ -17220,18 +17211,9 @@ a [t^[n]](/u) b
 
 ## A footnote in reference link text nests the anchors too
 
-The PART 9 §16 limitation is about LINK TEXT, not about one spelling of a
-link: "a footnote (reference `[^1]` or inline `^[…]`) inside link text
-(`[t[^1]](u)`) or inside a heading later cloned by a `</#id>` crossref nests an
-`<a>` in an `<a>`". A reference tail reaches the same place by a different
-route, and reaches the same answer - the noteref lands where it was written and
-the note draws its number from the one document-order sequence.
-
-The neighboring section pins the inline-tail half of that cross. This one pins
-the reference-tail half, which the executable spec used to refuse: its own
-resolution frame carried the link text through a JSON payload, and
-`JSON.stringify` escaped the frame's field separator, so the footnote pass never
-saw the noteref sitting in it (markup-carve/carve#1195).
+Under PART 9 §16 and markup-carve/carve#2978 Q12, a footnote in link text
+renders as a `<sup>` with its reference id and authored attributes. It counts
+toward reference ordinals, and its endnote keeps the backlink to that id.
 
 ::: compare
 
@@ -17244,7 +17226,7 @@ a [t[^1]][r] b
 ```
 
 ```html
-<p>a <a href="/u">t<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></a> b</p>
+<p>a <a href="/u">t<sup id="fnref1">1</sup></a> b</p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
@@ -17266,7 +17248,7 @@ a [t^[n]][r] b
 ```
 
 ```html
-<p>a <a href="/u">t<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></a> b</p>
+<p>a <a href="/u">t<sup id="fnref1">1</sup></a> b</p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
@@ -17290,7 +17272,7 @@ a [t[^1]][r] c [^1] b
 ```
 
 ```html
-<p>a <a href="/u">t<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></a> c <a id="fnref1-2" href="#fn1" role="doc-noteref"><sup>1</sup></a> b</p>
+<p>a <a href="/u">t<sup id="fnref1">1</sup></a> c <a id="fnref1-2" href="#fn1" role="doc-noteref"><sup>1</sup></a> b</p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
@@ -17382,7 +17364,7 @@ a [^1] b
   <hr>
   <ol>
     <li id="fn1">
-      <p>see <a href="/u">t<a id="fnref2" href="#fn2" role="doc-noteref"><sup>2</sup></a></a><a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+      <p>see <a href="/u">t<sup id="fnref2">2</sup></a><a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
     </li>
     <li id="fn2">
       <p>two<a href="#fnref2" role="doc-backlink" aria-label="Back to reference">↩</a></p>
@@ -49634,3 +49616,55 @@ open paragraph as it does in an item (`CARVE-P2-017`, `CARVE-P0-004`).
 ```
 
 ::::
+
+## A footnote reference in link text keeps its id on the sup
+
+PART 9 §16 and markup-carve/carve#2978 Q12 place the reference id and authored
+attributes on the `<sup>` inside link text. Repeated references keep distinct
+ids and backlinks. An authored `data-carve-footnote-label` stays on that carrier.
+
+::: compare
+
+```carve
+a [t[^1]{.x}](/u) c [^1] b
+
+[^1]: n
+```
+
+```html
+<p>a <a href="/u">t<sup id="fnref1" class="x">1</sup></a> c <a id="fnref1-2" href="#fn1" role="doc-noteref"><sup>1</sup></a> b</p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>n<a href="#fnref1" role="doc-backlink" aria-label="Back to reference 1">↩<sup>1</sup></a> <a href="#fnref1-2" role="doc-backlink" aria-label="Back to reference 2">↩<sup>2</sup></a></p>
+    </li>
+  </ol>
+</section>
+```
+
+:::
+
+::: compare
+
+```carve
+a [t[^named]{data-carve-footnote-label="named"}][r] b
+
+[r]: /u
+
+[^named]: n
+```
+
+```html
+<p>a <a href="/u">t<sup id="fnref1" data-carve-footnote-label="named">1</sup></a> b</p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>n<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+    </li>
+  </ol>
+</section>
+```
+
+:::
