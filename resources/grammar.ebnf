@@ -2067,13 +2067,19 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    the message is where the sink kind survives; `target` is already a field, so
    the message does not repeat it.
 
-   Each authored attribute a roundtrip carrier displaces under PART 10 §13b
+   Each authored attribute roundtrip export drops under PART 10 §13b
    contributes one loss in document order with the stable code
    `carrier-attribute-dropped`, the selected `target`, `nodeType` of `inline` or
    `block`, its `pos` when recorded, and NO `format`. Such an entry MUST carry
-   `attribute`, the displaced attribute's name, because the name is the whole
+   `attribute`, the dropped attribute's name, because the name is the whole
    content of the finding and a message is not compared. Only the HTML target
    writes carriers, so only that target reports this code.
+
+   Each definition list that PART 11 §10t leaves without carrier markers
+   under roundtrip export contributes one loss in document order with the
+   stable code `definition-list-flattened`, the selected `target`, `nodeType`
+   of `block`, its `pos` when recorded, and NO `format`. Only the Markdown
+   target reports this code.
 
    The canonical Carve writer preserves authored destinations under PART 11
    and contributes no `destination-denied` row for them. PART 9 §25 binds the
@@ -8036,9 +8042,9 @@ EOF = (* end of file *) ;
       attribute those sections write.
 
       THE TARGET DECIDES THE CARRIER. For HTML it is the names in §13a. For
-      Markdown it is the container carrier comments of PART 11 §10s. A
-      Markdown export carries containers and no more, and is not a claim to
-      preserve what §13a lists.
+      Markdown it is the carrier comments of PART 11 §10s and §10t. A
+      Markdown export carries what those two sections name, and is not a
+      claim to preserve what §13a lists.
 
       WHAT IT GUARANTEES IS RECOVERY OF THE NAMED DISTINCTIONS, not
       byte-identical source. A distinction the AST already records --
@@ -8067,7 +8073,8 @@ EOF = (* end of file *) ;
 
       WHAT IT DOES NOT RECOVER IS A REFERENCE'S FORM. The collapsed `[r][]`
       and the full `[r][r]` both write `data-carve-ref="r"`, and no carrier
-      holds which of the two the author wrote.
+      holds which of the two the author wrote. A reference whose form is not
+      recovered returns as `[r][]`.
 
    13a. THE HTML CARRIERS ARE THE NAMES IN THIS INVENTORY -- NORMATIVE
       [CARVE-P10-016]. Under roundtrip export, and only under it, the CORE
@@ -8086,11 +8093,12 @@ EOF = (* end of file *) ;
                                                   PART 9 §13 wraps one, and
                                                   the heading where it does
                                                   not
-        data-carve-generated-id     <h1>-<h6>     presence: the id was
-                                                  generated, not authored. It
-                                                  rides a heading that keeps
-                                                  its own id, where PART 9 §13
-                                                  wraps no `<section>`
+        data-carve-generated-id     <section>,    presence: the id was
+                                    <h1>-<h6>     generated, not authored. It
+                                                  rides the `<section>` where
+                                                  PART 9 §13 wraps one, and
+                                                  the heading where it does
+                                                  not
         data-carve-ref              <a>, <img>    the reference label the link
                                                   or image resolved by
         data-carve-autolink         <a>           presence: the link was
@@ -8128,16 +8136,12 @@ EOF = (* end of file *) ;
                                                   `code_block.label`; a block
                                                   with no label writes no
                                                   attribute
-        data-carve-ext              <section>     `section`: the element is the
-                                                  wrapper PART 9 §13 generates
-                                                  for a heading whose id is
-                                                  generated
         data-carve-id-slot          <section>     the authored id's slot among
                                                   the heading's attributes, the
                                                   index of `#id` in its
                                                   `attrs.order`. It rides
                                                   beside `data-carve-explicit-id`
-        data-carve-tight            <ul>, <ol>    `true`: the list is tight
+        data-carve-tight            <ul>, <ol>    presence: the list is tight
                                                   although an item's paragraph
                                                   keeps its `<p>`. The AST
                                                   field it restores is
@@ -8171,31 +8175,25 @@ EOF = (* end of file *) ;
       holds what PART 2 writes between `[` and `]`, so a reader validates it
       against that production before rebuilding the fence label: a value that
       holds `]`, a line break, or is empty is not a carrier, and §13e's rule
-      for an invalid value applies. A `<pre>` that is not a code block's -- an
-      extension's own `<pre>` -- carries no label of this row.
+      for an invalid value applies.
 
         ```php [Example]     ->  <pre data-carve-label="Example"><code
         echo 1;                  class="language-php">echo 1;
         ```                      </code></pre>
 
-      `data-carve-ext` NAMES WHAT GENERATED THE ELEMENT. `section` is the only
-      value the core writes, on a wrapper that carries no
-      `data-carve-explicit-id`. Any other value is a carrier only where an
-      extension's contract names it (§13e).
+      AN UNMARKED ID ON A HEADING IS AUTHORED. Where an element carries
+      neither `data-carve-explicit-id` nor `data-carve-generated-id`, a reader
+      keeps a heading's id as `{#id}`. A `<section>` wrapper's id that equals
+      the heading's PART 2 slug is generated; any other wrapper id is authored.
 
-      AN ID SLOT IS A RUN OF DECIMAL DIGITS. The slot counts from 0, and a
-      writer omits the carrier at 0, where the id leads. A reader places the
-      id at that slot, or last where the heading has fewer attributes; any
-      other value is not a carrier (§13e) and the id leads.
+      AN ID SLOT IS A RUN OF DECIMAL DIGITS. The slot indexes the heading's
+      attributes in their authored order and counts from 0. A writer MUST omit
+      the carrier at 0, where the id leads. A reader places the id at that
+      slot. A slot larger than the heading's attribute count, like any other
+      value, is not a carrier (§13e) and the id leads.
 
         {.c #mine}      ->  <section id="mine" data-carve-explicit-id
         # H                 data-carve-id-slot="1">
-
-      A TIGHT VALUE IS `true` OR `false`. A writer writes `true` on a tight
-      list where an item's paragraph keeps its `<p>` for its own attributes,
-      and writes the carrier nowhere else. A reader takes either value over
-      what the items' `<p>` elements imply; any other value is not a carrier
-      (§13e).
 
       THE `data-carve-col-widths` ROW SATISFIES THE CARRIER RULE.
       `data-carve-col-widths` was absent from this inventory until
@@ -8219,7 +8217,9 @@ EOF = (* end of file *) ;
       AN EXTENSION WRITES ITS OWN CARRIERS, under the reserved prefix, for the
       distinctions ITS nodes record. They are scoped to that extension and
       enumerated in that extension's own contract rather than here, which is
-      what the CORE qualifier above leaves room for. AN EXTENSION CARRIER IS A
+      what the CORE qualifier above leaves room for. An extension's contract
+      MAY place a core carrier name on its own element, and defines its
+      meaning there. AN EXTENSION CARRIER IS A
       CARRIER in every other respect: §13b displaces an authored attribute of
       its name, §13c reads its deprecated spelling, and §13d consumes it in
       every import mode.
@@ -8269,8 +8269,8 @@ EOF = (* end of file *) ;
 
       A PRESENCE CARRIER CARRIES NOTHING IN ITS VALUE.
       `data-carve-explicit-id`, `data-carve-generated-id`,
-      `data-carve-autolink`, `data-carve-inline-footnote` and
-      `data-carve-escaped` say what they say
+      `data-carve-autolink`, `data-carve-inline-footnote`,
+      `data-carve-escaped` and `data-carve-tight` say what they say
       by being there. A writer writes the empty value or `1`; a reader reads
       presence and does not compare the value.
 
@@ -8303,16 +8303,22 @@ EOF = (* end of file *) ;
       option, and each has its own clause. This option neither gates nor
       duplicates them.
 
-   13b. A CARRIER WINS A COLLISION AND THE DROPPED ATTRIBUTE IS REPORTED --
-      NORMATIVE [CARVE-P10-019]. Where a node carries an authored attribute
-      whose name is a reserved name from §13a, THE CARRIER IS WRITTEN AND THE
-      AUTHORED ATTRIBUTE IS DROPPED. A carrier is structural and leads the
-      authored attributes by §1, and §12 already reads a value outside its
-      own enumeration as an author attribute rather than as the spec's.
+   13b. ROUNDTRIP EXPORT DROPS AN AUTHORED RESERVED NAME AND REPORTS IT --
+      NORMATIVE [CARVE-P10-019]. Under roundtrip export an authored attribute
+      whose name is a reserved name from §13a IS DROPPED ON EVERY NODE,
+      whether or not that node writes a carrier of that name. A node that
+      writes a carrier of that name still writes it. Default export passes
+      the authored attribute through.
+
+        [a](/u){data-carve-ref=x}   ->  <a href="/u">a</a>
+
+      A carrier is structural and leads the authored attributes by §1, and
+      §12 already reads a value outside its own enumeration as an author
+      attribute rather than as the spec's.
 
       THE DROP IS A RENDER-LOSS ROW NAMING THE ATTRIBUTE, so the document
       records the loss instead of taking it silently. The code is
-      `carrier-attribute-dropped` and the row carries `attribute`, the displaced name;
+      `carrier-attribute-dropped` and the row carries `attribute`, the dropped name;
       [CARVE-P2-024] states the rest of its shape.
 
       EMITTING BOTH IS NOT CONFORMING. Two attributes of one name is invalid
@@ -8340,6 +8346,10 @@ EOF = (* end of file *) ;
       `data-marker` and `data-char` have no alias, having never carried a
       prefix.
 
+      `data-djot-src` IS THE ONE ALIAS OF THE ROWLESS NAME. It is reserved and
+      consumed like `data-carve-src` (§13a), in every import mode, and nothing
+      is rebuilt from its value.
+
    13d. EVERY IMPORT MODE CONSUMES THE INVENTORY AND WRITES NO RESERVED NAME
       BACK -- NORMATIVE [CARVE-P10-021]. Consuming a carrier reconstructs
       syntax the AST can already express, so it is not a trust decision and
@@ -8354,15 +8364,25 @@ EOF = (* end of file *) ;
       reserved name an importer has no use for is still consumed rather than
       passed through, with or without a diagnostic saying so.
 
-      CONTRADICTORY CARRIERS RESTORE NEITHER MEANING. Where two carriers on
-      one element contradict each other, the reader consumes neither carrier's
-      meaning: it imports the ordinary element, reports one
-      `attribute-dropped` warning for the pair, and excludes both reserved
-      names from authored attributes. `data-carve-autolink` beside
-      `data-carve-ref` on one `<a>` imports as an inline link. This applies in
-      every import mode and to the deprecated aliases in §13c. Value
+      CONTRADICTORY CARRIERS RESTORE NEITHER MEANING. The contradictory
+      pairs are a CLOSED LIST, each pair on one element:
+
+        data-carve-footnote-label   with   data-carve-inline-footnote
+        data-carve-autolink         with   data-carve-ref
+        data-carve-explicit-id      with   data-carve-generated-id
+        data-carve-escaped          with   data-carve-raw
+
+      For a pair on the list the reader consumes neither carrier's meaning: it
+      imports the ordinary element, reports one `attribute-dropped` warning
+      for the pair, and excludes both reserved names from authored attributes.
+      `data-carve-autolink` beside `data-carve-ref` on one `<a>` imports as an
+      inline link. A PAIR NOT ON THE LIST IS NOT A CONTRADICTION. This applies
+      in every import mode and to the deprecated aliases in §13c. Value
       validation under §13e comes first: an invalid value is not a carrier
       and contradicts nothing.
+
+      A `data-carve-id-slot` WITHOUT `data-carve-explicit-id` on the same
+      element is not a carrier, and §13e applies.
 
       THE FOOTNOTE PAIR IS THE FIRST INSTANCE. An endnote carrying both a
       valid `data-carve-footnote-label` and `data-carve-inline-footnote` asks
@@ -8384,14 +8404,16 @@ EOF = (* end of file *) ;
       consumed whatever the mode, and reconstruction of raw HTML outside a
       carrier is §13e's question rather than this clause's.
 
+      AN IMPORT PUBLISHES `attrs.order` ON A HEADING where its
+      `data-carve-explicit-id` or `data-carve-id-slot` carrier supplies it.
+      Elsewhere an import publishes no `order`.
+
    13e. EXPORT DOES NOT SELECT AN IMPORT MODE -- NORMATIVE [CARVE-P10-017].
       Roundtrip export adds information to OUTPUT. HTML import's `roundtrip`
       mode decides reconstruction and raw-HTML preservation of INPUT, and
       finding one of these carriers in a document is not a reason to trust
       that document. Enabling export never enables a trusted import, never
-      widens an importer's mode, and never relaxes a destination check. An
-      importer that returns a stored-source payload verbatim does so on its
-      own trust setting, never on the exporter's.
+      widens an importer's mode, and never relaxes a destination check.
 
       A CARRIER VALUE IS UNTRUSTED INPUT. Before reconstructing syntax, a
       reader validates the value against the grammar of the construct it
@@ -10853,7 +10875,9 @@ EOF = (* end of file *) ;
       definition would write the same `:` and closing markers as the list
       around it and the import could not tell which list a marker closes. A
       nested list therefore takes no markers and degrades as §10p writes it,
-      inside the outer definition that is carried.
+      inside the outer definition that is carried. This is a LIMIT: the export
+      reports each nested definition list that took no markers with one
+      `definition-list-flattened` loss (CARVE-P2-024).
 
       A DEFINITION LIST'S OWN ATTRIBUTE LINE stands directly above its first
       term marker, as that list's prelude, the way a container's attribute
