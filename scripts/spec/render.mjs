@@ -1492,7 +1492,8 @@ export function parseAttrList(text) {
 // `*x*{.a<NEWLINE>.b}` as an attribute block where all three engines leave it
 // literal text (carve#878).
 export function parseBlockAttrList(text) {
-  const m = g.match(text, 'blockAttrs')
+  // CARVE-P7-001 item 5: a line-final run is dropped before the line is read.
+  const m = g.match(text.replace(/[ \t]+(?=\n)/g, ''), 'blockAttrs')
   if (m.failed()) return null
   return attrSem(m).parseAttrs()
 }

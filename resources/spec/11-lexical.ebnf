@@ -36,13 +36,19 @@ digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
      4. INSIDE VERBATIM CONTENT -- fenced code and inline code spans -- a tab
         is PRESERVED verbatim and never expanded. Stated in full at TABS IN
         CODE (PART 2) and pinned by corpus tabs-in-code-preserved.
+     5. A LINE-FINAL RUN of spaces and tabs is INSIGNIFICANT. It is dropped
+        before anything reads the line, so no production sees it and 3 applies
+        to what precedes it: `{.a}<TAB>` is an attribute line and
+        `[a]: /u<TAB>` a definition. CARVE-P2-025 names the two places the
+        drop does not reach, a verbatim payload line and the run a line block
+        has already turned into content.
 
-   Every other mention of a tab in this grammar APPLIES one of those four
-   sentences to one construct; none of them restates it. Two of the four keep
+   Every other mention of a tab in this grammar APPLIES one of those five
+   sentences to one construct; none of them restates it. Three of the five keep
    an operational home this clause does not duplicate: the walk that turns a
    run into a column, the content column a marker establishes and the
-   straddling tab at a dedent boundary are PART 9 §24 (C1, C3, C5), and 4 is
-   PART 2. MARKER SEPARATORS AND PADDING SLOTS below is 3 applied to every
+   straddling tab at a dedent boundary are PART 9 §24 (C1, C3, C5), and 4 and
+   5 are PART 2. MARKER SEPARATORS AND PADDING SLOTS below is 3 applied to every
    whitespace slot in this grammar that sits inline.
 
    Computing indentation still requires a per-line tab-stop walk. Source

@@ -328,8 +328,8 @@ reference_definition = '[', reference_label, ']', ':', space+, link_destination,
 
    is NOT a definition, and a `[a][]` below it does not resolve.
 
-   THE LINE ENDING is `whitespace` -- `' ' | '\t'` -- the same terminal
-   `blank_line = {whitespace}` takes (PART 1). So `[a]: /u<SP>` and
+   A LINE-FINAL RUN of spaces and tabs is dropped before the production reads
+   the line (CARVE-P7-001 item 5). So `[a]: /u<SP>` and
    `[a]: /u<TAB>` are still definitions, while `[a]: /u<NBSP>`,
    `[a]: /u<U+2000>` and `[a]: /u<FF>` are not: every one of those is CONTENT,
    and content after the production is exactly what the anchor rejects. An
