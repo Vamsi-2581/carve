@@ -6415,8 +6415,8 @@ EOF = (* end of file *) ;
              ended by the clause above. After a line COMMENT consumed below
              the content column the item is retained for a noninterrupting
              follower: that retention, its sibling-marker and column
-             qualifications and what clears it are CARVE-P0-009's exception
-             and are not restated here. It holds for bullet, ordered, task
+             qualifications and what clears it are PART 0's exception X1
+             (COMMENT RETENTION) and are not restated here. It holds for bullet, ordered, task
              and attributed markers alike (corpus 506).
 
              AN INVISIBLE LINE FOLDS LIKE ANY OTHER -- NORMATIVE [CARVE-P9-052]. "Every other
@@ -6463,7 +6463,7 @@ EOF = (* end of file *) ;
             indented comment at the top level is already invisible for the same
             reason. Visibility at every column does not imply ownership at
             every column: which comment retains the item for the line after
-            it is CARVE-P0-009's exception.
+            it is PART 0's exception X1 (COMMENT RETENTION).
 
             AND THE OWNERSHIP HALF REACHES A DEGRADED FENCE.
             "The `%%%` fence form, whose body and closer travel with its
