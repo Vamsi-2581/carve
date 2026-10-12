@@ -4633,6 +4633,7 @@ function firstBlockEnd(lines, start, limit, state, sourceColumns) {
     abbrDefs: new Map(),
     blockDepth: state.blockDepth ?? 0,
     measuringAuthoredBlock: state.measuringAuthoredBlock ?? false,
+    authoredBodyBases: state.authoredBodyBases,
   }
   const measuredLines = lines.slice(start, limit)
   seen.opaqueMeasurement = { origins: new WeakMap([[measuredLines, start]]), sourceColumns, sourceLines: lines, markerFenceEnd: new WeakMap(), rows: new Set() }
@@ -5223,6 +5224,9 @@ function collectItems(lines, i, list, state, ind, meas) {
      */
     const deepestParagraphOpen = () => {
       if (!paragraphIsOpen()) return false
+      // An authored block the block reader has already ended holds nothing
+      // open for the line below (a description ending on a code block).
+      if (!deepestIsDescendant && authoredContainer && authoredBlockLimit !== null && i >= authoredBlockLimit) return false
       if (!deepestIsDescendant) return true
       const d = descendantQ1At(descendantQ1.col)
       return d === null ? true : d.open
@@ -5311,6 +5315,9 @@ function collectItems(lines, i, list, state, ind, meas) {
     // `contentCol`; this is only the source collector's local zero.
     let authoredBlockBase = null
     let authoredBlockLimit = null
+    // Whether that block is a container (a quote or a definition list), whose
+    // own last block answers for the line below once the block has ended.
+    let authoredContainer = false
     // At the item's own column this base strips exactly what the item would.
     // Its end matters only when another opener could establish a different
     // scope. Defer the extent parse until then; a comment before a nested list
@@ -5320,6 +5327,7 @@ function collectItems(lines, i, list, state, ind, meas) {
     // A term on the marker line folds the lines past the content column that
     // follow it (carve#2411), so none of them opens an authored base.
     let leadTerm = DEFLIST_TERM.test(head.text.replace(/^[ \t]+/, ''))
+    let pendingHeadTerm = DEFLIST_TERM.test(head.text) ? i : null
     const insideFence = () => fence.opaque !== null || fence.colon.length !== 0
     const trackFence = (line, opens, index) => {
       if (fence.opaque) {
@@ -5960,7 +5968,25 @@ function collectItems(lines, i, list, state, ind, meas) {
             if (isBlank(lines[at]) || COMMENT_LINE.test(lines[at])) break
           }
           authoredBlockLimit = start + authoredBlockEnd(candidate, 0, 0, state)
+          authoredContainer = true
           pendingHeadQuote = null
+        }
+        // A definition list on the marker line is a block at the content
+        // column like one written below it, so its description keeps what
+        // reaches the body column (CARVE-P0-018, CARVE-P2-028).
+        if (pendingHeadTerm !== null && mayOpenAuthoredBlock) {
+          const candidate = [head.text]
+          for (let at = headIndex + 1; at < lines.length; at++) {
+            const measured = ind(at)
+            if (measured.col <= baseIndent && matchMarkerAt(measured)) break
+            if (isBlank(lines[at]) && at + 1 < lines.length && !isBlank(lines[at + 1]) &&
+              ind(at + 1).col < contentCol) break
+            candidate.push(measured.col < contentCol
+              ? lines[at] : dedentMeasured(measured, lines[at], contentCol).text)
+          }
+          authoredBlockLimit = headIndex + authoredBlockEnd(candidate, 0, 0, state)
+          authoredContainer = true
+          pendingHeadTerm = null
         }
         if (pendingAuthoredBlock !== null && mayOpenAuthoredBlock) {
           authoredBlockLimit = authoredBlockEnd(lines, pendingAuthoredBlock, contentCol, state)
@@ -6077,6 +6103,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // above knows whether an interior blank is fence content.
         if (openerBase !== null) {
           authoredBlockBase = openerBase
+          authoredContainer = DEFLIST_TERM.test(dedented) || QUOTE.test(dedented)
           if (openerBase === contentCol) pendingAuthoredBlock = i
           else authoredBlockLimit = authoredBlockEnd(lines, i, openerBase, state)
         }
