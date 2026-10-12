@@ -12,10 +12,8 @@
 
       The first is about the AST, not the bytes: `fmt` MAY normalize the
       author's spelling (indentation, marker alignment, escape form) but MUST
-      NOT change what the document says. This includes authored destinations
-      whose schemes PART 9 §25 denies at rendered URL sinks: canonical source
-      preserves them and reports no `destination-denied` loss. A consumer
-      rendering that source applies the denylist at its own sinks. The second
+      NOT change what the document says. Authored destinations are preserved,
+      denied schemes included (CARVE-P9-054). The second
       forbids growth -- a value that gains an escape per pass violates it,
       which is how over-escaping is usually first noticed.
 
@@ -106,7 +104,8 @@
       `one two`, `*a* *b*` and two code spans separated by one space.
 
       A TEXT character that becomes a live delimiter after the join is instead
-      an ESCAPING question governed by §2 through §1a. This clause supplies the
+      an ESCAPING question governed by CARVE-P11-002 and CARVE-P11-006. This clause
+      supplies the
       space and nothing else.
 
       The producer MUST flatten rather than omit the content. It MUST NOT write
@@ -189,8 +188,8 @@
       An importer MUST NOT unwrap a representable same-kind child or report
       structure-unspellable merely for that relationship. Depth-limit
       recovery and other independently unspellable shapes retain their
-      diagnostics. Markdown and Djot export follow their own target
-      contracts; removing this native ceiling does not widen those syntaxes.
+      diagnostics. Markdown export follows its own target contract
+      (CARVE-P11-045); this clause does not widen that syntax.
 
       DECIDED ON THE SPELLING, NEVER ON RESOLUTION -- and PART 9R R7 does not
       change that. R7's promotion phase reads the RESOLVED tree; this clause
@@ -226,10 +225,7 @@
       WRAPPER LOSS IS THE ONLY EQUALITY CARVE-OUT -- NORMATIVE [CARVE-P11-005].
       The paragraph above says what this clause forgives. This
       says what it does NOT, because a checker asserting `parse(fmt(x)) ==
-      parse(x)` has to encode both halves, and stated only as a permission the
-      carve-out acquired one mechanism per engine that reached it -- three
-      engines, three exemptions, none of them written where the next reader
-      would look.
+      parse(x)` has to encode both halves.
 
       THE RULE. The two trees MUST agree once every wrapper this clause names
       is dissolved into its content, on BOTH sides. Nothing else is forgiven: a
@@ -313,15 +309,18 @@
       every target at once, and it is the only one of the two that can name a
       field.
 
+      ONE LOSS IS REPORTED ON BOTH. A `ruby` node the canonical writer
+      flattens is `ruby-flattened` on the render-loss report and
+      `structure-unspellable`, node `ruby`, on this channel. The two codes
+      name one loss, one per channel.
+
       THE RENDER-LOSS FLAGS DO NOT REACH IT. `--strict-losses` and `--allow-loss`
       gate the `CARVE-P2-024` report, and neither grows a name for a code here. A
       producer without a diagnostic channel still writes the output its clause
       requires: the channel is what a producer MAY expose, never a condition on
       writing.
 
-      A render-time refusal MUST NOT appear in conversion diagnostics or render
-      losses; only lint can report it, so a host reading only the JSON reports
-      cannot observe it.
+      A render-time refusal appears on neither channel (CARVE-P2-024).
 
    2. THE ESCAPING RULE -- NORMATIVE [CARVE-P11-006]. A character is escaped IF AND ONLY IF
       omitting the escape would change the re-parsed AST.
@@ -385,7 +384,7 @@
       BARE -- in the same unit, in the same line, beside the escape that stayed.
 
       A WRITER MAY STILL BE UNABLE TO DECIDE AN OCCURRENCE, and §2b's fallback
-      is what it falls back to -- per occurrence now rather than per unit. A
+      is what it falls back to, per occurrence rather than per unit. A
       fallback that spends more escapes than this test asks for is wider than
       the minimum and never narrower, which is the only direction §1 tolerates.
 
@@ -503,7 +502,7 @@
       so W1 and W3 render and parse whole documents.
 
       THAT IS NOT A REASON TO ESCALATE THE WHOLE DOCUMENT, and reading it as
-      one is what §2b now forbids. Where the two parses differ, they differ
+      one is what §2b forbids. Where the two parses differ, they differ
       SOMEWHERE, and W4 takes the conservative spelling only for the smallest
       unit that fails.
 
@@ -524,14 +523,12 @@
         spelling.
 
         The CARET is also unconditional, for a different reason: it opens
-        nothing on its own, but its escape carries information the AST records
-        separately. A text node whose LEADING caret came from an escape is
-        marked as such, so an image followed by a caret line stays a paragraph
-        instead of being promoted to a figure. Comparing that mark in W3 would
-        escalate every document whose text begins with a caret; ignoring it
-        would silently turn the image case into a figure. Escaping the caret in
-        BOTH forms keeps the two renders identical on that point, at the cost
-        of one escape on a character that is rare in prose.
+        nothing on its own, but a LEADING caret decides whether the block
+        above it takes a caption. Escaped, an image followed by a caret line
+        stays a paragraph; bare, the two lines are a figure. The tree records
+        no field for the escape (CARVE-P11-010). Escaping the caret in BOTH
+        forms keeps the two renders identical on that point, at the cost of
+        one escape on a character that is rare in prose.
 
         SEARCH COST BELONGS TO THE STRATEGY, NOT THE OUTPUT -- NORMATIVE [CARVE-P11-010], and the
         difference is §4's own. This section names the sets W1 renders

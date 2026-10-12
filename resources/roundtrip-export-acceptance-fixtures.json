@@ -1552,6 +1552,14 @@
       "aheadOfPin": true
     },
     {
+      "id": "deprecated-alias-name-dropped",
+      "source": "[a](/u){data-djot-ref=x}\n",
+      "attribute": "data-djot-ref",
+      "value": null,
+      "defaultValue": "x",
+      "aheadOfPin": true
+    },
+    {
       "id": "unreserved-name-kept-on-heading",
       "source": "{data-keep=x}\n# T\n",
       "attribute": "data-keep",

@@ -553,8 +553,8 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    intentionally omit a raw node, flatten a `ruby` node or an editorial
    comment, or displace an authored attribute, but a checked
    renderer MUST make that loss observable. Its
-   result has `value`, `losses`, `totalLosses`, and `truncated`. Each omitted
-   raw node contributes one loss in document order with the stable code
+   result has `value`, `losses`, `totalLosses`, and `truncated`. Each raw
+   node the selected target does not render contributes one loss in document order with the stable code
    `raw-format-dropped`, its verbatim `format`, the selected `target`, a
    `nodeType` of `inline` or `block`, its source `pos` when recorded, and a
    short human-readable `message`. `losses` is bounded (100 entries by default),
@@ -566,7 +566,10 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    `inline`, its `pos` when recorded, and a short message. It has NO `format`.
    Plain, ANSI and canonical Carve output keep both sides visibly as
    `base(annotation)` but lose their association. HTML and Markdown preserve
-   native ruby and report no loss.
+   native ruby and report no loss. On the canonical Carve target the same
+   flatten is also reported as `structure-unspellable`, node `ruby`, on the
+   conversion-diagnostics channel (CARVE-P11-046): one loss under two codes,
+   one per channel.
 
    Each editorial comment that Plain or ANSI writes as bare text contributes
    one loss in document order with the stable code
@@ -599,12 +602,16 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    of `block`, its `pos` when recorded, and NO `format`. Only the Markdown
    target reports this code.
 
-   The canonical Carve writer preserves authored destinations under PART 11
-   and contributes no `destination-denied` row for them. PART 9 §25 binds the
-   consumer that renders the emitted source, not its interchange serialization.
+   The canonical Carve writer contributes no `destination-denied` row
+   (CARVE-P9-054).
 
-   A loss records WHAT THE SELECTED RENDERER ACTUALLY DROPS OR FLATTENS, not
-   every raw or ruby node in the tree. Matching HTML passes through (or is visibly escaped by a safe
+   A LOSS RECORDS WHAT THE SELECTED TARGET DOES NOT RENDER, not what its
+   output drops and not every raw or ruby node in the tree. A raw inline
+   whose format the target cannot write is not rendered, so it reports
+   `raw-format-dropped` whether or not roundtrip export carries its content
+   in a `data-carve-raw` span (CARVE-P10-015): the carrier keeps the content
+   for an import, and this output still does not render it.
+   Matching HTML passes through (or is visibly escaped by a safe
    policy, [CARVE-P10-013]) with no loss. Markdown visibly escapes HTML raw content with no loss.
    ANSI visibly degrades a raw BLOCK to `[raw:format] content` with no loss, but
    reports a raw INLINE it omits. Plain text reports every raw node it omits.
