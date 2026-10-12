@@ -1566,7 +1566,7 @@ function opensParagraph(text, atBlockPosition = false, tableOpen = false, memo =
     // along unchanged.
     if (budget-- <= 0) return true
     if (QUOTE.test(text)) { text = QUOTE.exec(text)[1] ?? ''; openTable = false; inQuote = true; continue }
-    if (HEADING.test(text) || HR.test(text)) return finish(false)
+    if (HEADING.test(text) || HR.test(text) || (inQuote && DEFLIST_TERM.test(text))) return finish(false)
     if (inQuote && atBlockPosition && ((FENCE.test(text) && parseFenceInfo(FENCE.exec(text)[2]) !== null) ||
         isColonBlockOpener(text))) return finish(false)
     // A LIST MARKER is asked the SAME question about what it carries, for the
@@ -3915,7 +3915,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         }
         if (atStart && qNestedTable.length === 0) {
           const summary = quotePrefixSummary(line, prefixMemo(state, lines, idx).quote)
-          if (summary && !isColonBlockOpener(summary.tail) && !(FENCE.test(summary.tail) && parseFenceInfo(FENCE.exec(summary.tail)[2]) !== null)) {
+          if (summary && !QUOTE.test(matchMarkerAt(indentCols(summary.tail))?.text ?? '') && !isColonBlockOpener(summary.tail) && !(FENCE.test(summary.tail) && parseFenceInfo(FENCE.exec(summary.tail)[2]) !== null)) {
             const { depth, tail } = summary
             if (state.blockDepth + depth >= MAX_NESTING_DEPTH) {
               const remaining = MAX_NESTING_DEPTH - state.blockDepth
@@ -3985,11 +3985,12 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             return settle(false, depth + 1)
           }
           depth++
+          if (QUOTE.test(inner.rest)) text = inner.rest
           if (!QUOTE.test(text)) {
             // A term has inline content, but no paragraph for a lazy fold.
             // Match the direct quote classifier below.
             if (state.blockDepth + depth >= MAX_NESTING_DEPTH) return settle(text.trim() !== '', depth)
-            if (hostedBlockAt(host, inner, popped)) return settle(false, depth)
+            if (hostedBlockAt(host, inner, popped) || isDefinitionOrAttributeLine(inner.rest)) return settle(false, depth)
             // A bare colon run closes the claim unless this level's own
             // paragraph absorbs it under CARVE-P9-016.
             const colon = COLON_FENCE.exec(text)
@@ -4200,14 +4201,20 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
          */
         // Every depth ends when a line stops supplying its marker, so a line
         // that is not a nested quote at all clears the whole ladder.
-        if (!QUOTE.test(l)) {
+        if (!QUOTE.test(l) && !QUOTE.test(inner0.rest)) {
           const continuesNested = qOpenPara && !isOpener && !COLON_CLOSER.test(l) &&
             opensParagraph(l, false, qTableOpen)
           if (continuesNested) {
             for (const para of qNestedParaLines) para?.push(l)
           } else clearNested()
         }
-        const nestedQuoteEnds = QUOTE.test(l) && !nestedQuoteOpensParagraph(l, !qOpenPara, idx)
+        const hostedQuote = QUOTE.exec(inner0.rest)
+        const hostedQuoteNeedsTracking = hostedQuote && (
+          qNestedHost.some(host => host?.fence) ||
+          isDefinitionOrAttributeLine((hostedQuote[1] ?? '').trimStart()) ||
+          !opensParagraph(inner0.rest, true, false, prefixMemo(state, lines, idx).paragraph))
+        const nestedQuoteText = QUOTE.test(l) ? l : hostedQuoteNeedsTracking ? inner0.rest : null
+        const nestedQuoteEnds = nestedQuoteText !== null && !nestedQuoteOpensParagraph(nestedQuoteText, blockStart || !qOpenPara, idx)
         const nestedItemEnds = !qOpenPara && !!matchMarkerAt(meas) &&
           !opensParagraph(l, true, false, prefixMemo(state, lines, idx).paragraph)
         const hostedBlock = hostedBlockAt(qHost, inner0, popped)
@@ -5594,7 +5601,34 @@ function collectItems(lines, i, list, state, ind, meas) {
     let fenceUnderAbsorbed = null
     // The quote run at this item's content column: its last line's index, and
     // whether that line left the quote a paragraph or a table open.
-    const bodyQuote = { at: -2, open: false, table: false }
+    const bodyQuote = { at: -2, open: false, table: false, hosts: [] }
+    const advanceBodyQuote = (text, idx) => {
+      const continues = bodyQuote.at === idx - 1
+      if (!continues) bodyQuote.hosts = []
+      let depth = 0
+      let opaque = false
+      while (QUOTE.test(text) && depth < MAX_NESTING_DEPTH) {
+        text = QUOTE.exec(text)[1] ?? ''
+        const host = bodyQuote.hosts[depth] ??= hostLadder()
+        if (hostFenceStep(host, text)) { opaque = true; break }
+        const { inner, blockStart, popped } = hostAdvance(host, text, continues && bodyQuote.open)
+        const opener = hostFenceOpener(host, inner, () => blockStart || !continues || !bodyQuote.open)
+        if (opener) {
+          host.fence = { run: opener[1], column: inner.col, host: host.columns.at(-1) }
+          opaque = true
+          break
+        }
+        if (hostedBlockAt(host, inner, popped) || isDefinitionOrAttributeLine(inner.rest)) { opaque = true; break }
+        depth++
+      }
+      bodyQuote.hosts.length = depth + Number(opaque)
+      const rowOpen = continues && bodyQuote.table
+      bodyQuote.open = !opaque && text.trim() !== '' && opensParagraph(text, !(continues && bodyQuote.open), rowOpen)
+      bodyQuote.table = !opaque && tableRunStep(rowOpen, text)
+      bodyQuote.at = idx
+      return bodyQuote.open
+    }
+    if (QUOTE.test(head.text) && !paragraphIsOpen()) advanceBodyQuote(head.text, i)
     {
       // A fence can open on the MARKER LINE (`- ``` `), where its opener is the
       // marker-line content, not a collected continuation line -- seed from it.
@@ -6207,7 +6241,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           }
           if (dmeas.rest !== '') {
             if (nm && nm.indent >= contentCol && !inDefBody) descLive = true
-            else if (!descendantOwned) descLive = false
+            else if (!descendantOwned && !COMMENT_LINE.test(dedented)) descLive = false
             deepestIsDescendant = descLive
           }
         }
@@ -6324,12 +6358,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // (CARVE-P0-009). The run's own paragraph and table state ride along,
         // so a marker or a `+ ...|` row under quoted prose stays that prose.
         else if (QUOTE.test(dedented)) {
-          const quoted = QUOTE.exec(dedented)[1] ?? ''
-          const continues = bodyQuote.at === i - 1
-          const rowOpen = continues && bodyQuote.table
-          bodyQuote.open = quoted.trim() !== '' && opensParagraph(quoted, !(continues && bodyQuote.open), rowOpen)
-          bodyQuote.table = tableRunStep(rowOpen, quoted)
-          bodyQuote.at = i
+          advanceBodyQuote(dedented, i)
           if (bodyQuote.open) startPara()
           else closePara()
         }
