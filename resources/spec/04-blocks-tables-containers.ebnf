@@ -99,7 +99,7 @@ colspan_marker = {space}, '<', {space} ;
 (* TABLE-CELL PADDING (NORMATIVE, PART 7). Every padding slot in the five
    productions above is spelled `space`. All of them sit after the row's
    opening `|`, so all of them are INLINE, and A TAB IS SYNTAX ONLY IN THE
-   LEADING RUN (PART 7). A tab written in one of these slots is not padding:
+   LEADING RUN (CARVE-P7-001). A tab written in one of these slots is not padding:
    it stays where it is and becomes ordinary cell content, so
    `|<TAB>a<TAB>|` is a cell whose text begins and ends with a tab, and
    `|<TAB>---<TAB>|` is not a delimiter_cell at all - the row is an ordinary
@@ -140,7 +140,7 @@ caption_continuation_line = inline_content, newline ;  (* a PLAIN line only *)
    that is not one BEGINS the caption. `^<SP><SP><SP>cap` is the caption `cap`,
    not `<SP><SP>cap`.
 
-   TWO CLAUSES DECIDE IT. MARKER SEPARATORS AND PADDING SLOTS (PART 2) makes a
+   TWO CLAUSES DECIDE IT. CARVE-P7-002 makes a
    marker separator what stands between the marker and the content it
    introduces, and the four slots it narrows to exactly one space are PADDING
    slots -- a closed enumeration the caret is not in. And PART 11 §1 names
@@ -148,7 +148,7 @@ caption_continuation_line = inline_content, newline ;  (* a PLAIN line only *)
    if the run is not content.
 
    A TAB IS NOT SEPARATOR. `space = ' '`, so `^<SP><TAB>cap` keeps the tab as
-   the caption's first character. MARKER REQUIRES CONTENT (PART 2) applies
+   the caption's first character. MARKER REQUIRES CONTENT (CARVE-P2-009) applies
    after the run as well: a caret, the separator and nothing but whitespace
    opens no caption, and the line is ordinary paragraph text.
 
@@ -209,7 +209,7 @@ caption_slot = [blank_line], caption ;
 colon_fence = ":::", {":"} ;
 (* The colon fence has ONE separator slot -- the whitespace immediately after
    the fence run -- and all four openers share it. It is a MARKER SEPARATOR
-   (PART 7): the token after it selects which of the four blocks the line
+   (CARVE-P7-002): the token after it selects which of the four blocks the line
    opens, so it is spelled `space` and a tab does not satisfy it. `div_open`
    makes the slot OPTIONAL because a bare `[label]` may sit flush against the
    fence (`:::[First]`); optional is a different property from a different
@@ -217,7 +217,7 @@ colon_fence = ":::", {":"} ;
    token follows it.  *)
 colon_fence_close = colon_fence:close
                     where len(close) = len(open) ;
-(* FORMAL (PART 9 §12, now a guard): `open` is the colon_fence captured by
+(* FORMAL (PART 9 §12, stated as a guard): `open` is the colon_fence captured by
    the INNERMOST open block's opener (admonition_open / div_open /
    line_block_open / local_hard_break_block_open). A block is closed only by
    a bare fence of EXACTLY its opener's length.
@@ -336,9 +336,9 @@ admonition = admonition_open, newline,
    separator is what makes this an admonition rather than a div, a line block
    or a local hard-break block, so it is a MARKER SEPARATOR; once
    `admonition_type` has been read the block is decided and the "title" and
-   [label] slots are ordinary inter-token padding (PART 7, MARKER SEPARATORS
-   AND PADDING SLOTS). The roles differ, the terminal does not, because A TAB
-   IS SYNTAX ONLY IN THE LEADING RUN (PART 7). `::: note<TAB>"T"` is not an
+   [label] slots are ordinary inter-token padding (CARVE-P7-002). The roles
+   differ, the terminal does not, because A TAB IS SYNTAX ONLY IN THE LEADING
+   RUN (CARVE-P7-001). `::: note<TAB>"T"` is not a
    valid admonition opener. It recovers as the named container with no
    metadata and a diagnostic. A tab in the marker-separator slot still leaves
    the prefix unrecognized and the line as prose. *)
@@ -370,9 +370,9 @@ quoted_title = '"', {character - '"'}, '"' ;
    DESIGN: the group's one piece of authored metadata is its caption, and the
    caption sits after the closer, where §4's rule already lives.
 
-   THE CLOSER CARRIES THE CAPTION SLOT. This is §4's sixth host, and the one
-   whose allowance is STRUCTURAL on a fence: the slot hangs on the CLOSING
-   fence, exactly the `[caption_slot]` that `code_block`, `blockquote` and
+   THE CLOSER CARRIES THE CAPTION SLOT. A figure group is one of PART 9 §4's
+   seven captionable hosts, and its allowance is STRUCTURAL on a fence: the
+   slot hangs on the CLOSING fence, exactly the `[caption_slot]` that `code_block`, `blockquote` and
    `table` end in, with the same one-optional-blank-line allowance. Two
    container kinds take it -- this one and `quote_block`, which captions like
    the block quote it is (§4) -- and a `^ ` line after any OTHER `:::` closer
@@ -452,8 +452,7 @@ local_hard_break_block_open = colon_fence:open, space, backslash ;
    WHICH SPELLING AN AUTHOR USED is carried on the node as `fenced` (PART 12),
    because `carve fmt` must be able to write back what it read: normalizing
    one spelling to the other would rewrite documents no one asked to change.
-   The flag is ABSENT on a `>`-prefixed quote, so a document that predates
-   this clause serializes exactly as it did. *)
+   The flag is ABSENT on a `>`-prefixed quote. *)
 quote_block = quote_block_open, newline,
               {block - admonition_close},
               [admonition_close, newline, [caption_slot]] ;

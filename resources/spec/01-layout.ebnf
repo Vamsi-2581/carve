@@ -6,8 +6,7 @@
    THIS LAYER. Indentation, container prefixes, and lazy continuation are 2D
    properties no string grammar can express (they need column arithmetic and
    carried container state); L0 states them as a deterministic one-pass line
-   automaton instead of prose. The three engine implementations realize
-   this automaton literally.
+   automaton instead of prose.
 
    INPUT.  Lines, split on `newline` as that production defines it below.
 
@@ -27,7 +26,7 @@
            offsets.
 
            Column arithmetic is PART 9 §24 C1. A TAB IS SYNTAX ONLY IN THE
-           LEADING RUN (PART 7).
+           LEADING RUN (CARVE-P7-001).
    STATE.  open := stack of open containers, bottom-up (document ->
            innermost), plus the current leaf (none | paragraph | heading |
            ...). Container kinds and the per-line prefix each demands:
@@ -107,8 +106,8 @@
            rule; their construct clauses only define the minimum column and
            attachment boundary.
 
-           A BLOCK'S EXTENT ENDS AT A DEFINITION IT CAN ONLY TAKE AS TEXT
-           (carve#1918). "At its own content column" is the whole of what the
+           A BLOCK'S EXTENT ENDS AT A DEFINITION IT CAN ONLY TAKE AS TEXT.
+           "At its own content column" is the whole of what the
            nested body owns: ownership is decided per line, so a block standing
            open does not withhold the columns BELOW its own. A definition it
            does not itself register is a line its body never reached, and §10
@@ -389,20 +388,6 @@
         `- a` / `  > q`, column 2 opens; column 1 and columns 3 through 8 fold,
         including the quote's column 4. Corpus 531 pins this band in all hosts.
 
-        §2's rebasing is what the band turns on. "A recognized opener PAST that
-        column establishes its authored visual column" presumes the line IS a
-        recognized opener there, and past the column it is one only where
-        nothing can take it as text -- with a container in the open stack
-        holding an OPEN PARAGRAPH the line is ordinary over-indented text, and
-        §2's last sentence gives such text no base. AT the content column it is
-        an opener whatever is open, because that column IS the body's column 0
-        (§24 C3) and a block there ends the paragraph it sits under
-        (CARVE-P0-011). So `- a` over `  > q` opens a block at column 2 alone.
-        Column 1 is below the item's column, columns 3 through 8 are above it,
-        column 4 is the quote's own content column, and all of them fold: a line
-        that writes no `>` is in no quote at any column, and none of these
-        reaches an opener column.
-
         A blank closes the paragraph. In the host, the same opener then opens
         a sibling block on its authored base (carve#2598).
 
@@ -492,7 +477,7 @@
         content column 4, a run at column 0 or 1 reaches the document; a run at
         column 2 reaches an outer item.
 
-        AND NO HOST TERM (carve#2538). This holds for items, definition bodies
+        NO HOST TERM. This holds for items, definition bodies
         and footnote bodies inside quotes too: an unmarked column-0 line
         reaches the document. Matched `%%%` spans are the exception (PART 9 §28):
         their whitespace slot admits a closer at any column, ending the span

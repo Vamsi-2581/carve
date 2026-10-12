@@ -60,8 +60,8 @@
      `resources/spec/rules.json` gives every `-- NORMATIVE` clause a stable id.
      The JSON transition and capability tables in that directory are normative
      inputs consumed or checked by the executable artifacts.
-   - docs/case-study/syntax.md and docs/edge-cases.md are EXPLANATORY and
-     DERIVED — prose for humans, non-normative.
+   - docs/case-study/syntax.md is EXPLANATORY and DERIVED: prose for
+     humans, non-normative.
    - docs/spec-history.md records retired readings, implementation divergence,
      compatibility measurements and decision archaeology. Those facts may
      explain a current rule but do not belong inside its normative algorithm.

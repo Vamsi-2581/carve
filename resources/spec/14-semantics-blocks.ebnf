@@ -36,7 +36,7 @@
          a further bare d that would open does NOT push -- it is literal.
          Hence /usr/local/ -> <em>usr/local</em> (01-emphasis-6);
          the/path/here is literal; unbalanced trailing runs stay literal:
-         /b// -> <em>b</em>/ and /x// -> <em>x</em>/ (edge-cases.md §1).
+         /b// -> <em>b</em>/ and /x// -> <em>x</em>/ (resources/examples/edge-cases.md).
          An explicit braced opener is exempt: it MAY push a child of the
          same kind under either a bare or a braced parent (§22). Each braced
          span creates the E2a boundary; its closer closes that span, never
@@ -227,7 +227,7 @@
          is the deliberate divergence, not a restatement of it.
       I7 A CAPTION LINE DOES NOT INTERRUPT. A `^ ` line appears in neither
          I1 nor I5. What ends a paragraph at a caret is §4, and §4 reaches
-         only the five captionable hosts; for the two it spells in prose that
+         only the seven captionable hosts; for the two it spells in prose that
          is a paragraph whose WHOLE content is one image or one display-math
          span, and there the caret line ends the paragraph and ATTACHES.
          Anywhere else it folds in as ordinary paragraph text, caret and all:
@@ -500,7 +500,7 @@
       endnotes section; any OTHER `aria-*`
       the author writes leaves the naming alone.
       The label renders as `<p class="div-label">` when no group extension
-      consumes it. An untitled, unlabeled marker renders EXACTLY as it did before this clause.
+      consumes it. An untitled, unlabeled marker emits neither paragraph.
       Non-HTML targets follow PART 11 §10e T1 for both tokens.
 
       A SIBLING TITLE WAS REFUSED FOR A NAMEABLE REGION. Put the visible title
@@ -536,8 +536,7 @@
       same-or-shallower heading. The slug-derivation rule (ASCII
       transliteration etc., see syntax.md §4.1) computes
       the id; the id lives on the `<section>` element, NOT on the
-      `<h*>` element. This shifts the existing carve behavior
-      (id-on-h*, no section wrapper) to match djot's structural model.
+      `<h*>` element.
       Algorithm (one stateful pass over top-level blocks):
         let openSections : Stack of (level, sectionElement) = []
         for each top-level child node:
@@ -584,7 +583,7 @@
         top-level headings (`# abc` then `> # abc` gives `abc` then
         `abc-2`), and it is a valid `</#id>` crossref target. The one
         exception is the implicit `[Heading][]` reference index, which
-        declines headings under a blockquote (PART 11 R1).
+        declines headings under a blockquote (PART 9R R1).
         When the `sections` option below is off, the top-level shape becomes
         identical to this one, so id
         placement and attribute placement follow ONE rule everywhere in
@@ -744,8 +743,7 @@
       A4 DROP IF DANGLING -- NORMATIVE [CARVE-P9-024]. pending with no following block
          element produces no output.
 
-         THERE ARE TWO WAYS TO RUN OUT OF FOLLOWING BLOCKS, and this clause
-         named only the first:
+         THERE ARE TWO WAYS TO RUN OUT OF FOLLOWING BLOCKS:
 
            - END OF DOCUMENT; and
            - END OF THE CONTAINER that holds the attribute.

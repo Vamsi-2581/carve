@@ -22,7 +22,7 @@
    `%%<SP><SP>x<SP>` has the text `<SP>x`.
 
    THE RUN IS `whitespace` -- `' ' | '\t'` -- the same two-character terminal
-   `blank_line = {whitespace}` and `indent` take (PART 1). Every
+   `blank_line = {whitespace}` (PART 1) and `indent` (PART 2) take. Every
    other character is CONTENT and survives, however invisible: a no-break
    space, a zero-width space, a BYTE ORDER MARK, an en quad, an ideographic
    space, a form feed and a vertical tab all reach the output. In
