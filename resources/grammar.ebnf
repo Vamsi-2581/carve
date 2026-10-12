@@ -348,10 +348,10 @@
         same rule; their construct clauses only define the minimum column and
         attachment boundary.
 
-     X1 COMMENT RETENTION. After a line comment consumed below the content
-        column of a list item, a definition body or a footnote body, a
-        noninterrupting follower below that column remains in the container
-        and starts a new paragraph (CARVE-P9-053). This is retained ownership,
+     X1 COMMENT RETENTION. Only a line comment consumed BELOW the content
+        column of a list item, a definition body or a footnote body retains:
+        after one, a noninterrupting follower below that column remains in
+        the container and starts a new paragraph (CARVE-P9-053). This is retained ownership,
         not a fold and not a continuation claim: the comment closed the
         paragraph (T). Its limits:
           - A sibling marker is recognized first. A retained list marker
@@ -364,8 +364,9 @@
             comment is classified in the enclosing context.
           - Retention describes the most recent boundary, not the next
             visible line across arbitrary invisible boundaries. A following
-            blank clears it. A comment at or above the content column grants
-            none and clears earlier retention.
+            blank clears it. A comment at or above the content column retains
+            nothing and clears earlier retention, so in `- inner` / `  %% c` /
+            ` code` the line ` code` leaves the item.
           - An interrupting opener below the content column is classified
             outside the container.
           - An unmatched `%%%` fence is a line comment and follows this rule.
