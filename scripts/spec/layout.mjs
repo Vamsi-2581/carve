@@ -2017,7 +2017,7 @@ function hostAdvance(h, line, paraOpen) {
 function hostedBlockAt(h, inner, popped) {
   if (h.columns.length < 2) return false
   const column = h.columns.at(-1)
-  if (inner.col !== column && !(popped && inner.col > column)) return false
+  if (inner.col < column) return false
   const text = inner.rest
   return HEADING.test(text) || HR.test(text) || text[0] === '|' || DEFLIST_TERM.test(text) ||
     isDefinitionOrAttributeLine(text)
@@ -2120,7 +2120,9 @@ function hostFenceOpener(h, inner, canOpen = () => true) {
   const f = FENCE.exec(inner.rest)
   const opener = f && parseFenceInfo(f[2]) !== null ? f : null
   if (inner.col !== column) {
-    if (opener !== null && column > 0 && !h.unrebased.has(column) && h.unclaimed === null && canOpen(opener)) return opener
+    // An absorbed run of the other fence character is not waiting for this one.
+    const awaited = h.unclaimed !== null && (opener === null || opener[1][0] === h.unclaimed.run[0])
+    if (opener !== null && column > 0 && !h.unrebased.has(column) && !awaited && canOpen(opener)) return opener
     // AN OVER-INDENTED RUN INSIDE A CONTAINER DID OPEN SOMETHING. The host's
     // reader takes it (SS24 C3 reads "at or past"), and the run at the host's own
     // column below it is that fence's CLOSER. Untracked, that closer read as a
@@ -5997,7 +5999,10 @@ function collectItems(lines, i, list, state, ind, meas) {
         break
       }
       const { col } = lm
-      const nm = matchMarkerAt(lm)
+      // A marker in a line-block payload is payload: it opens no sublist.
+      const inPayload = col >= contentCol && fence.opaque === null && fence.colon.length !== 0 &&
+        colonLineBlock.at(-1) === true
+      const nm = inPayload ? null : matchMarkerAt(lm)
       if (col >= contentCol) {
         // A line at a known descendant item's column belongs to that item.
         // Leave its authored indentation intact here so the recursive list
@@ -6201,7 +6206,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // the base folds with it. `descendantOwned` is the collector's existing
         // spelling of "a known descendant item owns this column".
         absorbedFenceSeen = null
-        nestedOpaque = trackNestedFence(nestedOpaque, dmeas, lm.col, i, descendantOwned && !inDefBody)
+        if (!inPayload) nestedOpaque = trackNestedFence(nestedOpaque, dmeas, lm.col, i, descendantOwned && !inDefBody)
         // ADVANCE. One line the descendant takes, in the descendant's own
         // coordinates, which is what makes the state readable at its column.
         // A COMMENT SPAN WRITTEN BELOW THIS COLUMN IS NOT THE DESCENDANT'S. Its
@@ -6318,6 +6323,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // close it. Unconditional `startPara()` was the content-column twin of
         // the marker-line seed carve#1280 fixed, and it survived because that
         // fix reached only the marker line.
+        else if (inPayload && matchMarkerAt(dmeas)) openParaWith(dedented)
         else if (matchMarkerAt(dmeas)) {
           if (opensParagraph(dmeas.rest, true, false, prefixMemo(state, lines, i).paragraph)) startPara()
           else closePara()

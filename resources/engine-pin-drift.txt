@@ -43,3 +43,4 @@
 560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-2  the line below a description that ends on a code block leaves the list (CARVE-P0-009); the pin keeps it in the item (carve-js#2855)
 561-a-line-block-payload-span-pairs-past-the-content-column  two fence runs past the content column in a line-block payload pair as one inline span (ruled on carve-php#3137); the pin opens a code span and a div at the second run (carve-js#2861)
 561-a-line-block-payload-span-pairs-past-the-content-column-2  two fence runs past the content column in a line-block payload pair as one inline span (ruled on carve-php#3137); the pin opens a code span and a div at the second run (carve-js#2861)
+562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph  a heading past a quoted nested item's content column leaves the quote no paragraph (CARVE-P0-004, CARVE-P0-009); the pin keeps the line below in the quote (carve-js#2838)
