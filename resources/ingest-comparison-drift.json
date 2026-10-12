@@ -972,7 +972,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/js->php",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/js->php",
       "reason": "A heading past the column of an item-hosted container opens at its authored column (CARVE-P0-004); carve-js and carve-rs read it as text, carve-php opens it and keeps the line below in the container.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "1de0257d5e0c91ae17c0cbc3d8a221fb3e805324c5cf3c6d84064a7282ae1f32",
@@ -983,7 +983,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/php->js",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/php->js",
       "reason": "A heading past the column of an item-hosted container opens at its authored column (CARVE-P0-004); carve-js and carve-rs read it as text, carve-php opens it and keeps the line below in the container.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "5654c3729bcd7d99112184e8bff3a7dfe11dd9527679cefddf771225a5ce2477",
@@ -994,7 +994,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/php->rust",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/php->rust",
       "reason": "A heading past the column of an item-hosted container opens at its authored column (CARVE-P0-004); carve-js and carve-rs read it as text, carve-php opens it and keeps the line below in the container.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "5654c3729bcd7d99112184e8bff3a7dfe11dd9527679cefddf771225a5ce2477",
@@ -1005,7 +1005,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/rust->php",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/rust->php",
       "reason": "A heading past the column of an item-hosted container opens at its authored column (CARVE-P0-004); carve-js and carve-rs read it as text, carve-php opens it and keeps the line below in the container.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "1de0257d5e0c91ae17c0cbc3d8a221fb3e805324c5cf3c6d84064a7282ae1f32",
@@ -1016,7 +1016,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/js->php",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/js->php",
       "reason": "Under an open paragraph of an item-hosted container a shifted line-block opener is text; carve-php opens it, and carve-rs keeps the line below the closed container in the item.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3241",
       "fingerprint": "1b156dc0be41db404861d382a65942cc3a4335bb574f7d36114e6d6061b582b9",
@@ -1027,7 +1027,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/js->rust",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/js->rust",
       "reason": "Under an open paragraph of an item-hosted container a shifted line-block opener is text; carve-php opens it, and carve-rs keeps the line below the closed container in the item.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3241",
       "fingerprint": "d9b171ccfc5a5ef3890056030d2c9a0a426d40bbf762708cbdba8cd8563f89c5",
@@ -1038,7 +1038,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/php->js",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/php->js",
       "reason": "Under an open paragraph of an item-hosted container a shifted line-block opener is text; carve-php opens it, and carve-rs keeps the line below the closed container in the item.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3241",
       "fingerprint": "1dd4ae395e72283594e4588dc68c6739c8c6ff338e42bae03b6b002f955f527d",
@@ -1049,7 +1049,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/php->rust",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/php->rust",
       "reason": "Under an open paragraph of an item-hosted container a shifted line-block opener is text; carve-php opens it, and carve-rs keeps the line below the closed container in the item.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3241",
       "fingerprint": "0dccceff4ab7bab9041fbc5bf78981096cb30f058698712655756c39f972bc0a",
@@ -1060,7 +1060,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/rust->js",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/rust->js",
       "reason": "Under an open paragraph of an item-hosted container a shifted line-block opener is text; carve-php opens it, and carve-rs keeps the line below the closed container in the item.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3241",
       "fingerprint": "3fbff9751cd77671e66a92209fced4ed1bd2d188c9d3762b299ffb9882ec1bd0",
@@ -1071,7 +1071,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/rust->php",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/rust->php",
       "reason": "Under an open paragraph of an item-hosted container a shifted line-block opener is text; carve-php opens it, and carve-rs keeps the line below the closed container in the item.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3241",
       "fingerprint": "3d367a0a8c5cc47158436f2fab139b1bb1f443506a4f7a345f340c5f32796171",
@@ -1082,7 +1082,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-5.crv/js->rust",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-5.crv/js->rust",
       "reason": "A fence run past an item column after a block ended its sublist opens a code block (CARVE-P0-004); carve-js and carve-php read it as text, carve-rs opens it.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "1d22e2374c8b12111fa2780e830e3447d51f67c51539271ef9dc0f10224f2750",
@@ -1093,7 +1093,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-5.crv/php->rust",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-5.crv/php->rust",
       "reason": "A fence run past an item column after a block ended its sublist opens a code block (CARVE-P0-004); carve-js and carve-php read it as text, carve-rs opens it.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "1d22e2374c8b12111fa2780e830e3447d51f67c51539271ef9dc0f10224f2750",
@@ -1104,7 +1104,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-5.crv/rust->js",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-5.crv/rust->js",
       "reason": "A fence run past an item column after a block ended its sublist opens a code block (CARVE-P0-004); carve-js and carve-php read it as text, carve-rs opens it.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "e1c728103ecbc10f2868d03880ac5ffa36b3c70e68810c09e85b500fccc54be4",
@@ -1115,7 +1115,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there-5.crv/rust->php",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-5.crv/rust->php",
       "reason": "A fence run past an item column after a block ended its sublist opens a code block (CARVE-P0-004); carve-js and carve-php read it as text, carve-rs opens it.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "e1c728103ecbc10f2868d03880ac5ffa36b3c70e68810c09e85b500fccc54be4",
@@ -1126,7 +1126,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there.crv/js->php",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/js->php",
       "reason": "A line-block opener past the column of an item-hosted container opens at its authored column (CARVE-P0-004); carve-js reads it as text, carve-rs also keeps the line below in the item, carve-php opens it.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "62612b0e0243eaf22edc7c1206b3521dd6ece057aa5e76269e13553edcc78217",
@@ -1137,7 +1137,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there.crv/js->rust",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/js->rust",
       "reason": "A line-block opener past the column of an item-hosted container opens at its authored column (CARVE-P0-004); carve-js reads it as text, carve-rs also keeps the line below in the item, carve-php opens it.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "f41d16380ef9f1663b5342693a0dad5d26eda305c80b13e306606c2c3d0b6334",
@@ -1148,7 +1148,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there.crv/php->js",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/php->js",
       "reason": "A line-block opener past the column of an item-hosted container opens at its authored column (CARVE-P0-004); carve-js reads it as text, carve-rs also keeps the line below in the item, carve-php opens it.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "4dd5359cf7685c817dc27aff5b194572ae115abf8436fdfc027f2c728cd9982f",
@@ -1159,7 +1159,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there.crv/php->rust",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/php->rust",
       "reason": "A line-block opener past the column of an item-hosted container opens at its authored column (CARVE-P0-004); carve-js reads it as text, carve-rs also keeps the line below in the item, carve-php opens it.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "10eb1723bce9a0f0765d5ce448101e3270a9ac8f213870d03b21372696fa7d0f",
@@ -1170,7 +1170,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there.crv/rust->js",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/rust->js",
       "reason": "A line-block opener past the column of an item-hosted container opens at its authored column (CARVE-P0-004); carve-js reads it as text, carve-rs also keeps the line below in the item, carve-php opens it.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "09fd88e29217168e89dd400b97cd2dd81fd229270baf3c9b079375047753290a",
@@ -1181,7 +1181,7 @@
       }
     },
     {
-      "key": "tests/corpus/564-an-opener-past-a-hosted-container-s-column-opens-there.crv/rust->php",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/rust->php",
       "reason": "A line-block opener past the column of an item-hosted container opens at its authored column (CARVE-P0-004); carve-js reads it as text, carve-rs also keeps the line below in the item, carve-php opens it.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2875",
       "fingerprint": "1b6f697ff0f4ee4e8e20270ab470de661ca6afcd19dae6ad00a6ab56767e614e",

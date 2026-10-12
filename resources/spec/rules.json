@@ -469,7 +469,7 @@
     {
       "id": "CARVE-P4-001",
       "part": "4",
-      "title": "THE INLINE INTERIOR IS SPACE-ONLY, THE BLOCK-ATTRIBUTE LINE IS NOT",
+      "title": "ATTRIBUTE PADDING IS SPACE-ONLY",
       "scope": "parsing"
     },
     {

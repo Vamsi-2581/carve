@@ -54,7 +54,7 @@ list_item (extent)  1  carve-php opens at the parent content column, carve-js an
 # THE ROWS BELOW are not that case. On each the engines read the source into
 # different trees, because the corpus is ahead of one or more of them, and the
 # spans differ as a result. Every one closes with the parser fix its reference
-# names; none is a position defect of its own. Sections 556, 557, 560 and 564.
+# names; none is a position defect of its own. Sections 556, 557, 560 and 566.
 #
 # The same parse differences also put seven more documents on the two rows
 # above. Those are NOT declared: .ast-span-exempt keys the conformant reading on

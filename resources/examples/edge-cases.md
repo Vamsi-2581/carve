@@ -10400,10 +10400,10 @@ answer, and it is kept deliberately.** Corpus category names are an append-only
 contract - every engine allowlists them as `NN-slug`, so renaming one
 invalidates all of those lists at once. The documents below now pin the
 NARROWED answer (markup-carve/carve#906): a tab does not separate two attributes
-inside an INLINE block. The second half of the heading is still true, and is
-what the ruling turned on - a tab does pad a block-attribute LINE, which the
-category *The inline attribute interior is space-only, the attribute line is
-not* pins directly.
+inside an INLINE block. The second half of the heading no longer holds either:
+a tab inside a block-attribute LINE is content too, and only the indentation of
+a continuation line takes one. The category *The inline attribute interior is
+space-only, the attribute line is not* pins both.
 
 Every whitespace slot of the inline block takes `space`. All of them sit AFTER
 the first non-whitespace character of their line, which is where PART 7's rule
@@ -13409,10 +13409,12 @@ executable spec accepted one until this landed, for the same reason it linked
 
 ## The inline attribute interior is space-only, the attribute line is not
 
-markup-carve/carve#906 is a POSITION distinction rather than a per-construct
-exception, and this category is the half that does not move. The three
-documents above pin the inline block narrowing; these pin what it narrowed
-against.
+**The heading is the name this category was given when the attribute line
+still took a tab between attributes, and it is kept deliberately**: every
+engine allowlists a category as `NN-slug`. The rule is one POSITION rule
+(`CARVE-P4-001`, markup-carve/carve#2978): within a line every slot of an
+attribute block is a space run, inline and on a line of its own, and a tab is
+indentation only.
 
 CONTROL. The SPACE forms of all four inline positions - the run after `{`, the
 run between two attributes, the run before `}`, and the blessed empty block -
@@ -13440,11 +13442,9 @@ silently accepting less:
 
 :::
 
-The block-attribute LINE keeps `whitespace` at all three of its slots. It is
-the one construct in this grammar whose interior can hold a leading indentation
-run: after a `continuation`, the next line's leading whitespace IS indentation,
-and the rule that narrows the inline block is the same rule that protects this
-one.
+<!-- Each gap inside the braces is a TAB. -->
+A tab inside the block-attribute LINE is content, so the line is no attribute
+block and it is paragraph text.
 
 ::: compare
 
@@ -13455,13 +13455,15 @@ paragraph
 ```
 
 ```html
-<p class="a b">paragraph</p>
+<p>{	.a	.b	}</p>
+<p>paragraph</p>
 ```
 
 :::
 
-And the continuation line's own indentation, which is the position the whole
-distinction is about:
+The block-attribute line is still the one construct whose interior can hold a
+leading indentation run: after a `continuation`, the next line's leading
+whitespace IS indentation, and a tab there is measured in columns.
 
 ::: compare
 
@@ -49035,6 +49037,134 @@ paragraph in the item itself, which makes it loose (carve#2988).
     <p>text</p>
   </li>
 </ul>
+```
+
+:::
+
+
+## A line-final run of spaces and tabs is dropped before the line is read
+
+Line-final spaces and tabs are insignificant: they are dropped before anything
+reads the line (`CARVE-P7-001` item 5, markup-carve/carve#2978). On an attribute
+line that wraps, the run before the line break is no part of the separator, so
+the block still closes on the next line.
+
+<!-- The first line ends in a SPACE. -->
+A space before the line break of a wrapped attribute line is dropped.
+
+::: compare
+
+```carve
+{.a 
+.b}
+
+paragraph
+```
+
+```html
+<p class="a b">paragraph</p>
+```
+
+:::
+
+<!-- The first line ends in a TAB. -->
+So is a tab, which would be content anywhere inside the line.
+
+::: compare
+
+```carve
+{.a	
+.b}
+
+paragraph
+```
+
+```html
+<p class="a b">paragraph</p>
+```
+
+:::
+
+
+## A tab is content in a heading key and in a cross-reference id
+
+Inline spacing is a run of U+0020 and nothing else (markup-carve/carve#2978).
+The heading index a collapsed reference falls back to takes the label key of
+PART 9R R1, so only space runs collapse there, and a cross-reference id ends at
+a space, not at a tab (`crossref_id`).
+
+<!-- The heading holds a TAB between `A` and `B`. -->
+A tab in a heading is a character of its key, so a label spelled with a space
+does not find it and stays literal.
+
+::: compare
+
+```carve
+# A	B
+
+see [A B][]
+```
+
+```html
+<section id="A-B">
+  <h1>A	B</h1>
+  <p>see [A B][]</p>
+</section>
+```
+
+:::
+
+<!-- The heading and the label each hold a TAB between `A` and `B`. -->
+The same tab in the label finds it.
+
+::: compare
+
+```carve
+# A	B
+
+see [A	B][]
+```
+
+```html
+<section id="A-B">
+  <h1>A	B</h1>
+  <p>see <a href="#A-B">A	B</a></p>
+</section>
+```
+
+:::
+
+Space runs still collapse on both sides, and spaces at either end are trimmed.
+
+::: compare
+
+```carve
+# A  B
+
+see [ A B ][]
+```
+
+```html
+<section id="A-B">
+  <h1>A  B</h1>
+  <p>see <a href="#A-B"> A B </a></p>
+</section>
+```
+
+:::
+
+<!-- The id holds a TAB between `no` and `pe`. -->
+A tab inside `</#...>` belongs to the id. No id holds one, so the reference
+names nothing and stays literal, and nothing inside it is parsed.
+
+::: compare
+
+```carve
+a </#no	pe> b
+```
+
+```html
+<p>a &lt;/#no	pe&gt; b</p>
 ```
 
 :::

@@ -387,6 +387,9 @@ const INVENTORY = [
   },
   // The FORM FEED inside the label is the case: without it the label is `ab`.
   { base: '559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-2', crv: ['FF'], html: ['FF'] },
+  // The line-final run on the first line is the case: without it each is corpus 253-2.
+  { base: '564-a-line-final-run-of-spaces-and-tabs-is-dropped-before-the-line-is-read', crv: ['trailing-WS'], html: [] },
+  { base: '564-a-line-final-run-of-spaces-and-tabs-is-dropped-before-the-line-is-read-2', crv: ['trailing-TAB'], html: [] },
 ]
 
 function scan(text) {

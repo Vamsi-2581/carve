@@ -328,8 +328,8 @@ reference_definition = '[', reference_label, ']', ':', space+, link_destination,
 
    is NOT a definition, and a `[a][]` below it does not resolve.
 
-   THE LINE ENDING is `whitespace` -- `' ' | '\t'` -- the same terminal
-   `blank_line = {whitespace}` takes (PART 1). So `[a]: /u<SP>` and
+   A LINE-FINAL RUN of spaces and tabs is dropped before the production reads
+   the line (CARVE-P7-001 item 5). So `[a]: /u<SP>` and
    `[a]: /u<TAB>` are still definitions, while `[a]: /u<NBSP>`,
    `[a]: /u<U+2000>` and `[a]: /u<FF>` are not: every one of those is CONTENT,
    and content after the production is exactly what the anchor rejects. An
@@ -450,7 +450,10 @@ url_autolink = url ;  (* the same token the destination slot reads *)
 email_autolink = {email_char}+, '@', {email_char}+, '.', {letter}+ ;
 
 auto_text_link = "</#", crossref_id, '>' ;  (* cross-reference with auto text *)
-crossref_id = {character - ('>' | whitespace | newline)}+ ;
+crossref_id = {character - ('>' | space | newline)}+ ;
+(* A space ends the token and a tab does not (CARVE-P7-001): `</#a<TAB>b>` is
+   a cross-reference whose id holds the tab. No id does, so it names nothing
+   and stays literal. *)
 (* The crossref id token accepts NON-ASCII characters: automatic heading ids
    PRESERVE Unicode and case (`# Café Notes` -> `Café-Notes`), so `</#Café-Notes>`
    must be writable. Resolution is EXACT (PART 9R R4): no case fold and no

@@ -1375,8 +1375,8 @@ function resolveRefsOnce(html, ctx) {
 }
 
 /*
- * R1 keys the heading index on rendered plain text: trim, collapse internal
- * whitespace, NFC-normalize. Case is compared exactly, as everywhere else.
+ * R1 keys the heading index on rendered plain text: the label key (trim and
+ * collapse space runs), then NFC. Case is compared exactly, as everywhere else.
  *
  * NFC and not NFKC. Without it the id side is normalized (§25) and this side is
  * not, so a document publishes `id="Café"` and then declines `[Café][]` against
@@ -1384,8 +1384,8 @@ function resolveRefsOnce(html, ctx) {
  * other three did not.
  */
 function refKey(text) {
-  // R1's run, not `\s`: a no-break space or an em space is content (PART 7).
-  return stripTags(text).replace(/^[ \t\n\f\r]+|[ \t\n\f\r]+$/g, '').replace(/[ \t\n\f\r]+/g, ' ').normalize('NFC')
+  // R1's label key: U+0020 runs only, so a tab or a no-break space is content.
+  return labelKey(stripTags(text)).normalize('NFC')
 }
 
 /* Register a heading in the implicit-reference index. FIRST wins. */
