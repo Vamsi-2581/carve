@@ -32,7 +32,7 @@
          In particular, a bracket inside an editorial comment opens no run,
          so `[{#a]#}`
          retains its comment and renders the outside `[`.
-      E3 NO BARE SAME-TYPE NESTING (§3). While a reachable d-span is open,
+      E3 NO BARE SAME-TYPE NESTING. While a reachable d-span is open,
          a further bare d that would open does NOT push -- it is literal.
          Hence /usr/local/ -> <em>usr/local</em> (01-emphasis-6);
          the/path/here is literal; unbalanced trailing runs stay literal:
@@ -106,9 +106,8 @@
          81-paragraph-interruption-19.
 
          A `:::` OPENER IS NOT GUARDED. It interrupts whether or not a closer
-         follows, and an unterminated one closes with its host -- the
-         enclosing container's boundary, or end of input at the top level
-         (§12). Pinned by corpus 81-paragraph-interruption-20: `Text` /
+         follows; where an unterminated one closes is PART 2's UNCLOSED rule
+         (`admonition`). Pinned by corpus 81-paragraph-interruption-20: `Text` /
          `:::` / `stuff` is a paragraph followed by a div holding `stuff`.
 
       I5 INVISIBLE CONSTRUCTS interrupt AND are consumed: a reference
@@ -204,14 +203,13 @@
          430-below-a-definition-body-s-column-an-invisible-line-folds-as-text.
 
          A DEFINITION COLLECTED AT content_column ENDS THE ITEM'S OPEN
-         PARAGRAPH. The next nonblank line therefore stays in the item only if
-         it reaches content_column and opens item prose, except that a footnote
-         line reaching content_column + 2 belongs to the definition body and
-         leaves no item paragraph open. A line one column short of that body is
-         item prose. The comment exception above does not extend to definitions.
-         The bare decimal-dot marker `. ` claims one marker column and one
-         separator column, so its content_column is the same as `- `. Pinned
-         by corpus 374.
+         PARAGRAPH (CARVE-P0-010). The next nonblank line therefore stays in
+         the item only if it reaches content_column and opens item prose. A
+         footnote definition's own extent is CARVE-P0-012; a line one column
+         short of its body is item prose. The comment exception above does not
+         extend to definitions. The bare decimal-dot marker `. ` claims one
+         marker column and one separator column, so its content_column is the
+         same as `- `. Pinned by corpus 374.
       I6 SCOPE + THE HEADING EXCEPTION. The relation applies to EVERY open
          paragraph, including a blockquote's lazy continuation: "> quoted
          \n - item" folds into ONE quote whose paragraph is
@@ -302,44 +300,16 @@
       generic container. An EMPTY one closes on the next line --
       `<div>` newline `</div>`, the exception PART 10 §4 states.
 
-      INLINE OPENER ATTRIBUTES -- STRICT (djot). The opener line carries NO
-      inline attributes: it is the colon fence, an optional type word, an
-      optional quoted title and an optional `[label]`, and NOTHING else. A
-      `{...}` where the type word belongs makes the line an ORDINARY
-      PARAGRAPH, not a fence: `::: {.x}` and `:::{k=v}` are paragraphs. After
-      a type word, PART 2's opener recovery governs: `::: note {.x}` opens
-      the `note` container, drops the metadata and reports
-      `fence-title-syntax`. To attribute a div or admonition, use
-      a PRECEDING block-attribute line, which floats onto the block (§15):
-      `{.x #id}` then `::: note` yields `<aside class="admonition note x"
-      id="id">`.
+      INLINE OPENER ATTRIBUTES. None. The opener's shape and the recovery of
+      a malformed one are PART 2's (STRICT, under `admonition_open`). To
+      attribute a div or admonition, use a PRECEDING block-attribute line,
+      which floats onto the block (§15): `{.x #id}` then `::: note` yields
+      `<aside class="admonition note x" id="id">`.
 
-      FENCE LENGTH & NESTING: a fence is a run of 3+ colons; the same rule
-      governs both admonitions and generic divs. A block is closed only by a
-      BARE fence of EXACTLY its opener's length -- the guard the formal
-      `colon_fence_close` states as `len(close) = len(open)` -- so a bare
-      `:::` inside a `::::` block is content rather than a closer, and a bare
-      `::::` inside a `:::` block is likewise not one. AN UNCLOSED OPENER STILL
-      OPENS, bare or labeled, and closes where its HOST ends by PART 2's rule:
-      the enclosing container's boundary, or end of input at the top level
-      (corpus 271-the-flush-left-line-after-a-container-a-quoted-line-opened).
-
-      EQUAL-LENGTH FENCES DO NEST, because a closer must be BARE: `::: note`
-      may hold `::: tip`, the inner line being an opener rather than a closer
-      on account of its label. Only a bare equal-length line closes.
-
-      THE CANONICAL WIDTH IS A FUNCTION OF DEPTH, AND THAT COSTS O(depth^2)
-      BYTES. The exact-length guard leaves the DIRECTION free --
-      longer-outer documents and longer-inner ones both parse -- and `carve
-      fmt` writes the inward one: the outermost container is `:::` and each
-      level inward adds one colon (PART 11; the `colon_fence` note in PART 2).
-      So the writer sizes each fence from the depth it is ALREADY CARRYING. It
-      needs no lookahead, and the widths it emits cannot collide, because along
-      any one chain they are STRICTLY INCREASING. (A fence-shaped line in TEXT
-      is a different problem, answered by PART 11 §5's escaping.)
-
-      A nest d containers deep spends d^2 + 5d bytes on opener and closer
-      markers -- the accepted canonical-size trade (docs/spec-history.md).
+      FENCE LENGTH, NESTING, DIRECTION AND AN UNCLOSED OPENER are stated once,
+      in PART 2 at `colon_fence_close` and under `admonition`, for admonitions
+      and generic divs alike (corpus
+      271-the-flush-left-line-after-a-container-a-quoted-line-opened).
 
       A COLON-FENCE LINE THAT FAILS THE OPENER TEST LEAVES THE PARAGRAPH
       EXPECTING A CLOSER -- NORMATIVE [CARVE-P9-016]. A `:::` line that is not a valid opener
@@ -391,10 +361,7 @@
       between the opener and the nested list still opens the block, and an
       empty body (opener immediately followed by its closer) opens too. A
       MISSING closer changes none of this: PART 2's UNCLOSED rule governs
-      unqualified, the opener opens and the container closes with the ITEM
-      that holds it (corpus
-      270-a-real-div-in-a-container-and-the-flush-left-line-after-it), which is
-      end of input only when the item runs that far.
+      (corpus 270-a-real-div-in-a-container-and-the-flush-left-line-after-it).
       (resources/examples/edge-cases.md "Fence opener with a nested-list body
       inside a list item" pins these.)
 

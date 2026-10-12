@@ -161,9 +161,8 @@ caption_continuation_line = inline_content, newline ;  (* a PLAIN line only *)
      2. a line that INTERRUPTS a paragraph -- a heading, blockquote, table,
         fenced code, `:::` div, thematic break, or `%%%` comment -- ends the
         caption and starts that block;
-     3. a LIST MARKER does NOT end the caption: like a paragraph, a caption
-        folds a `- ` / `1.` line in as literal text (djot -- a list needs a
-        blank line to interrupt). `^ cap` + `- x` yields the caption `cap\n- x`;
+     3. a LIST MARKER does NOT end the caption (§10 I2): `^ cap` + `- x`
+        yields the caption `cap\n- x`;
      4. a further `^ ` line does NOT continue the caption (there is no repeated
         marker); it ends the caption and, having no captionable block to attach
         to, is ordinary paragraph text.
@@ -203,9 +202,8 @@ caption_slot = [blank_line], caption ;
    in the resolution pass. A caption with no bare `#` is unchanged. *)
 
 (* --- Admonitions --- *)
-(* A fence is a run of 3+ colons. The run length is a DEPTH count, not a
-   quoting device: a nested container's fence differs in length from its
-   parent's, and the canonical direction is +1 colon per level inward. *)
+(* A fence is a run of 3+ colons, for every colon container alike. The run
+   length is a DEPTH count, not a quoting device. *)
 colon_fence = ":::", {":"} ;
 (* The colon fence has ONE separator slot -- the whitespace immediately after
    the fence run -- and all four openers share it. It is a MARKER SEPARATOR
@@ -217,7 +215,7 @@ colon_fence = ":::", {":"} ;
    token follows it.  *)
 colon_fence_close = colon_fence:close
                     where len(close) = len(open) ;
-(* FORMAL (PART 9 §12, stated as a guard): `open` is the colon_fence captured by
+(* FORMAL (stated as a guard): `open` is the colon_fence captured by
    the INNERMOST open block's opener (admonition_open / div_open /
    line_block_open / local_hard_break_block_open). A block is closed only by
    a bare fence of EXACTLY its opener's length.
@@ -228,7 +226,11 @@ colon_fence_close = colon_fence:close
        not a closer at all -- it is an ordinary opener, and opens a block;
      - which direction the lengths run is therefore free. Longer-outer
        documents and longer-inner ones both parse. `carve fmt` emits the
-       inward-widening form (PART 11).
+       inward-widening form: the outermost container is `:::` and each level
+       inward adds one colon. The writer sizes each fence from the depth it
+       is already carrying, with no lookahead, and the widths along any one
+       chain are strictly increasing. A nest d containers deep spends
+       d^2 + 5d bytes on fence markers in that form.
 
    Code fences keep >= (PART 9 §2) because their length axis really is
    quoting: opaque content that never nests, which must be able to hold a
@@ -239,7 +241,7 @@ admonition = admonition_open, newline,
              [admonition_close, newline] ;
 (* the body may be EMPTY, like the generic div's (PART 9 §12).
 
-   UNCLOSED (PART 9 §12). The closer is OPTIONAL: an opener always opens, and
+   UNCLOSED. The closer is OPTIONAL: an opener always opens, bare or labeled, and
    a block still open when its HOST ends closes there, innermost first. The
    host is the ENCLOSING CONTAINER where there is one and the DOCUMENT
    otherwise, so "closes at end of input" is the top-level case rather than
@@ -257,7 +259,7 @@ admonition = admonition_open, newline,
    leaves no paragraph open, and `tail` is a document paragraph
    (CARVE-P0-009, CARVE-P0-016).
 
-   OPAQUE SPANS (PART 9 §12). `{block - admonition_close}` is a BLOCK
+   OPAQUE SPANS. `{block - admonition_close}` is a BLOCK
    sequence, so a fenced code block, a raw block and a comment block inside
    the body are single blocks and their lines are never examined for a
    closer. A colon fence written inside one is content: it neither closes the
@@ -268,7 +270,7 @@ admonition = admonition_open, newline,
    first ends the span on its own line and hands the span's contents back to
    the block parser.
 
-   TOOLING FOR NEAR MATCHES (PART 9 §12). Exact length remains a parse rule,
+   TOOLING FOR NEAR MATCHES. Exact length remains a parse rule,
    not a recoverable syntax error. A processor with diagnostics SHOULD report
    `colon-fence-length-mismatch` when a bare colon run does not close the
    innermost open container, would close it after resizing, and plausibly
@@ -306,12 +308,14 @@ admonition = admonition_open, newline,
 
 (* STRICT (djot): the opener line carries NO inline `{...}` attributes -- it
    is colon_fence, type, an optional quoted "header", an optional [label],
-   and NOTHING else. Metadata outside that shape remains invalid. Recovery
+   and NOTHING else. Metadata outside that shape remains invalid. Without a
+   type word the line is paragraph text: `::: {.x}` and `:::{k=v}`. Recovery
    recognizes a colon fence followed by `space+` and an ASCII type word.
    The type word must end at the line end, Unicode White_Space or U+FEFF,
    a straight double quote, `{`, `[`, or a curly double quote. Recovery is
    confined to one source line. It reports fence-title-syntax, drops all opener metadata, and parses the children as
-   blocks through the matching-width closer (carve#2693). This recovery does
+   blocks through the matching-width closer (carve#2693): `::: note {.x}` opens
+   the `note` container with no metadata. This recovery does
    not admit a bare title as valid syntax. An unrecognized fence/type prefix
    remains paragraph text.
    Class/id/data-* attach via a PRECEDING block-attribute line, which floats
@@ -371,12 +375,13 @@ quoted_title = '"', {character - '"'}, '"' ;
    `table` end in, with the same one-optional-blank-line allowance. Two
    container kinds take it -- this one and `quote_block`, which captions like
    the block quote it is (§4) -- and a `^ ` line after any OTHER `:::` closer
-   is ordinary paragraph content. A group left
-   open at END OF INPUT closes there like any container (PART 9 §12) and, its
-   closer line never having been written, has no caption position.
+   is ordinary paragraph content. A group with
+   no closer closes with its host like any container (UNCLOSED, under
+   `admonition`) and, its closer line never having been written, has no
+   caption position.
 
    Body, closer discipline, opaque spans, fence lengths and nesting are the
-   container rules, unchanged (PART 9 §12). What its direct children MEAN --
+   container rules, unchanged (`admonition`, above). What its direct children MEAN --
    which of them are panels, how the group numbers, how a nested bare
    `::: figure` degrades -- is PART 9 §4c. *)
 figure_group = figure_group_open, newline,
@@ -390,16 +395,15 @@ figure_group_open = colon_fence:open, space, "figure" ;
 
 (* --- Generic Divs (djot generic container; PART 9 §12) --- *)
 (* A BARE `:::` opener with NO type word is a generic div, NOT an
-   admonition (no class added). STRICT (djot): the opener carries NO inline
-   `{...}` attributes -- an inline `::: {…}` is a paragraph, not a div.
-   Class/id/data-* attach via a PRECEDING block-attribute line, which floats
-   onto the div (§15). A typeless div MAY still carry a [label] (e.g.
+   admonition (no class added). The opener carries NO inline `{...}`
+   attributes (STRICT, under `admonition_open`): `::: {…}` is a paragraph, not
+   a div. A typeless div MAY still carry a [label] (e.g.
    `::: [First]` for a tab member with no semantic type); a header without a
    type is not meaningful, so `::: "x"` is a paragraph. As the FIRST token after
    the fence the [label] may sit directly against it (`:::[First]`), exactly as
    a code fence admits a bare `[label]` (a label AFTER a type word still needs a
    space -- admonition_open). Shares the colon-fence closer and the fence-length
-   nesting rule (PART 9 §12). *)
+   nesting rule (`colon_fence_close`). *)
 div = div_open, newline, {block - admonition_close}, [admonition_close, newline] ;
 div_open = colon_fence:open, [[space], label] ;
 
@@ -410,10 +414,9 @@ div_open = colon_fence:open, [[space], label] ;
    break into a hard break. The type token is a bare pipe `|` on the opener --
    NOT a per-line prefix -- so it is free of the pipe/table ambiguity of the
    Pandoc/djot per-line `|` form, and uses no English keyword (jgm/djot#29).
-   The behavior keys off the `|` token. STRICT (djot): the opener carries no
-   inline attributes, so the inline `::: {.line-block}` form is a PARAGRAPH, not
-   a line block; extra attributes attach via a PRECEDING block-attribute line.
-   Normative rendering: PART 9 §23. *)
+   The behavior keys off the `|` token. The opener carries no inline
+   attributes (STRICT, under `admonition_open`): `::: {.line-block}` is a
+   PARAGRAPH, not a line block. Normative rendering: PART 9 §23. *)
 line_block = line_block_open, newline, line_block_body, [admonition_close, newline] ;
 line_block_open = colon_fence:open, space, "|" ;
 (* The body is a sequence of stanzas separated by blank lines; each stanza is

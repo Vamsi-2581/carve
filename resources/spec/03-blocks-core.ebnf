@@ -312,14 +312,10 @@ blockquote_line = '>', (newline | (space, inline_content, newline)) ;
        or comment -- each ends the blockquote and starts that block OUTSIDE it,
        and
      - not a caption ('^ ' ...), which attaches to the blockquote instead.
-   A LIST MARKER (bullet or ordered) is NOT an exclusion: a quoted line ends in
-   an OPEN PARAGRAPH, and a list marker folds into an open paragraph (§10), so it
-   continues the quote exactly as it folds into a top-level paragraph. Thus
-   "> quoted \n - item" is ONE quote whose paragraph is "quoted\n- item" -- not a
-   quote plus a sibling list. (This makes the quoted paragraph obey §10 like any
-   paragraph; only a HEADING, a bounded title, is ended by a list marker. To put
-   a real list inside a quote, `>`-prefix it or use the `+` continuation marker,
-   §17.)
+   A LIST MARKER (bullet or ordered) is NOT an exclusion: it folds into the
+   open paragraph (§10 I2, I6), so "> quoted \n - item" is ONE quote whose
+   paragraph is "quoted\n- item". To put a real list inside a quote,
+   `>`-prefix it or use the `+` continuation marker (§17).
    Only PLAIN text and a folded list marker continue the open paragraph. The lazy line's text
    is appended to the blockquote's inner content before that content is
    block-parsed, so a hard-wrapped quoted paragraph need not repeat '>' on every
@@ -343,53 +339,39 @@ bullet_marker = '-' | '*' ;  (* `+` is NOT a bullet in Carve -- it is the list
                                 continuation marker (PART 9 §17); a `+ ` line is
                                 ordinary paragraph text. Deviates from djot. *)
 (* MARKER REQUIRES CONTENT -- NORMATIVE [CARVE-P2-009]. A marker that takes a separator space
-   opens its block only when followed by that space AND non-empty content. A
-   content-less marker line -- bare (`-`) or with trailing whitespace only
-   (`- `, `-   `) -- is NOT a list: it is paragraph text. The rule ignores
-   trailing whitespace, so `-` and `- ` behave identically. Stricter than
-   CommonMark, which treats a bare `-` as an empty item.
+   opens its block only when followed by that space AND non-empty content.
+   The separator is SPACES ONLY (CARVE-P7-002). Content is any character
+   outside the `' ' | '\t'` run that NO TRAILING WHITESPACE drops
+   (CARVE-P2-025). A content-less marker line, bare (`-`) or with trailing
+   whitespace only (`- `, `-   `), is paragraph text. Stricter than
+   CommonMark, which treats a bare `-` as an empty item. The rule holds for
+   EVERY such marker: bullets, ordered markers, the definition-term marker
+   `::` and the description marker `:`. The three clauses below apply it.
 
-   EVERY SUCH MARKER, not only bullets and ordered markers: the rule is a
-   property of the separator space and applies wherever one appears --
-   including the definition-term marker `::` and the description marker `:`.
-
-   THE DESCRIPTION MARKER -- NORMATIVE [CARVE-P2-026]. `definition_separator` is a
-   separator space, so a `:` line carrying only whitespace opens no description.
-   It is a plain line under the open term, which folds it as a soft break, and
-   NO TRAILING WHITESPACE (PART 2) drops the run -- so `:`, `: `, `:   ` and a
-   tab-separated `:` are one document, and the separator's width carries no
-   meaning where it positions nothing. The tab is refused a step earlier, at the
-   separator itself (PART 1, MARKER SEPARATORS AND PADDING SLOTS), and lands in
-   the same place.
+   THE DESCRIPTION MARKER -- NORMATIVE [CARVE-P2-026]. A `:` line carrying only
+   whitespace opens no description. It is a plain line under the open term,
+   which folds it as a soft break: `:`, `: `, `:   ` and `:` + TAB are one
+   document.
 
    A LEADING CONTENT TAB FOLLOWS NORMAL INDENTATION -- NORMATIVE [CARVE-P2-010].
-   There the separator space is present, so the marker is satisfied and a term
-   forms; the tab is the first character of the term's inline content. It is
-   ordinary leading whitespace and is stripped like any other in that position:
-   content_column is where the item's content actually STARTS (PART 9 §24 C3).
-   The TABS IN CODE rule (PART 2, above) does not apply -- it covers fenced code
-   content and inline code spans only. `::` + space + TAB + `x` therefore
-   renders `<dl><dt>x</dt></dl>`.
+   With the separator space present and content after it, a tab that begins
+   the content is ordinary leading whitespace and is stripped: content_column
+   is where the content actually STARTS (PART 9 §24 C3). `::` + space + TAB +
+   `x` renders `<dl><dt>x</dt></dl>`. TABS IN CODE (CARVE-P2-007) covers code
+   content only.
 
-   WHICH CHARACTERS THE CONTENT TEST IGNORES -- NORMATIVE [CARVE-P2-027]. The
-   trailing whitespace this rule ignores is spelled `' ' | '\t'`, the same set
-   NO TRAILING WHITESPACE (PART 2) drops. The separator run is SPACES ONLY, so a
-   tab PAST that run is judged by the content test rather than by the separator:
-   a body of nothing but tabs is a trailing run and opens nothing. `: ` + TAB
-   therefore folds into the term, landing where `:` + TAB already lands one step
-   earlier, while `: ` + TAB + `x` opens a description whose content begins with
-   the tab. Every character outside that set is content, so `: ` + VT and `: ` +
-   NBSP each open a description. *)
+   WHICH CHARACTERS THE CONTENT TEST IGNORES -- NORMATIVE [CARVE-P2-027]. A tab
+   PAST the separator run is judged by the content test: a body of nothing but
+   tabs opens nothing, so `: ` + TAB folds into the term, while `: ` + TAB +
+   `x` opens a description. Every character outside `' ' | '\t'` is content:
+   `: ` + VT and `: ` + NBSP each open a description. *)
 
 ordered_list = ordered_item+ ;
 ordered_item = ordered_marker, [item_attributes], space, list_item_content ;
 (* The first item fixes the dialect (decimal / alpha / roman) and the
    delimiter (`.` or `)`); classification and the ambiguous-letter
-   tie-break are in PART 9 §11. No list -- ordered OR unordered -- interrupts a
-   paragraph: an ordered marker in any dialect/value (`1.`, `2.`, `1985.`, `a.`,
-   `i.`) and a bullet (`- `/`* `) alike need a blank line before them (matching
-   Djot, avoiding the CommonMark `1.`-only heuristic) -- the symmetric
-   paragraph-interruption rule is PART 9 §10.
+   tie-break are in PART 9 §11. Whether a marker line interrupts a paragraph is
+   PART 9 §10 I2.
    The two delimiters are the trailing `.` and `)` only. djot's
    parenthesized `(1)` / `(a)` form is INTENTIONALLY NOT a marker -- it is
    too easily confused with a prose parenthetical -- so `(1) text` stays

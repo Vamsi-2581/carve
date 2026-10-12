@@ -341,8 +341,7 @@
 
         LAZY CONTINUATION SECOND: only after ownership is fixed, if the
         selected frame holds an OPEN PARAGRAPH and the residue is NOT an
-        interrupting line (PART 9 §10 -- list markers and plain text fold;
-        visible openers interrupt), L folds into that paragraph. With no open
+        interrupting line (PART 9 §10), L folds into that paragraph. With no open
         paragraph, the same already-owned line begins a new paragraph in that
         frame. Lazy continuation therefore changes the leaf operation, never
         which container survives.
@@ -543,10 +542,7 @@
         A following document-column line leaves the container if no open
         paragraph remains anywhere in the stack.
 
-        This transition covers the block's entire extent. A footnote
-        definition's indented continuation belongs to that definition and
-        permits no lazy continuation into it. A link reference definition is
-        one line; following indented prose is ordinary container text.
+        This transition covers the block's entire extent (CARVE-P0-012).
 
         A HEADING IS THE VISIBLE CONTROL -- NORMATIVE [CARVE-P0-012]. A heading
         at the content column leaves no paragraph open. A following line at
@@ -555,13 +551,15 @@
         remains its second paragraph. At a nonzero column below it, access is
         through S4's lazy fold; §24 C3's comment exception keeps that path open.
 
-        A footnote definition's extent includes blanks between its blocks:
-        `- a` / `  [^f]: t` / blank / `    more` / `tail` ends the item and
-        gives the note two blocks. Those blanks are interior to the definition.
-        A blank after a one-line link definition is outside that definition;
-        following indented prose opens the container's second paragraph, and a
-        flush-left line folds into it. Nested definition extent is not decided
-        by this clause.
+        DEFINITION EXTENT. A footnote definition's extent is its marker line,
+        the continuation lines reaching its body column (two columns past the
+        column the definition is written at) and the blanks between its
+        blocks; no lazy line continues into it. `- a` / `  [^f]: t` / blank /
+        `    more` / `tail` ends the item and gives the note two blocks. A link
+        reference definition is one line: a blank after it is outside the
+        definition, following indented prose opens the container's second
+        paragraph, and a flush-left line folds into it. Nested definition
+        extent is not decided by this clause.
 
         A FENCED BODY IS NOT A PARAGRAPH -- NORMATIVE [CARVE-P0-013]. If a line
         supplies no indentation prefix to the fence's host, S1 stops there and
@@ -1063,14 +1061,10 @@ blockquote_line = '>', (newline | (space, inline_content, newline)) ;
        or comment -- each ends the blockquote and starts that block OUTSIDE it,
        and
      - not a caption ('^ ' ...), which attaches to the blockquote instead.
-   A LIST MARKER (bullet or ordered) is NOT an exclusion: a quoted line ends in
-   an OPEN PARAGRAPH, and a list marker folds into an open paragraph (§10), so it
-   continues the quote exactly as it folds into a top-level paragraph. Thus
-   "> quoted \n - item" is ONE quote whose paragraph is "quoted\n- item" -- not a
-   quote plus a sibling list. (This makes the quoted paragraph obey §10 like any
-   paragraph; only a HEADING, a bounded title, is ended by a list marker. To put
-   a real list inside a quote, `>`-prefix it or use the `+` continuation marker,
-   §17.)
+   A LIST MARKER (bullet or ordered) is NOT an exclusion: it folds into the
+   open paragraph (§10 I2, I6), so "> quoted \n - item" is ONE quote whose
+   paragraph is "quoted\n- item". To put a real list inside a quote,
+   `>`-prefix it or use the `+` continuation marker (§17).
    Only PLAIN text and a folded list marker continue the open paragraph. The lazy line's text
    is appended to the blockquote's inner content before that content is
    block-parsed, so a hard-wrapped quoted paragraph need not repeat '>' on every
@@ -1094,53 +1088,39 @@ bullet_marker = '-' | '*' ;  (* `+` is NOT a bullet in Carve -- it is the list
                                 continuation marker (PART 9 §17); a `+ ` line is
                                 ordinary paragraph text. Deviates from djot. *)
 (* MARKER REQUIRES CONTENT -- NORMATIVE [CARVE-P2-009]. A marker that takes a separator space
-   opens its block only when followed by that space AND non-empty content. A
-   content-less marker line -- bare (`-`) or with trailing whitespace only
-   (`- `, `-   `) -- is NOT a list: it is paragraph text. The rule ignores
-   trailing whitespace, so `-` and `- ` behave identically. Stricter than
-   CommonMark, which treats a bare `-` as an empty item.
+   opens its block only when followed by that space AND non-empty content.
+   The separator is SPACES ONLY (CARVE-P7-002). Content is any character
+   outside the `' ' | '\t'` run that NO TRAILING WHITESPACE drops
+   (CARVE-P2-025). A content-less marker line, bare (`-`) or with trailing
+   whitespace only (`- `, `-   `), is paragraph text. Stricter than
+   CommonMark, which treats a bare `-` as an empty item. The rule holds for
+   EVERY such marker: bullets, ordered markers, the definition-term marker
+   `::` and the description marker `:`. The three clauses below apply it.
 
-   EVERY SUCH MARKER, not only bullets and ordered markers: the rule is a
-   property of the separator space and applies wherever one appears --
-   including the definition-term marker `::` and the description marker `:`.
-
-   THE DESCRIPTION MARKER -- NORMATIVE [CARVE-P2-026]. `definition_separator` is a
-   separator space, so a `:` line carrying only whitespace opens no description.
-   It is a plain line under the open term, which folds it as a soft break, and
-   NO TRAILING WHITESPACE (PART 2) drops the run -- so `:`, `: `, `:   ` and a
-   tab-separated `:` are one document, and the separator's width carries no
-   meaning where it positions nothing. The tab is refused a step earlier, at the
-   separator itself (PART 1, MARKER SEPARATORS AND PADDING SLOTS), and lands in
-   the same place.
+   THE DESCRIPTION MARKER -- NORMATIVE [CARVE-P2-026]. A `:` line carrying only
+   whitespace opens no description. It is a plain line under the open term,
+   which folds it as a soft break: `:`, `: `, `:   ` and `:` + TAB are one
+   document.
 
    A LEADING CONTENT TAB FOLLOWS NORMAL INDENTATION -- NORMATIVE [CARVE-P2-010].
-   There the separator space is present, so the marker is satisfied and a term
-   forms; the tab is the first character of the term's inline content. It is
-   ordinary leading whitespace and is stripped like any other in that position:
-   content_column is where the item's content actually STARTS (PART 9 §24 C3).
-   The TABS IN CODE rule (PART 2, above) does not apply -- it covers fenced code
-   content and inline code spans only. `::` + space + TAB + `x` therefore
-   renders `<dl><dt>x</dt></dl>`.
+   With the separator space present and content after it, a tab that begins
+   the content is ordinary leading whitespace and is stripped: content_column
+   is where the content actually STARTS (PART 9 §24 C3). `::` + space + TAB +
+   `x` renders `<dl><dt>x</dt></dl>`. TABS IN CODE (CARVE-P2-007) covers code
+   content only.
 
-   WHICH CHARACTERS THE CONTENT TEST IGNORES -- NORMATIVE [CARVE-P2-027]. The
-   trailing whitespace this rule ignores is spelled `' ' | '\t'`, the same set
-   NO TRAILING WHITESPACE (PART 2) drops. The separator run is SPACES ONLY, so a
-   tab PAST that run is judged by the content test rather than by the separator:
-   a body of nothing but tabs is a trailing run and opens nothing. `: ` + TAB
-   therefore folds into the term, landing where `:` + TAB already lands one step
-   earlier, while `: ` + TAB + `x` opens a description whose content begins with
-   the tab. Every character outside that set is content, so `: ` + VT and `: ` +
-   NBSP each open a description. *)
+   WHICH CHARACTERS THE CONTENT TEST IGNORES -- NORMATIVE [CARVE-P2-027]. A tab
+   PAST the separator run is judged by the content test: a body of nothing but
+   tabs opens nothing, so `: ` + TAB folds into the term, while `: ` + TAB +
+   `x` opens a description. Every character outside `' ' | '\t'` is content:
+   `: ` + VT and `: ` + NBSP each open a description. *)
 
 ordered_list = ordered_item+ ;
 ordered_item = ordered_marker, [item_attributes], space, list_item_content ;
 (* The first item fixes the dialect (decimal / alpha / roman) and the
    delimiter (`.` or `)`); classification and the ambiguous-letter
-   tie-break are in PART 9 §11. No list -- ordered OR unordered -- interrupts a
-   paragraph: an ordered marker in any dialect/value (`1.`, `2.`, `1985.`, `a.`,
-   `i.`) and a bullet (`- `/`* `) alike need a blank line before them (matching
-   Djot, avoiding the CommonMark `1.`-only heuristic) -- the symmetric
-   paragraph-interruption rule is PART 9 §10.
+   tie-break are in PART 9 §11. Whether a marker line interrupts a paragraph is
+   PART 9 §10 I2.
    The two delimiters are the trailing `.` and `)` only. djot's
    parenthesized `(1)` / `(a)` form is INTENTIONALLY NOT a marker -- it is
    too easily confused with a prose parenthetical -- so `(1) text` stays
@@ -1663,9 +1643,8 @@ caption_continuation_line = inline_content, newline ;  (* a PLAIN line only *)
      2. a line that INTERRUPTS a paragraph -- a heading, blockquote, table,
         fenced code, `:::` div, thematic break, or `%%%` comment -- ends the
         caption and starts that block;
-     3. a LIST MARKER does NOT end the caption: like a paragraph, a caption
-        folds a `- ` / `1.` line in as literal text (djot -- a list needs a
-        blank line to interrupt). `^ cap` + `- x` yields the caption `cap\n- x`;
+     3. a LIST MARKER does NOT end the caption (§10 I2): `^ cap` + `- x`
+        yields the caption `cap\n- x`;
      4. a further `^ ` line does NOT continue the caption (there is no repeated
         marker); it ends the caption and, having no captionable block to attach
         to, is ordinary paragraph text.
@@ -1705,9 +1684,8 @@ caption_slot = [blank_line], caption ;
    in the resolution pass. A caption with no bare `#` is unchanged. *)
 
 (* --- Admonitions --- *)
-(* A fence is a run of 3+ colons. The run length is a DEPTH count, not a
-   quoting device: a nested container's fence differs in length from its
-   parent's, and the canonical direction is +1 colon per level inward. *)
+(* A fence is a run of 3+ colons, for every colon container alike. The run
+   length is a DEPTH count, not a quoting device. *)
 colon_fence = ":::", {":"} ;
 (* The colon fence has ONE separator slot -- the whitespace immediately after
    the fence run -- and all four openers share it. It is a MARKER SEPARATOR
@@ -1719,7 +1697,7 @@ colon_fence = ":::", {":"} ;
    token follows it.  *)
 colon_fence_close = colon_fence:close
                     where len(close) = len(open) ;
-(* FORMAL (PART 9 §12, stated as a guard): `open` is the colon_fence captured by
+(* FORMAL (stated as a guard): `open` is the colon_fence captured by
    the INNERMOST open block's opener (admonition_open / div_open /
    line_block_open / local_hard_break_block_open). A block is closed only by
    a bare fence of EXACTLY its opener's length.
@@ -1730,7 +1708,11 @@ colon_fence_close = colon_fence:close
        not a closer at all -- it is an ordinary opener, and opens a block;
      - which direction the lengths run is therefore free. Longer-outer
        documents and longer-inner ones both parse. `carve fmt` emits the
-       inward-widening form (PART 11).
+       inward-widening form: the outermost container is `:::` and each level
+       inward adds one colon. The writer sizes each fence from the depth it
+       is already carrying, with no lookahead, and the widths along any one
+       chain are strictly increasing. A nest d containers deep spends
+       d^2 + 5d bytes on fence markers in that form.
 
    Code fences keep >= (PART 9 §2) because their length axis really is
    quoting: opaque content that never nests, which must be able to hold a
@@ -1741,7 +1723,7 @@ admonition = admonition_open, newline,
              [admonition_close, newline] ;
 (* the body may be EMPTY, like the generic div's (PART 9 §12).
 
-   UNCLOSED (PART 9 §12). The closer is OPTIONAL: an opener always opens, and
+   UNCLOSED. The closer is OPTIONAL: an opener always opens, bare or labeled, and
    a block still open when its HOST ends closes there, innermost first. The
    host is the ENCLOSING CONTAINER where there is one and the DOCUMENT
    otherwise, so "closes at end of input" is the top-level case rather than
@@ -1759,7 +1741,7 @@ admonition = admonition_open, newline,
    leaves no paragraph open, and `tail` is a document paragraph
    (CARVE-P0-009, CARVE-P0-016).
 
-   OPAQUE SPANS (PART 9 §12). `{block - admonition_close}` is a BLOCK
+   OPAQUE SPANS. `{block - admonition_close}` is a BLOCK
    sequence, so a fenced code block, a raw block and a comment block inside
    the body are single blocks and their lines are never examined for a
    closer. A colon fence written inside one is content: it neither closes the
@@ -1770,7 +1752,7 @@ admonition = admonition_open, newline,
    first ends the span on its own line and hands the span's contents back to
    the block parser.
 
-   TOOLING FOR NEAR MATCHES (PART 9 §12). Exact length remains a parse rule,
+   TOOLING FOR NEAR MATCHES. Exact length remains a parse rule,
    not a recoverable syntax error. A processor with diagnostics SHOULD report
    `colon-fence-length-mismatch` when a bare colon run does not close the
    innermost open container, would close it after resizing, and plausibly
@@ -1808,12 +1790,14 @@ admonition = admonition_open, newline,
 
 (* STRICT (djot): the opener line carries NO inline `{...}` attributes -- it
    is colon_fence, type, an optional quoted "header", an optional [label],
-   and NOTHING else. Metadata outside that shape remains invalid. Recovery
+   and NOTHING else. Metadata outside that shape remains invalid. Without a
+   type word the line is paragraph text: `::: {.x}` and `:::{k=v}`. Recovery
    recognizes a colon fence followed by `space+` and an ASCII type word.
    The type word must end at the line end, Unicode White_Space or U+FEFF,
    a straight double quote, `{`, `[`, or a curly double quote. Recovery is
    confined to one source line. It reports fence-title-syntax, drops all opener metadata, and parses the children as
-   blocks through the matching-width closer (carve#2693). This recovery does
+   blocks through the matching-width closer (carve#2693): `::: note {.x}` opens
+   the `note` container with no metadata. This recovery does
    not admit a bare title as valid syntax. An unrecognized fence/type prefix
    remains paragraph text.
    Class/id/data-* attach via a PRECEDING block-attribute line, which floats
@@ -1873,12 +1857,13 @@ quoted_title = '"', {character - '"'}, '"' ;
    `table` end in, with the same one-optional-blank-line allowance. Two
    container kinds take it -- this one and `quote_block`, which captions like
    the block quote it is (§4) -- and a `^ ` line after any OTHER `:::` closer
-   is ordinary paragraph content. A group left
-   open at END OF INPUT closes there like any container (PART 9 §12) and, its
-   closer line never having been written, has no caption position.
+   is ordinary paragraph content. A group with
+   no closer closes with its host like any container (UNCLOSED, under
+   `admonition`) and, its closer line never having been written, has no
+   caption position.
 
    Body, closer discipline, opaque spans, fence lengths and nesting are the
-   container rules, unchanged (PART 9 §12). What its direct children MEAN --
+   container rules, unchanged (`admonition`, above). What its direct children MEAN --
    which of them are panels, how the group numbers, how a nested bare
    `::: figure` degrades -- is PART 9 §4c. *)
 figure_group = figure_group_open, newline,
@@ -1892,16 +1877,15 @@ figure_group_open = colon_fence:open, space, "figure" ;
 
 (* --- Generic Divs (djot generic container; PART 9 §12) --- *)
 (* A BARE `:::` opener with NO type word is a generic div, NOT an
-   admonition (no class added). STRICT (djot): the opener carries NO inline
-   `{...}` attributes -- an inline `::: {…}` is a paragraph, not a div.
-   Class/id/data-* attach via a PRECEDING block-attribute line, which floats
-   onto the div (§15). A typeless div MAY still carry a [label] (e.g.
+   admonition (no class added). The opener carries NO inline `{...}`
+   attributes (STRICT, under `admonition_open`): `::: {…}` is a paragraph, not
+   a div. A typeless div MAY still carry a [label] (e.g.
    `::: [First]` for a tab member with no semantic type); a header without a
    type is not meaningful, so `::: "x"` is a paragraph. As the FIRST token after
    the fence the [label] may sit directly against it (`:::[First]`), exactly as
    a code fence admits a bare `[label]` (a label AFTER a type word still needs a
    space -- admonition_open). Shares the colon-fence closer and the fence-length
-   nesting rule (PART 9 §12). *)
+   nesting rule (`colon_fence_close`). *)
 div = div_open, newline, {block - admonition_close}, [admonition_close, newline] ;
 div_open = colon_fence:open, [[space], label] ;
 
@@ -1912,10 +1896,9 @@ div_open = colon_fence:open, [[space], label] ;
    break into a hard break. The type token is a bare pipe `|` on the opener --
    NOT a per-line prefix -- so it is free of the pipe/table ambiguity of the
    Pandoc/djot per-line `|` form, and uses no English keyword (jgm/djot#29).
-   The behavior keys off the `|` token. STRICT (djot): the opener carries no
-   inline attributes, so the inline `::: {.line-block}` form is a PARAGRAPH, not
-   a line block; extra attributes attach via a PRECEDING block-attribute line.
-   Normative rendering: PART 9 §23. *)
+   The behavior keys off the `|` token. The opener carries no inline
+   attributes (STRICT, under `admonition_open`): `::: {.line-block}` is a
+   PARAGRAPH, not a line block. Normative rendering: PART 9 §23. *)
 line_block = line_block_open, newline, line_block_body, [admonition_close, newline] ;
 line_block_open = colon_fence:open, space, "|" ;
 (* The body is a sequence of stanzas separated by blank lines; each stanza is
@@ -2129,16 +2112,11 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
 format_name = "html" | "latex" | identifier ;
 raw_content = (* any content until closing fence *) ;
 (* --- Paragraphs --- *)
-(* A VISIBLE block (heading, quote, table, fence, thematic break,
-   admonition/div) interrupts a paragraph with no blank line before it
-   (Markdown-like); invisible constructs (reference definitions, comments,
-   block-attribute lines) interrupt too. A LIST marker (bullet OR ordered) is
-   the exception: it does NOT interrupt -- a list needs a blank line before it
-   (symmetric, Djot-like; see §10). This is the semantic constraint
-   PART 9 §10, not a context-free one. A paragraph is terminated by a blank
-   line, an interrupting block (§10), or end of file -- the optional trailing
-   blank_line here is the paragraph's own terminator, not a precondition for
-   the NEXT block.
+(* Which lines interrupt a paragraph with no blank line before them is the
+   semantic constraint PART 9 §10 (I1 to I7), not a context-free one. A
+   paragraph is terminated by a blank line, an interrupting block (§10), or
+   end of file -- the optional trailing blank_line here is the paragraph's own
+   terminator, not a precondition for the NEXT block.
    NO TRAILING WHITESPACE -- NORMATIVE [CARVE-P2-025]. A `whitespace` run at the END of a
    CONTENT LINE is DROPPED. It does not reach the output, and it is not
    content.
@@ -4163,7 +4141,7 @@ EOF = (* end of file *) ;
        wins: a `::: x` line is never a `:: ` definition term)
    11. Paragraphs (everything else)
    Recognition order is NOT interruption: which of these may interrupt an
-   open paragraph is PART 9 §10 (list markers -- bullet and ordered -- never do).
+   open paragraph is PART 9 §10.
 
    Inline parsing precedence (second pass):
    1. Escaped characters (\x)
@@ -4770,7 +4748,7 @@ EOF = (* end of file *) ;
          In particular, a bracket inside an editorial comment opens no run,
          so `[{#a]#}`
          retains its comment and renders the outside `[`.
-      E3 NO BARE SAME-TYPE NESTING (§3). While a reachable d-span is open,
+      E3 NO BARE SAME-TYPE NESTING. While a reachable d-span is open,
          a further bare d that would open does NOT push -- it is literal.
          Hence /usr/local/ -> <em>usr/local</em> (01-emphasis-6);
          the/path/here is literal; unbalanced trailing runs stay literal:
@@ -4844,9 +4822,8 @@ EOF = (* end of file *) ;
          81-paragraph-interruption-19.
 
          A `:::` OPENER IS NOT GUARDED. It interrupts whether or not a closer
-         follows, and an unterminated one closes with its host -- the
-         enclosing container's boundary, or end of input at the top level
-         (§12). Pinned by corpus 81-paragraph-interruption-20: `Text` /
+         follows; where an unterminated one closes is PART 2's UNCLOSED rule
+         (`admonition`). Pinned by corpus 81-paragraph-interruption-20: `Text` /
          `:::` / `stuff` is a paragraph followed by a div holding `stuff`.
 
       I5 INVISIBLE CONSTRUCTS interrupt AND are consumed: a reference
@@ -4942,14 +4919,13 @@ EOF = (* end of file *) ;
          430-below-a-definition-body-s-column-an-invisible-line-folds-as-text.
 
          A DEFINITION COLLECTED AT content_column ENDS THE ITEM'S OPEN
-         PARAGRAPH. The next nonblank line therefore stays in the item only if
-         it reaches content_column and opens item prose, except that a footnote
-         line reaching content_column + 2 belongs to the definition body and
-         leaves no item paragraph open. A line one column short of that body is
-         item prose. The comment exception above does not extend to definitions.
-         The bare decimal-dot marker `. ` claims one marker column and one
-         separator column, so its content_column is the same as `- `. Pinned
-         by corpus 374.
+         PARAGRAPH (CARVE-P0-010). The next nonblank line therefore stays in
+         the item only if it reaches content_column and opens item prose. A
+         footnote definition's own extent is CARVE-P0-012; a line one column
+         short of its body is item prose. The comment exception above does not
+         extend to definitions. The bare decimal-dot marker `. ` claims one
+         marker column and one separator column, so its content_column is the
+         same as `- `. Pinned by corpus 374.
       I6 SCOPE + THE HEADING EXCEPTION. The relation applies to EVERY open
          paragraph, including a blockquote's lazy continuation: "> quoted
          \n - item" folds into ONE quote whose paragraph is
@@ -5040,44 +5016,16 @@ EOF = (* end of file *) ;
       generic container. An EMPTY one closes on the next line --
       `<div>` newline `</div>`, the exception PART 10 §4 states.
 
-      INLINE OPENER ATTRIBUTES -- STRICT (djot). The opener line carries NO
-      inline attributes: it is the colon fence, an optional type word, an
-      optional quoted title and an optional `[label]`, and NOTHING else. A
-      `{...}` where the type word belongs makes the line an ORDINARY
-      PARAGRAPH, not a fence: `::: {.x}` and `:::{k=v}` are paragraphs. After
-      a type word, PART 2's opener recovery governs: `::: note {.x}` opens
-      the `note` container, drops the metadata and reports
-      `fence-title-syntax`. To attribute a div or admonition, use
-      a PRECEDING block-attribute line, which floats onto the block (§15):
-      `{.x #id}` then `::: note` yields `<aside class="admonition note x"
-      id="id">`.
+      INLINE OPENER ATTRIBUTES. None. The opener's shape and the recovery of
+      a malformed one are PART 2's (STRICT, under `admonition_open`). To
+      attribute a div or admonition, use a PRECEDING block-attribute line,
+      which floats onto the block (§15): `{.x #id}` then `::: note` yields
+      `<aside class="admonition note x" id="id">`.
 
-      FENCE LENGTH & NESTING: a fence is a run of 3+ colons; the same rule
-      governs both admonitions and generic divs. A block is closed only by a
-      BARE fence of EXACTLY its opener's length -- the guard the formal
-      `colon_fence_close` states as `len(close) = len(open)` -- so a bare
-      `:::` inside a `::::` block is content rather than a closer, and a bare
-      `::::` inside a `:::` block is likewise not one. AN UNCLOSED OPENER STILL
-      OPENS, bare or labeled, and closes where its HOST ends by PART 2's rule:
-      the enclosing container's boundary, or end of input at the top level
-      (corpus 271-the-flush-left-line-after-a-container-a-quoted-line-opened).
-
-      EQUAL-LENGTH FENCES DO NEST, because a closer must be BARE: `::: note`
-      may hold `::: tip`, the inner line being an opener rather than a closer
-      on account of its label. Only a bare equal-length line closes.
-
-      THE CANONICAL WIDTH IS A FUNCTION OF DEPTH, AND THAT COSTS O(depth^2)
-      BYTES. The exact-length guard leaves the DIRECTION free --
-      longer-outer documents and longer-inner ones both parse -- and `carve
-      fmt` writes the inward one: the outermost container is `:::` and each
-      level inward adds one colon (PART 11; the `colon_fence` note in PART 2).
-      So the writer sizes each fence from the depth it is ALREADY CARRYING. It
-      needs no lookahead, and the widths it emits cannot collide, because along
-      any one chain they are STRICTLY INCREASING. (A fence-shaped line in TEXT
-      is a different problem, answered by PART 11 §5's escaping.)
-
-      A nest d containers deep spends d^2 + 5d bytes on opener and closer
-      markers -- the accepted canonical-size trade (docs/spec-history.md).
+      FENCE LENGTH, NESTING, DIRECTION AND AN UNCLOSED OPENER are stated once,
+      in PART 2 at `colon_fence_close` and under `admonition`, for admonitions
+      and generic divs alike (corpus
+      271-the-flush-left-line-after-a-container-a-quoted-line-opened).
 
       A COLON-FENCE LINE THAT FAILS THE OPENER TEST LEAVES THE PARAGRAPH
       EXPECTING A CLOSER -- NORMATIVE [CARVE-P9-016]. A `:::` line that is not a valid opener
@@ -5129,10 +5077,7 @@ EOF = (* end of file *) ;
       between the opener and the nested list still opens the block, and an
       empty body (opener immediately followed by its closer) opens too. A
       MISSING closer changes none of this: PART 2's UNCLOSED rule governs
-      unqualified, the opener opens and the container closes with the ITEM
-      that holds it (corpus
-      270-a-real-div-in-a-container-and-the-flush-left-line-after-it), which is
-      end of input only when the item runs that far.
+      (corpus 270-a-real-div-in-a-container-and-the-flush-left-line-after-it).
       (resources/examples/edge-cases.md "Fence opener with a nested-list body
       inside a list item" pins these.)
 

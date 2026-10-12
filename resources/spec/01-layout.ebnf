@@ -260,8 +260,7 @@
 
         LAZY CONTINUATION SECOND: only after ownership is fixed, if the
         selected frame holds an OPEN PARAGRAPH and the residue is NOT an
-        interrupting line (PART 9 §10 -- list markers and plain text fold;
-        visible openers interrupt), L folds into that paragraph. With no open
+        interrupting line (PART 9 §10), L folds into that paragraph. With no open
         paragraph, the same already-owned line begins a new paragraph in that
         frame. Lazy continuation therefore changes the leaf operation, never
         which container survives.
@@ -462,10 +461,7 @@
         A following document-column line leaves the container if no open
         paragraph remains anywhere in the stack.
 
-        This transition covers the block's entire extent. A footnote
-        definition's indented continuation belongs to that definition and
-        permits no lazy continuation into it. A link reference definition is
-        one line; following indented prose is ordinary container text.
+        This transition covers the block's entire extent (CARVE-P0-012).
 
         A HEADING IS THE VISIBLE CONTROL -- NORMATIVE [CARVE-P0-012]. A heading
         at the content column leaves no paragraph open. A following line at
@@ -474,13 +470,15 @@
         remains its second paragraph. At a nonzero column below it, access is
         through S4's lazy fold; §24 C3's comment exception keeps that path open.
 
-        A footnote definition's extent includes blanks between its blocks:
-        `- a` / `  [^f]: t` / blank / `    more` / `tail` ends the item and
-        gives the note two blocks. Those blanks are interior to the definition.
-        A blank after a one-line link definition is outside that definition;
-        following indented prose opens the container's second paragraph, and a
-        flush-left line folds into it. Nested definition extent is not decided
-        by this clause.
+        DEFINITION EXTENT. A footnote definition's extent is its marker line,
+        the continuation lines reaching its body column (two columns past the
+        column the definition is written at) and the blanks between its
+        blocks; no lazy line continues into it. `- a` / `  [^f]: t` / blank /
+        `    more` / `tail` ends the item and gives the note two blocks. A link
+        reference definition is one line: a blank after it is outside the
+        definition, following indented prose opens the container's second
+        paragraph, and a flush-left line folds into it. Nested definition
+        extent is not decided by this clause.
 
         A FENCED BODY IS NOT A PARAGRAPH -- NORMATIVE [CARVE-P0-013]. If a line
         supplies no indentation prefix to the fence's host, S1 stops there and
