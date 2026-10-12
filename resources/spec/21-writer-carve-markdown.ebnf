@@ -392,13 +392,13 @@
 
       §7 permits stripping a line's trailing whitespace on the ground that
       "where the PARSER discards trailing whitespace the writer may too". The
-      parser does NOT discard it when a backslash follows: PART 7 makes the
+      parser does NOT discard it when a backslash follows: CARVE-P2-025 makes the
       run before a line-break backslash INTERIOR, and PART 9 §23 gives that
       the visible consequence. So none of this is a new principle, it is §7
       applied where its condition does not hold.
 
       A BARE NEWLINE RE-DERIVES A `hard_break` AT A BOUNDARY BETWEEN TWO BODY
-      LINES, and nowhere else. §23 hardens the boundary BETWEEN lines, so a
+      LINES, and nowhere else. CARVE-P9-044 hardens the boundary BETWEEN lines, so a
       newline written between two lines comes back as the break it replaced,
       with the lines around it unchanged. That is the ordinary case and most
       of every stanza.
@@ -407,7 +407,7 @@
       not in this list is decided by the property above, not by the absence of
       a bullet:
 
-        - THE LAST BODY LINE, WHATEVER IT ENDS IN. §23 hardens the boundary
+        - THE LAST BODY LINE, WHATEVER IT ENDS IN. CARVE-P9-044 hardens the boundary
           BETWEEN lines, and the body's end is not one. So a `hard_break`
           there is the AUTHOR'S OWN (PART 3) and nothing else can produce it:
           the newline after it belongs to the closing fence, or to the blank
@@ -419,7 +419,7 @@
           stanza, so one stanza is written back as two.
         - CONTENT ENDING IN A LONE SPACE. The boundary comes back and the
           space does not: PART 2's NO TRAILING WHITESPACE clause takes it. A
-          run of TWO OR MORE columns is already NBSP CONTENT (§23 MEDIAL
+          run of TWO OR MORE columns is already NBSP CONTENT (CARVE-P9-044 MEDIAL
           GAPS) and survives on its own, so it needs no backslash INSIDE a
           stanza -- at the stanza's end the entry above governs it instead.
 
@@ -460,7 +460,7 @@
 
       AN EMPTY LINE INSIDE A VERBATIM RUN IS SPELLED `%%`, because there the
       backslash is not a break but content. A run left unclosed on an earlier
-      line swallows an emptied verse line as a NEWLINE in its value (§23), so
+      line swallows an emptied verse line as a NEWLINE in its value (CARVE-P9-044), so
       the tree holds no `hard_break` for this clause to spell and no `comment`
       node to put back -- what the writer has is a value containing an empty
       line, and a blank line would end the stanza. An empty verse line has

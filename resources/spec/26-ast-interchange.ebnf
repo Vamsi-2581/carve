@@ -425,8 +425,8 @@
 
       ANCESTRY IS ON THE SOURCE, NOT THE NODE. A nested include reaches its
       root by walking `parent`, recorded once per input instead of copied onto
-      every node that came from it. A root input has no `parent`, and PART 9
-      §19 already refuses a cycle.
+      every node that came from it. A root input has no `parent`, and CARVE-P6-001
+      already refuses a cycle.
 
       A BYTE RANGE IS NOT AN OFFSET. The two bytes count the input they name
       (CARVE-P12-067); §4's codepoint rule governs `pos`. When `pos.file` is present, every `pos` coordinate is measured in

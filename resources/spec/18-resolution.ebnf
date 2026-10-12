@@ -8,7 +8,7 @@
    occurrence (PART 9 §25 RESOURCE BOUNDS). Definitions are collected even
    inside a block-level container, which then renders as though the
    definition line were never written (PART 9 §17 L6 states the general
-   rule once, for every container that can hold one; §16; corpus "Footnote
+   rule once, for every container that can hold one; CARVE-P9-025; corpus "Footnote
    definition inside a container is collected"). These rules are
    attribute-grammar / two-pass semantics --
    deliberately NOT grammar productions: symbol-table resolution is outside
@@ -18,7 +18,7 @@
      linkDefs     : label -> (url, title?, attrs?)   -- LAST definition wins
      footnoteDefs : label -> body                    -- FIRST definition wins
      abbrDefs     : term -> expansion                -- LAST definition wins;
-                                                       non-empty term (§25)
+                                                       non-empty term (CARVE-P9-054)
      headingIds   : slug -> heading node             -- case-preserving; the
                     PART 2 HEADING IDENTIFIERS rules: explicit {#id} ids are
                     reserved first in document order, then auto-slugs, with
@@ -124,21 +124,21 @@
       target (R4), which addresses it by id rather than by wording.
    R1a A DEFINITION IS COLLECTED FROM A LINE THE BLOCK STRUCTURE KEEPS --
       NORMATIVE [CARVE-P9R-002]. A
-      definition line that PART 0's S4 folds into an OPEN PARAGRAPH yields no
+      definition line that PART 0's O3 folds into an OPEN PARAGRAPH yields no
       entry in ANY symbol table -- linkDefs, footnoteDefs or abbrDefs. It is
       paragraph text, it renders as the text the author typed, and nothing on it
       defines anything. The container makes no difference: the document level, a
-      quote and a div are one rule, because S4 asks only whether a paragraph is
+      quote and a div are one rule, because PART 0 O3 asks only whether a paragraph is
       open and which container holds it.
 
       THE ABBREVIATION KIND IS DECIDED BEFORE THIS CLAUSE REACHES IT, and it is
       named above for completeness rather than as a case that discriminates.
-      PART 12 section 7 already makes `*[TERM]: expansion` a definition ONLY as a
+      CARVE-P12-026 already makes `*[TERM]: expansion` a definition ONLY as a
       direct child of the document, so every marker-line and in-container
       spelling is ordinary text by that rule; and at the document level an
-      abbreviation definition INTERRUPTS an open paragraph (PART 9 section 10,
+      abbreviation definition INTERRUPTS an open paragraph (PART 9 §10 I5,
       invisible constructs interrupt), so it is never a lazy line there. No
-      document distinguishes this clause's answer from section 7's for that kind.
+      document distinguishes this clause's answer from CARVE-P12-026's for that kind.
       The link and footnote kinds are the ones this clause governs on its own.
 
       HOW AN ENGINE MAY DECIDE IT. Collection is a pre-pass over lines, so the
@@ -324,7 +324,7 @@
       SHAPE would put a `<figure>` around a paragraph of literal `![a][r]` --
       output no engine writes and no clause asks for.
 
-      A DISPLAY-MATH HOST HAS NOTHING TO WAIT FOR. §4's other prose-spelled
+      A DISPLAY-MATH HOST HAS NOTHING TO WAIT FOR. PART 9 §4's other prose-spelled
       captionable host, a paragraph whose whole content is one display-math
       span, is captionable and is not a block image: it has no reference to
       resolve, so its slot binds outright. The syntactic filter that decides

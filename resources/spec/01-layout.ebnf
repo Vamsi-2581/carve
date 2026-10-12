@@ -21,7 +21,7 @@
            Every U+0000 in the source becomes U+FFFD REPLACEMENT CHARACTER,
            wherever it stands, before the first line is read. It is therefore
            not content, and it is the ONE C0 control PART 9 §29 does not make
-           content; §29 carries that carve-out. EVERY occurrence is replaced,
+           content; CARVE-P9-061 carries that carve-out. EVERY occurrence is replaced,
            one U+0000 to one U+FFFD, so the transform does not change source
            offsets.
 
@@ -104,9 +104,7 @@
          &(...) closer guards on fence / frontmatter openers). Ownership is
          the four steps O1 to O4, in that order, with the named exceptions X1
          to X3. Every clause after X3 is a consequence and names the step that
-         decides it. Other PARTs cite the steps by earlier names: S1 is O1, S2
-         is O1's opaque-body rule, S3 is O4 on a line that supplied every
-         prefix, S4 is O2 to O4 on a line that did not, and S5 is O4's push.
+         decides it.
 
      O1 STRIP PREFIXES, OUTWARD-IN. Walk `open` bottom-up, consuming each
         container's prefix from L: strip `>` or `> ` for a quote, DEDENT by
@@ -271,7 +269,7 @@
         noninterrupting follower below that column remains in the container
         and starts a new paragraph (CARVE-P9-053). This is retained ownership,
         not a fold and not a continuation claim: the comment closed the
-        paragraph (T). Its limits, each from PART 9 §24 C3 and CARVE-P9-051:
+        paragraph (T). Its limits:
           - A sibling marker is recognized first. A retained list marker
             below the content column remains paragraph text, and closing the
             preceding paragraph does not reduce the indentation a child list
@@ -298,8 +296,8 @@
         A column cannot supply a quote prefix (O1), but a paragraph open in
         the quote keeps the quote open, and O3 folds into it before the host
         reads the residue. An unmarked list marker under that paragraph
-        therefore folds under §10 I2, even at an enclosing item's content
-        column, where O3 would otherwise hand it to §24 C3:
+        therefore folds under PART 9 §10 I2, even at an enclosing item's content
+        column, where O3 would otherwise hand it to PART 9 §24 C3:
 
             - a
               > - x
@@ -308,7 +306,7 @@
         This also holds for a quote on the item marker line and at every host
         or quote depth. Quoted prose in place of the quoted list folds alike.
         With an item, heading, fence or paragraph instead of the quote, the
-        enclosing item owns the line and §24 C3 opens a list element at its
+        enclosing item owns the line and PART 9 §24 C3 opens a list element at its
         content column. A blank ends the quote and its nested columns
         (CARVE-P0-019). Intervening lazy prose keeps the quote open, including
         for following markers (CARVE-P0-015). Corpus 448 pins folds and controls.
@@ -363,19 +361,19 @@
         ancestor MUST NOT treat the closer as a fresh below-column comment
         granting retention. An ordinary payload line below the inner item's
         content column still ends that item under O1 and O4. Definitions are
-        collected where written (SS17 L6); item closure governs the next line
+        collected where written (CARVE-P9-034); item closure governs the next line
         and MUST NOT discard the definition.
 
         A FLOATING ATTRIBUTE BLOCK DOES NOT CHANGE THE CONTENT COLUMN --
         NORMATIVE [CARVE-P0-008]. Marker-attached attributes contribute zero
-        width to `content_column` (§24 C3). A task checkbox is content, not
+        width to `content_column` (PART 9 §24 C3). A task checkbox is content, not
         marker width. Thus `-{#item} {#next}` / `  # H` keeps the item open and
         attaches `{#next}` to the heading at column 2. An ordered `1.` marker
         places the equivalent heading at column 3.
 
         Moving the heading one column left closes the item: the floating
         attribute opened no paragraph. Reclassify the residue as document
-        paragraph text and discard the item's pending attribute (§15 A4).
+        paragraph text and discard the item's pending attribute (CARVE-P9-024).
         It MUST NOT escape to that paragraph. A task item retains its checkbox
         even when no block remains. Ordinary marker-line prose, which opens a
         paragraph, permits a below-column lazy fold.
@@ -389,7 +387,7 @@
         A DEFINITION AT THE CONTENT COLUMN ENDS THE PARAGRAPH, NOT THE
         CONTAINER -- NORMATIVE [CARVE-P0-010]. A link or footnote definition
         at a list item's or definition body's `content_column` interrupts the
-        paragraph and registers (§10 I5). A comment there also interrupts.
+        paragraph and registers (PART 9 §10 I5). A comment there also interrupts.
         The container stays open until a later line is owned elsewhere (O2).
         Thus `- a` / `  [r]: /u` / `tail` registers `r`, then ends the item and
         publishes `tail` at document level. A definition registers only in
@@ -399,11 +397,11 @@
         At document column 0 a definition is a document-level interrupter.
         At a nonzero column below `content_column` it is lazy paragraph text
         and does not register: `- a` / ` [r]: /u` / `tail` folds. Abbreviation
-        definitions are recognized only at document level (§16); inside a
+        definitions are recognized only at document level (CARVE-P12-026); inside a
         container their lines are ordinary text and reopen the paragraph.
 
         A QUOTE IS REACHED BY ITS MARKER, AND A COLUMN NEVER REACHES INTO ONE.
-        Prefix matching requires `>` (§24 C5); indentation cannot supply it.
+        Prefix matching requires `>` (O1); indentation cannot supply it.
         An unmarked definition line reaching it through lazy continuation is
         paragraph text and registers nothing. With the marker supplied,
         `> - x` / `>   [r]: /u` registers at the inner item's content column.
@@ -424,7 +422,7 @@
 
         With no item open, definitions register at the context's content
         column exactly, or at document column 0. Extra indentation provides
-        no registration site. With an item open, §24 C3 accepts at or past its
+        no registration site. With an item open, PART 9 §24 C3 accepts at or past its
         content column by erasing the authored block base.
 
         AT OR PAST MEANS THE DEEPEST COLUMN THE LINE REACHES -- NORMATIVE [CARVE-P0-020].
@@ -441,11 +439,11 @@
 
         BELOW EVERY OPEN COLUMN IS UNCHANGED. A nonzero-column definition
         below every open content column remains lazy paragraph text and does
-        not register (§24 C3).
+        not register (PART 9 §24 C3).
 
         AT A CONTAINER'S CONTENT COLUMN, A BLOCK ENDS THE PARAGRAPH IT SITS
         UNDER -- NORMATIVE [CARVE-P0-011]. A block at the content column is
-        recognized as at document column 0 (§24 C3). It ends the preceding
+        recognized as at document column 0 (PART 9 §24 C3). It ends the preceding
         paragraph and leaves the container open, whether the block is visible
         or invisible.
         Comments, link/footnote definitions and attribute blocks all apply.
@@ -504,7 +502,7 @@
         ends the host when no paragraph is open; with one open, it folds (O3).
 
         A code fence interrupts an open paragraph only when a closer exists
-        (§10 I4). Otherwise its line is paragraph text, including at a
+        (PART 9 §10 I4). Otherwise its line is paragraph text, including at a
         container's content column.
 
         THE CLOSER LOOKAHEAD DOES NOT STOP AT A BELOW-COLUMN LINE. Search past

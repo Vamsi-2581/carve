@@ -40,7 +40,7 @@ continuation_row = '+', table_cell, {'|', table_cell}, '|', newline ;
    of a cell's attribute block (cell_attributes). The two are NOT in the same
    position: a row's block follows the row's LAST `|`, a cell's follows the
    cell's marker run (CELL ATTRIBUTES below). The whole
-   payload must be valid attribute syntax (§15); otherwise the `{` is ordinary
+   payload must be valid attribute syntax (PART 9 §15); otherwise the `{` is ordinary
    content and the line is not a row attribute (see PART 9 §5, ROW
    ATTRIBUTES). *)
 row_attributes = attributes ;
@@ -79,7 +79,7 @@ data_cell   =      [alignment_run], [cell_attributes], cell_padding, cell_conten
    (`|{.x} …`). No whitespace may intervene. The rest of the cell, after
    optional whitespace, is the content. A space before the brace (`| {.x}`) is
    ordinary content, NOT attributes. The whole brace payload must be valid
-   attribute syntax (§15); otherwise the '{' is literal content. A cell
+   attribute syntax (PART 9 §15); otherwise the '{' is literal content. A cell
    carrying attributes is never a bare span_cell -- its content is literal even
    if it is just '^' or '<', AND THE ATTRIBUTES STAY ON IT. The
    block is what makes the cell ordinary content, so reading it back out as
@@ -155,13 +155,13 @@ caption_continuation_line = inline_content, newline ;  (* a PLAIN line only *)
    THE CONTINUATION LINE IS NOT TOUCHED BY THIS. A continuation line carries no
    marker, so its leading run is INDENTATION and it is kept as written. *)
 (* MULTI-LINE CAPTIONS -- NORMATIVE [CARVE-P2-021]. A caption is multi-line inline CONTENT, so
-   its text spills onto following lines exactly like a PARAGRAPH (§10), NOT like
+   its text spills onto following lines exactly like a PARAGRAPH (PART 9 §10), NOT like
    a heading. It ends the same way an open paragraph does:
      1. a blank line ends the caption;
      2. a line that INTERRUPTS a paragraph -- a heading, blockquote, table,
         fenced code, `:::` div, thematic break, or `%%%` comment -- ends the
         caption and starts that block;
-     3. a LIST MARKER does NOT end the caption (§10 I2): `^ cap` + `- x`
+     3. a LIST MARKER does NOT end the caption (PART 9 §10 I2): `^ cap` + `- x`
         yields the caption `cap\n- x`;
      4. a further `^ ` line does NOT continue the caption (there is no repeated
         marker); it ends the caption and, having no captionable block to attach
@@ -176,10 +176,10 @@ caption_slot = [blank_line], caption ;
 
    FIVE OF THE SEVEN HOSTS REFERENCE THIS SLOT: `code_block`, `blockquote`,
    `table`, `figure_group` and `quote_block`; the last two attach it to their
-   CLOSING fence (§4c, §4). Image paragraphs and standalone display-math blocks
-   follow the same allowance under §4 without a slot-carrying production.
+   CLOSING fence (CARVE-P9-001, PART 9 §4). Image paragraphs and standalone display-math blocks
+   follow the same allowance under PART 9 §4 without a slot-carrying production.
    Any other `^ ` line is ordinary inline/paragraph content and, when a
-   paragraph is OPEN above it, folds into it (§10 I7).
+   paragraph is OPEN above it, folds into it (PART 9 §10 I7).
 
    The optional `blank_line` matches a TRULY blank line only. A
    structural-only line -- a bare `>`, a bare list marker, a bare
@@ -249,7 +249,7 @@ admonition = admonition_open, newline,
    ends WITH THE QUOTE, and a flush-left line below is a sibling paragraph
    outside both. This is djot's behavior. An unclosed opener SHOULD be
    diagnosed by lint and by the language server; it is not an error for the
-   parser. Note this is NOT the `%%%` comment-block rule (§28), where an
+   parser. Note this is NOT the `%%%` comment-block rule (CARVE-P9-060), where an
    opener with no exact closer ahead opens nothing: a comment block is
    invisible either way, so failing closed costs nothing there.
 
@@ -303,7 +303,7 @@ admonition = admonition_open, newline,
 
    This does NOT change a fence with nothing to interrupt: `` ``` `` alone,
    or as the whole content of a blockquote, still opens a code block that
-   runs to the end. I4 and this clause both gate a fence that would take
+   runs to the end. PART 9 §10 I4 and this clause both gate a fence that would take
    structure away from something else, not a fence that is the content. *)
 
 (* STRICT (djot): the opener line carries NO inline `{...}` attributes -- it
@@ -319,7 +319,7 @@ admonition = admonition_open, newline,
    not admit a bare title as valid syntax. An unrecognized fence/type prefix
    remains paragraph text.
    Class/id/data-* attach via a PRECEDING block-attribute line, which floats
-   onto the admonition (§15).
+   onto the admonition (PART 9 §15).
    The "header" and [label] are the SAME two metadata tokens a code fence
    takes (PART 9 §2), in the same fixed order:
      - HEADER ("...") -- the visible admonition title (`<p
@@ -367,14 +367,14 @@ quoted_title = '"', {character - '"'}, '"' ;
    Tier-2 container, metadata preserved losslessly -- which `carve lint`
    reports (PART 9 §4c). `figure_group` carries no title and no label BY
    DESIGN: the group's one piece of authored metadata is its caption, and the
-   caption sits after the closer, where §4's rule already lives.
+   caption sits after the closer, where PART 9 §4's rule already lives.
 
    THE CLOSER CARRIES THE CAPTION SLOT. A figure group is one of PART 9 §4's
    seven captionable hosts, and its allowance is STRUCTURAL on a fence: the
    slot hangs on the CLOSING fence, exactly the `[caption_slot]` that `code_block`, `blockquote` and
    `table` end in, with the same one-optional-blank-line allowance. Two
    container kinds take it -- this one and `quote_block`, which captions like
-   the block quote it is (§4) -- and a `^ ` line after any OTHER `:::` closer
+   the block quote it is (PART 9 §4) -- and a `^ ` line after any OTHER `:::` closer
    is ordinary paragraph content. A group with
    no closer closes with its host like any container (UNCLOSED, under
    `admonition`) and, its closer line never having been written, has no
@@ -390,7 +390,7 @@ figure_group = figure_group_open, newline,
 figure_group_open = colon_fence:open, space, "figure" ;
 (* the optional `caption_slot` begins on the line after the closer, at most
    one blank line below it -- caption_slot's own optional blank_line IS the
-   allowance (§4). Two blank lines detach, and the `^ ` line is an ordinary
+   allowance (PART 9 §4). Two blank lines detach, and the `^ ` line is an ordinary
    paragraph. *)
 
 (* --- Generic Divs (djot generic container; PART 9 §12) --- *)
@@ -438,7 +438,7 @@ local_hard_break_block = local_hard_break_block_open, newline,
                          [admonition_close, newline] ;
 local_hard_break_block_open = colon_fence:open, space, backslash ;
 
-(* --- Fenced block quote (PART 9 section 12: the container rules govern it) --- *)
+(* --- Fenced block quote (CARVE-P9-015: the container rules govern it) --- *)
 (* A SECOND SPELLING of the block quote, not a second block: a colon fence
    whose type token is a bare `>` opens a quote whose body is ordinary block
    content, and the node is the one `blockquote_line` produces. The two forms

@@ -43,7 +43,7 @@ heading_marker = '#' | "##" | "###" | "####" | "#####" | "######" ;
 
    WHAT MOVES WITH THE TEXT, AND WHAT DOES NOT. The derived id does NOT
    change: slugging drops a leading run either way, so `##<SP><SP>a b` is
-   `a-b`. A CROSSREF's AUTO-TEXT takes the heading's own text (§19), so
+   `a-b`. A CROSSREF's AUTO-TEXT takes the heading's own text (CARVE-P9-039), so
    `</#a-b>` renders `a b`. *)
 
 (* SINGLE-LINE HEADINGS -- NORMATIVE [CARVE-P2-003] (diverges from Djot). A heading ENDS AT
@@ -58,7 +58,7 @@ heading_marker = '#' | "##" | "###" | "####" | "#####" | "######" ;
      ## B
 
    A `^ ` caption line is no exception: it does not fold in, and it does not
-   attach either, because a heading is NOT one of §4's captionable hosts. It
+   attach either, because a heading is NOT one of PART 9 §4's captionable hosts. It
    opens an ordinary paragraph of its own.
 
      # H              -> <h1>H</h1> then <p>^ cap</p>
@@ -313,9 +313,9 @@ blockquote_line = '>', (newline | (space, inline_content, newline)) ;
        and
      - not a caption ('^ ' ...), which attaches to the blockquote instead.
    A LIST MARKER (bullet or ordered) is NOT an exclusion: it folds into the
-   open paragraph (§10 I2, I6), so "> quoted \n - item" is ONE quote whose
+   open paragraph (PART 9 §10 I2, I6), so "> quoted \n - item" is ONE quote whose
    paragraph is "quoted\n- item". To put a real list inside a quote,
-   `>`-prefix it or use the `+` continuation marker (§17).
+   `>`-prefix it or use the `+` continuation marker (PART 9 §17).
    Only PLAIN text and a folded list marker continue the open paragraph. The lazy line's text
    is appended to the blockquote's inner content before that content is
    block-parsed, so a hard-wrapped quoted paragraph need not repeat '>' on every
@@ -334,7 +334,7 @@ list = unordered_list | ordered_list | definition_list ;
 unordered_list = unordered_item+ ;
 unordered_item = bullet_marker, [item_attributes], space, [task_marker], list_item_content ;
 (* the optional task_marker makes the item a TASK item (checkbox); the
-   plain-vs-task axis is a §11 same-list criterion *)
+   plain-vs-task axis is a PART 9 §11 same-list criterion *)
 bullet_marker = '-' | '*' ;  (* `+` is NOT a bullet in Carve -- it is the list
                                 continuation marker (PART 9 §17); a `+ ` line is
                                 ordinary paragraph text. Deviates from djot. *)
@@ -429,9 +429,9 @@ roman_numeral = ('i' | 'v' | 'x' | 'l' | 'c' | 'd' | 'm')+
      same-line `{.c}` is leading inline content; a `{.c}` alone on its own line
      (inside the item) is a block-attribute line that floats to the next block
      within the item -- e.g. a `{.blue}` line preceding an indented `> quote`
-     puts `.blue` on the `<blockquote>` (§15), NOT on the `<li>`. This keeps
+     puts `.blue` on the `<blockquote>` (PART 9 §15), NOT on the `<li>`. This keeps
      li-attributes and block-attributes cleanly separated.
-   - DISAMBIGUATION of the abutting block mirrors the inline-span rule (§14):
+   - DISAMBIGUATION of the abutting block mirrors the inline-span rule (CARVE-P9-020):
      it is consumed as li-attributes only if it yields >= 1 attribute (`#id`,
      `.class`, `key=value`) OR is the blessed empty block (`-{} text` -> bare
      `<li>`). Otherwise (`-{+a+}`, `-{not attrs}`) the `-{` is not a marker and
@@ -484,7 +484,7 @@ task_state = ' ' | 'x' | 'X' | '-' | '_' | '>' | '?' ;
    `checked` drives the rendering above; the state is the author's spelling,
    as `bulletChar` is for `-` vs `*`.
 
-   TASK STATE IS NOT A SAME-LIST AXIS. §11's criteria are unchanged: a `[ ]`
+   TASK STATE IS NOT A SAME-LIST AXIS. PART 9 §11's criteria are unchanged: a `[ ]`
    item and a `[-]` item are the SAME list, where a `-` bullet and a `*`
    bullet are not. The marker character splits a list; the state inside the
    box does not. *)
@@ -506,7 +506,7 @@ task_state = ' ' | 'x' | 'X' | '-' | '_' | '>' | '?' ;
    (PART 9R R4's derivation). A name is ONE line, so each run of ASCII
    whitespace in the derived text collapses to a single space and the result is
    trimmed; a NO-BREAK space is content and survives. Deriving rather than
-   inventing is what keeps this string out of the `labels` map (PART 9 SS16a) -
+   inventing is what keeps this string out of the `labels` map (PART 9 §16a) -
    it is the AUTHOR's text, already on the page.
      `- [ ] unchecked`   ->  `<input type="checkbox" disabled
                               aria-label="unchecked">`
@@ -548,7 +548,7 @@ term_continuation_line = inline_content, newline ;
        break, code or colon fence, table row, second `:: ` term or block
        attribute line.
 
-   A list marker is not term text: §24 C4 lets it open at any column, so it
+   A list marker is not term text: PART 9 §24 C4 lets it open at any column, so it
    ends the term.
 
    The invisible lines follow the same two bands (PART 9 §24 C3, AN INVISIBLE
@@ -587,7 +587,7 @@ definition_separator = space, {space} ;
 (* SEPARATOR WIDTH SETS THE BODY'S COLUMN. The separator is a run
    of ONE OR MORE spaces, and the body's content column is `1 + separator
    width`: `: x` establishes column 2, `:  x` column 3, `:    x` column 5. A
-   continuation line qualifies by REACHING its own body's column (PART 9 SS24
+   continuation line qualifies by REACHING its own body's column (PART 9 §24
    C1), so the spellings differ only in how far their continuations indent,
    never in what they mean.
 
@@ -626,13 +626,13 @@ definition_indent = whitespace, {whitespace} ;
 
        THE BAND IS ABOUT OPENERS, AND A NON-OPENER STILL FOLDS. What ends the
        body is a line the surviving context can OPEN A BLOCK with; a line that
-       opens nothing has an open paragraph above it and §10 I2's lazy
+       opens nothing has an open paragraph above it and PART 9 §10 I2's lazy
        continuation still reaches it, which is why the plain-line row folds
        from every column in this band. The five invisible-line
        kinds resolve HERE, not in this bullet: a comment is invisible at any
-       column (§10, A COMMENT IS THE ONE EXCEPTION), and a definition or
+       column (CARVE-P9-053), and a definition or
        attribute line at a nonzero column below the column is lazy paragraph
-       text of THIS body (§10 I5, AN INVISIBLE LINE FOLDS LIKE ANY OTHER). At
+       text of THIS body (CARVE-P9-052). At
        DOCUMENT column 0 they are interrupters and the body does end. An INFO
        STRING decides nothing here. When the deepest frame holds an open
        paragraph, a flush-left fence line without a closer is paragraph
@@ -650,8 +650,8 @@ definition_indent = whitespace, {whitespace} ;
    The two bands answer that question ALIKE, because the opener is the body's
    own block content in both: at the column it opens at the body's column 0,
    past it at the authored base `AUTHORED BLOCK BASES` gives it, and the
-   paragraph above it survives neither reading. §10 I1 closes it for a visible
-   opener - a heading, a thematic break, a table row - and §10 I5 closes it for
+   paragraph above it survives neither reading. PART 9 §10 I1 closes it for a visible
+   opener - a heading, a thematic break, a table row - and PART 9 §10 I5 closes it for
    a definition, a footnote definition or an attribute block, which interrupt
    at the body's own column 0 exactly as they do at the document's.
 

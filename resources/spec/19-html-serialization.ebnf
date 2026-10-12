@@ -82,7 +82,7 @@
       quotes). ONE EXCEPTION: a NO-BREAK SPACE (U+00A0) in text content
       serializes as `&nbsp;`, the one entity beyond the three, so it
       renders visibly distinct from an ordinary space with no external
-      CSS -- matching the escaped-space spelling `\ ` (PART 3) and a line
+      CSS -- matching the escaped-space spelling `\ ` (CARVE-P12-004) and a line
       block's preserved indentation (PART 9 §23), both of which already
       serialize the same way. No other entities are produced. This
       describes only the QUOTING of values that survive filtering:
@@ -272,7 +272,7 @@
       generic `<span class="ext-samp">` fallback.
 
       They are the `SemanticSpan` extension, Tier-2 and off by default, whose
-      contract is `docs/extensions.md` §8: when it is enabled the four names
+      contract is `docs/extension-contract.md` §11: when it is enabled the four names
       behave exactly as §9's three do, under the same nesting order, the same
       value mapping for `dfn`, the same attribute riding, and the same
       hardening. The extension also accepts `:name[…]` for all seven names;
@@ -464,14 +464,14 @@
         title, attributes                                       (PART 11 §10s)
         and nesting
         a block's attribute    none                             the attribute-line
-        line that reaches no                                    marker (§10t)
+        line that reaches no                                    marker (CARVE-P11-067)
         element of the
         Markdown output
         a definition list,     none                             the term, `:` and
         outermost only                                          closing markers
-                                                                (§10t)
+                                                                (CARVE-P11-067)
         a caption line         none                             the caption marker
-                                                                (§10s, §10t)
+                                                                (CARVE-P11-063, CARVE-P11-067)
 
       THE SHARED RULES hold for both columns:
 

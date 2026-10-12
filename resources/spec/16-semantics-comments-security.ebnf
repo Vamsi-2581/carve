@@ -336,7 +336,7 @@
         CARVE-P11-020.
 
         A TRAILING COMMENT IS A DIFFERENT CONSTRUCT and this clause does not
-        reach it. `x %% secret` is `inline_comment` (PART 3, §21), not
+        reach it. `x %% secret` is `inline_comment` (PART 3, CARVE-P9-041), not
         `comment_line`, and CARVE-P9-041's verbatim rule governs it: inside a verbatim
         run there is no comment there at all, only two percent characters in
         content. The asymmetry is deliberate: an engine may leave a `%%`
@@ -743,7 +743,7 @@
         silent truncation, a partial document or the host's stack-overflow error.
         This applies PART 12 §9(b)'s ingest rule to rendering, including the
         canonical writer. The derived ceiling exceeds the parser's bound in
-        its own unit, so parsed trees cannot reach it; §9(b) already rejects
+        its own unit, so parsed trees cannot reach it; CARVE-P12-028(b) already rejects
         ingested trees deeper than the parser's limit. Trees built through the
         API can reach it and MUST receive that failure.
 

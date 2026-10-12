@@ -162,8 +162,7 @@
              ordinary text there, and they fold into the container that holds
              the open paragraph, in every host (AN INVISIBLE LINE FOLDS LIKE ANY
              OTHER; WHICH CONTAINER, NOT ONLY THAT IT IS TEXT; corpus 430).
-           - AN ABBREVIATION DEFINITION IS DOCUMENT-LEVEL ONLY (§16, AN
-             ABBREVIATION DEFINITION IS RECOGNIZED ONLY AT DOCUMENT LEVEL).
+           - AN ABBREVIATION DEFINITION IS DOCUMENT-LEVEL ONLY (CARVE-P12-026).
              Anywhere else it is not an invisible line at all: it is paragraph
              text, it is VISIBLE, and it folds like any other plain line. That
              is a line OUTSIDE the class, not a third band inside it.
@@ -258,7 +257,7 @@
          THREE OR MORE blank lines before an item marker ends the list: the
          marker after the run opens a NEW sibling list even when every N1
          axis matches. ONE blank line remains the ordinary loose separator,
-         and so does TWO (SS17 L1). In the common LF spelling the boundary is
+         and so does TWO (§17 L1). In the common LF spelling the boundary is
          four newline bytes between the two item lines (`item\n\n\n\nitem`)
          against two for the tight spelling and three for the loose one.
          Example:
@@ -272,7 +271,7 @@
          THE RUN CLOSES NOTHING ON ITS OWN. It denies a FOLLOWING SIBLING
          MARKER the right to join; it does not end the item. A run followed
          by a continuation at the item's content column continues that item,
-         at any run length -- which is SS17's content-column model unchanged,
+         at any run length -- which is §17's content-column model unchanged,
          and is why three blank lines before indented text still leave one
          loose item.
          Two blank lines remain ordinary decorative spacing; three establish
@@ -345,7 +344,7 @@
       `:::note` has no separator, so it opens nothing and is absorbed, and the
       QUOTED `> :::` under it would be absorbed on the same terms. The `:::`
       above supplies no `>` prefix: it is a PARTIAL match, and it could reach
-      that paragraph only through PART 0 S4's lazy fold. The strict column-0
+      that paragraph only through PART 0 O3's lazy fold. The strict column-0
       rule decides it instead -- a flush-left fence-shaped line interrupts, the
       quote closes, and the line is re-classified at top level, where it opens
       a div of its own. Change one line to `> :::` and the answer inverts,
@@ -421,14 +420,14 @@
               <p class="admonition-title" id="adm-1">Careful</p>
 
         UNTITLED: there is no visible name to point at, so the name is the TYPE
-        WORD, drawn from the `labels` map (SS16a) rather than fixed English:
+        WORD, drawn from the `labels` map (§16a) rather than fixed English:
             <aside class="admonition note" aria-label="Note">
 
         The minted id is `adm-{n}`, n counting Tier-1 titled blocks in document
         order from 1, allocated through the SAME slug registry as heading ids
         so it can never collide with one this document generates. (An id the
         author writes by hand does not register -- the pre-existing property of
-        SS13's registry, not a new hole here.)
+        §13's registry, not a new hole here.)
 
         THE AUTHOR'S OWN NAME WINS, MATCHED CASE-INSENSITIVELY. When the
         attribute line carries either `aria-label` or `aria-labelledby` under
@@ -519,7 +518,7 @@
       - Adjacent same-level headings: produce sibling sections at the
         same level (`# A / # B` -> two <section>s).
       - Skipped levels: a `# H1 / ### H3` sequence nests H3's section
-        inside H1's, because the §11-style stack-close test (top.level
+        inside H1's, because the stack-close test above (top.level
         >= N) only closes sections at level >= 3 (none open at level 3
         or 5/6). The structure mirrors djot's behavior; carve does NOT
         synthesize intermediate <h2>/<section> nodes.
@@ -622,8 +621,7 @@
           attributes.
         - empty or SPACE-only (`[text]{}`, `[text]{ }`) -> a valid EMPTY
           block: a bare `<span>text</span>`. A TAB inside it is not padding
-          and the block is unrecognized (the A7 position of THE INLINE
-          INTERIOR IS SPACE-ONLY in PART 4). The empty block is a blessed
+          and the block is unrecognized (CARVE-P4-001). The empty block is a blessed
           exception -- the bare `attribute_list` production nominally needs
           >= 1 attribute -- so a default-attribute processor can target the
           span.
@@ -650,14 +648,14 @@
       digit-first bare word is not a valid name (the block stays literal, as for
       any digit-first identifier). All impls support it (a carve extension
       beyond canonical djot, matching djot-php).
-      THE THREE NAMES OF PART 9 §9 ARE THE EXCEPTION TO `name=""`: on an
+      THE THREE NAMES OF CARVE-P10-003 ARE THE EXCEPTION TO `name=""`: on an
       ordinary span, `abbr`, `time` and `kbd` are consumed into an HTML
       element instead of reaching the output as an attribute, so `[Tab]{kbd}`
       is `<kbd>Tab</kbd>` and not `<span kbd="">Tab</span>`. The OTHER four
       semantic names -- `samp`, `var`, `cite` and `dfn` -- are NOT core: a
       conformant core leaves them as ordinary boolean attributes
       (`<span samp="">x</span>`), and only the Tier-2 SemanticSpan extension
-      consumes them (§10). All seven are boolean attributes everywhere else,
+      consumes them (CARVE-P10-008). All seven are boolean attributes everywhere else,
       including in the AST and in the canonical writer, which writes the span
       back as `[Tab]{kbd}` -- an empty-string attribute is spelled bare there
       (PART 11 §6c).
@@ -723,7 +721,7 @@
          `unattached-block-attribute` (docs/validation.md), while producing no
          output for the attribute.
 
-         S4 decides container closure: the attribute leaves no open paragraph,
+         CARVE-P0-009 decides container closure: the attribute leaves no open paragraph,
          so `> {.k}` / `tail` ends the quote and A4 drops the attribute.
          This clause does not decide how an empty container renders.
       A5 MULTI-LINE BLOCK. One block may wrap across lines ({#id\n .foo} is

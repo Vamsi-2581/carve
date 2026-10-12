@@ -1,7 +1,7 @@
 (* --- Paragraphs --- *)
 (* Which lines interrupt a paragraph with no blank line before them is the
    semantic constraint PART 9 §10 (I1 to I7), not a context-free one. A
-   paragraph is terminated by a blank line, an interrupting block (§10), or
+   paragraph is terminated by a blank line, an interrupting block (PART 9 §10), or
    end of file -- the optional trailing blank_line here is the paragraph's own
    terminator, not a precondition for the NEXT block.
    NO TRAILING WHITESPACE -- NORMATIVE [CARVE-P2-025]. A `whitespace` run at the END of a

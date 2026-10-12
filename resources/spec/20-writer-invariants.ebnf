@@ -95,7 +95,7 @@
 
       THE UNIT IS THE TOKEN, NOT THE NODE: `onetwo` and `one two` each parse
       as one text node, but only the latter preserves the word boundary.
-      IT IS §23's TEST READ BACKWARDS: PART 9 §23 preserves a line boundary
+      IT IS CARVE-P9-044's TEST READ BACKWARDS: PART 9 §23 preserves a line boundary
       as a node; flattening preserves a block boundary in the emitted bytes.
 
       THE CANONICAL SEPARATOR IS ONE SPACE (U+0020), at every such boundary
@@ -237,11 +237,11 @@
 
       A RESOLUTION RESULT ABOUT THE WRAPPER IS NOT CONTENT OF IT -- NORMATIVE [CARVE-P11-039].
       `paragraph.blockImage` (PART 12 §23) is the ONE field a
-      wrapper may carry and still be BARE, and it is admitted BY NAME. §23
+      wrapper may carry and still be BARE, and it is admitted BY NAME. CARVE-P12-043
       bounds it to `true` and PART 9R R7's promotion phase is its only
       producer, so what it records is that this paragraph IS the block image --
       which is what the dissolved spelling states outright. The two spellings
-      §23 blesses for that one fact, an `image` in block position and a
+      CARVE-P12-043 blesses for that one fact, an `image` in block position and a
       `paragraph` carrying the field around one `image`, differ in no
       information, so dissolving either into the other takes nothing with it.
       This bounds the CHECKER's comparison and not the writer: `fmt` does not
@@ -399,8 +399,8 @@
 
         source     written as    what changed
         `* %%`     `* +`         a line comment became the CONTINUATION MARKER
-                                 (§17 L3), a different construct with a body
-        `| %%%`    `| %% %`      a comment-block fence (§28) split into a line
+                                 (PART 9 §17 L3), a different construct with a body
+        `| %%%`    `| %% %`      a comment-block fence (CARVE-P9-060) split into a line
                                  comment plus text
 
       The second also violates §2's THE UNIT IS THE OPENER: an opener run
@@ -624,7 +624,7 @@
       CANDIDATE -- escaped only when W4 selects the conservative form:
         `* _ ~ / = ,`        emphasis and the braced pair delimiters
         `[ ]  { } <`      links, images, spans, attributes, autolinks
-        `@ #`                mentions and tags (§7 boundary rules); `#` also
+        `@ #`                mentions and tags (PART 9 §7 boundary rules); `#` also
                              opens a heading at column 0
         `> + - . ) : | % !`  block openers at column 0, plus the inline forms
                              `%%`, `::` and the symbol shortcode `:name:` (the

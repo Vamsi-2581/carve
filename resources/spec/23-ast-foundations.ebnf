@@ -46,7 +46,7 @@
       source at any offset, and §4 rates a span that selects the wrong text
       worse than no span at all. So such a run publishes NONE.
 
-      A run an inline include (PART 9 §19) assembled from more than one file
+      A run an inline include (CARVE-P6-001) assembled from more than one file
       is the exception: it spans its pieces from the file that holds the run,
       from the first one's start to the last one's end.
 
@@ -114,16 +114,16 @@
                    §13a is the HTML carrier's alone. Interchange may retain the
                    field on a table without an all-header first row; the source
                    writer cannot spell that combination without promoting cells
-                   and reports the field loss under PART 11 §§1d, 6h
+                   and reports the field loss under CARVE-P11-046 and CARVE-P11-066
       An implementation MUST NOT invent a synonym, and MUST NOT expose an
       internal field the reference does not have. A consumer reading `href`
       must not have to know which engine produced the document.
 
       GENERATED NONBREAKING SPACES ARE NODES -- NORMATIVE [CARVE-P12-004].
       A `non_breaking_space` inline node represents one escaped space (`\ `)
-      or one preserved column of line-block whitespace (PART 9 section 23).
+      or one preserved column of line-block whitespace (CARVE-P9-044).
       It carries `type`, optional `attrs` and optional `pos`, with no value
-      field. Four preserved columns are four nodes. Positions follow section 4:
+      field. Four preserved columns are four nodes. Positions follow PART 12 §4:
       an escaped space owns its backslash and space; synthesized columns omit
       positions when expansion prevents an exact source range. This omission
       applies to the synthesized columns, not to the whole line or stanza.
@@ -194,7 +194,7 @@
       consisting only of LFs retains
       all of them. This rendering convention does not alter the stored payload.
       Native formatting that adds a final payload LF MUST report
-      `field-unspellable` for `raw_block.content` on PART 11 section 1d's
+      `field-unspellable` for `raw_block.content` on CARVE-P11-046's
       conversion channel. This is separate from the render-loss report.
 
    3a. THE SERIALIZED TREE IS PRE-RESOLVE -- NORMATIVE [CARVE-P12-005]. It records what the
@@ -290,7 +290,7 @@
       Lines are 1-based. Columns are 1-based and offsets 0-based, both counted
       in UNICODE CODEPOINTS. `endColumn` and `endOffset` are exclusive.
       `pos.file`, when present, is the canonical id of the included input the
-      coordinates are measured in (PART 9 §19); absent means the top-level
+      coordinates are measured in (CARVE-P6-001); absent means the top-level
       input. The root is exempt because it spans the whole source.
 
       An implementation MAY gate position tracking behind a parse option, and

@@ -269,7 +269,7 @@
 
       AN IMPORTER READS THE FIELD RATHER THAN GUESSING. An HTML importer that
       escapes a following `^ ` line because the image above it "would capture
-      it" is deriving R7 a third time, in a pipeline with no access to the
+      it" is deriving PART 9R R7 a third time, in a pipeline with no access to the
       phase (`docs/html-import.md`, the detached-caption case). It reads
       `blockImage` on the tree it built instead.
 

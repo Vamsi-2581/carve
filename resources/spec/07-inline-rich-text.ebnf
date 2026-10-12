@@ -216,7 +216,7 @@ footnote_indent = whitespace, {whitespace} ;
 (* --- Citations (Tier-2 extension) --- *)
 (* TIER-2, OFF BY DEFAULT. A `[...]` whose content contains a `@key` and which
    has NO link/ref/span tail (`(url)` / `[ref]` / `{attrs}`) is a citation; a
-   bare `@key` stays a mention (PART 19) and `\@` is literal. Items are
+   bare `@key` stays a mention (PART 9 §7) and `\@` is literal. Items are
    `;`-separated; each is `[prefix] [-] @key [, locator]`. Bibliography entries
    are defined in-document: `[@key]: {author= year=}? entry` -- the `{…}` is
    optional and feeds author-date, and a leading `@` label is RESERVED here,

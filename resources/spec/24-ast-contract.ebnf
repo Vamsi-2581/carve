@@ -97,7 +97,7 @@
       PART 11's writer emits the definition after the container the author
       wrote it in, which reads like a violation of PART 11 §6 ("fmt does not
       reorder ... those are the author's choices and the AST records them"). It
-      is not, because §6 governs what the writer may do with what the tree
+      is not, because PART 11 §6 governs what the writer may do with what the tree
       HOLDS, and this clause is what the tree holds. It is accepted for
       footnotes because a footnote definition renders as a footnote either way,
       so the move costs the author placement and nothing else.
@@ -151,7 +151,7 @@
       THE NAME IS `loose` AND NOT `tight`, and the divergence from `list` is
       the point. An absent `tight` read as false would say LOOSE, the opposite
       of the default; `loose: true` absent means derived, which is the truth.
-      It matches L7's own key, and follows `list.bareMarker`, the other field
+      It matches PART 9 §17 L7's own key, and follows `list.bareMarker`, the other field
       here that records an authored distinction the default spelling cannot
       express.
 
@@ -336,7 +336,7 @@
          `preceding` for the host immediately above it (a caption slot under
          its host, PART 9 §4), `continuation` for a `+`-attached block,
          `detached` where an attachable position was written but the spelling
-         detached it (§4's two blank lines), `none` where the node has no
+         detached it (PART 9 §4's two blank lines), `none` where the node has no
          host.
 
       A DECLARED FACT WITH NO DEFINITION IS A DEFECT, not a reserved slot.

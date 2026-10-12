@@ -17,7 +17,7 @@
         They are REMOVED, not escaped: in HTML, entity-encoding one would let
         it DECODE BACK to the raw control downstream; in the other presentation
         targets it would either remain live or change the author's visible
-        content. This target rule is independent of §25's C0-control split:
+        content. This target rule is independent of CARVE-P9-061's C0-control split:
         bidi override/isolate characters are Unicode format characters, not
         C0 controls.
       - The canonical `carve` target is a SOURCE SERIALIZER, not a presentation
@@ -103,7 +103,7 @@
         level there is no container prefix to remove. This also applies to a
         comment folded into a definition term, whose marker establishes no
         body column. The closer's column does not change the payload value.
-      - TAIL DISPOSITION (serialization, PART 10): the OPENER's tail is kept as
+      - TAIL DISPOSITION (serialization, PART 11): the OPENER's tail is kept as
         the comment body's FIRST LINE, so `carve fmt` round-trips the words
         rather than deleting them; the CLOSER's tail is DISCARDED, as a code
         fence's closing info is. Neither is ever rendered.

@@ -497,7 +497,7 @@
       attributes exist, the bare `::: figure` opener (`figure_group` has no
       title or label to spell), the children with one blank line between
       them, the closer at the opener's width (the inward-widening discipline
-      of PART 9 §12 unchanged), and the group caption as a `^ ` line after
+      of PART 2 `colon_fence_close` unchanged), and the group caption as a `^ ` line after
       the closer, its `#` placeholder written back as authored.
 
       THE CARET AFTER A GROUP CLOSER IS A CAPTION POSITION. §5's
@@ -554,11 +554,11 @@
         (six blank lines)                         (three blank lines)
         - oranges                                 - oranges
 
-      One blank line would merge the lists, violating §1. N1a reads THREE
+      One blank line would merge the lists, violating §1. PART 9 §11 N1a reads THREE
       OR MORE, so three is the canonical form for every hard-boundary run.
 
       A RUN THAT IS NOT THE BOUNDARY NORMALIZES AS USUAL. Three blank lines
-      between two paragraphs, or between two lists that already differ on an N1
+      between two paragraphs, or between two lists that already differ on a PART 9 §11 N1
       axis (`- a` then `* b`), separate nothing that one blank line does not
       separate as well, so they come back as one. What earns the three is the
       boundary's job, not the run's length.
