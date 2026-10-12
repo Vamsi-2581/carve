@@ -2014,7 +2014,7 @@ function hostColonStep(h, inner, commentCloses = () => false, markerLine = false
     // (ruled on carve-php#3137).
     const fence = FENCE.exec(inner.rest)
     if (inner.col >= top.column && fence && parseFenceInfo(fence[2]) !== null && codeCloses(fence[1], top.base, true)) {
-      h.fence = { run: fence[1], column: inner.col, host: top.base, payload: true }
+      h.payloadSpan = { run: fence[1], column: inner.col, host: top.base }
     }
   }
   const bare = COLON_CLOSER.test(inner.rest)
@@ -2036,7 +2036,7 @@ function hostColonStep(h, inner, commentCloses = () => false, markerLine = false
   if (top && bare && inner.col !== top.base && inner.col !== top.column) return false
   if (stack.length >= remainingDepth) return false
   const opener = colon && parseColonOpener(colon[2])
-  if (base > 0 && opener) {
+  if (opener && (base > 0 || opener.mode === 'line-block')) {
     let absorbed = false
     if (COLON_CLOSER.test(inner.rest)) {
       let held = h.colonParagraph
@@ -2070,15 +2070,18 @@ function hostColonStep(h, inner, commentCloses = () => false, markerLine = false
  * the host's column ends the host and its fence; a blank ends neither.
  */
 function hostFenceStep(h, line) {
-  if (!h.fence) return false
+  // Inline spans shield delimiters without claiming code-fence ownership.
+  const slot = h.payloadSpan ? 'payloadSpan' : 'fence'
+  const span = h[slot]
+  if (!span) return false
   const meas = indentCols(line)
-  if (meas.rest !== '' && meas.col < h.fence.host) {
-    h.fence = null
+  if (meas.rest !== '' && meas.col < span.host) {
+    h[slot] = null
     return false
   }
   const c = PURE_FENCE.exec(meas.rest)
-  if (c && c[1][0] === h.fence.run[0] && c[1].length >= h.fence.run.length &&
-      (h.fence.payload || meas.col === h.fence.host || meas.col === h.fence.column)) h.fence = null
+  if (c && c[1][0] === span.run[0] && c[1].length >= span.run.length &&
+      (slot === 'payloadSpan' || meas.col === span.host || meas.col === span.column)) h[slot] = null
   return true
 }
 
@@ -3977,14 +3980,15 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           // S2: an open payload makes this level's line verbatim, so a marker
           // on it is literal and A FENCED BODY IS NOT A PARAGRAPH.
           const host = qNestedHost[depth] ??= hostLadder()
-          if (hostFenceStep(host, text)) return settle(false, depth + 1)
+          if (hostFenceStep(host, text)) return settle(host.colons?.at(-1)?.mode === 'line-block', depth + 1)
           const before = qNestedTable[depth] ?? false
           qNestedTable[depth] = tableRunStep(before, text)
           const { inner, blockStart, popped } = hostAdvance(host, text, qNestedPara[depth] ?? false)
           if (blockStart) qNestedParaLines[depth] = []
+          const inLineBlock = host.colons?.at(-1)?.mode === 'line-block'
           if (state.blockDepth + depth + 1 + (host.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(host, inner, (width, floor) => quotedCommentCloser(idx, depth + 2, width, floor), blockStart, qNestedParaLines[depth] ?? [], MAX_NESTING_DEPTH - state.blockDepth - depth - 1 - (host.columns.length - 1), (run, column, past) => closerFollows(idx, depth + 2, run, column, past))) {
             qNestedTable[depth] = false
-            return settle(false, depth + 1)
+            return settle(inLineBlock && host.colons?.at(-1)?.mode === 'line-block' && !isBlank(text), depth + 1)
           }
           const f = hostFenceOpener(host, inner, (opener) => blockStart || !qNestedPara[depth] ||
             (closerFollows(idx, depth + 2, opener[1], inner.col) ||
@@ -4117,7 +4121,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         // the claim again (carve#2538). Only a closer used to clear this, so the
         // ordinary line read as payload.
         if (hostFenceStep(qHost, l)) {
-          qOpenPara = false
+          qOpenPara = qHost.colons?.at(-1)?.mode === 'line-block'
           qTermOpen = false
           qTableOpen = false
           clearNested()
@@ -4138,12 +4142,15 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         }
         const { meas, inner: inner0, blockStart, popped } = hostAdvance(qHost, l, qOpenPara)
         if (blockStart) qPara = []
+        const inLineBlock = qHost.colons?.at(-1)?.mode === 'line-block'
         if (state.blockDepth + (qHost.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(qHost, inner0, (width, floor) => openComment === null && quotedCommentCloser(idx, 1, width, floor), blockStart, qPara, MAX_NESTING_DEPTH - state.blockDepth - (qHost.columns.length - 1), (run, column, past) => closerFollows(idx, 1, run, column, past))) {
-          qOpenPara = false
+          // Inline payload keeps the stanza open whatever block shape it has
+          // (carve-php#3237). The opener itself contains no payload yet.
+          qOpenPara = inLineBlock && qHost.colons?.at(-1)?.mode === 'line-block' && !isBlank(l)
           qTermOpen = false
           qTableOpen = false
           clearNested()
-          qPara = []
+          qPara = qOpenPara ? [l] : []
           return
         }
         const f = hostFenceOpener(qHost, inner0, (opener) => blockStart || !qOpenPara ||
@@ -6050,7 +6057,8 @@ function collectItems(lines, i, list, state, ind, meas) {
       }
       const { col } = lm
       // A marker in a line-block payload is payload: it opens no sublist.
-      const inPayload = col >= contentCol && fence.opaque === null && fence.colon.length !== 0 &&
+      // A span closer remains payload after trackFence clears the span.
+      const inPayload = col >= contentCol && fence.colon.length !== 0 &&
         colonLineBlock.at(-1) === true
       const nm = inPayload ? null : matchMarkerAt(lm)
       if (col >= contentCol) {
@@ -6307,6 +6315,10 @@ function collectItems(lines, i, list, state, ind, meas) {
         // span written at another one, which is the whole of carve#2526.
         if (belowCloser) { /* the span's own state, untouched */ }
         else if (inCommentSpan) { /* opaque: the opener already closed the paragraph */ }
+        else if (inPayload || fence.opaque?.payload) {
+          if (colonLineBlock.at(-1) === true) startPara()
+          else closePara()
+        }
         else if (i <= wrappedAttrEnd) closePara()
         // A line in a footnote definition's body is that definition's, whatever
         // its shape: a comment or a marker there ends neither the definition
