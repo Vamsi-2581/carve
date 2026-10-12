@@ -7,7 +7,7 @@ const html = (source) => renderDoc(parse(source)).replace(/\s+/g, ' ').replace(/
 const quoted = (depth, lines) => lines.map((line) => ('> '.repeat(depth) + line).trimEnd()).join('\n') + '\n'
 
 // CARVE-P0-004: a recognized opener past the content column takes its authored
-// column as the base of that one block, where no paragraph is in the way.
+// column as the base of that one block (CARVE-P2-017).
 for (const depth of [0, 1, 2]) for (const box of ['::: box', ':::', ':::: w']) for (const child of ['::: note', '::: inner', '::: tip "T"']) {
   for (const over of [1, 2, 4]) for (const closed of [true, false]) {
     const pad = ' '.repeat(2 + over)
@@ -19,9 +19,9 @@ for (const depth of [0, 1, 2]) for (const box of ['::: box', ':::', ':::: w']) f
         assert.match(out, depth > 0 ? /<\/blockquote><p>TAIL<\/p>$/ : /<\/ul><p>TAIL<\/p>$/)
       })
     }
-    test(`under a paragraph of the container it stays text: depth ${depth}, ${box}, ${child}, +${over}, closed ${closed}`, () => {
+    test(`under a paragraph of the container it opens: depth ${depth}, ${box}, ${child}, +${over}, closed ${closed}`, () => {
       const out = html(quoted(depth, ['- ' + box, '  text', ...body]) + 'TAIL\n')
-      assert.match(out, /<p>text :::/)
+      assert.match(out, /<p>text<\/p><(aside|div)/)
     })
   }
 }

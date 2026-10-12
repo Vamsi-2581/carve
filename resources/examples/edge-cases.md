@@ -48304,7 +48304,7 @@ owns the line: an opener past the content column of a hosted container, and a
 fence closer written after its item had ended (markup-carve/carve#2925).
 
 A named colon opener written past the content column inside a container an item
-hosts. The box holds no paragraph, so the opener is recognized and takes its
+hosts. The opener is recognized and takes its
 authored column as the base of that one block (`CARVE-P0-004`,
 markup-carve/carve-php#3137). The quoted spelling reads the same way, and with
 the box left unclosed the line below still leaves the quote.
@@ -48358,8 +48358,8 @@ tail
 
 :::
 
-The control. Under a paragraph of the box the same line is over-indented text,
-which establishes no base.
+Under a paragraph of the box the same opener closes the paragraph and
+establishes its own base (`CARVE-P2-017`, `CARVE-P0-004`).
 
 :::: compare
 
@@ -48377,10 +48377,10 @@ tail
 <ul>
   <li>
     <div class="box">
-      <p>text
-::: note
-x
-:::</p>
+      <p>text</p>
+      <aside class="admonition note" aria-label="Note">
+        <p>x</p>
+      </aside>
     </div>
   </li>
 </ul>
@@ -49156,8 +49156,8 @@ a </#no	pe> b
 ## An opener past a hosted container's column opens there
 
 A recognized block opener past the content column of a colon container that a
-list item hosts takes its authored column as the base of that one block, where
-the container holds no open paragraph (`CARVE-P0-004`, ruled on
+list item hosts takes its authored column as the base of that one block
+(`CARVE-P0-004`, `CARVE-P2-017`, ruled on
 markup-carve/carve#2973). The line-block spelling, a code fence and a heading
 open like a named container does, with the container on the marker line or
 below it, quoted or not.
@@ -49229,8 +49229,8 @@ tail
 
 ::::
 
-The control. Under a paragraph of the container the same lines are
-over-indented text.
+Under a paragraph of the container the same opener closes the paragraph
+and opens its block (`CARVE-P2-017`, `CARVE-P0-004`).
 
 :::: compare
 
@@ -49248,10 +49248,10 @@ tail
 <ul>
   <li>
     <div class="box">
-      <p>text
-::: |
-x
-:::</p>
+      <p>text</p>
+      <div class="line-block">
+        <p>x</p>
+      </div>
     </div>
   </li>
 </ul>
@@ -49584,3 +49584,53 @@ tail
 ```
 
 :::
+
+## An opener past a hosted container's column interrupts its open paragraph
+
+A recognized opener past an item-hosted colon body's column interrupts its
+open paragraph as it does in an item (`CARVE-P2-017`, `CARVE-P0-004`).
+
+:::: compare
+
+````carve
+- ::: box
+  text
+   # h
+  :::
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+      <p>text</p>
+      <h1 id="h">h</h1>
+    </div>
+  </li>
+</ul>
+```
+
+````carve
+> - ::: box
+>   text
+>    ```
+>    x
+>    ```
+>   :::
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <p>text</p>
+        <pre><code>x
+</code></pre>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+```
+
+::::

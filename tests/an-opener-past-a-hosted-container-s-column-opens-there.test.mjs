@@ -23,12 +23,14 @@ for (const host of ['marker', 'continuation']) for (const depth of [0, 1, 2]) {
     test(`${host}, depth ${depth}, ${kind}, offset ${offset}: opens inside the box`, () => {
       assert.ok(compact(source(false)).includes('<div class="box">' + expected + '</div>'), html(source(false)))
     })
-    test(`${host}, depth ${depth}, ${kind}, offset ${offset}: an open paragraph keeps text`, () => {
+    test(`${host}, depth ${depth}, ${kind}, offset ${offset}: interrupts an open paragraph as in an item`, () => {
       let owner = parse(source(true)).blocks[0]
       for (let n = 0; n < depth; n++) owner = owner.children[0]
       const box = owner.items[0].blocks.at(-1)
       assert.equal(box.t, 'colon-div')
-      assert.deepEqual(box.children, [{t: 'para', lines: ['text', ...lines]}])
+      let item = parse(['- text', ...lines.map(line => ' '.repeat(2 + offset) + line)].map(line => q + line).join('\n') + '\n').blocks[0]
+      for (let n = 0; n < depth; n++) item = item.children[0]
+      assert.deepEqual(box.children, item.items[0].blocks)
     })
   }
 }
@@ -54,8 +56,37 @@ for (const sublist of [false, true]) test(`an item heading releases the child co
 test('a shifted reference definition stays paragraph text in a hosted box', () => {
   assert.equal(compact('- ::: box\n   [r]: /url\n  :::\n'), '<ul><li><div class="box"><p>[r]: /url</p></div></li></ul>')
 })
-for (const nested of [false, true]) test(`a comment retains the below-child-column fence as text, nested box ${nested}`, () => {
+for (const nested of [false, true]) test(`a comment releases the below-child-column fence to the box, nested box ${nested}`, () => {
   const source = '> - ::: box\n>   - ' + (nested ? '::: inner' : 'inner') + '\n>     %%%\n>     hidden\n>     %%%\n>    ```\n>    code\n- tail\n'
-  const inner = nested ? '<div class="inner"><p><code>code- tail</code></p></div>' : 'inner<code>code- tail</code>'
-  assert.equal(compact(source), '<blockquote><ul><li><div class="box"><ul><li>' + inner + '</li></ul></div></li></ul></blockquote>')
+  const inner = nested ? '<div class="inner"></div>' : 'inner'
+  assert.equal(compact(source), '<blockquote><ul><li><div class="box"><ul><li>' + inner + '</li></ul><pre><code>code</code></pre></div></li></ul></blockquote><ul><li>tail</li></ul>')
+})
+
+for (const host of ['description', 'footnote']) for (const depth of [0, 1, 2]) {
+  for (const [kind, [lines]] of Object.entries(kinds)) for (const offset of [1, 2, 4]) {
+    test(`${host}, depth ${depth}, ${kind}, offset ${offset}: interrupts as in an item`, () => {
+      const q = '> '.repeat(depth)
+      const start = host === 'description' ? [':: term', ': ::: box'] : ['[^n]: ::: box']
+      const source = [...start, '  text', ...lines.map(line => ' '.repeat(2 + offset) + line), '  :::'].map(line => q + line).join('\n') + '\n'
+      const doc = parse(source)
+      let owner = doc.blocks[0]
+      for (let n = 0; n < depth && owner; n++) owner = owner.children[0]
+      const box = host === 'description' ? owner.items[1].ddBlocks[0] : doc.footnoteDefs.get('n')[0]
+      const item = parse(['- text', ...lines.map(line => ' '.repeat(2 + offset) + line)].join('\n') + '\n').blocks[0]
+      assert.deepEqual(box.children, item.items[0].blocks)
+    })
+  }
+}
+
+for (const lines of [['```', 'x'], ['~~~', 'x'], [':::broken']]) {
+  for (const offset of [1, 2, 4]) test(`a hosted box uses item interruption for ${JSON.stringify(lines)}, offset ${offset}`, () => {
+    const shifted = lines.map(line => ' '.repeat(2 + offset) + line)
+    const box = parse(['- ::: box', '  text', ...shifted, '  :::'].join('\n') + '\n').blocks[0].items[0].blocks[0]
+    const item = parse(['- text', ...shifted].join('\n') + '\n').blocks[0].items[0]
+    assert.deepEqual(box.children, item.blocks)
+  })
+}
+
+test('a shifted reference under an open paragraph stays text in a hosted box', () => {
+  assert.deepEqual(parse('- ::: box\n  text\n   [r]: /url\n  :::\n').blocks[0].items[0].blocks[0].children, [{t: 'para', lines: ['text', '[r]: /url']}])
 })

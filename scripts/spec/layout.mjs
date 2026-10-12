@@ -2029,10 +2029,10 @@ function hostColonStep(h, inner, commentCloses = () => false, markerLine = false
     return false
   }
   const base = h.columns.at(-1)
-  // An opener past a hosted container establishes its own base when no
-  // paragraph is open (CARVE-P0-004).
+  // An opener past a hosted container establishes its own base and may
+  // interrupt its paragraph (CARVE-P0-004, CARVE-P2-017).
   if (top && base === top.base && inner.col > top.column &&
-      !(paragraph.length === 0 && !bare && opensHostedColonBlock(inner.rest))) return false
+      !(!bare && opensHostedColonBlock(inner.rest))) return false
   if (top && bare && inner.col !== top.base && inner.col !== top.column) return false
   if (stack.length >= remainingDepth) return false
   const opener = colon && parseColonOpener(colon[2])
@@ -2356,7 +2356,7 @@ const opensAuthoredBase = (line) => opensSubBlock(line) || isLinkDef(line) ||
  * returns left of it. This measures every leading run once and preserves any
  * payload indentation beyond the opener.
  */
-export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = false) {
+export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = false, hostedColonBody = false) {
   const out = []
   // Whether a nested note has been flushed to column 0 whose fixed body column
   // (2) a following plain paragraph could wrongly reach. It arms the paragraph
@@ -2410,7 +2410,7 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
       index = last
       continue
     }
-    const establishesBase = measured.col > 0 && opensAuthoredBase(measured.rest)
+    const establishesBase = measured.col > 0 && (hostedColonBody ? opensHostedColonBlock(measured.rest) : opensAuthoredBase(measured.rest))
     // A LIST ITEM IS A CONTAINER TOO (carve#1781). `opensSubBlock` answers a
     // different question - whether a blank-separated sub-block leaves a list
     // TIGHT - and a list marker is deliberately absent from it there, because a
@@ -2474,7 +2474,15 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
         }
       }
     }
-    out.push(...candidate.slice(0, relativeEnd))
+    const colon = COLON_FENCE.exec(candidate[0])
+    const opener = colon && !COLON_CLOSER.test(candidate[0]) && parseColonOpener(colon[2])
+    if (opener && opener.mode !== 'line-block') {
+      const close = findColonCloser(candidate, 0, colon[1].length)
+      const end = close === -1 ? relativeEnd : Math.min(close, relativeEnd)
+      out.push(candidate[0])
+      out.push(...normalizeAuthoredBodyBases(candidate.slice(1, end), state, false, true))
+      out.push(...candidate.slice(end, relativeEnd))
+    } else out.push(...candidate.slice(0, relativeEnd))
     index += relativeEnd - 1
   }
   return out
@@ -6066,11 +6074,10 @@ function collectItems(lines, i, list, state, ind, meas) {
         }
         const foldsIntoLeadTerm = leadTerm && col > contentCol && !nm
         // A colon container is not opaque: an opener past the column inside one
-        // takes its authored base like any other, where no paragraph is in the
-        // way (CARVE-P0-004).
-        const colonHoldsNoParagraph = !paragraphIsOpen()
+        // takes its authored base and may interrupt a paragraph
+        // (CARVE-P0-004, CARVE-P2-017).
         const retainedAfterComment = afterComment && subCol > col && !opensBlockAt(line, i)
-        const inOpenColonOnly = fence.opaque === null && fence.colon.length !== 0 && colonHoldsNoParagraph &&
+        const inOpenColonOnly = fence.opaque === null && fence.colon.length !== 0 &&
           col > contentCol && !descendantOwned && !COLON_CLOSER.test(lm.rest) && !inPayload && !retainedAfterComment && opensHostedColonBlock(lm.rest)
         const mayOpenAuthoredBlock = !foldsIntoLeadTerm && !descendantOwned &&
           (!insideFence() || inOpenColonOnly) && opensAuthoredBase(lm.rest)
