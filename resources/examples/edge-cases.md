@@ -48378,8 +48378,9 @@ x
 A fence run after a nested item has ended. The blank and the heading at the
 outer item's column end the child item, so the later run is not inside it and
 closes nothing: the first run has no closer and is paragraph text
-(`CARVE-P0-014`, markup-carve/carve#2961). The top-level spelling already read
-this way.
+(`CARVE-P0-014`, markup-carve/carve#2961). The later run is past the outer
+item's column with no paragraph open, so it opens a code block of its own
+(`CARVE-P0-004`). The top-level spelling already read the first run this way.
 
 ::: compare
 
@@ -48402,7 +48403,7 @@ this way.
 code</code></li>
     </ul>
     <h1 id="h">h</h1>
-    <code></code>
+    <pre><code></code></pre>
   </li>
 </ul>
 ```
@@ -49009,3 +49010,137 @@ paragraph in the item itself, which makes it loose (carve#2988).
 ```
 
 :::
+
+## An opener past a hosted container's column opens there
+
+A recognized block opener past the content column of a colon container that a
+list item hosts takes its authored column as the base of that one block, where
+the container holds no open paragraph (`CARVE-P0-004`, ruled on
+markup-carve/carve#2973). The line-block spelling, a code fence and a heading
+open like a named container does, with the container on the marker line or
+below it, quoted or not.
+
+:::: compare
+
+````carve
+- ::: box
+    ::: |
+    x
+    :::
+  :::
+tail
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+      <div class="line-block">
+        <p>x</p>
+      </div>
+    </div>
+  </li>
+</ul>
+<p>tail</p>
+```
+
+````carve
+- a
+  ::: box
+     ```
+     code
+     ```
+  :::
+tail
+````
+
+```html
+<ul>
+  <li>a
+    <div class="box">
+      <pre><code>code
+</code></pre>
+    </div>
+  </li>
+</ul>
+<p>tail</p>
+```
+
+````carve
+> - ::: box
+>    # h
+tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <h1 id="h">h</h1>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+<p>tail</p>
+```
+
+::::
+
+The control. Under a paragraph of the container the same lines are
+over-indented text.
+
+:::: compare
+
+````carve
+- ::: box
+  text
+    ::: |
+    x
+    :::
+  :::
+tail
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+      <p>text
+::: |
+x
+:::</p>
+    </div>
+  </li>
+</ul>
+<p>tail</p>
+```
+
+::::
+
+A block at the item's column ends a sublist above it, so a later run past that
+column belongs to the item and opens there too.
+
+:::: compare
+
+````carve
+- outer
+  - para
+
+  ---
+    ```
+````
+
+```html
+<ul>
+  <li>outer
+    <ul>
+      <li>para</li>
+    </ul>
+    <hr>
+    <pre><code></code></pre>
+  </li>
+</ul>
+```
+
+::::

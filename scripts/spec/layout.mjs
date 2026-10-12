@@ -1025,14 +1025,6 @@ function lineBlockSpanEnd(lines, idx) {
   return opaqueSpanEnd(lines, idx)
 }
 
-// A colon opener that names its container: `::: note`, not a bare run and not
-// the `::: |` line-block spelling.
-function namedColonOpener(line) {
-  const cf = COLON_FENCE.exec(line)
-  const opener = cf && parseColonOpener(cf[2])
-  return !!(opener && opener.type && opener.mode !== 'line-block')
-}
-
 function isColonBlockOpener(line) {
   const cf = COLON_FENCE.exec(line)
   return !!(cf && parseColonOpener(cf[2]) !== null)
@@ -2067,11 +2059,10 @@ function hostColonStep(h, inner, bodyFollows, commentCloses = () => false, marke
     return false
   }
   const base = h.columns.at(-1)
-  // Past the container's column a line is its text, except a named opener
-  // where no paragraph is in the way: that one opens at its authored column
-  // (CARVE-P0-004).
+  // An opener past a hosted container establishes its own base when no
+  // paragraph is open (CARVE-P0-004).
   if (top && base === top.base && inner.col > top.column &&
-      !(paragraph.length === 0 && colon && !bare && namedColonOpener(inner.rest))) return false
+      !(paragraph.length === 0 && !bare && opensHostedColonBlock(inner.rest))) return false
   if (top && bare && inner.col !== top.base && inner.col !== top.column) return false
   if (stack.length >= remainingDepth) return false
   const opener = colon && parseColonOpener(colon[2])
@@ -2373,6 +2364,15 @@ function opensSubBlock(line) {
   // FALLBACK) -- the line is prose and loosens the item
   if (f) return parseFenceInfo(f[2]) !== null
   return isColonBlockOpener(line)
+}
+
+function opensHostedColonBlock(line) {
+  if (QUOTE.test(line) || HEADING.test(line) || HR.test(line) || isTableRow(line)) return true
+  const fence = FENCE.exec(line)
+  if (fence) return parseFenceInfo(fence[2]) !== null
+  const colon = COLON_FENCE.exec(line)
+  const opener = colon && parseColonOpener(colon[2])
+  return !!(opener && (opener.type || opener.mode === 'line-block'))
 }
 
 const opensAuthoredBase = (line) => opensSubBlock(line) || isLinkDef(line) ||
@@ -6073,8 +6073,9 @@ function collectItems(lines, i, list, state, ind, meas) {
         // way (CARVE-P0-004).
         const colonHoldsNoParagraph = !paragraphIsOpen() ||
           (para.length === 1 && i === headIndex + 1 && isColonBlockOpener(para[0]))
+        const retainedAfterComment = afterComment && subCol > col && !opensBlockAt(line, i)
         const inOpenColonOnly = fence.opaque === null && fence.colon.length !== 0 && colonHoldsNoParagraph &&
-          col > contentCol && namedColonOpener(lm.rest)
+          col > contentCol && !descendantOwned && !COLON_CLOSER.test(lm.rest) && !inPayload && !retainedAfterComment && opensHostedColonBlock(lm.rest)
         const mayOpenAuthoredBlock = !foldsIntoLeadTerm && !descendantOwned &&
           (!insideFence() || inOpenColonOnly) && opensAuthoredBase(lm.rest)
         if (pendingHeadQuote !== null && mayOpenAuthoredBlock) {
@@ -6108,7 +6109,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         const insideAuthoredBlock = pendingAuthoredBlock !== null ||
           (authoredBlockLimit !== null && i < authoredBlockLimit)
         if (leadTerm && !foldsIntoLeadTerm && !insideFence() && !foldablePlainLine(lm.rest)) leadTerm = false
-        const openerBase = !insideAuthoredBlock && mayOpenAuthoredBlock
+        const openerBase = (!insideAuthoredBlock || inOpenColonOnly) && mayOpenAuthoredBlock
           ? col
           : null
         // A LINE THAT OPENS ITS OWN BASE IS MEASURED AT ITS OWN COLUMN. The
@@ -6125,7 +6126,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // base at the item's content column then held it over a quote written
         // one column deeper, which arrived at body column 1 instead of 0 and
         // stopped being an opener at all (carve#1772, corpus 422-8).
-        const localBase = authoredBlockBase !== null && insideFence() && col < authoredBlockBase
+        const localBase = inOpenColonOnly ? openerBase : authoredBlockBase !== null && insideFence() && col < authoredBlockBase
           ? contentCol
           : authoredBlockBase ?? openerBase ?? contentCol
         const dd = dedentMeasured(lm, line, localBase)
@@ -6459,6 +6460,10 @@ function collectItems(lines, i, list, state, ind, meas) {
          * (markup-carve/carve#1376).
          */
         else if (dmeas.rest !== '') openParaWith(dedented)
+        // A block of this item below the sublist's column has ended the sublist,
+        // so a later line past this column is no descendant's (CARVE-P0-004).
+        if (subCol >= 0 && col < subCol && !nm && dmeas.rest !== '' && !belowCloser && !inCommentSpan &&
+            !inDefBody && !COMMENT_LINE.test(dedented) && !paragraphIsOpen()) subCol = -1
         // A FENCED BODY IS NOT A PARAGRAPH whichever container opened it
         // (CARVE-P0-013, CARVE-P0-014). The branches above classify the line in
         // THIS item's coordinates, where a descendant's fence and its payload
