@@ -2413,6 +2413,11 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
       index = last
       continue
     }
+    if (COMMENT_LINE.test(measured.rest) && !comment) {
+      out.push(!hostedColonBody && measured.col > 0 ? measured.rest : line)
+      flushedNote = false
+      continue
+    }
     const establishesBase = measured.col > 0 && (hostedColonBody ? opensHostedColonBlock(measured.rest) : opensAuthoredBase(measured.rest))
     // A LIST ITEM IS A CONTAINER TOO (carve#1781). `opensSubBlock` answers a
     // different question - whether a blank-separated sub-block leaves a list
@@ -2928,6 +2933,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
       let pullPending = false
       let afterComment = false
       let commentScanFrom = 0
+      let retainedParagraph = false
       // Indented continuation: the line's leading run must reach COLUMN 2
       // (PART 9 SS24 C1 column arithmetic), not two literal space characters.
       // A tab from column 0 already reaches column 4, so a bare tab or a
@@ -2937,6 +2943,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         const measured = ind(i)
         if (measured.col === 0 && FOOTNOTE_DEF.test(measured.rest)) break
         if (isBlank(lines[i])) afterComment = false
+        if (measured.col >= FOOTNOTE_BODY_COLUMN || isBlank(lines[i])) retainedParagraph = false
         if (isFootnoteContinuationLine(lines[i])) {
           afterComment = afterCommentTransition(false, {})
           bodyLines.push(dedent(lines[i], FOOTNOTE_BODY_COLUMN))
@@ -3009,7 +3016,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           pullPending = false
           i++
         } else if (measured.col < FOOTNOTE_BODY_COLUMN &&
-            (afterComment || paragraphOpenSince(bodyLines, commentScanFrom)) &&
+            (afterComment || retainedParagraph || paragraphOpenSince(bodyLines, commentScanFrom)) &&
             COMMENT_LINE.test(measured.rest) &&
             !(measured.col === 0 && commentFenceOpensSpan(lines, i))) {
           const comment = classifyLayoutComment(lines, i)
@@ -3019,6 +3026,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             i = comment.end
           } else i++
           commentScanFrom = bodyLines.length
+          retainedParagraph = false
           afterComment = afterCommentTransition(afterComment, { comment: true, belowComment: measured.col < FOOTNOTE_BODY_COLUMN })
         } else if (afterComment &&
             !startsVisibleBlock(lines[i]) && !isTableRow(lines[i]) &&
@@ -3026,6 +3034,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           // A retained marker is paragraph text and opens no list (PART 0 X1).
           bodyLines.push(BULLET.test(measured.rest) || isOrderedMarkerLine(measured.rest) ? LAZY + measured.rest : measured.rest)
           afterComment = afterCommentTransition(afterComment, {})
+          retainedParagraph = true
           i++
         } else break
         // NO LAZY CONTINUATION. A branch here used to fold any flush-left
@@ -3301,6 +3310,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           // Lines before the last comment this arm kept cannot hold a paragraph or a
           // span open, so the fold questions below read the tail only.
           let ddScanFrom = 0
+          let retainedParagraph = false
           const sinceComment = () => (ddScanFrom === 0 ? bodyLines : bodyLines.slice(ddScanFrom))
           let openFence = -1
           const nestedLeadFenceUnterminated = descriptionLeadHasUnterminatedNestedFence(
@@ -3308,6 +3318,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           )
           while (i < n) {
             const cur = lines[i] ?? ''
+            if (isDefinitionContinuationLine(cur, bodyColumn) || isBlank(cur)) retainedParagraph = false
             if (nestedLeadFenceUnterminated) {
               if (endsBodyAt(i)) break
               const measured = indentCols(cur)
@@ -3454,7 +3465,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             }
             if (classifyLayoutComment(lines, i) !== null) {
               if (authoredCol === 0 && commentFenceOpensSpan(lines, i)) break
-              if (!afterComment && !bodyLeavesParagraphOpen(asRead(sinceComment()))) break
+              if (!afterComment && !retainedParagraph && !bodyLeavesParagraphOpen(asRead(sinceComment()))) break
               const comment = classifyLayoutComment(lines, i)
               pushBody(keptCommentDelimiter(cur))
               if (comment.kind === 'fenced_comment') {
@@ -3462,6 +3473,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
                 i = comment.end
               } else i++
               ddScanFrom = bodyLines.length
+              retainedParagraph = false
               afterComment = afterCommentTransition(afterComment, { comment: true, belowComment: authoredCol < bodyColumn })
               continue
             }
@@ -3470,6 +3482,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
                 !(FENCE.test(cur) && hasCloser(lines, i))) {
               pushBody(BULLET.test(dedented) || isOrderedMarkerLine(dedented) ? LAZY + dedented : dedented)
               afterComment = afterCommentTransition(afterComment, {})
+              retainedParagraph = true
               i++
               continue
             }
@@ -5772,11 +5785,18 @@ function collectItems(lines, i, list, state, ind, meas) {
         closePara()
       }
     }
+    let paragraphOpenBeforeComments = false
+    let captureParagraphState = true
     while (i < n) {
+      if (captureParagraphState) paragraphOpenBeforeComments = deepestParagraphOpen()
       const line = lines[i]
       // `+` at the item's MARKER column attaches ONE following flush-left
       // block to this item (SS17 L3/L4)
       const lm = ind(i)
+      const commentLine = fence.opaque?.kind === 'comment' || nestedOpaque?.kind === 'comment' ||
+        (belowSpan !== null && lastCommentCloser(belowSpan.run) >= i) || lm.rest.startsWith('%%')
+      captureParagraphState = !commentLine
+      if (!commentLine && lm.rest === '') paragraphOpenBeforeComments = false
       if (lm.rest !== '') fenceBlankRun = 0
       if (CONT_MARKER.test(line) && lm.col === baseIndent) {
         i++
@@ -6023,6 +6043,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           // a second PARAGRAPH inside the item -> loose (SS17 L1)
           if (!descendantFence) pushLine('', BLANK_MEAS)
           list.tight = false
+          if (col === contentCol) subCol = -1
           startPara()
           i = j
           continue
@@ -6476,7 +6497,9 @@ function collectItems(lines, i, list, state, ind, meas) {
         // A block of this item below the sublist's column has ended the sublist,
         // so a later line past this column is no descendant's (CARVE-P0-004).
         if (subCol >= 0 && col < subCol && !nm && dmeas.rest !== '' && !belowCloser && !inCommentSpan &&
-            !inDefBody && !COMMENT_LINE.test(dedented) && !paragraphIsOpen()) subCol = -1
+            !inDefBody && !COMMENT_LINE.test(dedented) &&
+            (!paragraphIsOpen() ||
+              (col === contentCol && opensBlockAt(dedented, i)))) subCol = -1
         // A FENCED BODY IS NOT A PARAGRAPH whichever container opened it
         // (CARVE-P0-013, CARVE-P0-014). The branches above classify the line in
         // THIS item's coordinates, where a descendant's fence and its payload
@@ -6629,6 +6652,8 @@ function collectItems(lines, i, list, state, ind, meas) {
       if (!nm && atFrameColumn(lm.col) && lm.rest.startsWith('%%') && !paragraphIsOpen() && nestedOpaque?.kind !== 'comment' &&
           !bodyHoldsLiveCommentSpan()) break
       if (!nm && lm.rest.startsWith('%%') && itemLines.length > 0) {
+        if (!afterComment && !(deepestParagraphOpen() || paragraphOpenBeforeComments) && fence.opaque?.kind !== 'comment' &&
+            nestedOpaque?.kind !== 'comment' && !bodyHoldsLiveCommentSpan()) break
         // KEEP ONE COLUMN of the original indentation. Stripping it entirely
         // told the item's own parse that a line indented in the source had
         // been written flush left, and the rule above cannot then tell an
