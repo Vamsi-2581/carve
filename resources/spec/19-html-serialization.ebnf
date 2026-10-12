@@ -650,8 +650,9 @@
 
    13b. ROUNDTRIP EXPORT DROPS AN AUTHORED RESERVED NAME AND REPORTS IT --
       NORMATIVE [CARVE-P10-019]. Under roundtrip export an authored attribute
-      whose name is a reserved name from §13a IS DROPPED ON EVERY NODE,
-      whether or not that node writes a carrier of that name. A node that
+      whose name is a reserved name from §13a, or the deprecated `data-djot-`
+      spelling of one, which §13c has every importer consume, IS DROPPED ON
+      EVERY NODE, whether or not that node writes a carrier of that name. A node that
       writes a carrier of that name still writes it. Default export passes
       the authored attribute through.
 
