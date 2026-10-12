@@ -112,6 +112,12 @@
            `> `. The frame that answers is the innermost one whose prefix the
            line supplied.
 
+           EVERY RECOGNIZED BLOCK OPENER QUALIFIES, the line-block opener
+           `::: |` included. A colon body has no prefix, so it answers as its
+           host does: inside a colon body an indentation container hosts, an
+           opener past the column opens on its authored base where no
+           paragraph of that body is open above it.
+
            OWNERSHIP PRECEDES REBASING. The base belongs to the INNERMOST open
            container whose content column the opener reaches. While that block
            is open, a nested body's opener at its own content column is owned
@@ -149,6 +155,8 @@
            After a line comment consumed below the content column, a noninterrupting
            follower remains in the item even below that column. A comment at
            or above the content column does not grant that retention (C3).
+           A definition body and a footnote body retain on the same terms as
+           an item.
            Sibling markers are recognized before ordinary-line retention.
            A retained list marker below the item's content column remains
            paragraph text. Closing the preceding paragraph does not reduce
@@ -213,7 +221,7 @@
            it does not close the container merely because a comment preceded
            it. The next VISIBLE line follows prefix matching, the owner table and
            the list-item qualifications above. A comment creates no stored
-           ordinary-line continuation claim. The retained list ownership in
+           ordinary-line continuation claim. The retained ownership in
            CARVE-P9-053 is a separate rule, not parser fallthrough.
 
            A matched `%%%` token carries its opener, body and exact-width
@@ -313,8 +321,9 @@
         block, and no surviving frame adopts it: a line below an item's
         content column is not that item's content, so the owner table does
         not select one for it. THE ONE EXCEPTION is retention: after a line
-        comment consumed below the content column, a noninterrupting follower
-        remains in the item and starts a new paragraph (CARVE-P9-053). A
+        comment consumed below the content column of a list item, a
+        definition body or a footnote body, a noninterrupting follower remains
+        in that container and starts a new paragraph (CARVE-P9-053). A
         heading at an item's content column leaves
         no paragraph open, and neither does a thematic break, a fenced code
         block, a `:::` container, a table, or a nested list whose own leaf
@@ -564,6 +573,16 @@
         not apply and S4 finds no open paragraph. The body closes with an empty
         code block, and `body` and the trailing run are reclassified at document
         level, as for the list-item form (CARVE-P0-013).
+
+        The hosts agree on an unfinished fence on a NESTED marker line too. In
+
+            :: t
+            : - ``` x
+            code
+
+        `code` misses every prefix: the nested item closes with an empty code
+        block and `code` is document text, as it is under a `- - ` marker line
+        (corpus 455).
 
      S5 OPENERS. When S3/S4 classify the residue as a container opener (a
         quote marker; a list marker at an admissible column; a `+`

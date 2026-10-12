@@ -251,16 +251,11 @@ admonition = admonition_open, newline,
    opener with no exact closer ahead opens nothing: a comment block is
    invisible either way, so failing closed costs nothing there.
 
-   ONLY LAZY FOLDING TAKES THE OPENER BACK. "An opener always opens" has one
-   exception and it is not a blank line. A `:::` opener written as the sole
-   content of a list item's MARKER LINE opens nothing when its whole body
-   arrived by LAZY FOLDING -- lines that sat below the item's content column
-   and folded into the paragraph the opener line left open, which never
-   belonged to the container in the first place:
-
-       - ::: d          - ::: d
-       tail
-                        tail
+   A MARKER-LINE OPENER OPENS TOO. A `:::` opener written as the sole content
+   of a list item's marker line opens its container whatever the next line
+   is. In `- ::: d` / `tail` the item holds an empty `d` container, which
+   leaves no paragraph open, and `tail` is a document paragraph
+   (CARVE-P0-009, CARVE-P0-016).
 
    OPAQUE SPANS (PART 9 §12). `{block - admonition_close}` is a BLOCK
    sequence, so a fenced code block, a raw block and a comment block inside
