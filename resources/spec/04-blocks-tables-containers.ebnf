@@ -185,7 +185,7 @@ caption_slot = [blank_line], caption ;
    structural-only line -- a bare `>`, a bare list marker, a bare
    continuation marker, a bare fence -- is not blank, and where it changes
    the open container it ends the caption scope instead of being spent as
-   the allowance (PART 9 §4d). *)
+   the allowance (CARVE-P9-080). *)
 
 (* CAPTION NUMBER PLACEHOLDER -- NORMATIVE [CARVE-P2-022].
    The FIRST bare `#` in a caption's TOP-LEVEL inline_content is a number
@@ -357,7 +357,7 @@ quoted_title = '"', {character - '"'}, '"' ;
    container keeps its children (carve#2693). Unlike `quoted_value`, this
    token does not accept escapes *)
 
-(* --- Composite figures (PART 9 §4c) --- *)
+(* --- Composite figures (CARVE-P9-001) --- *)
 (* The kind word `figure` is RESERVED among the `:::` types: a BARE opener --
    fence, separator, the word `figure`, and NOTHING else -- opens a composite
    figure rather than an admonition. `figure_group_open` wins over
@@ -365,7 +365,7 @@ quoted_title = '"', {character - '"'}, '"' ;
    title or a `[label]` (`::: figure "T"`, `::: figure [g]`) does NOT match
    this production and stays an `admonition` of kind `figure` -- a generic
    Tier-2 container, metadata preserved losslessly -- which `carve lint`
-   reports (PART 9 §4c). `figure_group` carries no title and no label BY
+   reports (CARVE-P9-001). `figure_group` carries no title and no label BY
    DESIGN: the group's one piece of authored metadata is its caption, and the
    caption sits after the closer, where PART 9 §4's rule already lives.
 
@@ -383,7 +383,7 @@ quoted_title = '"', {character - '"'}, '"' ;
    Body, closer discipline, opaque spans, fence lengths and nesting are the
    container rules, unchanged (`admonition`, above). What its direct children MEAN --
    which of them are panels, how the group numbers, how a nested bare
-   `::: figure` degrades -- is PART 9 §4c. *)
+   `::: figure` degrades -- is CARVE-P9-001. *)
 figure_group = figure_group_open, newline,
                {block - admonition_close},
                [admonition_close, newline, [caption_slot]] ;
@@ -493,7 +493,7 @@ inline_comment = "%%", {character - newline} ;
    rendered. Unlike `inline_comment` it has an explicit CLOSER, so it ends
    mid-run and may span the soft line breaks inside one paragraph. The same
    semantic constraints as the `%%` form -- never inside a code span or raw
-   inline, literal when the brace is escaped -- are stated in PART 9 §21a, and
+   inline, literal when the brace is escaped -- are stated in CARVE-P9-042, and
    so is the rule that an UNTERMINATED opener stays literal text. *)
 braced_comment = "{%", {character - "%}"}, "%}" ;
 
@@ -588,7 +588,7 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    the message is where the sink kind survives; `target` is already a field, so
    the message does not repeat it.
 
-   Each authored attribute roundtrip export drops under PART 10 §13b
+   Each authored attribute roundtrip export drops under CARVE-P10-019
    contributes one loss in document order with the stable code
    `carrier-attribute-dropped`, the selected `target`, `nodeType` of `inline` or
    `block`, its `pos` when recorded, and NO `format`. Such an entry MUST carry
@@ -596,7 +596,7 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    content of the finding and a message is not compared. Only the HTML target
    writes carriers, so only that target reports this code.
 
-   Each definition list that PART 11 §10t leaves without carrier markers
+   Each definition list that CARVE-P11-067 leaves without carrier markers
    under roundtrip export contributes one loss in document order with the
    stable code `definition-list-flattened`, the selected `target`, `nodeType`
    of `block`, its `pos` when recorded, and NO `format`. Only the Markdown

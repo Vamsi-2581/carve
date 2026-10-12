@@ -466,7 +466,7 @@
       the author writes leaves the naming alone.
       The label renders as `<p class="div-label">` when no group extension
       consumes it. An untitled, unlabeled marker emits neither paragraph.
-      Non-HTML targets follow PART 11 §10e T1 for both tokens.
+      Non-HTML targets follow CARVE-P11-032 T1 for both tokens.
 
       A SIBLING TITLE WAS REFUSED FOR A NAMEABLE REGION. Put the visible title
       inside a region that admits it, and use it as that region's accessible
@@ -658,7 +658,7 @@
       consumes them (CARVE-P10-008). All seven are boolean attributes everywhere else,
       including in the AST and in the canonical writer, which writes the span
       back as `[Tab]{kbd}` -- an empty-string attribute is spelled bare there
-      (PART 11 §6c).
+      (CARVE-P11-012).
       A COLON is not an `identifier` character, so a colon-bearing name is
       unrecognized in every form -- `{xml:lang="en"}`, `{.sm:hover}`, `{#a:b}`
       and a bare `{a:b}` all leave the run literal. It stays legal one position

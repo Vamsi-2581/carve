@@ -304,8 +304,8 @@
       question cannot be answered while the block layer is still reading lines.
 
       ONE PHASE, AFTER R1. A paragraph whose whole content resolves to a single
-      image becomes a BLOCK IMAGE (PART 9 §4's image-paragraph host, PART 11
-      §1c's writer-side collapse, PART 10's bare `<img>`). This is the ONLY
+      image becomes a BLOCK IMAGE (PART 9 §4's image-paragraph host,
+      CARVE-P11-004's writer-side collapse, PART 10's bare `<img>`). This is the ONLY
       place the question is asked. Nothing before it may treat an image
       paragraph as a block image, and nothing after it may re-derive the answer
       -- a renderer, a writer and an importer all READ it (PART 12 §23 names

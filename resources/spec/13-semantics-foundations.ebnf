@@ -27,12 +27,12 @@
       (a captioned code block is a numbered LISTING), a standalone
       display-math block (a numbered EQUATION; the block must be solely the
       `$$`…`` span), the CLOSING fence of a bare `::: figure` container
-      (a composite FIGURE GROUP -- §4c), or the CLOSING fence of a
+      (a composite FIGURE GROUP -- CARVE-P9-001), or the CLOSING fence of a
       `quote_block`. The allowance is the same for all
       seven: adjacent OR exactly one blank line attaches, two blank lines
       detach and leave the `^ ` line an ordinary paragraph.
       A STRUCTURAL-ONLY LINE between host and marker detaches too, and is
-      not one of the blanks that allowance counts -- see §4d.
+      not one of the blanks that allowance counts -- see CARVE-P9-080.
 
       THE SEVENTH IS THE SECOND SPELLING OF THE SECOND. `quote_block` is a
       block quote and captions as a figure. Like `figure_group`, its caption
@@ -151,7 +151,7 @@
       nothing a caption could be about, so it is not a captionable host. This
       says nothing about hosts delimited by an explicit closing fence, whose
       caption attaches at the closer: a zero-panel `::: figure` still carries
-      its group caption (§4c).
+      its group caption (CARVE-P9-001).
 
       A STRUCTURAL-ONLY LINE INSIDE AN ALREADY-OPEN CONTAINER CHANGES NOTHING.
       `> q` followed by a bare `>` is one quote with content, and it still
