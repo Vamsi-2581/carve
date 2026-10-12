@@ -132,7 +132,7 @@ const HEADING = /^(#{1,6}) +(?=.*[^ \t\n\r\f])(.*)$/
 const HR = /^(-{3,}|\*{3,}|_{3,})[ \t]*$/
 const FENCE = /^(`{3,}|~{3,})(.*)$/
 const PURE_FENCE = /^(`{3,}|~{3,})[ \t]*$/
-const QUOTE = /^>(?: (.*)|)$/
+const QUOTE = /^>(?: (.*)|[ \t]*$)/
 // `reference_label = (character - ']' - '@'), {character - ']'}` - only those
 // two are excluded, and only `@` only at the first position. `^` was excluded
 // here too, so `[^]: %` matched nothing and fell through as a paragraph, where
@@ -383,7 +383,7 @@ function isCaptionableParagraph(para) {
   // literal text, where all three engines leave both lines as prose - the
   // tail patterns admit a newline inside `[...]` and `(...)` because they
   // never had to exclude one.
-  const line = para.join('\n')
+  const line = para.map(trimLineEnd).join('\n')
   if (CAPTIONABLE_MATH.test(line)) return 'math'
   if (!line.startsWith('![')) return null
   const altEnd = bracketRunEnd(line, 1)
@@ -1284,6 +1284,9 @@ function isBlankCell(seg) {
   const cell = parseCell(seg)
   return cell.content === '' && cell.align === null && cell.valign === null && cell.attrs === null
 }
+
+// Syntax readers trim line endings; line-block bodies keep their raw gap columns.
+const trimLineEnd = (line) => line.replace(/[ \t]+$/, '')
 
 // PART 9 SS15: try to read one-or-more attribute blocks starting at
 // lines[i] (adjacent blocks on one line merge; one block may wrap lines; a
@@ -2372,7 +2375,7 @@ function opensHostedColonBlock(line) {
 
 const opensAuthoredBase = (line) => opensSubBlock(line) || isLinkDef(line) ||
   FOOTNOTE_DEF.test(line) || COMMENT_LINE.test(line) ||
-  parseAttrList(line) !== null || isCaptionableParagraph([line])
+  parseAttrList(trimLineEnd(line)) !== null || isCaptionableParagraph([line])
 
 /**
  * Rebase an authored block opener inside a definition or footnote body.
@@ -2917,7 +2920,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
       stop.next = i
       return blocks
     }
-    const line = lines[i]
+    const line = trimLineEnd(lines[i])
     if (ind(i).rest === '') { // isBlank, without re-walking the indent
       i++
       continue
@@ -6040,7 +6043,7 @@ function collectItems(lines, i, list, state, ind, meas) {
             COMMENT_FENCE.test(dedented) ||
             FOOTNOTE_DEF.test(dedented) ||
             isLinkDef(dedented) ||
-            parseAttrList(dedented) !== null
+            parseAttrList(trimLineEnd(dedented)) !== null
           ) {
             // An INVISIBLE construct is not a second paragraph, and SS17 L1
             // asks for one: "some item holds a blank-line-separated second
@@ -6209,7 +6212,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           !dmeas.rest.startsWith('%%') &&
           !FOOTNOTE_DEF.test(dedented) &&
           !isLinkDef(dedented) &&
-          parseAttrList(dedented) === null
+          parseAttrList(trimLineEnd(dedented)) === null
         ) {
           // §17 L1b: a second paragraph, still blank-line-separated.
           list.tight = false
