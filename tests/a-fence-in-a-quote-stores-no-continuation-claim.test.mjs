@@ -304,19 +304,24 @@ test('a host that ends ends its fence, and the line is classified again', () => 
     'quote[list[item[p(a), code]]], p(flush)')
 })
 
-test('a description body is not a host, in either spelling', () => {
-  // Its column would put a fence out of the quote's sight too, but whether a
-  // `: ` line opens a body depends on the term's list still being open - and
-  // that list ends at a blank followed by anything, at a block opener and at an
-  // indented list written before any description, while surviving text that
-  // folds into the term. Guessing at it read three shapes wrong, so the host is
-  // out and these pin its absence against the block reader's own answers.
+test('a description body hosts a fence only while its term survives', () => {
+  // A description needs an open term; a bare colon and a colon folded into an
+  // item's paragraph open no body and retain their previous answers.
   assert.equal(host(`> :  a\n>\n>    ${F}\n>    x\nflush\n`),
     `quote[p(:  a), p(${F}|x|flush)]`)
   assert.equal(host(`> :: t\n> :  d\n>\n>    ${F}\n>    x\nflush\n`),
-    'quote[deflist, p(flush)]')
+    'quote[deflist], p(flush)')
   assert.equal(host(`> :: t\n>   - a\n> : d\n>\n>   ${F}\nflush\n`),
     `quote[deflist, list[item[p(a|: d)]], p(${F}|flush)]`)
+})
+
+test('a description paragraph absorbs shifted fence runs at every quote depth', () => {
+  for (const depth of [1, 2, 3]) {
+    const q = '> '.repeat(depth)
+    const source = `${q}:: t\n${q}:  d\n${q}   - a\n${q}    ${F}\n${q}    x\n${q}    ${F}\nflush\n`
+    assert.equal(host(source), 'quote['.repeat(depth) + 'deflist' + ']'.repeat(depth), source)
+    assert.match(renderDoc(parse(source)).replace(/\s+/g, ' '), /<dd>d - a <code> x <\/code> flush<\/dd>/, source)
+  }
 })
 
 test('the rule answers the same at every quote depth', () => {
@@ -328,6 +333,13 @@ test('the rule answers the same at every quote depth', () => {
     const q = (inner) => Array.from({ length: depth }, (_, k) => 'quote['.repeat(1)).join('') + inner + ']'.repeat(depth)
     assert.equal(host(`${p}- a\n${'>'.repeat(depth).split('').join(' ')}\n${p}  ${F}\n${p}  x\nflush\n`),
       `${q('list[item[p(a), code]]')}, p(flush)`, `depth ${depth}`)
+    for (const closed of [false, true]) {
+      const closer = closed ? `${p}   ${F}\n` : ''
+      const list = host(`${p}- a\n${p}\n${p}  ${F}\n${p}  x\n${closed ? `${p}  ${F}\n` : ''}flush\n`)
+      const description = host(`${p}:: t\n${p}:  d\n${p}\n${p}   ${F}\n${p}   x\n${closer}flush\n`)
+      assert.equal(description, list.replace('list[item[p(a), code]]', 'deflist'),
+        `description at depth ${depth}, closed ${closed}`)
+    }
     assert.equal(host(`${p}- ${F}\n${p}  x\nflush\n`),
       `${q('list[item[code]]')}, p(flush)`, `marker-line fence at depth ${depth}`)
   }

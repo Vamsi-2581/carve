@@ -1892,8 +1892,8 @@ function hostLadder() {
  */
 function hostAdvance(h, line, paraOpen) {
   const meas = indentCols(line)
-  if (meas.col === 0 && DEFLIST_TERM.test(meas.rest)) h.descriptionTerm = true
-  const description = h.descriptionTerm && meas.col === 0 && /^:( +)(.*)$/.exec(meas.rest)
+  const term = meas.col === 0 && DEFLIST_TERM.test(meas.rest)
+  const description = h.descriptionTerm && meas.col === 0 && /^:( +)(?=[ \t]*[^ \t])(.*)$/.exec(meas.rest)
   if (description && matchMarkerAt(indentCols(description[2]))) {
     const lead = markerFenceSummary(description[2], new Map())
     if (lead) {
@@ -1904,10 +1904,21 @@ function hostAdvance(h, line, paraOpen) {
       return { meas, inner: { col: column, rest: markerFreeContent(description[2]) }, blockStart: true, popped: false }
     }
   }
+  if (term) {
+    h.descriptionTerm = true
+    h.descriptionBlank = false
+  } else if (meas.rest === '') {
+    h.descriptionBlank = true
+  } else if (!description && !h.kinds.includes('description') &&
+      (h.descriptionBlank || !foldablePlainLine(line))) {
+    h.descriptionTerm = false
+  }
+  if (meas.rest !== '') h.descriptionBlank = false
   if (h.colons?.at(-1)?.mode === 'line-block' && meas.col >= h.colons.at(-1).base) {
     return { meas, inner: meas, blockStart: false, popped: false }
   }
   if (meas.rest === '' || h.colonComment || COMMENT_LINE.test(meas.rest)) {
+    h.descriptionParagraph = false
     if (COMMENT_LINE.test(meas.rest) && !h.colonComment) {
       h.retainedComment = meas.col > 0 && meas.col < h.columns.at(-1)
     }
@@ -1944,6 +1955,8 @@ function hostAdvance(h, line, paraOpen) {
     h.markerCols.pop()
     h.kinds.pop()
   }
+  if (!h.kinds.includes('description')) h.descriptionParagraph = false
+  if (h.kinds.at(-1) === 'description') paraOpen = h.descriptionParagraph ?? paraOpen
   const insideItem = h.kinds.at(-1) === 'item'
   let inner = meas
   let blockStart = false
@@ -1970,15 +1983,23 @@ function hostAdvance(h, line, paraOpen) {
       blockStart = true
       break
     }
-    // A DESCRIPTION BODY IS NOT A HOST HERE. Its column is its own separator
-    // run, but whether a `: ` line opens one at all depends on whether the
-    // term's list is still open, and a term's list ends at a blank followed by
-    // anything, at a block opener and at an indented list written before any
-    // description - while it survives text that folds into the term and content
-    // inside a description already open. That is paragraph-and-term state this
-    // tracker does not carry, and three separate readings came out wrong while
-    // it was guessed at, so the host stays out (carve#2538).
+    // A description carries its separator column only while its term's list survives.
+    if (description && inner === meas) {
+      const column = inner.col + 1 + description[1].length
+      h.markerCols.push(inner.col)
+      h.columns.push(column)
+      h.kinds.push('description')
+      blockStart = true
+      const next = indentCols(description[2])
+      inner = { col: column + next.col, rest: next.rest }
+      continue
+    }
     break
+  }
+  if (h.kinds.at(-1) === 'description') {
+    // A list-shaped line folds into the description's paragraph under section 10 I2.
+    h.descriptionParagraph = FENCE.test(inner.rest) && !blockStart
+      ? paraOpen : opensParagraph(inner.rest, blockStart)
   }
   return { meas, inner, blockStart, popped }
 }
@@ -2095,6 +2116,8 @@ function hostFenceOpener(h, inner, canOpen = () => true) {
   const f = FENCE.exec(inner.rest)
   const opener = f && parseFenceInfo(f[2]) !== null ? f : null
   if (inner.col !== column) {
+    // A shifted run in an open description paragraph is inline text, not a fence.
+    if (h.kinds.at(-1) === 'description' && h.descriptionParagraph) return null
     // An absorbed run of the other fence character is not waiting for this one.
     const awaited = h.unclaimed !== null && (opener === null || opener[1][0] === h.unclaimed.run[0])
     if (opener !== null && column > 0 && !h.unrebased.has(column) && !awaited && canOpen(opener)) return opener
@@ -3997,6 +4020,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           const before = qNestedTable[depth] ?? false
           qNestedTable[depth] = tableRunStep(before, text)
           const { inner, blockStart, popped } = hostAdvance(host, text, qNestedPara[depth] ?? false)
+          if (host.kinds.at(-1) === 'description') qNestedPara[depth] = host.descriptionParagraph
           if (blockStart) qNestedParaLines[depth] = []
           const inLineBlock = host.colons?.at(-1)?.mode === 'line-block'
           if (state.blockDepth + depth + 1 + (host.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(host, inner, (width, floor) => quotedCommentCloser(idx, depth + 2, width, floor), blockStart, qNestedParaLines[depth] ?? [], MAX_NESTING_DEPTH - state.blockDepth - depth - 1 - (host.columns.length - 1), (run, column, past) => closerFollows(idx, depth + 2, run, column, past))) {
@@ -4154,6 +4178,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           }
         }
         const { meas, inner: inner0, blockStart, popped } = hostAdvance(qHost, l, qOpenPara)
+        if (qHost.kinds.at(-1) === 'description') qOpenPara = qHost.descriptionParagraph
         if (blockStart) qPara = []
         const inLineBlock = qHost.colons?.at(-1)?.mode === 'line-block'
         if (state.blockDepth + (qHost.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(qHost, inner0, (width, floor) => openComment === null && quotedCommentCloser(idx, 1, width, floor), blockStart, qPara, MAX_NESTING_DEPTH - state.blockDepth - (qHost.columns.length - 1), (run, column, past) => closerFollows(idx, 1, run, column, past))) {
