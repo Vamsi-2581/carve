@@ -30219,8 +30219,10 @@ same document twice, once with the marker and once with a comment line, which
 those rules cannot see either - so the pair isolates which container the line
 reached.
 
-A column below the body's minimum is not the note's. The comment spelling ends
-the body and the paragraph lands at document level, above the endnotes section.
+A column below the body's minimum. The note consumes the comment and retains
+the line as a new paragraph of the note (PART 0 X1, ruled on
+markup-carve/carve#2978), so in a footnote body and a description body the
+comment row no longer answers as the marker row does.
 
 ::: compare
 
@@ -30233,13 +30235,13 @@ see[^a]
 ```
 
 ```html
-<p>more</p>
 <p>see<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
     <li id="fn1">
-      <p>intro<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+      <p>intro</p>
+      <p>more<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
     </li>
   </ol>
 </section>
@@ -30247,7 +30249,8 @@ see[^a]
 
 :::
 
-The marker answers the same, where it used to pull the line into the note.
+The marker is no comment. It attaches nothing, and the paragraph lands at
+document level, above the endnotes section.
 
 ::: compare
 
@@ -30278,8 +30281,8 @@ The body's OWN minimum column is not column 0 either, so it is refused for the
 same reason - the marker names one column, not a range reaching down to the
 container's floor. An indented comment at that column is a different document
 and stays inside the body, which is pinned above under "A comment in a footnote
-body is invisible in both spellings"; the control here is the comment where the
-marker was.
+body is invisible in both spellings". The comment where the marker was retains
+the line; the marker does not.
 
 ::: compare
 
@@ -30292,13 +30295,13 @@ see[^a]
 ```
 
 ```html
-<p>more</p>
 <p>see<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
     <li id="fn1">
-      <p>intro<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+      <p>intro</p>
+      <p>more<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
     </li>
   </ol>
 </section>
@@ -30359,8 +30362,8 @@ see[^a]
 
 :::
 
-A description body's content column is 3 here, so column 2 is below it and the
-ordinary rules put the paragraph outside the `dd`. The comment spelling:
+A description body's content column is 3 here, so column 2 is below it. The
+comment spelling retains the line in the `dd`:
 
 ::: compare
 
@@ -30374,14 +30377,17 @@ ordinary rules put the paragraph outside the `dd`. The comment spelling:
 ```html
 <dl>
   <dt>term</dt>
-  <dd>intro</dd>
+  <dd>
+    <p>intro</p>
+    <p>more</p>
+  </dd>
 </dl>
-<p>more</p>
 ```
 
 :::
 
-And the marker, which used to pull the same line in.
+And the marker, which attaches nothing: the ordinary rules put the paragraph
+outside the `dd`.
 
 ::: compare
 
@@ -33690,20 +33696,16 @@ p
 
 ## A comment below a description body's column ends the body
 
-A `%%%` written at DOCUMENT column 0 below a description body ends the body and
-is classified in the surviving context, where a matching run below it makes it a
-comment BLOCK. The line between the two delimiters is comment content and
-renders nothing (markup-carve/carve#1930).
+A matched `%%%` span opened at DOCUMENT column 0 below a description body ends
+the body. The opener is classified in the surviving context, where the matching
+run below it makes it a comment BLOCK, and the line between the two delimiters
+renders nothing (markup-carve/carve#1930). A list item answers the same way
+(PART 0 X1, corpus 214).
 
-This is the rule the ITEM host has always had -- a comment fence at the frame's
-column 0 ends the item and hands the following line to the enclosing block,
-while an indented fence stays with the item. §17's band says the same for a
-description body in so many words: below the body's content column the body
-ends and the line is classified in the surviving context, and "at DOCUMENT
-column 0 they are interrupters and the body does end". The `dd` had no such arm,
-so the fence folded in as an invisible body line, no block was ever opened, and
-BOTH delimiters degraded to line comments while the text between them was
-published.
+Every other comment below the body's column is consumed by the body and retains
+the line after it as a new paragraph, as in a list item (PART 0 X1, ruled on
+markup-carve/carve#2978): the `%%` line form, a `%%%` with no closer ahead, and
+a matched span written past column 0. The rows below pin both halves.
 
 TERMINATED IS WHAT MAKES IT A BLOCK, and the degraded control below is why that
 has to be said: §28's degradation is total, so an opener with no exact-width
@@ -33782,7 +33784,8 @@ z
 :::
 
 DEGRADED IS THE CONTROL. With no closer ahead the opener is one line comment,
-it opens nothing, and the lines below it are ordinary paragraph text.
+it opens nothing, and the lines below it are retained as a new paragraph of the
+body.
 
 ::: compare
 
@@ -33797,16 +33800,18 @@ z
 ```html
 <dl>
   <dt>t</dt>
-  <dd>x</dd>
-</dl>
-<p>y
+  <dd>
+    <p>x</p>
+    <p>y
 z</p>
+  </dd>
+</dl>
 ```
 
 :::
 
 The `%%` LINE FORM is the other control. It is invisible at any column and opens
-no block, so the body ends at it and the following line is a document paragraph.
+no block; the body consumes it and keeps the following line as a new paragraph.
 
 ::: compare
 
@@ -33820,9 +33825,11 @@ z
 ```html
 <dl>
   <dt>t</dt>
-  <dd>x</dd>
+  <dd>
+    <p>x</p>
+    <p>z</p>
+  </dd>
 </dl>
-<p>z</p>
 ```
 
 :::
@@ -33875,10 +33882,9 @@ b
 
 :::
 
-A FOLLOWER AT THE BODY'S OWN COLUMN is what makes the three comment shapes one
-rule rather than three. With the body ended at the comment, a line back at column
-3 is a document paragraph -- it has no body left to rejoin. The `%%` line form
-first.
+A FOLLOWER AT THE BODY'S OWN COLUMN after a line comment below it stays in the
+body as a new paragraph: the comment closed the paragraph, not the body. The
+`%%` line form first.
 
 ::: compare
 
@@ -33892,15 +33898,16 @@ first.
 ```html
 <dl>
   <dt>t</dt>
-  <dd>x</dd>
+  <dd>
+    <p>x</p>
+    <p>more</p>
+  </dd>
 </dl>
-<p>more</p>
 ```
 
 :::
 
-The DEGRADED fence, same answer: whether a closer follows decides what the
-comment IS, never whether the body survives it.
+The DEGRADED fence, same answer: with no closer ahead it is a line comment.
 
 ::: compare
 
@@ -33914,14 +33921,17 @@ comment IS, never whether the body survives it.
 ```html
 <dl>
   <dt>t</dt>
-  <dd>x</dd>
+  <dd>
+    <p>x</p>
+    <p>more</p>
+  </dd>
 </dl>
-<p>more</p>
 ```
 
 :::
 
-And the terminated fence, which completes the trio.
+And the terminated fence at column 0, which does end the body, so the same
+follower is a document paragraph.
 
 ::: compare
 
@@ -33944,8 +33954,9 @@ y
 
 :::
 
-THE COLUMN IS NOT A PARAMETER EITHER, as long as the comment is BELOW the body's
-content column. One column in answers as column 0 does.
+THE COLUMN DECIDES FOR A MATCHED SPAN. One column in it is no longer at the
+enclosing context's opener column, so the body consumes the span whole and keeps
+the line after it.
 
 ::: compare
 
@@ -33961,14 +33972,16 @@ z
 ```html
 <dl>
   <dt>t</dt>
-  <dd>x</dd>
+  <dd>
+    <p>x</p>
+    <p>z</p>
+  </dd>
 </dl>
-<p>z</p>
 ```
 
 :::
 
-Two columns in, the last column below the body's own.
+Two columns in, the last column below the body's own, answers the same.
 
 ::: compare
 
@@ -33984,15 +33997,17 @@ z
 ```html
 <dl>
   <dt>t</dt>
-  <dd>x</dd>
+  <dd>
+    <p>x</p>
+    <p>z</p>
+  </dd>
 </dl>
-<p>z</p>
 ```
 
 :::
 
-And the line form one column in, with a follower back at the body's column --
-the two axes crossed, so neither can be read as the one doing the work.
+And the line form one column in, with a follower back at the body's column,
+which stays in the body.
 
 ::: compare
 
@@ -34006,9 +34021,11 @@ the two axes crossed, so neither can be read as the one doing the work.
 ```html
 <dl>
   <dt>t</dt>
-  <dd>x</dd>
+  <dd>
+    <p>x</p>
+    <p>more</p>
+  </dd>
 </dl>
-<p>more</p>
 ```
 
 :::

@@ -1025,6 +1025,13 @@ function lineBlockSpanEnd(lines, idx) {
   return opaqueSpanEnd(lines, idx)
 }
 
+// A comment closes the paragraph, so only the lines after the last one the
+// body kept can hold it open; scanning from there keeps collection linear.
+function paragraphOpenSince(bodyLines, from) {
+  const tail = from === 0 ? bodyLines : bodyLines.slice(from)
+  return tail.some((line) => line.trim() !== '') && bodyLeavesParagraphOpen(tail)
+}
+
 function isColonBlockOpener(line) {
   const cf = COLON_FENCE.exec(line)
   return !!(cf && parseColonOpener(cf[2]) !== null)
@@ -2946,13 +2953,19 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
       // pulled-in block (SS17 L4). It is a distinct signal from an empty body
       // line, so an empty note (`[^a]:`) never swallows the following block.
       let pullPending = false
+      let afterComment = false
+      let commentScanFrom = 0
       // Indented continuation: the line's leading run must reach COLUMN 2
       // (PART 9 SS24 C1 column arithmetic), not two literal space characters.
       // A tab from column 0 already reaches column 4, so a bare tab or a
       // space-then-tab both satisfy the floor; a single space (column 1) does
       // not. A blank RUN of any length is allowed between continuation lines.
       while (i < n) {
+        const measured = ind(i)
+        if (measured.col === 0 && FOOTNOTE_DEF.test(measured.rest)) break
+        if (isBlank(lines[i])) afterComment = false
         if (isFootnoteContinuationLine(lines[i])) {
+          afterComment = afterCommentTransition(false, {})
           bodyLines.push(dedent(lines[i], FOOTNOTE_BODY_COLUMN))
           pullPending = false
           i++
@@ -3012,7 +3025,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           for (let k = i; k < end; k++) bodyLines.push(lines[k])
           pullPending = false
           i = end
-        } else if (COMMENT_LINE.test(lines[i] ?? '') && bodyHoldsOpenCommentSpan(bodyLines)) {
+        } else if (COMMENT_LINE.test(lines[i] ?? '') && bodyHoldsOpenCommentSpan(commentScanFrom === 0 ? bodyLines : bodyLines.slice(commentScanFrom))) {
           // carve#2488, the same arm the `dd` carries. This body ends at a
           // comment below column 2, and a comment INSIDE a span the body already
           // holds is not one - see `bodyHoldsOpenCommentSpan`. carve#2488 reads
@@ -3021,6 +3034,25 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           // band this covers.
           bodyLines.push(keptCommentDelimiter(lines[i]))
           pullPending = false
+          i++
+        } else if (measured.col < FOOTNOTE_BODY_COLUMN &&
+            (afterComment || paragraphOpenSince(bodyLines, commentScanFrom)) &&
+            COMMENT_LINE.test(measured.rest) &&
+            !(measured.col === 0 && commentFenceOpensSpan(lines, i))) {
+          const comment = classifyLayoutComment(lines, i)
+          bodyLines.push(keptCommentDelimiter(lines[i]))
+          if (comment?.kind === 'fenced_comment') {
+            for (let k = i + 1; k < comment.end; k++) bodyLines.push(lines[k])
+            i = comment.end
+          } else i++
+          commentScanFrom = bodyLines.length
+          afterComment = afterCommentTransition(afterComment, { comment: true })
+        } else if (afterComment &&
+            !startsVisibleBlock(lines[i]) && !isTableRow(lines[i]) &&
+            !COLON_FENCE.test(lines[i]) && !(FENCE.test(lines[i]) && hasCloser(lines, i))) {
+          // A retained marker is paragraph text and opens no list (PART 0 X1).
+          bodyLines.push(BULLET.test(measured.rest) || isOrderedMarkerLine(measured.rest) ? LAZY + measured.rest : measured.rest)
+          afterComment = afterCommentTransition(afterComment, {})
           i++
         } else break
         // NO LAZY CONTINUATION. A branch here used to fold any flush-left
@@ -3292,6 +3324,11 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             return isEntry(cur) ||
               (isBlank(cur) && !isDefinitionContinuationLine(lines[at + 1], bodyColumn))
           }
+          let afterComment = false
+          // Lines before the last comment this arm kept cannot hold a paragraph or a
+          // span open, so the fold questions below read the tail only.
+          let ddScanFrom = 0
+          const sinceComment = () => (ddScanFrom === 0 ? bodyLines : bodyLines.slice(ddScanFrom))
           let openFence = -1
           const nestedLeadFenceUnterminated = descriptionLeadHasUnterminatedNestedFence(
             bodyLines[0] ?? '', lines, i, bodyColumn, endsBodyAt,
@@ -3308,6 +3345,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             }
             if (isEntry(cur)) break
             if (isBlank(cur)) {
+              afterComment = false
               // a blank before an indented line is an internal paragraph break;
               // otherwise the blank ends this definition body.
               if (isDefinitionContinuationLine(lines[i + 1], bodyColumn)) { pushBody(dedent(cur, bodyColumn)); i++; continue }
@@ -3335,6 +3373,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
               continue
             }
             if (isDefinitionContinuationLine(cur, bodyColumn)) {
+              afterComment = afterCommentTransition(false, {})
               // indented continuation block, dedented by the content margin.
               // `dedent` carries a tab that STRADDLES the margin back as the
               // spaces it bought past column 3, so `<TAB>x` (column 4) arrives
@@ -3433,44 +3472,34 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // own columns still fold, which is why the test is made here and not
             // in `bodyLeavesParagraphOpen`.
             if (authoredCol === 0 && descriptionBodyEndsInAbsorbedNote(asRead(bodyLines))) break
-            /*
-             * A COMMENT BELOW THE BODY'S COLUMN ENDS IT (carve#1930). This arm
-             * is only reached for a line BELOW the body's content column, and
-             * §17's band sends such a line to the surviving context: the body
-             * ends and the document classifies it. A comment closes the
-             * paragraph above it wherever it is written, so once the body's
-             * paragraph is closed and the comment is not the body's own
-             * content, nothing is left open for the next line to fold into -
-             * S4's ordinary answer, reached the ordinary way.
-             *
-             * The `dd` had no such arm at all, so a comment here folded in as an
-             * invisible BODY line and the body went on collecting. Two things
-             * followed. A terminated `%%%` never opened a comment BLOCK, so both
-             * delimiters degraded to line comments and the text between them was
-             * PUBLISHED; and a following line at the body's own column stayed in
-             * the `dd` where every engine puts it outside.
-             *
-             * NEITHER THE KIND NOR THE COLUMN IS A PARAMETER. The `%%` line
-             * form, a `%%%` with no closer ahead and a terminated `%%%` answer
-             * alike, and so does a comment one or two columns in. Both narrower
-             * forms were written first and every document that told them apart
-             * sided with this one in all three engines.
-             *
-             * The ITEM collector states its half of the same rule further down,
-             * and corpus 214 pins it there. AT the body's own column nothing
-             * changes: that line is the body's own content and never reaches
-             * here, and neither does a comment under an EMPTY body - the
-             * first-block `+` branch above consumes it first, which is why
-             * there is no emptiness guard on this line to go stale.
-             */
             // carve#2488: a comment inside a span this body already holds is not
             // "a comment below the column" - see `bodyHoldsOpenCommentSpan`.
-            if (COMMENT_LINE.test(dedented) && bodyHoldsOpenCommentSpan(asRead(bodyLines))) {
+            if (COMMENT_LINE.test(dedented) && bodyHoldsOpenCommentSpan(asRead(sinceComment()))) {
               pushBody(keptCommentDelimiter(cur))
               i++
               continue
             }
-            if (classifyLayoutComment(lines, i) !== null) break
+            if (classifyLayoutComment(lines, i) !== null) {
+              if (authoredCol === 0 && commentFenceOpensSpan(lines, i)) break
+              if (!afterComment && !bodyLeavesParagraphOpen(asRead(sinceComment()))) break
+              const comment = classifyLayoutComment(lines, i)
+              pushBody(keptCommentDelimiter(cur))
+              if (comment.kind === 'fenced_comment') {
+                for (let k = i + 1; k < comment.end; k++) pushBody(lines[k], k)
+                i = comment.end
+              } else i++
+              ddScanFrom = bodyLines.length
+              afterComment = afterCommentTransition(afterComment, { comment: true })
+              continue
+            }
+            if (afterComment && !startsVisibleBlock(cur) &&
+                !isTableRow(cur) && !COLON_FENCE.test(cur) &&
+                !(FENCE.test(cur) && hasCloser(lines, i))) {
+              pushBody(BULLET.test(dedented) || isOrderedMarkerLine(dedented) ? LAZY + dedented : dedented)
+              afterComment = afterCommentTransition(afterComment, {})
+              i++
+              continue
+            }
             /*
              * AN INVISIBLE LINE FOLDS LIKE ANY OTHER -- NORMATIVE, and §10 I5's
              * own sentence for the same band: "at a nonzero column BELOW
