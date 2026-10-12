@@ -6301,10 +6301,12 @@ A box.
 ## Below-content-column div body in a list item stays literal
 
 Inside a list item the block openers key on the item content column, not column
-0. A `::: note` sitting at the marker on the item's first line opens no
-container when its body and closing marker sit *below* the content column: they
-are lazy paragraph continuations, so the whole run - including the `::: note`
-opener line - folds into the item as literal text rather than an admonition.
+0. A `::: note` on the item's marker line opens its container whatever the next
+line is (PART 2, "A MARKER-LINE OPENER OPENS TOO", ruled on
+markup-carve/carve#2978). Lines below the content column are not its body, and
+the empty container leaves no paragraph for them to fold into
+(`CARVE-P0-009`), so they are read at the document. The section keeps the title
+of the reading it used to pin.
 
 :::: compare
 
@@ -6316,8 +6318,14 @@ opener line - folds into the item as literal text rather than an admonition.
 
 ```html
 <ul>
-  <li>::: note
-- para text
+  <li>
+    <aside class="admonition note" aria-label="Note">
+
+    </aside>
+  </li>
+</ul>
+<ul>
+  <li>para text
 :::</li>
 </ul>
 ```
@@ -24121,20 +24129,11 @@ carve-php write it in all of them (carve#1381).
 ## Only lazy folding demotes a marker-line colon opener
 
 A `:::` opener written as the sole content of a list item's marker line opens a
-container. What takes that away is LAZY FOLDING and nothing else: an opener whose
-whole body arrived from lines that folded in from below the item's content column
-never acquired container content at all, so it stays literal text. A blank line is
-not one of those lines. It is the container's own content - the item collector
-keeps it in the item body precisely because a colon fence is open above it - so an
-opener a blank follows has opened an EMPTY container, not no container.
-
-The executable spec demoted it. Its guard asked only whether the body was
-non-empty, and a lone blank line satisfied that, so `- ::: d` before a blank read
-as literal item text while every neighbouring spelling of the same opener was
-right: at end of input, with its closer at the content column, with a body line,
-and inside a quote instead of an item. Four correct neighbours against one wrong
-one, and the difference was a line the collector had already decided was content.
-carve-js, carve-php and carve-rs open the div (carve#1382).
+container, whatever the next line is (PART 2, "A MARKER-LINE OPENER OPENS TOO",
+ruled on markup-carve/carve#2978). No later line takes that away. An earlier
+reading demoted the opener to text when its whole body arrived by lazy folding;
+the section keeps that title. An opener a blank follows has opened an EMPTY
+container (carve#1382).
 
 ::: compare
 
@@ -24157,13 +24156,9 @@ tail
 
 :::
 
-CONTROL, and the shape the guard exists for. Here the body really is lazy: `tail`
-sits below the item's content column and folds into the open paragraph the opener
-line left, so the opener never acquired a body of its own and the whole item is
-literal text. The blank that follows rides alongside that folded line and does not
-rescue the opener - a reader that stopped asking whether folding happened, and
-asked only whether the body was free of blanks, would answer this one wrong in the
-other direction.
+The line below the content column. The opener has opened an empty container,
+which holds no paragraph, so `tail` has nothing to fold into and is a document
+paragraph (`CARVE-P0-009`, `CARVE-P0-016`).
 
 ::: compare
 
@@ -24176,9 +24171,13 @@ after
 
 ```html
 <ul>
-  <li>::: d
-tail</li>
+  <li>
+    <div class="d">
+
+    </div>
+  </li>
 </ul>
+<p>tail</p>
 <p>after</p>
 ```
 
@@ -34482,12 +34481,10 @@ tail
 The marker-line spelling of the same body moves with it, since the container it
 opens is equally empty.
 
-A MARKER-LINE COLON OPENER UNDER A LIST HOST IS A DIFFERENT QUESTION and is not
-touched here: `- ::: d` is demoted to literal text by lazy folding, which
+A marker-line colon opener under a list host opens the same way: `- ::: d`
+opens an empty container whatever follows, which
 `161-below-content-column-div-body-in-a-list-item-stays-literal` and
-`364-only-lazy-folding-demotes-a-marker-line-colon-opener` pin. Reading "the
-description host should behave like the list host" as reaching that spelling
-would retire both rows, and the first draft of this rule did exactly that.
+`364-only-lazy-folding-demotes-a-marker-line-colon-opener` pin.
 
 ::: compare
 
@@ -37058,12 +37055,14 @@ not a div
 
 ## A closer does not rescue a marker-line colon opener whose body folded in
 
-A `:::` on a list item's marker line is demoted to text when its body arrives by
-lazy folding (*Only lazy folding demotes a marker-line colon opener*). A closer
-at the item's content column adds no body, so it does not stop the demotion:
-the opener and the folded lines are one paragraph, and the closer-shaped line is
-then read on its own. A bare run interrupts a paragraph (§10 I4), so it opens an
-empty div that closes with the item (markup-carve/carve#2147).
+A `:::` on a list item's marker line opens its container whatever follows
+(*Only lazy folding demotes a marker-line colon opener*, ruled on
+markup-carve/carve#2978). A line below the item's content column is not its
+body, and the empty container holds no paragraph, so the line leaves the list
+and opens a document paragraph (`CARVE-P0-009`). A closer-shaped run written
+after it is then past the document's column under that open paragraph, and
+folds into it as text. The section keeps the title of the reading it used to
+pin (markup-carve/carve#2147).
 
 ::::: compare
 
@@ -37075,13 +37074,14 @@ empty div that closes with the item (markup-carve/carve#2147).
 
 ```html
 <ul>
-  <li>:::
-y
+  <li>
     <div>
 
     </div>
   </li>
 </ul>
+<p>y
+:::</p>
 ```
 
 :::::
@@ -37096,20 +37096,22 @@ y
 
 ```html
 <ul>
-  <li>::: note
-y
-    <div>
+  <li>
+    <aside class="admonition note" aria-label="Note">
 
-    </div>
+    </aside>
   </li>
 </ul>
+<p>y
+:::</p>
 ```
 
 :::::
 
-The same holds for an ordered item, for several folded lines, with a blank line
-before the run, and for a nested item, where the run sits at the inner item's
-column and the div opens there.
+The same holds for an ordered item and for several lines. A blank line before
+the run closes the paragraph, so the run is a paragraph of its own. In a nested
+item the line below the inner column still reaches the outer item, which takes
+it and the run as its text.
 
 ::::: compare
 
@@ -37121,13 +37123,14 @@ column and the div opens there.
 
 ```html
 <ol>
-  <li>::: d
-y
-    <div>
+  <li>
+    <div class="d">
 
     </div>
   </li>
 </ol>
+<p>y
+:::</p>
 ```
 
 :::::
@@ -37143,14 +37146,15 @@ y
 
 ```html
 <ul>
-  <li>::: d
-y
-z
-    <div>
+  <li>
+    <div class="d">
 
     </div>
   </li>
 </ul>
+<p>y
+z
+:::</p>
 ```
 
 :::::
@@ -37166,13 +37170,14 @@ z
 
 ```html
 <ul>
-  <li>::: d
-y
-    <div>
+  <li>
+    <div class="d">
 
     </div>
   </li>
 </ul>
+<p>y</p>
+<p>:::</p>
 ```
 
 :::::
@@ -37190,13 +37195,14 @@ y
 <ul>
   <li>x
     <ul>
-      <li>::: d
-y
-        <div>
+      <li>
+        <div class="d">
 
         </div>
       </li>
     </ul>
+    y
+:::
   </li>
 </ul>
 ```
@@ -48093,9 +48099,10 @@ below
 
 :::
 
-A comment below the content column is not the line that reaches it. The colon
-opener on the marker line acquires no body and stays item text, as it does
-without the comment.
+A comment below the content column is not a line of the container. The colon
+opener on the marker line has opened an empty container, the item holds no
+paragraph, and the line below the comment is a document paragraph, as it is
+after a container closed on the next line.
 
 ::: compare
 
@@ -48107,10 +48114,13 @@ without the comment.
 
 ```html
 <ul>
-  <li>::: inner
-    text
+  <li>
+    <div class="inner">
+
+    </div>
   </li>
 </ul>
+<p>text</p>
 ```
 
 :::

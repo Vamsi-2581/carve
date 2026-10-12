@@ -183,7 +183,14 @@ for (const item of shared) {
 for (const body of ['lazy\n', '  body\n> lazy\n']) {
   test(`a lazy quoted div keeps its host: ${JSON.stringify(body)}`, () => {
     const prefix = `> - ::: box\n> ${body}>   :::\n`
-    assert.deepEqual(parse(prefix + '- tail\n').blocks, [...parse(prefix).blocks, ...parse('- tail\n').blocks])
+    if (body === 'lazy\n') {
+      const blocks = parse(prefix + '- tail\n').blocks
+      assert.equal(blocks.length, 1)
+      assert.deepEqual(blocks[0].children[0].items[0].blocks[0].children, [])
+      assert.deepEqual(blocks[0].children[1], { t: 'para', lines: ['lazy', ':::', '- tail'] })
+    } else {
+      assert.deepEqual(parse(prefix + '- tail\n').blocks, [...parse(prefix).blocks, ...parse('- tail\n').blocks])
+    }
   })
 }
 
