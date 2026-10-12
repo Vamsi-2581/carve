@@ -58,8 +58,10 @@
      (two-pass resolution semantics) -> PART 10 (serialization). PART 9 and
      PART 9R are the authority for behavior the productions cannot encode.
      `resources/spec/rules.json` gives every `-- NORMATIVE` clause a stable id.
-     The JSON transition and capability tables in that directory are normative
-     inputs consumed or checked by the executable artifacts.
+     `target-capabilities.json` in that directory is a normative input checked
+     by the executable artifacts. `layout-transitions.json` restates
+     CARVE-P0-003's transition table for tooling and is INFORMATIVE: no parse
+     path reads it, and the clause governs.
    - docs/case-study/syntax.md is EXPLANATORY and DERIVED: prose for
      humans, non-normative.
    - docs/spec-history.md records retired readings, implementation divergence,
@@ -113,23 +115,30 @@
              list item      indentation to content_column (PART 9 §24 C3)
              footnote def   indentation >= 2 spaces; the prefix CONSUMED is
                             exactly 2, content_column := 2 (PART 9 §16)
-             fenced body    (code / raw / comment / admonition / div /
-                            line block / hard-break block) -- no per-line
-                            prefix; bounded by its where-guarded fence pair
+             opaque body    (code / raw / matched comment span) -- no
+                            per-line prefix; verbatim up to its where-guarded
+                            closer
+             colon body     (admonition / div / figure group / fenced quote /
+                            hard-break block / line block) -- no per-line
+                            prefix; parsed as blocks (a line block as lines,
+                            PART 9 §23) up to its exact-length closer or the
+                            end of its host.
 
            EVERY FRAME CARRIES OWNERSHIP AND PARAGRAPH STATE SEPARATELY --
            NORMATIVE [CARVE-P0-003]. A frame is the record
 
              owner              document | quote | list_item |
-                                definition_body | footnote_body | fenced_body
+                                definition_body | footnote_body |
+                                opaque_body | colon_body
              base_column        authored column at which this frame opened
              content_column     minimum column of ordinary child blocks
              container_open     whether the frame may own another line
              paragraph_open     whether its current leaf accepts lazy text
              last_boundary_kind ordinary | blank | line_comment |
-                                fenced_comment | definition | heading | quote |
-                                code_fence | raw_fence | colon_fence | table |
-                                nested_list | continuation | end
+                                fenced_comment | definition | attribute_line |
+                                heading | thematic_break | quote | code_fence |
+                                raw_fence | colon_fence | table | nested_list |
+                                continuation | end
 
            `container_open` is inferred from `paragraph_open` only below the
            content column (CARVE-P0-009). Elsewhere `paragraph_open` describes
@@ -142,7 +151,7 @@
            open after the boundary; `P` independently says whether a paragraph
            is open. `deepest P` means the last child container is followed to
            its deepest leaf. These transitions apply to list items, quotes,
-           definition bodies and footnote bodies alike; a fenced body adds the
+           definition bodies and footnote bodies alike; an opaque body adds the
            opacity rule in S2.
 
              preceding boundary       container_open   paragraph_open
@@ -151,7 +160,9 @@
              line comment              C                no
              fenced comment            C                no
              invisible definition      C                no, for full extent
+             attribute line            C                no
              heading                   C                no
+             thematic break            C                no
              block quote               C                deepest P
              closed code/raw fence     C                no
              closed colon fence        C                no
@@ -168,12 +179,19 @@
            ONE AUTHORED BLOCK BASE -- NORMATIVE [CARVE-P0-004]. Every open
            container which accepts child blocks has a minimum
            `content_column`. A recognized block opener AT that column opens
-           there. A recognized opener PAST it establishes its authored visual
-           column as the local `base_column` for that ONE complete block; the
-           opener, payload, structural continuations, metadata and closer are
-           measured from that base. Canonical output returns the block to the
-           container's minimum column. Ordinary over-indented text establishes
-           no base.
+           there. In an INDENTATION CONTAINER (a list item, a definition body
+           or a footnote body) a recognized opener PAST it establishes its
+           authored visual column as the local `base_column` for that ONE
+           complete block; the opener, payload, structural continuations,
+           metadata and closer are measured from that base. Canonical output
+           returns the block to the container's minimum column. Ordinary
+           over-indented text establishes no base.
+
+           THE DOCUMENT AND A BLOCK QUOTE DO NOT REBASE. There an opener is
+           recognized at the content column exactly, and an over-indented one
+           is text: `   # H` is a paragraph at the document level and after
+           `> `. The frame that answers is the innermost one whose prefix the
+           line supplied.
 
            OWNERSHIP PRECEDES REBASING. The base belongs to the INNERMOST open
            container whose content column the opener reaches. While that block
@@ -295,9 +313,10 @@
         prefix from L (strip `>` or `> ` for quotes; DEDENT by columns for
         indentation containers, PART 9 §24 C5). Stop at the first container
         whose prefix L does not supply.
-     S2 FENCED BODY. If the innermost matched container is a fenced body, L
+     S2 OPAQUE BODY. If the innermost matched container is an opaque body, L
         is verbatim content unless it matches that fence's where-guarded
-        closer (then pop). No other rule applies to L.
+        closer (then pop). No other rule applies to L. A colon body is not
+        opaque: its lines go on to S3 and S4.
      S3 FULL MATCH (every prefix consumed). The residue of L continues the
         innermost container: BLANK -> close the open paragraph (recorded for
         tight/loose, PART 9 §17 L1); a BLOCK OPENER -> the interruption
@@ -726,14 +745,15 @@ heading = atx_heading ;
 atx_heading = heading_first_line ;
 heading_first_line = heading_marker, space+, inline_content, newline ;
 heading_marker = '#' | "##" | "###" | "####" | "#####" | "######" ;
-(* A HEADING MARKER STARTS AT ITS CONTAINER'S CONTENT COLUMN -- NORMATIVE [CARVE-P2-001]. A heading_marker sits at COLUMN 0 of its line (no
-   leading spaces or tabs); carve does NOT accept CommonMark's 0-3 space indent.
-   An indented `#`-line is ordinary paragraph text: "   # H" is <p># H</p>, not
-   a heading -- including one written directly under a heading, where it starts
-   its own paragraph (CARVE-P2-003). (Within a container the column is
-   measured after the container's own markers are stripped, e.g. "> # H" is a
-   quoted heading.) Matches Djot (which dropped CommonMark's indent fuzz);
-   pinned by corpus 103-heading-marker-column-zero. *)
+(* A HEADING MARKER STARTS AT ITS CONTAINER'S CONTENT COLUMN -- NORMATIVE [CARVE-P2-001]. At
+   the document level and in a block quote a heading_marker sits EXACTLY at
+   the content column: column 0 of the document, or the column after the quote
+   prefix ("> # H" is a quoted heading). Carve does NOT accept CommonMark's 0-3
+   space indent there: "   # H" is <p># H</p>, not a heading -- including one
+   written directly under a heading, where it starts its own paragraph
+   (CARVE-P2-003). In a list item, a definition body or a footnote body a
+   marker PAST the content column opens the heading on its authored base
+   (CARVE-P0-004). Pinned by corpus 103-heading-marker-column-zero. *)
 
 (* THE HEADING MARKER SEPARATOR IS A RUN -- NORMATIVE [CARVE-P2-002]. `space+`: one or more
    ASCII spaces after the hashes, ALL of them separator, and the first
@@ -952,12 +972,14 @@ code_fence_close = (backtick_fence | tilde_fence):close
    character as its opener and is at least as long. The `where` clause is the
    grammar's counting device -- see GUARD NOTATION in the header. *)
 (* COLUMN-EXACT DELIMITERS -- NORMATIVE [CARVE-P2-006] (PART 2). A fenced-code delimiter --
-   the opener AND the closer -- sits exactly at its container's content column;
-   after container prefixes are stripped (PART 0), that means NO leading
-   whitespace (at the top level, column 0). Carve has no indented-code-block
-   construct, so leading spaces carry no disambiguating meaning and the fence is
-   strict like every other block opener -- an indented heading, thematic break,
-   or block quote is likewise plain text (PART 9 §10). Consequences:
+   the opener AND the closer -- sits exactly at its block's base column. At the
+   document level and in a block quote the base is the content column: after
+   the quote prefixes are stripped (PART 0), NO leading whitespace. In a list
+   item, a definition body or a footnote body an opener past the content
+   column sets the base, and the closer is measured from it (CARVE-P0-004).
+   Carve has no indented-code-block construct, so at the document level an
+   indented fence is plain text, as an indented heading, thematic break or
+   block quote is (PART 9 §10). Consequences:
      - A backtick/tilde run indented at the document level is an ordinary
        paragraph line; its runs fall back to inline code spans.
      - A closing run indented PAST its opener is not a delimiter but code
@@ -1012,7 +1034,10 @@ blockquote_line = '>', (newline | (space, inline_content, newline)) ;
 (* LAZY CONTINUATION -- NORMATIVE [CARVE-P2-008] (CommonMark-compatible). After one or more
    blockquote_lines, a line that does NOT carry the '>' marker still continues
    the blockquote -- folding into the INNERMOST open paragraph, at whatever
-   depth that paragraph sits -- provided it is:
+   depth that paragraph sits -- provided:
+     - a paragraph IS open at the quote's deepest frame (CARVE-P0-009). A
+       quote whose last block is a heading, a table, a thematic break, a closed
+       fence or an empty container takes no lazy line; and the line is
      - not blank (a blank line ends the blockquote), and
      - not a block-opener: a heading, table, fenced code, `:::` div, thematic
        break, OR an "invisible" reference / footnote / abbreviation definition
@@ -1035,7 +1060,9 @@ blockquote_line = '>', (newline | (space, inline_content, newline)) ;
    table, ...) to the quote without `>`-prefixing every line, put a lone `+` at
    column 0 right after a quoted line; the following flush-left block joins the
    quote body. This is the un-prefixed analogue of the list item's `+`. *)
-lazy_continuation_line = inline_content, newline ;  (* see the NORMATIVE note above for which lines qualify *)
+lazy_continuation_line = inline_content, newline ;
+(* SEMANTIC CONSTRAINT: matches only while a paragraph is open at the deepest
+   frame (CARVE-P0-009), and only a line CARVE-P2-008 admits. *)
 
 (* --- Lists --- *)
 list = unordered_list | ordered_list | definition_list ;
@@ -5002,15 +5029,16 @@ EOF = (* end of file *) ;
       `<div>` newline `</div>`, the exception PART 10 §4 states.
 
       INLINE OPENER ATTRIBUTES -- STRICT (djot). The opener line carries NO
-      inline attributes: it is the colon fence, an optional type word, and
-      an optional quoted title, and NOTHING else. Any trailing `{...}` (or
-      other non-title text after the type) makes the line an ORDINARY
-      PARAGRAPH, not a fence -- so `::: note {.x}`, `::: {.x}`, and
-      `:::{k=v}` are all paragraphs. To attribute a div or admonition, use
+      inline attributes: it is the colon fence, an optional type word, an
+      optional quoted title and an optional `[label]`, and NOTHING else. A
+      `{...}` where the type word belongs makes the line an ORDINARY
+      PARAGRAPH, not a fence: `::: {.x}` and `:::{k=v}` are paragraphs. After
+      a type word, PART 2's opener recovery governs: `::: note {.x}` opens
+      the `note` container, drops the metadata and reports
+      `fence-title-syntax`. To attribute a div or admonition, use
       a PRECEDING block-attribute line, which floats onto the block (§15):
       `{.x #id}` then `::: note` yields `<aside class="admonition note x"
-      id="id">`. This matches canonical djot, which rejects any non-class
-      text on the fence line.
+      id="id">`.
 
       FENCE LENGTH & NESTING: a fence is a run of 3+ colons; the same rule
       governs both admonitions and generic divs. A block is closed only by a

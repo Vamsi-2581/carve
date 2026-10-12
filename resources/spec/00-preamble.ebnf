@@ -58,8 +58,10 @@
      (two-pass resolution semantics) -> PART 10 (serialization). PART 9 and
      PART 9R are the authority for behavior the productions cannot encode.
      `resources/spec/rules.json` gives every `-- NORMATIVE` clause a stable id.
-     The JSON transition and capability tables in that directory are normative
-     inputs consumed or checked by the executable artifacts.
+     `target-capabilities.json` in that directory is a normative input checked
+     by the executable artifacts. `layout-transitions.json` restates
+     CARVE-P0-003's transition table for tooling and is INFORMATIVE: no parse
+     path reads it, and the clause governs.
    - docs/case-study/syntax.md is EXPLANATORY and DERIVED: prose for
      humans, non-normative.
    - docs/spec-history.md records retired readings, implementation divergence,

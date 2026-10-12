@@ -17,7 +17,9 @@ filename order, so their numeric prefixes are part of the build contract.
 
 ## Structured contracts
 
-- `layout-transitions.json` is consumed by the executable layout checker.
+- `layout-transitions.json` restates the transition table of `CARVE-P0-003`.
+  It is informative: the layout checker exposes it through
+  `ownershipTransition`, which no parse path calls.
 - `paragraph-interruption.json` is the closed classification defined by PART 9
   section 10.
 - The interchange fallback table in `23-ast-foundations.ebnf` summarizes

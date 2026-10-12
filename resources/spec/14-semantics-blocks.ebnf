@@ -305,15 +305,16 @@
       `<div>` newline `</div>`, the exception PART 10 §4 states.
 
       INLINE OPENER ATTRIBUTES -- STRICT (djot). The opener line carries NO
-      inline attributes: it is the colon fence, an optional type word, and
-      an optional quoted title, and NOTHING else. Any trailing `{...}` (or
-      other non-title text after the type) makes the line an ORDINARY
-      PARAGRAPH, not a fence -- so `::: note {.x}`, `::: {.x}`, and
-      `:::{k=v}` are all paragraphs. To attribute a div or admonition, use
+      inline attributes: it is the colon fence, an optional type word, an
+      optional quoted title and an optional `[label]`, and NOTHING else. A
+      `{...}` where the type word belongs makes the line an ORDINARY
+      PARAGRAPH, not a fence: `::: {.x}` and `:::{k=v}` are paragraphs. After
+      a type word, PART 2's opener recovery governs: `::: note {.x}` opens
+      the `note` container, drops the metadata and reports
+      `fence-title-syntax`. To attribute a div or admonition, use
       a PRECEDING block-attribute line, which floats onto the block (§15):
       `{.x #id}` then `::: note` yields `<aside class="admonition note x"
-      id="id">`. This matches canonical djot, which rejects any non-class
-      text on the fence line.
+      id="id">`.
 
       FENCE LENGTH & NESTING: a fence is a run of 3+ colons; the same rule
       governs both admonitions and generic divs. A block is closed only by a

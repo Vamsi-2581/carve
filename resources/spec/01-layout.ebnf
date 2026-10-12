@@ -34,23 +34,30 @@
              list item      indentation to content_column (PART 9 §24 C3)
              footnote def   indentation >= 2 spaces; the prefix CONSUMED is
                             exactly 2, content_column := 2 (PART 9 §16)
-             fenced body    (code / raw / comment / admonition / div /
-                            line block / hard-break block) -- no per-line
-                            prefix; bounded by its where-guarded fence pair
+             opaque body    (code / raw / matched comment span) -- no
+                            per-line prefix; verbatim up to its where-guarded
+                            closer
+             colon body     (admonition / div / figure group / fenced quote /
+                            hard-break block / line block) -- no per-line
+                            prefix; parsed as blocks (a line block as lines,
+                            PART 9 §23) up to its exact-length closer or the
+                            end of its host.
 
            EVERY FRAME CARRIES OWNERSHIP AND PARAGRAPH STATE SEPARATELY --
            NORMATIVE [CARVE-P0-003]. A frame is the record
 
              owner              document | quote | list_item |
-                                definition_body | footnote_body | fenced_body
+                                definition_body | footnote_body |
+                                opaque_body | colon_body
              base_column        authored column at which this frame opened
              content_column     minimum column of ordinary child blocks
              container_open     whether the frame may own another line
              paragraph_open     whether its current leaf accepts lazy text
              last_boundary_kind ordinary | blank | line_comment |
-                                fenced_comment | definition | heading | quote |
-                                code_fence | raw_fence | colon_fence | table |
-                                nested_list | continuation | end
+                                fenced_comment | definition | attribute_line |
+                                heading | thematic_break | quote | code_fence |
+                                raw_fence | colon_fence | table | nested_list |
+                                continuation | end
 
            `container_open` is inferred from `paragraph_open` only below the
            content column (CARVE-P0-009). Elsewhere `paragraph_open` describes
@@ -63,7 +70,7 @@
            open after the boundary; `P` independently says whether a paragraph
            is open. `deepest P` means the last child container is followed to
            its deepest leaf. These transitions apply to list items, quotes,
-           definition bodies and footnote bodies alike; a fenced body adds the
+           definition bodies and footnote bodies alike; an opaque body adds the
            opacity rule in S2.
 
              preceding boundary       container_open   paragraph_open
@@ -72,7 +79,9 @@
              line comment              C                no
              fenced comment            C                no
              invisible definition      C                no, for full extent
+             attribute line            C                no
              heading                   C                no
+             thematic break            C                no
              block quote               C                deepest P
              closed code/raw fence     C                no
              closed colon fence        C                no
@@ -89,12 +98,19 @@
            ONE AUTHORED BLOCK BASE -- NORMATIVE [CARVE-P0-004]. Every open
            container which accepts child blocks has a minimum
            `content_column`. A recognized block opener AT that column opens
-           there. A recognized opener PAST it establishes its authored visual
-           column as the local `base_column` for that ONE complete block; the
-           opener, payload, structural continuations, metadata and closer are
-           measured from that base. Canonical output returns the block to the
-           container's minimum column. Ordinary over-indented text establishes
-           no base.
+           there. In an INDENTATION CONTAINER (a list item, a definition body
+           or a footnote body) a recognized opener PAST it establishes its
+           authored visual column as the local `base_column` for that ONE
+           complete block; the opener, payload, structural continuations,
+           metadata and closer are measured from that base. Canonical output
+           returns the block to the container's minimum column. Ordinary
+           over-indented text establishes no base.
+
+           THE DOCUMENT AND A BLOCK QUOTE DO NOT REBASE. There an opener is
+           recognized at the content column exactly, and an over-indented one
+           is text: `   # H` is a paragraph at the document level and after
+           `> `. The frame that answers is the innermost one whose prefix the
+           line supplied.
 
            OWNERSHIP PRECEDES REBASING. The base belongs to the INNERMOST open
            container whose content column the opener reaches. While that block
@@ -216,9 +232,10 @@
         prefix from L (strip `>` or `> ` for quotes; DEDENT by columns for
         indentation containers, PART 9 §24 C5). Stop at the first container
         whose prefix L does not supply.
-     S2 FENCED BODY. If the innermost matched container is a fenced body, L
+     S2 OPAQUE BODY. If the innermost matched container is an opaque body, L
         is verbatim content unless it matches that fence's where-guarded
-        closer (then pop). No other rule applies to L.
+        closer (then pop). No other rule applies to L. A colon body is not
+        opaque: its lines go on to S3 and S4.
      S3 FULL MATCH (every prefix consumed). The residue of L continues the
         innermost container: BLANK -> close the open paragraph (recorded for
         tight/loose, PART 9 §17 L1); a BLOCK OPENER -> the interruption
