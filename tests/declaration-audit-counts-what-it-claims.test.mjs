@@ -90,6 +90,27 @@ test('REGRESSION 2: a Rust element type is not a row', () => {
   assert.deepEqual(rows('rust', 'A', 'const A: &[(&str, &str, Option<&str>)] = &[];'), [])
 })
 
+test('Rust raw strings preserve offsets and count as part of their rows', () => {
+  const src = String.raw`const A: &[(&str, &str, &str)] = &[
+    // Raw HTML expectations.
+    (
+        "i01-padding-is-a-run-of-whitespace",
+        "html",
+        r#""<p>body</p>\n<p>{{\tc.crv\t}}</p>""#,
+    ),
+    (
+        "i01-section-after-a-tab",
+        "html",
+        r#""<p>{{ child\t<span class=\"tag\"><strong>#pick</strong></span> }}</p>""#,
+    ),
+];`
+  assert.equal(rows('rust', 'A', src).length, 2)
+  const clean = blankComments(src, 'rust')
+  assert.equal(clean.length, src.length)
+  const newlines = text => [...text.matchAll(/\n/g)].map(match => match.index)
+  assert.deepEqual(newlines(clean), newlines(src))
+})
+
 test('REGRESSION 3: a TypeScript constructor type argument is not a row', () => {
   assert.deepEqual(rows('js', 'A', 'const A = new Map<string, { reason: string; html: string }>([])'), [])
   assert.equal(rows('js', 'A', "const A = new Map<string, { reason: string }>([['x', { reason: 'r' }]])").length, 1)
