@@ -387,7 +387,7 @@ const MANIFEST = [
   // The carve-rs twin of carve-php's include KNOWN_DIFFERENCES. Two-way since
   // carve-rs#2010, which also asserts a row naming no vector.
   { repo: 'carve-rs', path: 'tests/include_conformance.rs', name: 'KNOWN_DIFFERENCES', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'the difference is gone; delete its KNOWN_DIFFERENCES entry', owner: 'tests/include_conformance.rs' },
-  { repo: 'carve-rs', path: 'tests/include_conformance.rs', name: 'HTML_AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'remove its retired HTML_AHEAD_OF_PIN entry', owner: 'tests/include_conformance.rs' },
+  { repo: 'carve-rs', path: 'tests/include_conformance.rs', name: 'AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'retire the caught-up declaration', owner: 'tests/include_conformance.rs' },
 ]
 
 /**
@@ -511,6 +511,21 @@ function blankComments(src, lang) {
   const hashComments = lang === 'php'
   while (i < src.length) {
     const c = src[i]
+    if (lang === 'rust' && (c === 'r' || c === 'b') && !/[A-Za-z0-9_]/.test(src[i - 1] ?? '')) {
+      const rawStart = /b?r(#*)"/y
+      rawStart.lastIndex = i
+      const raw = rawStart.exec(src)
+      if (raw) {
+        const end = src.indexOf('"' + raw[1], i + raw[0].length)
+        if (end !== -1) {
+          const last = end + raw[1].length
+          out[i] = '"'
+          while (++i < last) if (src[i] !== '\n') out[i] = ' '
+          out[i++] = '"'
+          continue
+        }
+      }
+    }
     if (c === '"' || c === "'" || c === '`') {
       const quote = c
       i += 1
@@ -1237,12 +1252,14 @@ if (failed > 0) {
     `DECLARATION AUDIT FAILED (mode: ${mode}) - ${failed} finding(s). ` +
       (strict ? 'Not clear to tag.' : 'This pull request has a declaration finding to fix.'),
   )
-  process.exit(1)
+  // exitCode, not exit(): exit() drops stdout still queued on a pipe.
+  process.exitCode = 1
+} else {
+  console.log(
+    `DECLARATION AUDIT PASSED (mode: ${mode}) - ` +
+      (strict
+        ? 'every owed list is empty, the reference build is current, and every guard is two-directional.'
+        : 'every owed list is empty, every engine-lag window is declared, and every guard is two-directional.'),
+  )
 }
-console.log(
-  `DECLARATION AUDIT PASSED (mode: ${mode}) - ` +
-    (strict
-      ? 'every owed list is empty, the reference build is current, and every guard is two-directional.'
-      : 'every owed list is empty, every engine-lag window is declared, and every guard is two-directional.'),
-)
 }

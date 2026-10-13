@@ -37,3 +37,23 @@ test('a line-block body keeps a two-column trailing gap', () => {
   assert.equal(render('::: |\na \n:::\n'), render('::: |\na\n:::\n'))
   assert.match(render('::: |\na\t\n:::\n'), /a&nbsp;&nbsp;&nbsp;/)
 })
+
+const markers = ['-', '*', '+', '1.', '1)', 'a.', '- [ ]', '- [x]', '* [ ]', '1. [ ]']
+const suffixes = [' ', '  ', '\t', ' \t', '\t ', '   ']
+const markerContexts = [
+  ['followed by an item', marker => `${marker}\n- b\n`],
+  ['followed by text', marker => `${marker}\ntext\n`],
+  ['followed by a blank line and text', marker => `${marker}\n\nb\n`],
+  ['after an item', marker => `- a\n${marker}\n`],
+  ['inside a quote', marker => `> ${marker}\n> - b\n`],
+]
+
+for (const marker of markers) {
+  for (const suffix of suffixes) {
+    for (const [context, source] of markerContexts) {
+      test(`${JSON.stringify(marker)} with trailing ${JSON.stringify(suffix)} ${context}`, () => {
+        assert.equal(render(source(marker + suffix)), render(source(marker)))
+      })
+    }
+  }
+}

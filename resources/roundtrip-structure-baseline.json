@@ -1,33 +1,39 @@
 {
-  "version": 1,
+  "version": 2,
   "engines": {
     "js": {
       "html": {
-        "identical": 1712,
+        "identical": 1740,
+        "strict": 1676,
         "total": 2401
       },
       "md": {
-        "identical": 1462,
+        "identical": 1548,
+        "strict": 1190,
         "total": 2401
       }
     },
     "php": {
       "html": {
-        "identical": 1745,
+        "identical": 1740,
+        "strict": 1680,
         "total": 2401
       },
       "md": {
-        "identical": 1389,
+        "identical": 1537,
+        "strict": 1155,
         "total": 2401
       }
     },
     "rs": {
       "html": {
-        "identical": 1677,
+        "identical": 1674,
+        "strict": 1614,
         "total": 2401
       },
       "md": {
-        "identical": 1461,
+        "identical": 1469,
+        "strict": 1271,
         "total": 2401
       }
     }
