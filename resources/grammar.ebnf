@@ -10447,7 +10447,10 @@ EOF = (* end of file *) ;
       A MARKER MAY CARRY A DEPTH directly after `carve:`, with no space
       before it: a decimal of 2 or more, as in `<!-- carve:2 : -->`. A bare
       `carve:` is depth 1, so a marker written without a depth keeps its
-      meaning. CARVE-P11-067 states which markers carry one.
+      meaning. CARVE-P11-067 states which markers carry one. A depth is part
+      of the payload, not of the marker's shape: on any other marker it is a
+      payload that marker's grammar does not admit, so the marker is invalid
+      and drops alone under the rule below, an opener together with its closer.
 
       A COMPOSITE FIGURE'S CAPTION LINE TAKES A MARKER OF ITS OWN, directly
       after the closer's. The caption slot hangs BELOW the closing fence, so
@@ -10613,7 +10616,11 @@ EOF = (* end of file *) ;
       of its definitions depth 2, and so on. Markers pair by depth: the
       "markers of the same list" above are the markers of the same depth. A
       marker of depth 2 or more with no open list of the depth one less around
-      it breaks the pairing, and the set is damaged.
+      it breaks the pairing, and the set is damaged. Only term, definition
+      and closing markers carry a depth; a depth on any other marker, such as
+      `<!-- carve:2 ::: note -->` or `<!-- carve:2 {.x} -->`, makes that marker
+      invalid, and it drops alone and is reported as `carrier-marker-dropped`
+      (CARVE-P11-063).
 
         <!-- carve: :: Outer -->
         <!-- carve: : -->
