@@ -497,8 +497,9 @@
          is not a reason to trust that document, and export selects no import
          mode (CARVE-P10-017).
       S4 A VALUE OUTSIDE ITS GRAMMAR IS NOT A CARRIER, AND IT IS REPORTED.
-         Nothing is rebuilt from it, and only that carrier falls with it on
-         both targets (CARVE-P10-017, CARVE-P11-063). A Markdown marker set
+         Nothing is rebuilt from it, and only that carrier falls with it, except
+         that an invalid Markdown opener marker falls together with its closer
+         (CARVE-P10-017, CARVE-P11-063). A Markdown marker set
          whose opener and closer pairing breaks reads the whole file as plain
          Markdown (CARVE-P11-063).
       S5 CONTRADICTORY CARRIERS RESTORE NEITHER MEANING. The pairs are the

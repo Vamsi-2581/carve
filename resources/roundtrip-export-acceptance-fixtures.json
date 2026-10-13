@@ -2052,6 +2052,45 @@
         "definition_list"
       ],
       "aheadOfPin": true
+    },
+    {
+      "id": "invalid-opener-drops-with-its-closer",
+      "markdown": "<!-- carve: ::: {key=\"u} note -->\nBody.\n<!-- carve: ::: -->\n\n<!-- carve: ::: tip -->\nok\n<!-- carve: ::: -->\n",
+      "expectedNodes": [
+        {
+          "type": "admonition",
+          "kind": "tip"
+        },
+        {
+          "type": "paragraph",
+          "children.0.value": "Body."
+        }
+      ],
+      "forbiddenNodes": [
+        {
+          "type": "admonition",
+          "kind": "note"
+        }
+      ],
+      "expectedDiagnostics": {
+        "carrier-marker-dropped": 1,
+        "carrier-markers-damaged": 0
+      }
+    },
+    {
+      "id": "valid-pair-reports-nothing",
+      "markdown": "<!-- carve: ::: note -->\nBody.\n<!-- carve: ::: -->\n",
+      "expectedNodes": [
+        {
+          "type": "admonition",
+          "kind": "note"
+        }
+      ],
+      "forbiddenNodes": [],
+      "expectedDiagnostics": {
+        "carrier-marker-dropped": 0,
+        "carrier-markers-damaged": 0
+      }
     }
   ]
 }

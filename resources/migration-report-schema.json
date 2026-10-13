@@ -49,6 +49,12 @@
             "if": { "properties": { "code": { "const": "carrier-markers-damaged" } }, "required": ["code"] },
             "then": { "properties": { "fidelity": { "const": "degraded" }, "confidence": { "const": "fallback" } } }
           }
+        ,
+          {
+            "$comment": "CARVE-P11-063: an invalid opener marker drops together with its closer, reported once per dropped pair or marker.",
+            "if": { "properties": { "code": { "const": "carrier-marker-dropped" } }, "required": ["code"] },
+            "then": { "properties": { "fidelity": { "const": "degraded" }, "confidence": { "const": "fallback" } } }
+          }
         ]
       }
     }
