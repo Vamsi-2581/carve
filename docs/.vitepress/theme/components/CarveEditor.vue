@@ -24,6 +24,7 @@ import {
   type ContinuationEdit,
 } from '@markup-carve/carve-lsp/browser'
 import { carveCompletion, carveDiagnostics, carveHover, carveLanguageTheme, carveTooltips } from '../editor/carve-language'
+import { endTableAt, formatTable, isBlankRow, isTableRow, nextCell, previousCell } from '../editor/carve-tables'
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search'
 
 const props = defineProps<{
@@ -153,6 +154,9 @@ const continueOnEnter: Command = (v) => {
   if (sel.ranges.length !== 1 || !sel.main.empty) return false
   const pos = sel.main.head
   const line = v.state.doc.lineAt(pos)
+  // Enter on the bare `|` a table row's Enter wrote, or on a row of blank cells,
+  // ends the table, as an empty list marker ends a list.
+  if ((/^[ \t]*\|[ \t]*$/.test(line.text) || isBlankRow(line.text)) && rowBelowTable(v.state, line.number)) return endTableAt(v, line.number)
   if (pos !== line.to) return false
   const base = { from: pos, insert: '\n' }
   const text = v.state.doc.sliceString(0, pos) + '\n' + v.state.doc.sliceString(pos)
@@ -167,6 +171,19 @@ const continueOnEnter: Command = (v) => {
   // A container closer (`\n:::`) goes below the cursor; a quote or table prefix goes before it.
   applyEdits(v, [{ range: { start: position, end: position }, newText: prefix }], base, prefix.startsWith('\n') ? -1 : 1)
   return true
+}
+
+// The line above is a table row or a line-block line, and neither is code.
+function rowBelowTable(state: EditorState, lineNumber: number): boolean {
+  if (lineNumber < 2) return false
+  const above = state.doc.line(lineNumber - 1).text
+  if (!isTableRow(above) && !/^[ \t]*\| /.test(above)) return false
+  return !inCodeBlock(state.doc.toString(), lineNumber)
+}
+
+// Table keys act on tables, never on pipe-led lines inside code.
+function outsideCode(command: Command): Command {
+  return (v) => !inCodeBlock(v.state.doc.toString(), v.state.doc.lineAt(v.state.selection.main.head).number) && command(v)
 }
 
 // A content-less marker as the continuation writes it: `- `, `- [ ] `, `2. `, `b) `.
@@ -198,11 +215,30 @@ function emitPreview(state: EditorState): void {
     const rest = line.text.slice(lead.length)
     if (sel.main.head === line.to && rest && BARE_MARKER.test(rest) && !inCodeBlock(state.doc.toString(), line.number)) {
       preview = state.doc.sliceString(0, line.from + lead.length).replace(/[ \t]+$/, '') + state.doc.sliceString(line.to)
+    } else if ((/^[ \t]*\|[ \t]*$/.test(line.text) || isBlankRow(line.text)) && rowBelowTable(state, line.number)) {
+      // A row being filled under a table renders as stray text until it has content.
+      preview = state.doc.sliceString(0, line.from) + state.doc.sliceString(line.to + 1)
     }
   }
   if (preview === lastPreview) return
   lastPreview = preview
   emit('preview', preview)
+}
+
+// Outside lists and tables, indenting a line's start can turn a heading, quote
+// or table row into text, so only code blocks indent; elsewhere Tab inserts
+// two spaces mid-line and does nothing at the start of the line's text.
+const plainTab: Command = (v) => {
+  const head = v.state.selection.main.head
+  const line = v.state.doc.lineAt(head)
+  if (inCodeBlock(v.state.doc.toString(), line.number)) return indentMore(v)
+  if (!v.state.selection.main.empty || /^[ \t]*$/.test(line.text.slice(0, head - line.from))) return true
+  v.dispatch(v.state.replaceSelection('  '), { userEvent: 'input' })
+  return true
+}
+const plainShiftTab: Command = (v) => {
+  const line = v.state.doc.lineAt(v.state.selection.main.head)
+  return inCodeBlock(v.state.doc.toString(), line.number) ? indentLess(v) : true
 }
 
 function listIndent(direction: 'indent' | 'outdent', fallback: Command): Command {
@@ -288,8 +324,10 @@ onMounted(() => {
         keymap.of([
           { key: 'Enter', run: continueOnEnter },
           { key: 'Backspace', run: deleteBareMarker },
-          { key: 'Tab', run: listIndent('indent', indentMore) },
-          { key: 'Shift-Tab', run: listIndent('outdent', indentLess) },
+          // In a table, Tab and Shift+Tab align it and move between cells.
+          { key: 'Tab', run: (v) => outsideCode(nextCell)(v) || listIndent('indent', plainTab)(v) },
+          { key: 'Shift-Tab', run: (v) => outsideCode(previousCell)(v) || listIndent('outdent', plainShiftTab)(v) },
+          { key: 'Mod-Alt-f', run: outsideCode(formatTable) },
           ...defaultKeymap,
           ...historyKeymap,
           ...searchKeymap,
@@ -305,6 +343,7 @@ onMounted(() => {
         carveTooltips,
         EditorView.updateListener.of((u) => {
           if (u.geometryChanged) syncGutterWidth(u.view)
+          if (u.selectionSet) revealLineStart(u.view)
           if (u.docChanged || u.selectionSet) {
             emitPreview(u.state)
             emit('cursor', u.state.doc.lineAt(u.state.selection.main.head).number)
@@ -339,6 +378,28 @@ watch(
   () => props.wrap,
   (on) => view.value?.dispatch({ effects: wrapping.reconfigure(on ? EditorView.lineWrapping : []) }),
 )
+
+// With wrapping off, a cursor near the start of its line scrolls fully left
+// instead of stopping where it is just visible, so the line's marker or `|`
+// stays in view after Enter on a long row.
+function revealLineStart(v: EditorView): void {
+  v.requestMeasure({
+    read(view) {
+      const scroller = view.scrollDOM
+      if (scroller.scrollLeft === 0) return null
+      const head = view.state.selection.main.head
+      const cursor = view.coordsAtPos(head)
+      const start = view.coordsAtPos(view.state.doc.lineAt(head).from)
+      if (!cursor || !start) return null
+      const gutter = (view.dom.querySelector('.cm-gutters') as HTMLElement | null)?.offsetWidth ?? 0
+      const visible = scroller.clientWidth - gutter - 24
+      return cursor.left - start.left <= visible ? 0 : null
+    },
+    write(left, view) {
+      if (left !== null) view.scrollDOM.scrollLeft = left
+    },
+  })
+}
 
 // Offset of the document's top inside the scroller's content, for line geometry.
 function documentOffset(v: EditorView): number {
