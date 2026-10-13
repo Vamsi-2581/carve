@@ -1,0 +1,127 @@
+A fence that leaves a closed nested item opens in the host it lands in
+
+````
+> - ::: box
+>   - ::: |
+>     ```
+>     :::
+>    ```
+>    :::bad
+>    :::
+- tail
+.
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <ul>
+          <li>
+            <div class="line-block">
+              <p><code></code></p>
+            </div>
+          </li>
+        </ul>
+        <pre><code>:::bad
+:::
+</code></pre>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+<ul>
+  <li>tail</li>
+</ul>
+````
+
+````
+> 1. ::: box
+>    - ::: |
+>      ```
+>      x
+>      ```
+>      :::
+>     ```
+>     - x
+> ```
+.
+<blockquote>
+  <ol>
+    <li>
+      <div class="box">
+        <ul>
+          <li>
+            <div class="line-block">
+              <p><code>
+x
+</code></p>
+            </div>
+          </li>
+        </ul>
+        <pre><code>- x
+</code></pre>
+      </div>
+    </li>
+  </ol>
+  <pre><code></code></pre>
+</blockquote>
+````
+
+````
+> - ::: box
+>   -   ::: |
+>       ```
+>       :::
+>     ```
+>     :::
+>     :::bad
+>     :::
+- tail
+.
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <ul>
+          <li>
+            <div class="line-block">
+              <p><code></code></p>
+            </div>
+          </li>
+        </ul>
+        <pre><code>:::
+:::bad
+:::
+</code></pre>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+<ul>
+  <li>tail</li>
+</ul>
+````
+
+````
+> - a
+>     - child
+>     ```
+>
+>       ```
+>   ~~~
+after
+.
+<blockquote>
+  <ul>
+    <li>a
+      <ul>
+        <li>child
+<code></code>
+          <pre><code></code></pre>
+        </li>
+      </ul>
+      <pre><code></code></pre>
+    </li>
+  </ul>
+</blockquote>
+<p>after</p>
+````
