@@ -4463,7 +4463,9 @@ EOF = (* end of file *) ;
          joined content belongs to the SPANNING cell, whether the continuation
          stands before or after the `^` row (corpus
          64-table-rowspan-with-multi-line-content). A
-         table cannot BEGIN with a continuation row (PART 2 `table`).
+         table cannot BEGIN with a continuation row (PART 2 `table`). The AST
+         keeps each join as a `cell_wrap` marker, so a writer can put the
+         `+` lines back (CARVE-P12-069).
 
          THE ROW ABOVE IS A LINE, NOT A `<tr>` -- NORMATIVE [CARVE-P9-069]. What
          a continuation joins is the row above it in the SOURCE. T7 CONSUMES
@@ -12758,5 +12760,61 @@ EOF = (* end of file *) ;
       PROVENANCE IS PER NODE. A range has no independent existence in the tree,
       so CARVE-P12-062's holder reads the nodes its anchors address
       ([carve#2233](https://github.com/markup-carve/carve/issues/2233)).
+
+   42. A CONTINUATION LINE IS A MARKER IN THE JOINED CELL -- NORMATIVE
+      [CARVE-P12-069]. Where a `+` continuation row joins non-empty content
+      onto a cell (PART 9 §5 T6), the parser puts a `cell_wrap` node in place
+      of the single joining space. `cell_wrap` carries `line`, the number of
+      the row's continuation line that part came from, counted from 1. The
+      marker sits wherever the join falls in the parsed tree, so it may be a
+      descendant of a span the two lines share:
+
+        | *bold | x |
+        + text* | y |
+
+        table_row{ continuationLines: 1, cells: [
+          table_cell[ strong[ "bold", cell_wrap{line:1}, "text" ] ],
+          table_cell[ "x", cell_wrap{line:1}, "y" ] ] }
+
+      `table_row.continuationLines` counts the row's `+` lines, and is absent
+      when there are none; it keeps a line whose cells are all empty, which
+      leaves no marker. A cell with nothing on line k has no marker for k.
+      Its part on line k is what lies between its markers for the lines
+      before and after; what precedes the first marker is the standard row's
+      own part.
+
+      UNDER A ROWSPAN the joined content belongs to the SPANNING cell (T6), so
+      the marker goes there too, and it adds `row`: how many rows below the
+      cell's own row the `+` line follows. `line` then counts that row's
+      continuation lines. `row` is absent when it is 0.
+
+        | a | b |
+        | ^ | c |
+        + more | d |
+
+        table_row{ cells: [ table_cell{ rowspan: 2,
+          children: [ "a", cell_wrap{line:1, row:1}, "more" ] }, ... ] }
+        table_row{ continuationLines: 1, cells: [
+          table_cell{ span: "rowspan" },
+          table_cell[ "c", cell_wrap{line:1}, "d" ] ] }
+
+      A MARKER IS NOT A SECOND TREE. The cell's `children` stay the one parsed
+      inline tree; literal per-line child lists are refused because the parts
+      are joined BEFORE inline parsing (CARVE-P2-019 item 2), so a span that
+      crosses the line could not be split. Every renderer and writer other
+      than the Carve writer outputs `cell_wrap` as one space, the joining
+      space it replaces, so no HTML, Markdown, plain or ANSI output moves.
+      Normalization never merges text across a `cell_wrap` and never drops
+      one.
+
+      THE CARVE WRITER WRITES THE LINES BACK. It cuts each cell at its
+      markers and writes `continuationLines` `+` lines after the row, each
+      holding the matching part of every column, empty where a cell has no
+      part. A `table_row` with no `continuationLines`, such as an imported
+      one, is written on one line. A `cell_wrap` outside a `table_cell`, a
+      `line` above the `continuationLines` of the row it names, a `row` past
+      the cell's `rowspan`, or two markers with one `line` and `row` in a cell
+      is invalid in the sense of CARVE-P12-030
+      ([carve#3094](https://github.com/markup-carve/carve/issues/3094)).
 
    ============================================================================ *)

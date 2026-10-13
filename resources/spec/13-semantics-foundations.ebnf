@@ -241,7 +241,9 @@
          joined content belongs to the SPANNING cell, whether the continuation
          stands before or after the `^` row (corpus
          64-table-rowspan-with-multi-line-content). A
-         table cannot BEGIN with a continuation row (PART 2 `table`).
+         table cannot BEGIN with a continuation row (PART 2 `table`). The AST
+         keeps each join as a `cell_wrap` marker, so a writer can put the
+         `+` lines back (CARVE-P12-069).
 
          THE ROW ABOVE IS A LINE, NOT A `<tr>` -- NORMATIVE [CARVE-P9-069]. What
          a continuation joins is the row above it in the SOURCE. T7 CONSUMES

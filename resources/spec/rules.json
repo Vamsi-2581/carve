@@ -1931,6 +1931,12 @@
       "scope": "ast-interchange"
     },
     {
+      "id": "CARVE-P12-069",
+      "part": "12",
+      "title": "A CONTINUATION LINE IS A MARKER IN THE JOINED CELL",
+      "scope": "ast-interchange"
+    },
+    {
       "id": "CARVE-P9-076",
       "part": "9",
       "title": "A MARKER IN A TOC BODY RETAINS ITS CONTAINER SCOPE",
