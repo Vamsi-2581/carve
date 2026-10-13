@@ -20,6 +20,6 @@ An invalid carrier on a generic span is consumed in roundtrip mode too, never ke
 
 A `markdownImportNegative` row may also list `expectedNodes` that must be present and `forbiddenNodes` projections that must be absent, and `expectedDiagnostics` maps a diagnostic code to the exact number of rows the import reports, each with `degraded` fidelity and `fallback` confidence. An invalid opener drops together with its closer and is reported once as `carrier-marker-dropped` (CARVE-P11-063). A composite figure's caption marker drops with that pair and adds no second row. A depth on a marker that is not a definition-list marker makes it invalid, so it drops alone and is reported the same way (CARVE-P11-067).
 
-A row marked `aheadOfPin` states behavior the pinned engine does not have yet. A flagged negative case fails in every import mode it lists. Its test passes while the pinned engine fails the row and fails once the engine passes it, so the flag is dropped in the pin bump that ships the behavior.
+A row marked `aheadOfPin` lists the assertion labels the pinned engine is expected to fail in `fails`. A flagged negative case is checked in every listed import mode. The test fails if an unlisted assertion fails, a listed assertion passes, or the row passes entirely. Remove passing labels or the flag when the pinned engine catches up.
 
 A row with `exportedHtml` also records the exact export bytes of the reference engine that first implemented it. Every engine must produce the same bytes, up to the line breaks that end the document.

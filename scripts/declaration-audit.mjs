@@ -869,7 +869,7 @@ function liveRows(entry, src) {
           for (const row of value) visit(row, group)
           return
         }
-        if (value[entry.flag] === true) {
+        if (value[entry.flag] === true || (value[entry.flag] !== null && typeof value[entry.flag] === 'object' && !Array.isArray(value[entry.flag]))) {
           if (typeof value.id !== 'string' || !value.id || !group) {
             throw new Error(`flagged fixture needs an id and group: ${JSON.stringify(value)}`)
           }

@@ -72,39 +72,60 @@ function carrierText(node) {
   }).join('')
 }
 const normalizedHtml = (html) => html.trim()
-// A row the pinned engine cannot pass yet is declared, and the declaration fires once the engine catches up.
+let collecting = null
+const check = new Proxy(assert, {
+  get(target, key) {
+    const method = target[key]
+    if (typeof method !== 'function') return method
+    return (...args) => {
+      try { return method(...args) } catch (error) {
+        if (!collecting || !(error instanceof assert.AssertionError)) throw error
+        collecting.push(args.at(-1))
+      }
+    }
+  },
+})
 const aheadOfPin = (fixture, body) => () => {
-  if (!fixture.aheadOfPin) return body()
-  assert.throws(body, undefined, `${fixture.id} is declared aheadOfPin but the pinned engine passes it: drop the flag`)
+  if (!Object.hasOwn(fixture, 'aheadOfPin')) return body()
+  assert.ok(fixture.aheadOfPin && typeof fixture.aheadOfPin === 'object' && !Array.isArray(fixture.aheadOfPin) &&
+    Array.isArray(fixture.aheadOfPin.fails) && fixture.aheadOfPin.fails.length > 0 &&
+    fixture.aheadOfPin.fails.every((label) => typeof label === 'string' && label.length > 0),
+  `${fixture.id}: aheadOfPin must name failed assertions`)
+  const failures = []
+  collecting = failures
+  try { body() } catch (error) { failures.push(`error: ${error.message}`) } finally { collecting = null }
+  assert.ok(failures.length, `${fixture.id} is declared aheadOfPin but the pinned engine passes it: drop the flag`)
+  for (const label of failures) assert.ok(fixture.aheadOfPin.fails.includes(label), `${fixture.id}: undeclared failure under aheadOfPin: ${label}`)
+  for (const label of fixture.aheadOfPin.fails) assert.ok(failures.includes(label), `${fixture.id}: '${label}' passes on the pinned engine now; drop it from aheadOfPin.fails`)
 }
 
 for (const fixture of fixtures.exportImport) {
   test(`shared roundtrip export: ${fixture.id}`, aheadOfPin(fixture, () => {
     assertProjection(parse(fixture.source), fixture.expectedNodes)
     const ordinary = carveToHtml(fixture.source)
-    assert.equal(carveToHtml(fixture.source, { roundtrip: false }), ordinary)
-    assert.ok(!htmlAttributes(ordinary).some((attr) => isReserved(attr.name)))
+    check.equal(carveToHtml(fixture.source, { roundtrip: false }), ordinary, 'ordinary html ignores roundtrip: false')
+    check.ok(!htmlAttributes(ordinary).some((attr) => isReserved(attr.name)), 'ordinary html has no reserved attributes')
     const exported = carveToHtml(fixture.source, { roundtrip: true })
     // A document-final line break is engine convention, as in the corpus comparisons.
-    if (fixture.exportedHtml !== undefined) assert.equal(exported.replace(/\n+$/, ''), fixture.exportedHtml.replace(/\n+$/, ''))
+    if (fixture.exportedHtml !== undefined) check.equal(exported.replace(/\n+$/, ''), fixture.exportedHtml.replace(/\n+$/, ''), 'exported html matches fixture')
     const attrs = htmlAttributes(exported)
     for (const [name, expected] of Object.entries(fixture.carrierText ?? {})) {
       const hosts = carrierElements(exported, name)
-      assert.equal(hosts.length, 1, name)
+      check.equal(hosts.length, 1, name)
       const allowed = Array.isArray(expected) ? expected : [expected]
-      assert.ok(allowed.includes(carrierText(hosts[0])), name)
+      check.ok(allowed.includes(carrierText(hosts[0])), name)
     }
-    assert.ok(!attrs.some((attr) => isReserved(attr.name) && attr.name.startsWith('data-djot-')))
-    assert.ok(attrs.filter((attr) => isReserved(attr.name)).every((attr) => Object.hasOwn(fixture.carriers, attr.name)))
-    for (const [name, value] of Object.entries(fixture.carriers)) assert.ok(attrs.some((attr) => attr.name === name && (value === null || attr.value === value)), `${name}=${value}`)
-    for (const host of fixture.carrierHosts) assert.ok(attrs.some((attr) => attr.name === host.attribute && attr.element === host.element), JSON.stringify(host))
+    check.ok(!attrs.some((attr) => isReserved(attr.name) && attr.name.startsWith('data-djot-')), 'export has no deprecated carriers')
+    check.ok(attrs.filter((attr) => isReserved(attr.name)).every((attr) => Object.hasOwn(fixture.carriers, attr.name)), 'export has only declared carriers')
+    for (const [name, value] of Object.entries(fixture.carriers)) check.ok(attrs.some((attr) => attr.name === name && (value === null || attr.value === value)), `${name}=${value}`)
+    for (const host of fixture.carrierHosts) check.ok(attrs.some((attr) => attr.name === host.attribute && attr.element === host.element), JSON.stringify(host))
     for (const [name, value] of Object.entries(fixture.ordinaryAttributes ?? {})) {
-      for (const html of [ordinary, exported]) assert.ok(htmlAttributes(html).some((attr) => attr.name === name && attr.value === value))
+      for (const html of [ordinary, exported]) check.ok(htmlAttributes(html).some((attr) => attr.name === name && attr.value === value), `${name}=${value} in ${html === ordinary ? 'ordinary' : 'exported'} html`)
     }
-    for (const name of fixture.forbiddenExportAttributes) assert.ok(!attrs.some((attr) => attr.name === name), name)
+    for (const name of fixture.forbiddenExportAttributes) check.ok(!attrs.some((attr) => attr.name === name), name)
     for (const roundtrip of [false, true]) {
       const codes = carveToHtmlWithReport(fixture.source, { roundtrip }).losses.map((row) => row.code)
-      for (const code of fixture.lossCodes ?? []) assert.ok(codes.includes(code), `${code} with roundtrip ${roundtrip}`)
+      for (const code of fixture.lossCodes ?? []) check.ok(codes.includes(code), `${code} with roundtrip ${roundtrip}`)
     }
     for (const mode of fixture.importModes) {
       const imported = htmlToAst(exported, { mode })
@@ -113,10 +134,10 @@ for (const fixture of fixtures.exportImport) {
       assertNoReservedAttrs(legacy.value)
       const declined = assertImportProjection(imported.value, fixture)
       assertNoReservedAttrs(imported.value)
-      for (const absent of fixture.expectedAbsentFields ?? []) assert.ok(nodes(imported.value).filter((node) => node.type === absent.type).every((node) => field(node, absent.field) === undefined))
+      for (const absent of fixture.expectedAbsentFields ?? []) check.ok(nodes(imported.value).filter((node) => node.type === absent.type).every((node) => field(node, absent.field) === undefined), `${absent.type}.${absent.field} absent in ${mode}`)
       const source = htmlToCarve(exported, { mode }).value
-      for (const fragment of fixture.returnedSourceFragments ?? []) assert.ok(source.includes(fragment), fragment)
-      assert.equal(normalizedHtml(carveToHtml(source)), normalizedHtml(declined ? fixture.fallbackHtml : ordinary), mode)
+      for (const fragment of fixture.returnedSourceFragments ?? []) check.ok(source.includes(fragment), fragment)
+      check.equal(normalizedHtml(carveToHtml(source)), normalizedHtml(declined ? fixture.fallbackHtml : ordinary), mode)
     }
   }))
 }
@@ -126,16 +147,16 @@ for (const fixture of fixtures.importNegative) {
     assertProjection(result.value, fixture.expectedNodes)
     if (fixture.requiresDiagnostic) {
       const controlCount = fixture.diagnosticControlHtml ? htmlToAst(fixture.diagnosticControlHtml, { mode }).report.diagnostics.length : 0
-      assert.ok(result.report.diagnostics.length > controlCount, fixture.id)
+      check.ok(result.report.diagnostics.length > controlCount, fixture.id)
     }
-    if (fixture.expectedDiagnostic) assert.ok(result.report.diagnostics.some((row) => Object.entries(fixture.expectedDiagnostic).every(([key, value]) => row[key] === value)), JSON.stringify(fixture.expectedDiagnostic))
+    if (fixture.expectedDiagnostic) check.ok(result.report.diagnostics.some((row) => Object.entries(fixture.expectedDiagnostic).every(([key, value]) => row[key] === value)), JSON.stringify(fixture.expectedDiagnostic))
     assertNoReservedAttrs(result.value)
-    for (const fragment of fixture.forbiddenSourceSubstrings ?? []) assert.ok(!htmlToCarve(fixture.html, { mode }).value.includes(fragment), fragment)
-    for (const fragment of fixture.forbiddenAstSubstrings ?? []) assert.ok(!JSON.stringify(result.value).includes(fragment), fragment)
-    for (const fragment of fixture.forbiddenRenderedSubstrings ?? []) assert.ok(!carveToHtml(htmlToCarve(fixture.html, { mode }).value).includes(fragment), fragment)
-    for (const type of fixture.forbiddenTypes) assert.ok(!nodes(result.value).some((node) => node.type === type), type)
-    for (const absent of fixture.expectedAbsentFields ?? []) assert.ok(nodes(result.value).filter((node) => node.type === absent.type).every((node) => field(node, absent.field) === undefined))
-    for (const forbidden of fixture.forbiddenFieldValues ?? []) assert.ok(nodes(result.value).filter((node) => node.type === forbidden.type).every((node) => field(node, forbidden.field) !== forbidden.value))
+    for (const fragment of fixture.forbiddenSourceSubstrings ?? []) check.ok(!htmlToCarve(fixture.html, { mode }).value.includes(fragment), fragment)
+    for (const fragment of fixture.forbiddenAstSubstrings ?? []) check.ok(!JSON.stringify(result.value).includes(fragment), fragment)
+    for (const fragment of fixture.forbiddenRenderedSubstrings ?? []) check.ok(!carveToHtml(htmlToCarve(fixture.html, { mode }).value).includes(fragment), fragment)
+    for (const type of fixture.forbiddenTypes) check.ok(!nodes(result.value).some((node) => node.type === type), type)
+    for (const absent of fixture.expectedAbsentFields ?? []) check.ok(nodes(result.value).filter((node) => node.type === absent.type).every((node) => field(node, absent.field) === undefined), `${absent.type}.${absent.field} absent in ${mode}`)
+    for (const forbidden of fixture.forbiddenFieldValues ?? []) check.ok(nodes(result.value).filter((node) => node.type === forbidden.type).every((node) => field(node, forbidden.field) !== forbidden.value), `${forbidden.type}.${forbidden.field} excludes ${JSON.stringify(forbidden.value)} in ${mode}`)
   }))
 }
 test('export cannot enable a denied destination', () => {
@@ -155,13 +176,13 @@ test('shared paired-footnote controls remain a separate complete resource', () =
 for (const fixture of fixtures.collisionExport) test(`shared export collision: ${fixture.id}`, aheadOfPin(fixture, () => {
   const named = (html) => htmlAttributes(html).filter((attr) => attr.name === fixture.attribute).map((attr) => attr.value)
   const result = carveToHtmlWithReport(fixture.source, { roundtrip: true })
-  assert.deepEqual(named(result.value), fixture.value === null ? [] : [fixture.value])
-  if (fixture.kept) return assert.ok(!result.losses.some((row) => row.code === 'carrier-attribute-dropped'))
-  assert.ok(result.losses.some((row) => row.code === 'carrier-attribute-dropped' && row.attribute === fixture.attribute))
+  check.deepEqual(named(result.value), fixture.value === null ? [] : [fixture.value], 'exported collision attribute matches fixture')
+  if (fixture.kept) return check.ok(!result.losses.some((row) => row.code === 'carrier-attribute-dropped'), 'kept attribute has no drop loss')
+  check.ok(result.losses.some((row) => row.code === 'carrier-attribute-dropped' && row.attribute === fixture.attribute), 'dropped attribute has loss')
   if (fixture.defaultValue === undefined) return
   const ordinary = carveToHtmlWithReport(fixture.source)
-  assert.deepEqual(named(ordinary.value), [fixture.defaultValue])
-  assert.ok(!ordinary.losses.some((row) => row.code === 'carrier-attribute-dropped'))
+  check.deepEqual(named(ordinary.value), [fixture.defaultValue], 'ordinary collision attribute keeps default')
+  check.ok(!ordinary.losses.some((row) => row.code === 'carrier-attribute-dropped'), 'ordinary collision has no drop loss')
 }))
 test('task hooks remain ordinary output without preservation export', () => {
   const fixture = fixtures.exportImport.find((row) => row.id === 'task-states')
@@ -180,33 +201,33 @@ function assertMarkdownReturn(fixture, returned) {
 for (const fixture of fixtures.markdownExportImport) test(`shared Markdown export: ${fixture.id}`, aheadOfPin(fixture, () => {
   assertProjection(parse(fixture.source), fixture.expectedNodes)
   const ordinary = carveToMarkdown(fixture.source)
-  assert.equal(carveToMarkdown(fixture.source, { roundtrip: false }), ordinary)
-  assert.ok(!ordinary.includes('<!-- carve:'))
-  for (const fragment of fixture.ordinaryFragments ?? []) assert.ok(ordinary.includes(fragment), fragment)
-  for (const fragment of fixture.forbiddenOrdinaryFragments ?? []) assert.ok(!ordinary.includes(fragment), fragment)
+  check.equal(carveToMarkdown(fixture.source, { roundtrip: false }), ordinary, 'ordinary markdown ignores roundtrip: false')
+  check.ok(!ordinary.includes('<!-- carve:'), 'ordinary markdown has no carrier markers')
+  for (const fragment of fixture.ordinaryFragments ?? []) check.ok(ordinary.includes(fragment), fragment)
+  for (const fragment of fixture.forbiddenOrdinaryFragments ?? []) check.ok(!ordinary.includes(fragment), fragment)
   if (fixture.defaultExportOnly) return
   const exported = carveToMarkdown(fixture.source, { roundtrip: true })
-  for (const fragment of fixture.carrierFragments) assert.ok(exported.includes(fragment), fragment)
+  for (const fragment of fixture.carrierFragments) check.ok(exported.includes(fragment), fragment)
   // CARVE-P11-068: inline markers only add; stripping them gives the ordinary bytes.
-  if (fixture.inlineMarkers) assert.equal(exported.replace(/<!-- carve: [\s\S]*? -->/g, ''), ordinary)
+  if (fixture.inlineMarkers) check.equal(exported.replace(/<!-- carve: [\s\S]*? -->/g, ''), ordinary, 'stripping inline markers restores ordinary markdown')
   const codes = carveToMarkdownWithReport(fixture.source, { roundtrip: true }).losses.map((row) => row.code)
-  for (const code of fixture.lossCodes ?? []) assert.ok(codes.includes(code), code)
-  for (const code of fixture.forbiddenLossCodes ?? []) assert.ok(!codes.includes(code), code)
+  for (const code of fixture.lossCodes ?? []) check.ok(codes.includes(code), code)
+  for (const code of fixture.forbiddenLossCodes ?? []) check.ok(!codes.includes(code), code)
   assertMarkdownReturn(fixture, migrateMarkdown(exported).value)
 }))
 
 for (const fixture of fixtures.markdownImportNegative) test(`shared Markdown import rejection: ${fixture.id}`, aheadOfPin(fixture, () => {
   const imported = migrateMarkdown(fixture.markdown)
   const tree = parse(imported.value)
-  if (fixture.expectedDiagnostic) assert.ok(imported.report.diagnostics.some((row) => row.code === fixture.expectedDiagnostic.code), fixture.expectedDiagnostic.code)
+  if (fixture.expectedDiagnostic) check.ok(imported.report.diagnostics.some((row) => row.code === fixture.expectedDiagnostic.code), fixture.expectedDiagnostic.code)
   const actualTypes = new Set(nodes(tree).map((node) => node.type))
-  for (const type of fixture.forbiddenTypes ?? []) assert.ok(!actualTypes.has(type), type)
+  for (const type of fixture.forbiddenTypes ?? []) check.ok(!actualTypes.has(type), type)
   assertProjection(tree, fixture.expectedNodes ?? [])
-  for (const forbidden of fixture.forbiddenNodes ?? []) assert.throws(() => assertProjection(tree, [forbidden]), { code: 'ERR_ASSERTION' }, JSON.stringify(forbidden))
+  for (const forbidden of fixture.forbiddenNodes ?? []) check.throws(() => assertProjection(tree, [forbidden]), { code: 'ERR_ASSERTION' }, JSON.stringify(forbidden))
   for (const [code, count] of Object.entries(fixture.expectedDiagnostics ?? {})) {
     const rows = imported.report.diagnostics.filter((row) => row.code === code)
-    assert.equal(rows.length, count, code)
-    for (const row of rows) assert.deepEqual([row.fidelity, row.confidence], ['degraded', 'fallback'], code)
+    check.equal(rows.length, count, code)
+    for (const row of rows) check.deepEqual([row.fidelity, row.confidence], ['degraded', 'fallback'], code)
   }
 }))
 
@@ -226,5 +247,18 @@ test('shared acceptance cases have distinct identities and explicit assertions',
     ids.add(row.id)
     assert.ok(typeof row.source === 'string' || typeof row.html === 'string' || typeof row.markdown === 'string', row.id)
     assert.ok(row.expectedNodes?.length || row.expectedDiagnostic || row.expectedDiagnostics || row.attribute, row.id)
+    if (Object.hasOwn(row, 'aheadOfPin')) assert.ok(row.aheadOfPin && typeof row.aheadOfPin === 'object' && !Array.isArray(row.aheadOfPin) &&
+      Array.isArray(row.aheadOfPin.fails) && row.aheadOfPin.fails.length > 0 &&
+      row.aheadOfPin.fails.every((label) => typeof label === 'string' && label.length > 0), `${row.id}: aheadOfPin must name failed assertions`)
   }
+})
+
+test('aheadOfPin collects only declared failing checks', () => {
+  const body = () => {
+    check.equal(1, 2, 'failing check')
+    check.equal(1, 1, 'passing check')
+  }
+  assert.doesNotThrow(aheadOfPin({ id: 'synthetic', aheadOfPin: { fails: ['failing check'] } }, body))
+  assert.throws(aheadOfPin({ id: 'synthetic', aheadOfPin: { fails: ['passing check'] } }, body), /undeclared failure under aheadOfPin: failing check/)
+  assert.throws(aheadOfPin({ id: 'synthetic', aheadOfPin: { fails: ['failing check'] } }, () => check.equal(1, 1, 'passing check')), /drop the flag/)
 })

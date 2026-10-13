@@ -455,11 +455,11 @@ test('JSON fixture flags count across groups as an owed list', () => {
   assert.equal(entry.guard, 'two-way')
   assert.equal(entry.owner, 'tests/roundtrip-export-acceptance.test.mjs')
   const flagged = {
-    exportImport: [{ id: 'star-bullet', aheadOfPin: true }, { id: 'unflagged' }],
+    exportImport: [{ id: 'star-bullet', aheadOfPin: true }, { id: 'obj', aheadOfPin: { fails: ['x'] } }, { id: 'unflagged' }],
     nested: { importNegative: [{ id: 'invalid-tight-value', aheadOfPin: true }] },
   }
   assert.deepEqual(liveRows(entry, JSON.stringify(flagged)), [
-    'exportImport/star-bullet', 'importNegative/invalid-tight-value',
+    'exportImport/star-bullet', 'exportImport/obj', 'importNegative/invalid-tight-value',
   ])
   assert.deepEqual(liveRows(entry, JSON.stringify({ exportImport: [{ id: 'star-bullet', aheadOfPin: false }] })), [])
   assert.ok(liveRows(entry, '{broken') instanceof Error)
