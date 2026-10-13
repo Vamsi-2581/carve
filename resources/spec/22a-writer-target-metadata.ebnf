@@ -294,6 +294,19 @@
       mode nothing is reported: the info string holds both tokens, so this
       target writes them (CARVE-P2-024).
 
+      A LIST'S NUMBERING STYLE TAKES A LIST-STYLE MARKER. This target writes
+      an alphabetic or roman ordered list as a decimal list (CARVE-P2-024), so
+      under the carrier mode such a list takes one marker directly above its
+      first item, holding the first item's marker as the canonical writer
+      spells it. The import takes the style from that marker and the start
+      and delimiter from the Markdown list, so a marker supplies the style
+      only. A list-style marker not directly above an ordered list is a
+      damaged set.
+
+        a. one                   ->  <!-- carve: a. -->
+        a. two                       1. one
+                                     2. two
+
   10u. THE CARRIER MODE CARRIES AN INLINE CONSTRUCT'S ATTRIBUTES, A SPAN AND
       A CROSS-REFERENCE IN INLINE MARKERS -- NORMATIVE [CARVE-P11-068].
       Markdown has no spelling for a link's, an image's or a span's

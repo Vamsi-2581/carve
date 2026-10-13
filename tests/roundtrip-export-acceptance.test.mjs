@@ -188,6 +188,7 @@ for (const fixture of fixtures.markdownExportImport) test(`shared Markdown expor
   if (fixture.inlineMarkers) assert.equal(exported.replace(/<!-- carve: [\s\S]*? -->/g, ''), ordinary)
   const codes = carveToMarkdownWithReport(fixture.source, { roundtrip: true }).losses.map((row) => row.code)
   for (const code of fixture.lossCodes ?? []) assert.ok(codes.includes(code), code)
+  for (const code of fixture.forbiddenLossCodes ?? []) assert.ok(!codes.includes(code), code)
   assertMarkdownReturn(fixture, migrateMarkdown(exported).value)
 }))
 
