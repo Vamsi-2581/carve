@@ -55,7 +55,17 @@ jobs:
           ref: ${{ needs.engine-revisions.outputs.rs }}
           path: carve-rs
           submodules: recursive
+      # Keyed on the release commit, so the four shards build it once per release.
+      - name: Restore carve-rs binaries
+        id: rs-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            carve-rs/target/release/carve
+            carve-rs/target/release/examples/social_resolvers
+          key: carve-rs-bin-${{ runner.os }}-${{ needs.engine-revisions.outputs.rs }}
       - name: Build carve-rs
+        if: steps.rs-cache.outputs.cache-hit != 'true'
         working-directory: carve-rs
         run: cargo build --release --bin carve --example social_resolvers
       - uses: actions/checkout@v4
@@ -73,6 +83,8 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
+          # compare-impls forks carve-php renders from one warm process.
+          extensions: pcntl, posix
       - name: Install carve-php
         working-directory: carve-php
         run: composer install --no-interaction --no-progress

@@ -12,6 +12,7 @@ import {
   targetOf,
 } from './lib/corpus-targets.mjs'
 import { parseShard, selectShard } from './lib/shard.mjs'
+import { runFast } from './lib/engine-fast-path.mjs'
 import { parseConverterLedger, unusedConverterDeclaration } from './lib/drift-ledger.mjs'
 import { phpDir, rustBinary, rustDir } from './lib/engine-locations.mjs'
 import { comparisonGateHasFailures } from './lib/comparison-gate.mjs'
@@ -850,6 +851,8 @@ function run(cmd, cwd, extraArgs = [], timeout = RENDER_TIMEOUT_MS) {
       signal: null,
     }
   }
+  const fast = runFast(cmd, cwd, extraArgs, timeout)
+  if (fast) return fast
   const result = spawnSync(bin, [...baseArgs, ...extraArgs], {
     cwd,
     encoding: 'utf8',
