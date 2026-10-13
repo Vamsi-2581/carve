@@ -511,6 +511,21 @@ function blankComments(src, lang) {
   const hashComments = lang === 'php'
   while (i < src.length) {
     const c = src[i]
+    if (lang === 'rust' && (c === 'r' || c === 'b') && !/[A-Za-z0-9_]/.test(src[i - 1] ?? '')) {
+      const rawStart = /b?r(#*)"/y
+      rawStart.lastIndex = i
+      const raw = rawStart.exec(src)
+      if (raw) {
+        const end = src.indexOf('"' + raw[1], i + raw[0].length)
+        if (end !== -1) {
+          const last = end + raw[1].length
+          out[i] = '"'
+          while (++i < last) if (src[i] !== '\n') out[i] = ' '
+          out[i++] = '"'
+          continue
+        }
+      }
+    }
     if (c === '"' || c === "'" || c === '`') {
       const quote = c
       i += 1
