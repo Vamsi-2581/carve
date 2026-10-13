@@ -79,12 +79,12 @@ test('keeps a below-authored-base definition outside the measured marker fence',
   assert.equal(ast.linkDefs.get('r')?.url, '/in')
 })
 
-test('keeps a literal definition in a real nested container after empty CODE', () => {
+test('a definition past a nested container after empty CODE opens on its authored base', () => {
   const ast = parse(':: term\n: - ```\n    ```\n      :::\n     [r]: /in\n')
   assert.equal(leaves(ast.blocks)[0].text, '')
-  assert.equal(ast.linkDefs.size, 0)
+  assert.equal(ast.linkDefs.get('r')?.url, '/in')
   const containers = ast.blocks[0].items[1].ddBlocks[0].items[0].blocks
-  assert.deepEqual(containers[1].children, [{ t: 'para', lines: ['[r]: /in'] }])
+  assert.deepEqual(containers[1].children, [])
 })
 
 test('measuring marker CODE preserves literal rows without changing the unrebased reader', () => {

@@ -2392,7 +2392,7 @@ function opensSubBlock(line) {
 }
 
 function opensHostedColonBlock(line) {
-  if (FOOTNOTE_DEF.test(line)) return true
+  if (FOOTNOTE_DEF.test(line) || isLinkDef(line) || parseAttrList(trimLineEnd(line)) !== null) return true
   if (QUOTE.test(line) || HEADING.test(line) || HR.test(line) || isTableRow(line)) return true
   const fence = FENCE.exec(line)
   if (fence) return parseFenceInfo(fence[2]) !== null
