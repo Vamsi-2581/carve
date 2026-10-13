@@ -2201,6 +2201,118 @@
       "forbiddenLossCodes": [
         "list-delimiter-changed"
       ]
+    },
+    {
+      "id": "bare-div",
+      "aheadOfPin": true,
+      "source": ":::\ninside\n:::\n",
+      "carrierFragments": [
+        "<!-- carve: ::: -->\ninside"
+      ],
+      "expectedNodes": [
+        {
+          "type": "div"
+        }
+      ]
+    },
+    {
+      "id": "definition-list-wrapped-term",
+      "aheadOfPin": true,
+      "source": ":: A term that\nwraps onto the next line\n: its definition\n",
+      "carrierFragments": [
+        "<!-- carve: :: A term that\nwraps onto the next line -->"
+      ],
+      "expectedNodes": [
+        {
+          "type": "definition_list"
+        }
+      ]
+    },
+    {
+      "id": "reference-link-full",
+      "aheadOfPin": true,
+      "source": "[a][r]\n\n[r]: /u\n",
+      "carrierFragments": [
+        "[a][r]",
+        "[r]: /u"
+      ],
+      "expectedNodes": [
+        {
+          "type": "link",
+          "ref": "r"
+        },
+        {
+          "type": "link_reference_definition",
+          "label": "r"
+        }
+      ]
+    },
+    {
+      "id": "reference-link-collapsed",
+      "aheadOfPin": true,
+      "source": "[r][]\n\n[r]: /u\n",
+      "carrierFragments": [
+        "[r][]",
+        "[r]: /u"
+      ],
+      "expectedNodes": [
+        {
+          "type": "link",
+          "ref": "r"
+        },
+        {
+          "type": "link_reference_definition",
+          "label": "r"
+        }
+      ]
+    },
+    {
+      "id": "reference-definition-unused",
+      "source": "x\n\n[r]: /u\n",
+      "carrierFragments": [
+        "[r]: /u"
+      ],
+      "expectedNodes": [
+        {
+          "type": "link_reference_definition",
+          "label": "r"
+        }
+      ]
+    },
+    {
+      "id": "reference-link-inline-outside-roundtrip",
+      "defaultExportOnly": true,
+      "source": "[a][r]\n\n[r]: /u\n",
+      "carrierFragments": [],
+      "ordinaryFragments": [
+        "[a](/u)"
+      ],
+      "forbiddenOrdinaryFragments": [
+        "[a][r]",
+        "[r]: /u"
+      ],
+      "expectedNodes": [
+        {
+          "type": "link",
+          "ref": "r"
+        }
+      ]
+    },
+    {
+      "id": "markdown-abbreviation-definition",
+      "aheadOfPin": true,
+      "source": "*[HTML]: Hyper Text\n\nHTML here\n",
+      "carrierFragments": [
+        "*[HTML]: Hyper Text"
+      ],
+      "expectedNodes": [
+        {
+          "type": "abbreviation_def"
+        },
+        {
+          "type": "abbreviation"
+        }
+      ]
     }
   ],
   "markdownImportNegative": [

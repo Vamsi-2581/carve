@@ -50,19 +50,27 @@
 
       THE SET: a tab set and each of its
       panels (`tabs`, `code-group`), an admonition of any kind whether or not
-      it carries a title, a named div and each div nested in one, a columns
+      it carries a title, a div, named or bare, a columns
       container and each column, a disclosure, a spoiler, a composite
       figure's group wrapper, and a line block (`::: |`) or a hard-break
       block (`::: \`), whose lines this target writes as a paragraph with
       hard breaks. A container this target DOES spell is not one
       and takes no comment: an attributes-only opener (`::: {.warning}`) is
-      written verbatim, and a list table is written as a pipe table.
+      written verbatim, and a list table is written as a pipe table. A BARE
+      DIV'S OPENER IS `:::` WITH NOTHING AFTER IT, so its marker is
+      `<!-- carve: ::: -->`, the same bytes as its closer's; no space pads the
+      payload.
 
       THE MARKER IS `<!-- carve: `, the payload, ` -->`. A `-->` the payload
       carries is written `--\>`, and an `\` the payload itself carries before
       such a `>` is written `\\`. Nothing else is escaped: the payload is
       Carve source, so Carve's own escape is the one the reader already has.
-      The import reverses exactly those two.
+      The import reverses exactly those two. A PAYLOAD MAY SPAN LINES: one
+      that holds a line break, such as a definition term the canonical writer
+      spells over two lines, is written across them, and the marker is the
+      whole comment. The import reads it as one marker, with any host prefix
+      on its later lines removed by the block structure as for the marker
+      itself, and restores the line breaks it holds.
 
       A MARKER MAY CARRY A DEPTH directly after `carve:`, with no space
       before it: a decimal of 2 or more, as in `<!-- carve:2 : -->`. A bare
@@ -176,7 +184,9 @@
       faithful and the defect is on the import or in CARVE-P11-045, not here.
       `small_caps` and `ruby` have no Carve opener to carry. Attributes on a
       list item's marker line are not carried: CARVE-P11-067 carries an
-      attribute LINE, and that is not spelled with one. An inline construct's
+      attribute LINE, and that is not spelled with one. That is a stated
+      limit: the attributes degrade as they do with the mode off, unreported,
+      as this target drops any attribute it cannot spell. An inline construct's
       attributes are CARVE-P11-068's.
 
   10t. THE CARRIER MODE ALSO CARRIES AN ATTRIBUTE LINE, A DEFINITION LIST AND A
