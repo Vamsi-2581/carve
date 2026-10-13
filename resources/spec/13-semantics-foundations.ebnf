@@ -201,6 +201,30 @@
          The two uses may never disagree: a line the block parser builds a
          table from but the §17 sub-block test calls prose would make a list
          item loose AND fill it with a table.
+
+         A CELL SLOT IS COUNTED, NOT WEIGHED -- NORMATIVE [CARVE-P9-082]. The
+         delimiters are T1's: an escaped `|` and a `|` inside a code span
+         are content. A slot lies between two consecutive delimiters, and
+         EMPTY CONTENT IS VALID CONTENT for it, so a row whose every cell is
+         blank is a row:
+
+             | |    ||        one data cell, empty children
+             | | |  |||       two data cells
+             ||||             three data cells
+             |                no closing delimiter, no slot: prose
+
+         No comment, literal or whitespace node is synthesized for a blank
+         cell. Only ASCII space padding is removed (PART 7); a tab between
+         the pipes is content, so `|<TAB>|` is a cell holding a tab. The rule
+         is the same for data and header cells, at a block start, after an
+         open paragraph and inside a table. An empty MARKED cell still needs
+         T11's space: `|= |` is an empty header cell and `|=|` a data cell
+         holding `=`; `|> |` is an empty right-aligned cell and `|>|` holds
+         `>`; `|{#x} |` is an empty cell with id `x` and `|{#x}|` carries no
+         cell attributes. This gives no spelling to a table with zero rows,
+         and it leaves T6, T7 and T8 as they are: a continuation row still
+         creates no row, and a blank first row above a delimiter row is
+         promoted to an empty header row like any other first row.
       T3 HEADER CELL. A leading `=` GLUED to the cell's opening `|` marks a
          HEADER cell; `\=` yields a data cell whose text starts with `=`.
       T4 SPAN MARKERS. A cell whose WHOLE content is `^` (rowspan) or `<`
@@ -268,8 +292,9 @@
          continuation makes it decline, including under a native header row.
 
          AN ALL-EMPTY CONTINUATION ROW IS A CONTINUATION ROW. It opens no
-         table and produces no `<tr>`; do not apply T2's standard-row guard.
-         Its empty cells append nothing. `+ | |` below `| a | b |` and `+ |`
+         table and produces no `<tr>`; T2 counts its slots the way it counts
+         a standard row's, and T6 decides what they do. Its empty cells append
+         nothing. `+ | |` below `| a | b |` and `+ |`
          below `| a |` are both absorbed.
 
          A CONTINUATION ROW LEAVES NO PARAGRAPH OPEN -- NORMATIVE [CARVE-P9-003].
@@ -386,8 +411,8 @@
              |{#x} =R |      data cell with `id="x"`, content `=R`
              |{#x}=R|        data cell, content `{#x}=R`
 
-         A cell with NO run is unchanged -- `| a |`, `|a|` and `||` all mean
-         what they meant.
+         A cell with NO run is unchanged -- `| a |` and `|a|` hold `a`, and
+         `||` is one empty cell (CARVE-P9-082).
 
          THE CLOSING PIPE IS NOT A TERMINATOR. `|=|` and `|{#x}|` carry no
          run; an empty marked cell is `|= |` and `|{#x} |` -- which is what

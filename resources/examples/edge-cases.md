@@ -4158,8 +4158,11 @@ An unquoted attribute value admits `.` and `:` (besides letters, digits, `-`,
 
 ## A pipe pair with no cell is not a table
 
-`||` has no cell between the pipes, so it is ordinary paragraph text, not a
-one-cell table.
+This section's name records the reading markup-carve/carve#2879 replaced; the
+corpus numbering is append-only, so it keeps its name. `||` has one cell slot
+between its two pipes, and an empty slot is a cell: the line is a one-row table
+with one empty data cell (PART 9 §5 T2). The section "An explicitly delimited
+row of blank cells is a table" carries the full rule.
 
 ::: compare
 
@@ -4168,7 +4171,11 @@ one-cell table.
 ```
 
 ```html
-<p>||</p>
+<table>
+  <tbody>
+    <tr><td></td></tr>
+  </tbody>
+</table>
 ```
 
 :::
@@ -34570,13 +34577,14 @@ tail</p>
 
 ## A row whose every cell is blank is not a table
 
-The table detector counts delimiter slots and never asks whether a slot holds
-anything. A single empty PLAIN cell was already rejected - `||` is a paragraph -
-but the rejection reached neither a MULTI-cell all-empty row nor the HEADER
-path, so `|||` opened a two-column table of empty cells and `|= |`, an empty
-header cell, opened a `<thead>`-only table where the identical `| |` was
-rejected. A table whose every cell is empty carries no data, and degrading it to
-text is what the one- and two-pipe cases already do (markup-carve/carve#1950).
+This section's name records the ruling of markup-carve/carve#1950, which
+markup-carve/carve#2879 replaced; the corpus numbering is append-only, so it
+keeps its name. An explicitly delimited row is a table row whatever its cells
+hold (PART 9 §5 T2), so the three rows that ruling turned into paragraphs are
+tables again. The section "An explicitly delimited row of blank cells is a
+table" carries the full rule.
+
+Two empty data cells:
 
 ::: compare
 
@@ -34585,13 +34593,16 @@ text is what the one- and two-pipe cases already do (markup-carve/carve#1950).
 ```
 
 ```html
-<p>|||</p>
+<table>
+  <tbody>
+    <tr><td></td><td></td></tr>
+  </tbody>
+</table>
 ```
 
 :::
 
-Whitespace-only cells are empty too - the content is trimmed before it is
-weighed.
+Padding spaces are not content, so this is the same two-cell row:
 
 ::: compare
 
@@ -34600,14 +34611,17 @@ weighed.
 ```
 
 ```html
-<p>| | |</p>
+<table>
+  <tbody>
+    <tr><td></td><td></td></tr>
+  </tbody>
+</table>
 ```
 
 :::
 
-The header path, which was the clearest gap: an empty header cell had no
-rejection at all, though the identical plain cell did. A table that is one empty
-header and no body is as empty as output gets.
+An empty header cell is a header-only table, the same way `| |` is a one-cell
+data table:
 
 ::: compare
 
@@ -34616,13 +34630,16 @@ header and no body is as empty as output gets.
 ```
 
 ```html
-<p>|= |</p>
+<table>
+  <thead>
+    <tr><th scope="col"></th></tr>
+  </thead>
+</table>
 ```
 
 :::
 
-A row with any content is a table, unchanged. This is the control the rule must
-not move.
+The controls are unchanged. A row with content:
 
 ::: compare
 
@@ -34640,8 +34657,7 @@ not move.
 
 :::
 
-ONE filled cell is enough - the rule is EVERY cell blank, not any cell blank. A
-row of one value and one empty cell is a real table with an empty cell in it.
+One filled cell beside an empty one:
 
 ::: compare
 
@@ -34659,9 +34675,7 @@ row of one value and one empty cell is a real table with an empty cell in it.
 
 :::
 
-A CELL MARKER IS SOMETHING THE AUTHOR WROTE. An attribute block is a deliberate
-construct, so a cell that carries one and no text is not blank and the row stays
-a table - the boundary is content a reader wrote, and an attribute is that.
+An empty cell carrying an attribute block:
 
 ::: compare
 
@@ -34679,7 +34693,7 @@ a table - the boundary is content a reader wrote, and an attribute is that.
 
 :::
 
-An alignment run is deliberate the same way, and holds its row a table too.
+An empty cell carrying an alignment run:
 
 ::: compare
 
@@ -50876,6 +50890,676 @@ see[^a]
     </li>
   </ol>
 </section>
+```
+
+:::
+
+## An explicitly delimited row of blank cells is a table
+
+A standard row needs an opening pipe, a closing pipe and at least one cell
+slot between them (PART 9 §5 T2). Empty content fills a slot like any other
+content, so a row of blank cells opens a table, interrupts a paragraph, and
+stays a row inside a table, under one predicate (markup-carve/carve#2879). This
+replaces the all-blank rejection of markup-carve/carve#1950, whose sections 113
+and 453 now carry the new expectations. A blank cell is an empty children list;
+nothing is synthesized to fill it.
+
+One empty data cell, padded and unpadded:
+
+::: compare
+
+```carve
+| |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+||
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+Two empty data cells, and three. Every slot between two delimiters is a cell:
+
+::: compare
+
+```carve
+|||
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td></td><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+| | |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td></td><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+||||
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td></td><td></td><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+An empty marked cell keeps the marker run and the space that ends it (T11).
+`|= |` is an empty header cell; `|=|` has no run, so its content is a literal `=`:
+
+::: compare
+
+```carve
+|= |
+```
+
+```html
+<table>
+  <thead>
+    <tr><th scope="col"></th></tr>
+  </thead>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+|=|
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td>=</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+The alignment run follows the same rule, `|> |` against `|>|`:
+
+::: compare
+
+```carve
+|> |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td style="text-align: right;"></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+|>|
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td>&gt;</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+The whole run in its one order, kind, alignment, attributes, then the space:
+
+::: compare
+
+```carve
+|=~{.x} |
+```
+
+```html
+<table>
+  <thead>
+    <tr><th scope="col" class="x" style="text-align: center;"></th></tr>
+  </thead>
+</table>
+```
+
+:::
+
+A cell attribute block needs the space too. Without it there is no run, and
+the block is cell content:
+
+::: compare
+
+```carve
+|{#x} |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td id="x"></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+|{#x}|
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td>{<span class="tag"><strong>#x</strong></span>}</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+A row attribute block glued to the closing pipe stays on the row, not on the
+blank cell (T8):
+
+::: compare
+
+```carve
+| |{.row}
+```
+
+```html
+<table>
+  <tbody>
+    <tr class="row"><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+A malformed row attribute block leaves content after the last pipe, so the
+line is prose, as it is for a row with content. A malformed cell attribute
+block is cell content:
+
+::: compare
+
+```carve
+| |{bad!!}
+```
+
+```html
+<p>| |{bad!!}</p>
+```
+
+:::
+
+::: compare
+
+```carve
+|{bad!!} |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td>{bad!!}</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+A lone pipe has no closing delimiter and no slot, so it stays paragraph text.
+A missing closer keeps its existing reading, with no blank-row exception:
+
+::: compare
+
+```carve
+|
+```
+
+```html
+<p>|</p>
+```
+
+:::
+
+::: compare
+
+```carve
+| a | b
+```
+
+```html
+<p>| a | b</p>
+```
+
+:::
+
+Escaped pipes and pipes inside a code span are content, never delimiters
+(T1). An escaped opener keeps the whole line literal:
+
+::: compare
+
+```carve
+| \| |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td>|</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+\| |
+```
+
+```html
+<p>| |</p>
+```
+
+:::
+
+::: compare
+
+```carve
+| `|` |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td><code>|</code></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+| `a|b` | |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td><code>a|b</code></td><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+Only ASCII spaces are padding. A tab between the pipes is cell content, not
+an empty cell (PART 7). Trailing whitespace after the closing pipe changes
+nothing:
+
+::: compare
+
+```carve
+|	|
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td>	</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+| |   
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+A blank row interrupts a paragraph, because opening and interruption share
+the predicate:
+
+::: compare
+
+```carve
+text
+| |
+```
+
+```html
+<p>text</p>
+<table>
+  <tbody>
+    <tr><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+text
+|||
+```
+
+```html
+<p>text</p>
+<table>
+  <tbody>
+    <tr><td></td><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+Blank rows before and after rows with content, and consecutive blank rows,
+are rows of their own. None disappears and none merges with its neighbor:
+
+::: compare
+
+```carve
+| |
+| a |
+| |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td></td></tr>
+    <tr><td>a</td></tr>
+    <tr><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+| | |
+|||
+| | |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td></td><td></td></tr>
+    <tr><td></td><td></td></tr>
+    <tr><td></td><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+Inside a quote and inside list items, under the hosts' usual content columns:
+
+::: compare
+
+```carve
+> text
+> | |
+> | |
+```
+
+```html
+<blockquote>
+  <p>text</p>
+  <table>
+    <tbody>
+      <tr><td></td></tr>
+      <tr><td></td></tr>
+    </tbody>
+  </table>
+</blockquote>
+```
+
+:::
+
+::: compare
+
+```carve
+- | |
+- |||
+```
+
+```html
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr><td></td></tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr><td></td><td></td></tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+```
+
+:::
+
+A caption attaches to a table of blank rows like any other:
+
+::: compare
+
+```carve
+| |
+^ A caption
+```
+
+```html
+<table>
+  <caption>A caption</caption>
+  <tbody>
+    <tr><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+Empty header rows before and after a body row keep the existing header-region
+and scope rules:
+
+::: compare
+
+```carve
+|= |= |
+| a | b |
+|= |= |
+```
+
+```html
+<table>
+  <thead>
+    <tr><th scope="col"></th><th scope="col"></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>a</td><td>b</td></tr>
+    <tr><th scope="row"></th><th scope="row"></th></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+A blank first row followed by a GFM delimiter row is promoted to an empty
+header row (T7):
+
+::: compare
+
+```carve
+| | |
+|---|---|
+| a | b |
+```
+
+```html
+<table>
+  <thead>
+    <tr><th scope="col"></th><th scope="col"></th></tr>
+  </thead>
+  <tbody>
+    <tr><td>a</td><td>b</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+A continuation row creates no row. It fills the blank row above it, and an
+empty continuation appends nothing and does not become a blank row (T6):
+
+::: compare
+
+```carve
+| | |
++ x | y |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td>x</td><td>y</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+::: compare
+
+```carve
+| |
++ |
+| |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td></td></tr>
+    <tr><td></td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+A table still cannot begin with a continuation row, blank or not:
+
+::: compare
+
+```carve
++ | |
+```
+
+```html
+<p>+ | |</p>
+```
+
+:::
+
+Span markers keep their existing walk. A blank cell can be the origin a
+marker extends, and no rule fills blank cells (T5):
+
+::: compare
+
+```carve
+| | < |
+| ^ | ^ |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td rowspan="2" colspan="2"></td></tr>
+    <tr></tr>
+  </tbody>
+</table>
 ```
 
 :::

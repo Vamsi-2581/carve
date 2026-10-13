@@ -697,7 +697,7 @@ function classifyOrdered(token) {
  * dropped for want of a column to join, which is content loss rather than a
  * different answer.
  */
-function splitRow(line, openRun = 0, openRunAt = 0, kind = 'standard') {
+function splitRow(line, openRun = 0, openRunAt = 0) {
   let s = line
   let rowAttrs = null
   const ra = new RegExp(`\\|\\{(${ATTR_PAYLOAD})\\}[ \\t]*$`).exec(s)
@@ -789,38 +789,9 @@ function splitRow(line, openRun = 0, openRunAt = 0, kind = 'standard') {
   // `|` with content dangling after the last pipe is prose, at a block start as
   // much as mid-paragraph -- there is no lenient open form.
   if (trimWs(cur) !== '') return null
-  if (cells.length === 0) return null // T2: `||` has no cell
-  /*
-   * T2's MINIMUM-CELL GUARD IS THE STANDARD ROW'S (carve#1354). "At least one
-   * cell lies between" is written of `valid_row`, the predicate that decides
-   * whether a line OPENS a table and whether it interrupts a paragraph, and T2
-   * says so in as many words: "this matches the `standard_row` production".
-   * A continuation row opens nothing - it appends to a table already open and
-   * produces no `<tr>` - so a row whose every cell is empty appends nothing,
-   * which is exactly what T6 provides for ("empty cells append nothing").
-   *
-   * Applying the standard row's guard here made ONE clause answer twice by
-   * column count: `| a | b |` over `+ | |` was absorbed and `| a |` over
-   * `+ |` was published as a paragraph, because only the one-column shape
-   * reaches a `cells.length === 1` test. All three engines absorb both.
-   */
-  // A STANDARD ROW WHOSE EVERY CELL IS BLANK IS NOT A TABLE (carve#1950). The
-  // guard used to fire for one cell only - `||` was prose while `|||` opened a
-  // two-column table of empty `<td>`, and `|= |`, an empty HEADER cell, opened
-  // a `<thead>`-only table where the identical plain `| |` was rejected. The
-  // detector was counting delimiter slots and never asking whether a slot held
-  // anything, the same class as the lone-pipe panic (carve-rs#1553): a table
-  // whose every cell is empty carries no data, and degrading it to text is what
-  // the one- and two-pipe cases already do.
-  //
-  // BLANK IS EMPTY CONTENT WITH NO ALIGNMENT, VALIGN OR ATTRIBUTE - a header
-  // marker aside, since `|= |` is the case the ruling names. A cell carrying an
-  // alignment run, a valign run or an attribute block was authored deliberately
-  // and is left a table (`|< |`, `|^ |`, `|{.x} |`); only slots holding nothing
-  // a reader wrote are the empty ones. `parseCell` strips the marker run, which
-  // is what lets the header case be seen: its raw segment `= ` does not trim to
-  // empty, its content does.
-  if (kind === 'standard' && cells.every(isBlankCell)) return null // `||`, `|||`, `| | |`, `|= |`
+  if (cells.length === 0) return null // T2: a lone `|` has no cell slot
+  // T2 counts slots, never content (carve#2879, replacing carve#1950): `||` and
+  // `| |` are one empty cell, `|||` two, for standard and continuation rows alike.
   // `inCode` here is the run the row's closing pipe did NOT close: a
   // continuation row is scanned with it, and nothing else reads it.
   // `inCode` here is the run the row's closing pipe did NOT close, and it sits
@@ -1271,18 +1242,6 @@ function parseCell(seg) {
   // payload, which is decided where the block is read, a few lines up. All
   // three engines read it that way; this file was alone.
   return cell
-}
-
-// carve#1950: a cell holds nothing a reader wrote. Empty content, and no
-// alignment, valign or attribute run - each of those is a construct the author
-// spelled, so `|< |`, `|^ |` and `|{.x} |` stay tables. A HEADER marker is the
-// one exception the ruling names: `|= |` is an empty header cell and blank, so
-// the `header` flag is not consulted. Content-only, because `parseCell` has
-// already stripped the marker run - the header case's raw `= ` does not trim to
-// empty but its content does.
-function isBlankCell(seg) {
-  const cell = parseCell(seg)
-  return cell.content === '' && cell.align === null && cell.valign === null && cell.attrs === null
 }
 
 // Syntax readers trim line endings; line-block bodies keep their raw gap columns.
@@ -3858,7 +3817,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         if (l === undefined || isBlank(l)) break
         if (CONT_ROW.test(l)) {
           // T6: continuation row - joins per column onto the row above
-          const sr = splitRow('|' + l.slice(1), openRun, openRunAt, 'continuation')
+          const sr = splitRow('|' + l.slice(1), openRun, openRunAt)
           if (!sr) break
           openRun = sr.openRun
           openRunAt = sr.openRunAt

@@ -291,3 +291,14 @@ much further, and `carve fmt` stripped the quotes off values the production
 rejected, which PART 11 does not permit a writer to emit. The production now
 names the characters that would end or restructure the block; what the three
 engines accepted at the time is recorded in carve#2440.
+
+## Blank table rows
+
+carve#1950 ruled that a standard row whose every cell was blank was not a
+table, so `||`, `|||`, `| | |` and `|= |` were paragraphs while `| a | |` and
+`|{.x} |` were tables. That made a single blank Djot cell (`| |`) impossible to
+import natively. carve#2879 replaced the rejection: T2 counts cell slots
+between explicit delimiters and never weighs their content (CARVE-P9-082).
+Source that was paragraph text may now open a table or interrupt a paragraph;
+an escaped delimiter keeps it literal. Corpus sections 113 and 453 keep their
+names because corpus numbering is append-only, and carry the new expectations.

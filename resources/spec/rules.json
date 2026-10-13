@@ -2037,6 +2037,12 @@
       "part": "9",
       "title": "A TIGHT ITEM'S ATTRIBUTED PARAGRAPH KEEPS ITS `<p>`",
       "scope": "resolution-rendering"
+    },
+    {
+      "id": "CARVE-P9-082",
+      "part": "9",
+      "title": "A CELL SLOT IS COUNTED, NOT WEIGHED",
+      "scope": "parsing"
     }
   ],
   "retired": [
