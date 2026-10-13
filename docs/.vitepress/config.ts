@@ -66,6 +66,19 @@ export default defineConfig({
   markdown: {
     ...carveMarkdown({ languages: [ebnfGrammar, orgGrammar, textileGrammar] }),
     config(md) {
+      // VitePress renders every page for the client and the server bundle, so
+      // each fence was highlighted ~3 times; Shiki was ~90% of the build.
+      const highlight = md.options.highlight!
+      const highlighted = new Map<string, string>()
+      md.options.highlight = (code, lang, attrs) => {
+        const key = `${lang}\0${attrs}\0${code}`
+        let html = highlighted.get(key)
+        if (html === undefined) {
+          html = highlight(code, lang, attrs)
+          highlighted.set(key, html)
+        }
+        return html
+      }
       // Custom container for two-column "Carve | HTML" example blocks.
       md.use(container, 'compare', {
         render(tokens: Array<{ nesting: number; info?: string }>, idx: number) {
