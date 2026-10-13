@@ -2055,7 +2055,7 @@
             "output": ">\n\n[a]: /u\n"
           },
           "rust": {
-            "output": ">\n",
+            "output": ">\n\n[a]: /u\n",
             "diagnostics": [
               {
                 "code": "markdown-reference-definition",
