@@ -474,7 +474,16 @@
         a `caption_number`     `data-carve-caption-number` on   inside the
                                the `<span>` that wraps the      caption marker
                                number, presence                 (CARVE-P11-067)
-        an element-less        none                             the opener and
+        a `div` whose          `data-carve-div` on the          the container
+        `<div>` carries no     `<div>`, presence                markers
+        other attribute                                         (CARVE-P11-063)
+        a `line_block`         `data-carve-line-block` on the   the container
+                               line block's `<div>`, presence   markers
+                                                                (CARVE-P11-063)
+        a `substitution`       `data-carve-substitution` on a   none
+                               `<span>` that wraps the node's
+                               `<del>` and `<ins>`, presence
+        an element-less       none                             the opener and
         container: its kind,                                    closer markers
         title, attributes                                       (CARVE-P11-063)
         and nesting
@@ -606,6 +615,36 @@
                                  data-carve-caption-number>1</span>: The
                                  sun</figcaption>
 
+      A BARE DIV IS MARKED, NOT INFERRED. A `<div>` with no attribute is what
+      any foreign HTML holds, so a reader never rebuilds a div from such an
+      element alone. It rebuilds a `div` from a `<div>` that carries `data-carve-div`,
+      and a writer writes the carrier only where the `<div>` carries no other
+      attribute.
+
+        :::            ->  <div data-carve-div>
+        inside             <p>inside</p>
+        :::                </div>
+
+      A LINE BLOCK IS READ FROM ITS CARRIER, NOT FROM ITS CLASS. The admonition
+      `::: line-block` renders the same `<div class="line-block">` as a line
+      block and carries no carrier, so a `<div class="line-block">` without
+      `data-carve-line-block` is never read as a line block. A reader rebuilds a
+      `line_block` from a `<div>` that carries the carrier.
+
+        ::: |          ->  <div data-carve-line-block class="line-block">
+        first              <p>first<br>
+        second             second</p>
+        :::                </div>
+
+      A SUBSTITUTION IS ONE WRAPPED PAIR. The carrier's `<span>` holds exactly
+      one `<del>` followed by one `<ins>`, and the reader rebuilds one
+      `substitution` from them, `old` from the `<del>` and `new` from the
+      `<ins>`. A span with any other attribute or any other content is not
+      this carrier. A `<del>` followed by an `<ins>` outside the carrier stays
+      a deletion and an insertion, as an authored `{-old-}{+new+}` writes them.
+
+        a {~old~>new~} b  ->  <p>a <span data-carve-substitution><del>old</del><ins>new</ins></span> b</p>
+
       A CONSTRUCT'S VERBATIM SOURCE IS WHAT THE RULE STILL EXCLUDES, which is
       why `data-carve-src` is absent from the rows above. It is not awaiting a
       field: [CARVE-P11-013] rules the glued opener canonical and says the tree
@@ -671,8 +710,9 @@
       A PRESENCE CARRIER CARRIES NOTHING IN ITS VALUE.
       `data-carve-explicit-id`, `data-carve-generated-id`,
       `data-carve-autolink`, `data-carve-inline-footnote`,
-      `data-carve-escaped`, `data-carve-tight`, `data-carve-xref` and
-      `data-carve-caption-number` say what they say
+      `data-carve-escaped`, `data-carve-tight`, `data-carve-xref`,
+      `data-carve-caption-number`, `data-carve-div`,
+      `data-carve-line-block` and `data-carve-substitution` say what they say
       by being there. A writer writes the empty value or `1`; a reader reads
       presence and does not compare the value.
 
