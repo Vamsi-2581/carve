@@ -969,7 +969,6 @@
           "element": "span"
         }
       ],
-      "aheadOfPin": true,
       "exportedHtml": "<figure id=\"fig-sun\">\n  <img src=\"sun.png\" alt=\"Sun\">\n  <figcaption>Figure <span data-carve-caption-number>1</span>: The sun</figcaption>\n</figure>\n<p>See <a href=\"#fig-sun\" data-carve-xref>Figure 1</a>.</p>"
     },
     {
@@ -997,8 +996,7 @@
           "element": "a"
         }
       ],
-      "exportedHtml": "<section id=\"Café\" data-carve-generated-id=\"1\">\n  <h1>Café</h1>\n  <p>See <a href=\"#Café\" data-carve-xref>Café</a>.</p>\n</section>",
-      "aheadOfPin": true
+      "exportedHtml": "<section id=\"Café\" data-carve-generated-id=\"1\">\n  <h1>Café</h1>\n  <p>See <a href=\"#Café\" data-carve-xref>Café</a>.</p>\n</section>"
     },
     {
       "id": "cross-reference-assigned-id",
@@ -1025,8 +1023,7 @@
           "element": "a"
         }
       ],
-      "exportedHtml": "<section id=\"a.b\" data-carve-explicit-id=\"1\">\n  <h1>Head</h1>\n  <p>See <a href=\"#a.b\" data-carve-xref>Head</a>.</p>\n</section>",
-      "aheadOfPin": true
+      "exportedHtml": "<section id=\"a.b\" data-carve-explicit-id=\"1\">\n  <h1>Head</h1>\n  <p>See <a href=\"#a.b\" data-carve-xref>Head</a>.</p>\n</section>"
     }
   ],
   "importNegative": [
