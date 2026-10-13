@@ -10689,6 +10689,24 @@ EOF = (* end of file *) ;
         a. two                       1. one
                                      2. two
 
+      AN AMBIGUOUS FIRST LETTER TAKES TWO MARKERS. When the first item's
+      marker is a letter that is also a roman numeral (`i`, `v`, `x`, `l`,
+      `c`, `d`, `m`, in either case), one marker cannot tell an alphabetic
+      list from a roman one, so the list-style marker holds the first two
+      item markers, separated by one space, and the import applies the
+      ambiguous-letter tie-break (PART 9 §11 N3) to them as Carve source
+      does. A single-item list with such a first marker holds its one
+      marker and takes the reading N3 gives a lone first marker. Every other
+      list keeps the one-marker form.
+
+        i. one                   ->  <!-- carve: i. j. -->
+        j. two                       9. one
+                                     10. two
+
+        i. one                   ->  <!-- carve: i. ii. -->
+        ii. two                      1. one
+                                     2. two
+
       A list's attribute marker stands directly above its list-style
       marker, as a block's does above its fence marker, and the import reads
       the two as one stack: the style from the list-style marker, the

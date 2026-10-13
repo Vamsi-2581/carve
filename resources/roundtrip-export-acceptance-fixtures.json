@@ -2092,6 +2092,61 @@
       "aheadOfPin": true
     },
     {
+      "id": "list-style-marker-ambiguous-alpha",
+      "source": "i. one\nj. two\n",
+      "carrierFragments": [
+        "<!-- carve: i. j. -->\n9. one"
+      ],
+      "expectedNodes": [
+        {
+          "type": "list",
+          "ordered": true,
+          "olType": "a",
+          "start": 9
+        }
+      ],
+      "forbiddenLossCodes": [
+        "list-style-dropped"
+      ],
+      "aheadOfPin": true
+    },
+    {
+      "id": "list-style-marker-ambiguous-roman",
+      "source": "i. one\nii. two\n",
+      "carrierFragments": [
+        "<!-- carve: i. ii. -->\n1. one"
+      ],
+      "expectedNodes": [
+        {
+          "type": "list",
+          "ordered": true,
+          "olType": "i"
+        }
+      ],
+      "forbiddenLossCodes": [
+        "list-style-dropped"
+      ],
+      "aheadOfPin": true
+    },
+    {
+      "id": "list-style-marker-ambiguous-single-item",
+      "source": "i. one\n",
+      "carrierFragments": [
+        "<!-- carve: i. -->\n1. one"
+      ],
+      "expectedNodes": [
+        {
+          "type": "list",
+          "ordered": true,
+          "olType": "i"
+        }
+      ],
+      "forbiddenLossCodes": [
+        "list-style-dropped"
+      ],
+      "aheadOfPin": true
+    },
+    {
       "id": "list-style-marker-under-attribute-line",
       "source": "{.steps}\na. one\nb. two\n",
       "carrierFragments": [
