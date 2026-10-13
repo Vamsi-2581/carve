@@ -702,7 +702,6 @@
     },
     {
       "id": "code-block-empty-label",
-      "aheadOfPin": true,
       "source": "```php []\necho 1;\n```\n",
       "carriers": {
         "data-carve-label": ""
