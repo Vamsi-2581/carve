@@ -88,9 +88,11 @@
       the marker stands directly above and no other, so the same caption text
       appearing as ordinary body text elsewhere in the document is untouched.
 
-      A CAPTION MARKER BELONGS TO THE CONTAINER THE MARKER BEFORE IT CLOSED.
-      One standing above an opener, or one with no closer before it, has lost
-      what it recorded, and the set is damaged under the rule below. A `^ ...`
+      A CAPTION MARKER BELONGS TO THE BLOCK DIRECTLY BEFORE IT, the one rule
+      CARVE-P11-067 states for every captioned block; for a composite figure
+      that block is the container the marker before it closed. One standing
+      above an opener has lost what it recorded, and the set is damaged under
+      the rule below. A `^ ...`
       line INSIDE the container is not the caption slot: it is literal text
       that renders as a paragraph, and it takes no marker of its own.
 
@@ -126,9 +128,10 @@
       with the mode on, imported back with `markdown` as the source format,
       returns every container the set names: its kind, its title, its
       attributes, and its nesting, which the import re-derives from the
-      block structure. It promises no
-      more than that. A construct outside the set degrades exactly as it does
-      with the mode off, a document
+      block structure. For containers it promises no more than that, and
+      CARVE-P11-067 and CARVE-P11-068 name everything else the mode carries. A
+      construct none of them carries degrades exactly as it does with the mode
+      off, a document
       holding no element-less container gains no comment under either
       setting, and this is not the byte-identical source round trip CARVE-P11-043's
       comparison governs.

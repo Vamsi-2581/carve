@@ -419,6 +419,18 @@ loses an id the author wrote on the heading, and moving a class onto the
 heading puts it on an element that never had it. `section-wrapper-id` pins an
 authored id, a derived one, a heading with its own id, and a section class.
 
+## A carrier attribute is consumed, not kept
+
+The roundtrip export writes carrier attributes that record what the HTML cannot
+show: `data-carve-explicit-id`, `data-carve-generated-id`, `data-carve-id-slot`,
+`data-carve-tight`, `data-carve-ref`, `data-carve-label`, `data-marker`,
+`data-char` and the other names `CARVE-P10-016` lists. Every import mode
+consumes them (`CARVE-P10-021`): the importer rebuilds the Carve syntax the
+carrier records and writes no carrier back as an authored attribute. A value
+outside a carrier's grammar is not a carrier and is reported. Two carriers that
+contradict each other on one element restore neither meaning, and the same
+clause lists the pairs.
+
 ## The escaping reaches the imported source
 
 Four of the shapes the import meaning sweep found are not import policy at all.

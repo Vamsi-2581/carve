@@ -678,14 +678,15 @@
       Reporting it is permitted, not required: an importer that builds a tree
       without a diagnostic channel still has to read the span.
 
-      THE RESERVED SET IS THIS ENUMERATION, NOT A PREFIX PATTERN. These names
+      THE RESERVED SET IS AN ENUMERATION, NOT A PREFIX PATTERN. These names
       are the serializer's protocol rather than an author's content, and each
-      one is reserved because this inventory lists it. So `data-marker` and
-      `data-char` keep their own spelling and are no less reserved for
-      carrying no prefix, and a `data-carve-` name this inventory does not
-      list is NOT a carrier and NOT reserved: an engine does not invent one,
-      and a reader treats it as an ordinary authored attribute. Adding a name
-      to this inventory is a change to this clause.
+      one is reserved because it is named: a row of this inventory, the
+      rowless name below and its alias, or an extension carrier its own
+      contract names. So `data-marker` and `data-char` keep their own spelling
+      and are no less reserved for carrying no prefix, and a `data-carve-`
+      name none of these names is NOT a carrier and NOT reserved: an engine
+      does not invent one, and a reader treats it as an ordinary authored
+      attribute. Adding a name to this inventory is a change to this clause.
 
       ONE NAME IS RESERVED WITHOUT A ROW. The core target writes no
       `data-carve-src`, and an importer consumes it in every mode and rebuilds
