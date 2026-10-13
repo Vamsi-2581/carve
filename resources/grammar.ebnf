@@ -4508,7 +4508,11 @@ EOF = (* end of file *) ;
          cells append nothing; no `<tr>` is produced. Under rowspan the
          joined content belongs to the SPANNING cell, whether the continuation
          stands before or after the `^` row (corpus
-         64-table-rowspan-with-multi-line-content). A
+         64-table-rowspan-with-multi-line-content). A `+` fragment on a span
+         marker joins the cell the T5 walk resolves the marker into, in
+         row-major order. A BLOCKED marker (T5) is a cell of its own: it renders
+         no marker, and the fragments on it are its content
+         (markup-carve/carve#3151). A
          table cannot BEGIN with a continuation row (PART 2 `table`). The AST
          keeps each join as a `cell_wrap` marker, so a writer can put the
          `+` lines back (CARVE-P12-069).
