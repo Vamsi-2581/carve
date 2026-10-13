@@ -239,8 +239,9 @@
       it breaks the pairing, and the set is damaged. Only term, definition
       and closing markers carry a depth; a depth on any other marker, such as
       `<!-- carve:2 ::: note -->` or `<!-- carve:2 {.x} -->`, makes that marker
-      invalid, and it drops alone and is reported as `carrier-marker-dropped`
-      (CARVE-P11-063).
+      invalid. It drops alone, an opener together with its closer under the
+      invalid-opener rule above, and is reported once as
+      `carrier-marker-dropped` (CARVE-P11-063).
 
         <!-- carve: :: Outer -->
         <!-- carve: : -->
