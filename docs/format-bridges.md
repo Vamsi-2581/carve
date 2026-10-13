@@ -144,6 +144,9 @@ Normalized constructs resolve source representations such as entities, escapes,
 references and alternate block forms; their output may already use that spelling. Raw HTML uses `raw-preserved` with
 `degraded` fidelity because it remains opaque and depends on the render profile.
 An ordered task marker uses `structure-unspellable` with `dropped` fidelity.
+An inline HTML `<code>` element that Carve cannot spell at its position uses
+`raw-code-fallback` with `degraded` fidelity: it stays raw HTML, so a target or
+profile that escapes or omits raw HTML changes its content.
 Known losses remain in the report when complete assessment is unavailable.
 
 Assessment must account for the complete input. Any unassessed construct retains

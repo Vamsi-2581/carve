@@ -8178,6 +8178,8 @@ EOF = (* end of file *) ;
       block and carries no carrier, so a `<div class="line-block">` without
       `data-carve-line-block` is never read as a line block. A reader rebuilds a
       `line_block` from a `<div>` that carries the carrier.
+      An authored `line-block` class on a line block is not recovered: the
+      renderer folds it into the class the line block writes anyway.
 
         ::: |          ->  <div data-carve-line-block class="line-block">
         first              <p>first<br>

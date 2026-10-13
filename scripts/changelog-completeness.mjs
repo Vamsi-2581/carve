@@ -279,7 +279,12 @@ export const verdict = ({ shipped, exempt, missing, unattributed, sections, from
         (unattributed ? `, ${unattributed} commit(s) carrying no pull request` : ''),
 });
 
-export const __internals = { VERSION_TAG, sectionHeadings, unreleasedSections, parseExemptions, exemptionForCommit, verdict };
+// A squash merge carries its pull request as a trailing `(#N)`, a merge commit
+// as `Merge pull request #N from ...`. Wave PRs merge with a merge commit.
+export const pullRequest = (subject) =>
+    (String(subject).match(/\(#(\d+)\)\s*$/) ?? String(subject).match(/^Merge pull request #(\d+) from /) ?? [])[1];
+
+export const __internals = { VERSION_TAG, sectionHeadings, unreleasedSections, parseExemptions, exemptionForCommit, verdict, pullRequest };
 
 if (process.env.CARVE_CHANGELOG_LIB === '1') {
   // Imported for its helpers by the self-test; do not run the gate.
@@ -365,17 +370,15 @@ const range = previous ? `${previous}..${at}` : at;
 // What merged, and what of it touched shipped source.
 
 const RECORD = '\u001f';
-const commits = git('log', `--format=%H${RECORD}%s`, range).split('\n').filter(Boolean)
+// First parent only: the commits a merge brings in carry no pull request of
+// their own, and the merge commit answers for them.
+const commits = git('log', '--first-parent', `--format=%H${RECORD}%s`, range).split('\n').filter(Boolean)
     .map((l) => { const [sha, subject] = l.split(RECORD); return { sha, subject }; });
 
 const touchesShipped = (sha) =>
     git('diff-tree', '--no-commit-id', '--name-only', '-r', '-m', '--first-parent', '--root', sha)
         .split('\n').filter(Boolean)
         .some((f) => SHIPPED.some((re) => re.test(f)) && !NOT_SHIPPED.some((re) => re.test(f)));
-
-// A squash merge carries its pull request as a trailing `(#N)`, the only
-// number on the commit that can lead anywhere.
-const pullRequest = (subject) => (subject.match(/\(#(\d+)\)\s*$/) ?? [])[1];
 
 // A reference is to THIS repository when it carries no qualifier, the bare
 // repository name (`carve#2094`, how the changelog here writes it), or the
