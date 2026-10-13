@@ -2077,6 +2077,29 @@
       }
     },
     {
+      "id": "dropped-figure-pair-takes-its-caption-marker",
+      "markdown": "<!-- carve: ::: {key=\"u} figure -->\n<!-- carve: :::: panel -->\n![a](x.png)\n\n<!-- carve: :::: -->\n<!-- carve: ::: -->\n<!-- carve: ^ Group caption -->\n**Group caption**\n\ntext\n",
+      "expectedNodes": [
+        {
+          "type": "admonition",
+          "kind": "panel"
+        },
+        {
+          "type": "strong"
+        }
+      ],
+      "forbiddenNodes": [
+        {
+          "type": "figure_group"
+        }
+      ],
+      "expectedDiagnostics": {
+        "carrier-marker-dropped": 1,
+        "carrier-markers-damaged": 0
+      },
+      "aheadOfPin": true
+    },
+    {
       "id": "valid-pair-reports-nothing",
       "markdown": "<!-- carve: ::: note -->\nBody.\n<!-- carve: ::: -->\n",
       "expectedNodes": [
