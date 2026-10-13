@@ -1713,7 +1713,7 @@ function bodyLeavesParagraphOpen(bodyLines, quoted = false, depth = 0) {
   // An UNTERMINATED fence is the opposite answer and keeps the old one: it opens
   // no block, so the paragraph above it is still open (corpus
   // `367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open`).
-  if (bodyLeavesNoParagraphAt(bodyLines, last)) return false
+  if (bodyLeavesNoParagraphAt(bodyLines, last, quoted)) return false
 
   // A TRAILING BARE `:::` OPENS AN EMPTY CONTAINER. It is closer-shaped, so
   // `opensParagraph` cannot tell it from a closer - but the line above says it
@@ -1790,7 +1790,7 @@ function bodyEndsWrappedAttr(bodyLines, depth = 0) {
 // wholesale - a `:::` line inside one is content, and reading it as a colon
 // fence's closer would make the real closer look like an opener and fold the
 // line below back into the body.
-function bodyLeavesNoParagraphAt(bodyLines, last) {
+function bodyLeavesNoParagraphAt(bodyLines, last, quoted = false) {
   // CARVE-P0-009 applies to a marker-line fence in a description body too.
   // Track its host column so an unfinished opener still leaves prose open.
   const host = hostLadder()
@@ -1812,6 +1812,7 @@ function bodyLeavesNoParagraphAt(bodyLines, last) {
     }
     paragraphOpen = opensParagraph(inner.rest, blockStart)
   }
+  if (quoted && host.fence) return true
   if ((!host.fence || !host.fence.markerLine) && host.kinds.at(-1) === 'item' && !paragraphOpen) return true
   let closedAt = -1
   let k = 0
@@ -6330,6 +6331,9 @@ function collectItems(lines, i, list, state, ind, meas) {
           pendingAuthoredBlock = null
         }
         if (authoredBlockLimit !== null && i >= authoredBlockLimit && !insideFence()) {
+          if (authoredContainer && isCodeBlockOpener(lm.rest) &&
+              QUOTE.test(ind(i - 1)?.rest ?? '') &&
+              !bodyLeavesParagraphOpen([ind(i - 1).rest])) closePara()
           authoredBlockBase = null
           authoredBlockLimit = null
         }
