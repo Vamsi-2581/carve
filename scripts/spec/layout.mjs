@@ -5988,12 +5988,23 @@ function collectItems(lines, i, list, state, ind, meas) {
     }
     let paragraphOpenBeforeComments = false
     let captureParagraphState = true
+    // Keep a marker-line note's comment at its authored body column, including
+    // a terminated span. A comment-shaped line inside its code fence is payload.
+    let markerNoteCommentEnd = -1
+    let markerNoteCommentSeen = false
     while (i < n) {
       if (captureParagraphState) paragraphOpenBeforeComments = deepestParagraphOpen()
       const line = lines[i]
       // `+` at the item's MARKER column attaches ONE following flush-left
       // block to this item (SS17 L3/L4)
       const lm = ind(i)
+      if (markerNoteEligible && i > noteFenceEnd && lm.col >= markerNoteBodyColumn &&
+          COMMENT_LINE.test(lm.rest) && !insideFence()) markerNoteCommentSeen = true
+      if (markerNoteEligible && i > noteFenceEnd && i > markerNoteCommentEnd && lm.col >= markerNoteBodyColumn &&
+          COMMENT_FENCE_BODY.test(lm.rest) && !insideFence()) {
+        const comment = classifyLayoutComment(lines, i)
+        if (comment?.kind === 'fenced_comment') markerNoteCommentEnd = comment.end - 1
+      }
       // Item content below the note body ends the note's list ownership.
       if (noteListBodyColumn !== null && lm.rest !== '' &&
           lm.col >= contentCol && lm.col < noteListBodyColumn && !insideFence()) {
@@ -6436,7 +6447,9 @@ function collectItems(lines, i, list, state, ind, meas) {
         // base at the item's content column then held it over a quote written
         // one column deeper, which arrived at body column 1 instead of 0 and
         // stopped being an opener at all (carve#1772, corpus 422-8).
-        const localBase = i <= noteFenceEnd && noteListBodyColumn !== null
+        const localBase = markerNoteCommentSeen && markerNoteEligible && col >= markerNoteBodyColumn &&
+          (i <= noteFenceEnd || i <= markerNoteCommentEnd || COMMENT_LINE.test(lm.rest)) ? contentCol
+          : i <= noteFenceEnd && noteListBodyColumn !== null
           ? noteListBodyColumn - FOOTNOTE_BODY_COLUMN
           : inOpenColonOnly ? openerBase : authoredBlockBase !== null && insideFence() && col < authoredBlockBase
           ? contentCol
@@ -6629,7 +6642,10 @@ function collectItems(lines, i, list, state, ind, meas) {
           closePara()
           defBodyIndent = defBody
         }
-        else if (COMMENT_LINE.test(dedented)) closePara()
+        else if (COMMENT_LINE.test(dedented)) {
+          closePara()
+          if (markerNoteEligible && col >= markerNoteBodyColumn) defBodyIndent = defBody
+        }
         else if (HR.test(dedented)) closePara()
         // A CODE FENCE CLOSES THE PARAGRAPH ONLY IF IT INTERRUPTED IT -- §10 I4,
         // and the same correction carve#891 already made one construct over for
@@ -6787,6 +6803,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // are ordinary text, so they record a paragraph the deepest structure
         // does not hold.
         if (nestedVerbatim()) closePara()
+        if (markerNoteCommentSeen && inNoteBody) closePara()
         // AN ABSORBED OPENER IS PARAGRAPH TEXT, NOT A BODY (§10 I4). Its span
         // stays tracked for the interior-blank rule, so a fence that really
         // opens under it never reached the tracker: its payload and closer
