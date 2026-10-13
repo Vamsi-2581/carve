@@ -2075,6 +2075,15 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    of `block`, its `pos` when recorded, and NO `format`. Only the Markdown
    target reports this code.
 
+   Each alphabetic or roman ordered list (`a.`, `A.`, `i.`, `I.`) the
+   Markdown target writes contributes one loss in document order with the
+   stable code `list-style-dropped`, the selected `target`, `nodeType` of
+   `block`, its `pos` when recorded, NO `format`, and `style`, one of
+   `lower-alpha`, `upper-alpha`, `lower-roman` or `upper-roman`. Markdown
+   numbers in decimal only, so the list keeps its start and delimiter and
+   loses its style, with roundtrip export on or off. Only the Markdown
+   target reports this code.
+
    The canonical Carve writer contributes no `destination-denied` row
    (CARVE-P9-054).
 
@@ -2103,8 +2112,9 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    explicit exceptions `--allow-loss raw-format-dropped`,
    `--allow-loss ruby-flattened`,
    `--allow-loss editorial-comment-flattened`,
-   `--allow-loss carrier-attribute-dropped` and
-   `--allow-loss definition-list-flattened`. The list is closed:
+   `--allow-loss carrier-attribute-dropped`,
+   `--allow-loss definition-list-flattened` and
+   `--allow-loss list-style-dropped`. The list is closed:
    `destination-denied` is not waivable, because a blanked destination is a
    policy refusal that a different profile avoids, not a loss the target
    cannot avoid (CARVE-P9-054). Import-loss reports
