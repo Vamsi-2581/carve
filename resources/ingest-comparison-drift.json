@@ -1190,6 +1190,358 @@
         "status": 0,
         "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: |\nx\n:::</p>\n    </div>\n    tail\n  </li>\n</ul>"
       }
+    },
+    {
+      "key": "tests/corpus/572-an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph-2.crv/js->php",
+      "reason": "An opener past an item-hosted colon body column interrupts the open paragraph there (CARVE-P2-017, carve#2978 ruling 2); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2881",
+      "fingerprint": "adece8d31bf575ceb86133d05ee0d4ba2687a435ee676495f24ad22c7db4c462",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>text</p>\n        <pre><code>x\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>text\n<code>\nx\n</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/572-an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph-2.crv/php->js",
+      "reason": "An opener past an item-hosted colon body column interrupts the open paragraph there (CARVE-P2-017, carve#2978 ruling 2); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2881",
+      "fingerprint": "90ff16a03c21139722ed5a5e672856ba5a28bd3de33e924802650f9cb34681f9",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>text\n<code>\nx\n</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>text</p>\n        <pre><code>x\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/572-an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph-2.crv/php->rust",
+      "reason": "An opener past an item-hosted colon body column interrupts the open paragraph there (CARVE-P2-017, carve#2978 ruling 2); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2881",
+      "fingerprint": "90ff16a03c21139722ed5a5e672856ba5a28bd3de33e924802650f9cb34681f9",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>text\n<code>\nx\n</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>text</p>\n        <pre><code>x\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/572-an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph-2.crv/rust->php",
+      "reason": "An opener past an item-hosted colon body column interrupts the open paragraph there (CARVE-P2-017, carve#2978 ruling 2); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2881",
+      "fingerprint": "adece8d31bf575ceb86133d05ee0d4ba2687a435ee676495f24ad22c7db4c462",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>text</p>\n        <pre><code>x\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>text\n<code>\nx\n</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column-2.crv/js->php",
+      "reason": "A head-row alignment marker sets the whole column over a delimiter colon; carve-php still lets the colon win.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3249",
+      "fingerprint": "d6dc1b3483dc908b10930ed499a10b0b10dae9ee9765a992bc69079c34db2c1a",
+      "observation": {
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>",
+        "status": 0,
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: center;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>"
+      }
+    },
+    {
+      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column-2.crv/php->js",
+      "reason": "A head-row alignment marker sets the whole column over a delimiter colon; carve-php still lets the colon win.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3249",
+      "fingerprint": "aafa05c690607e84e88d9aa498ab8e5f0e0bf5e04996a72ba4753761fb5a0b15",
+      "observation": {
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: center;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>",
+        "status": 0,
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>"
+      }
+    },
+    {
+      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column-2.crv/php->rust",
+      "reason": "A head-row alignment marker sets the whole column over a delimiter colon; carve-php still lets the colon win.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3249",
+      "fingerprint": "aafa05c690607e84e88d9aa498ab8e5f0e0bf5e04996a72ba4753761fb5a0b15",
+      "observation": {
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: center;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>",
+        "status": 0,
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>"
+      }
+    },
+    {
+      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column-2.crv/rust->php",
+      "reason": "A head-row alignment marker sets the whole column over a delimiter colon; carve-php still lets the colon win.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3249",
+      "fingerprint": "d6dc1b3483dc908b10930ed499a10b0b10dae9ee9765a992bc69079c34db2c1a",
+      "observation": {
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>",
+        "status": 0,
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: center;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>"
+      }
+    },
+    {
+      "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/js->php",
+      "reason": "A comment at or past the item content column retains nothing, so the below-column line leaves the item (CARVE-P0-009 X1, carve#2978 ruling 1); the pinned engines read it differently from one another until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2879",
+      "fingerprint": "77dcb787702e88a131d5fbe336e9fbb8d1793d12ba38acb893d97f1d78757bbe",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text\ntail</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n        <p>tail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/js->rust",
+      "reason": "A comment at or past the item content column retains nothing, so the below-column line leaves the item (CARVE-P0-009 X1, carve#2978 ruling 1); the pinned engines read it differently from one another until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2879",
+      "fingerprint": "36d7ecaa95e8197c47a06c57bea74bb853e4c967bf128914147c466366f9d59a",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n        <p>tail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/php->js",
+      "reason": "A comment at or past the item content column retains nothing, so the below-column line leaves the item (CARVE-P0-009 X1, carve#2978 ruling 1); the pinned engines read it differently from one another until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2879",
+      "fingerprint": "f75ef7f9d84c3d0d773683209cfca0e5cfaa40012514b0ac1ef65d2454f540d6",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n        <p>tail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text\ntail</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/php->rust",
+      "reason": "A comment at or past the item content column retains nothing, so the below-column line leaves the item (CARVE-P0-009 X1, carve#2978 ruling 1); the pinned engines read it differently from one another until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2879",
+      "fingerprint": "19a0a67e6dc4fe292f5598db768746572fa59b2390c9f521758fedd12bae9294",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text\ntail</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/rust->js",
+      "reason": "A comment at or past the item content column retains nothing, so the below-column line leaves the item (CARVE-P0-009 X1, carve#2978 ruling 1); the pinned engines read it differently from one another until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2879",
+      "fingerprint": "045fef9ba8c8594c236eb60b2aed1f4634f39a1eecae0b495135a2adb10f8a79",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n        <p>tail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/rust->php",
+      "reason": "A comment at or past the item content column retains nothing, so the below-column line leaves the item (CARVE-P0-009 X1, carve#2978 ruling 1); the pinned engines read it differently from one another until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2879",
+      "fingerprint": "ea6062d08e12c5ada4e49c04943165f8d4aed1471c585061932acfc3629fa9f4",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text\ntail</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/572-an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph.crv/js->php",
+      "reason": "An opener past an item-hosted colon body column interrupts the open paragraph there (CARVE-P2-017, carve#2978 ruling 2); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2881",
+      "fingerprint": "1a9838fb5a00464b0b97ff5994c3f895799a229808a5531d0eba3c43118331f1",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <h1 id=\"h\">h</h1>\n    </div>\n  </li>\n</ul>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n# h</p>\n    </div>\n  </li>\n</ul>"
+      }
+    },
+    {
+      "key": "tests/corpus/572-an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph.crv/php->js",
+      "reason": "An opener past an item-hosted colon body column interrupts the open paragraph there (CARVE-P2-017, carve#2978 ruling 2); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2881",
+      "fingerprint": "9f0d7522771889d6bc10bfa1fb929f54b98a5fc9fabfbfcd945fa1fb066a9e3b",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n# h</p>\n    </div>\n  </li>\n</ul>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <h1 id=\"h\">h</h1>\n    </div>\n  </li>\n</ul>"
+      }
+    },
+    {
+      "key": "tests/corpus/572-an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph.crv/php->rust",
+      "reason": "An opener past an item-hosted colon body column interrupts the open paragraph there (CARVE-P2-017, carve#2978 ruling 2); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2881",
+      "fingerprint": "9f0d7522771889d6bc10bfa1fb929f54b98a5fc9fabfbfcd945fa1fb066a9e3b",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n# h</p>\n    </div>\n  </li>\n</ul>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <h1 id=\"h\">h</h1>\n    </div>\n  </li>\n</ul>"
+      }
+    },
+    {
+      "key": "tests/corpus/572-an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph.crv/rust->php",
+      "reason": "An opener past an item-hosted colon body column interrupts the open paragraph there (CARVE-P2-017, carve#2978 ruling 2); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2881",
+      "fingerprint": "1a9838fb5a00464b0b97ff5994c3f895799a229808a5531d0eba3c43118331f1",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <h1 id=\"h\">h</h1>\n    </div>\n  </li>\n</ul>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n# h</p>\n    </div>\n  </li>\n</ul>"
+      }
+    },
+    {
+      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column.crv/js->php",
+      "reason": "A head-row alignment marker sets the whole column over a delimiter colon; carve-php still lets the colon win.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3249",
+      "fingerprint": "74ce98b7a2b0c6ef8878f42f55a704989fdff6cbbf1038eabec313d52ab804ab",
+      "observation": {
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: left;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>",
+        "status": 0,
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>"
+      }
+    },
+    {
+      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column.crv/php->js",
+      "reason": "A head-row alignment marker sets the whole column over a delimiter colon; carve-php still lets the colon win.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3249",
+      "fingerprint": "2ae70a697cebed07c7dd8b09e42d186ba74fe1822b590d8e4e5c70b845992028",
+      "observation": {
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>",
+        "status": 0,
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: left;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>"
+      }
+    },
+    {
+      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column.crv/php->rust",
+      "reason": "A head-row alignment marker sets the whole column over a delimiter colon; carve-php still lets the colon win.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3249",
+      "fingerprint": "2ae70a697cebed07c7dd8b09e42d186ba74fe1822b590d8e4e5c70b845992028",
+      "observation": {
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>",
+        "status": 0,
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: left;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>"
+      }
+    },
+    {
+      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column.crv/rust->php",
+      "reason": "A head-row alignment marker sets the whole column over a delimiter colon; carve-php still lets the colon win.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3249",
+      "fingerprint": "74ce98b7a2b0c6ef8878f42f55a704989fdff6cbbf1038eabec313d52ab804ab",
+      "observation": {
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: left;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>",
+        "status": 0,
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>"
+      }
+    },
+    {
+      "key": "tests/corpus/571-a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim-2.crv/js->php",
+      "reason": "An at-column comment retains nothing and the shifted fence then opens in the container with no claim (CARVE-P0-009 X1, CARVE-P0-013); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2879",
+      "fingerprint": "6e9faab0121574d33c1e1172d0e3e94624443067b6d7b012e6fa741eaadc2c48",
+      "observation": {
+        "expected": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>\n        <div class=\"box\">\n          <ul>\n            <li>inner\n              <code>\ncode</code>\n            </li>\n          </ul>\n        </div>\n      </li>\n    </ul>\n  </blockquote>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
+        "status": 0,
+        "actual": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>\n        <div class=\"box\">\n          <ul>\n            <li>inner\n              <code>\ncode</code>\n            </li>\n          </ul>\n          <p>- tail</p>\n        </div>\n      </li>\n    </ul>\n  </blockquote>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/571-a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim-2.crv/js->rust",
+      "reason": "An at-column comment retains nothing and the shifted fence then opens in the container with no claim (CARVE-P0-009 X1, CARVE-P0-013); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2879",
+      "fingerprint": "6e9faab0121574d33c1e1172d0e3e94624443067b6d7b012e6fa741eaadc2c48",
+      "observation": {
+        "expected": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>\n        <div class=\"box\">\n          <ul>\n            <li>inner\n              <code>\ncode</code>\n            </li>\n          </ul>\n        </div>\n      </li>\n    </ul>\n  </blockquote>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
+        "status": 0,
+        "actual": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>\n        <div class=\"box\">\n          <ul>\n            <li>inner\n              <code>\ncode</code>\n            </li>\n          </ul>\n          <p>- tail</p>\n        </div>\n      </li>\n    </ul>\n  </blockquote>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/571-a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim-2.crv/php->js",
+      "reason": "An at-column comment retains nothing and the shifted fence then opens in the container with no claim (CARVE-P0-009 X1, CARVE-P0-013); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2879",
+      "fingerprint": "d330f1d92a1528dd5e179e04dccc63503835026d3f02d687f71c2bca7ae5849c",
+      "observation": {
+        "expected": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>\n        <div class=\"box\">\n          <ul>\n            <li>inner\n              <code>\ncode</code>\n            </li>\n          </ul>\n          <p>- tail</p>\n        </div>\n      </li>\n    </ul>\n  </blockquote>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>\n        <div class=\"box\">\n          <ul>\n            <li>inner\n              <code>\ncode</code>\n            </li>\n          </ul>\n        </div>\n      </li>\n    </ul>\n  </blockquote>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
+      }
+    },
+    {
+      "key": "tests/corpus/571-a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim-2.crv/rust->js",
+      "reason": "An at-column comment retains nothing and the shifted fence then opens in the container with no claim (CARVE-P0-009 X1, CARVE-P0-013); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2879",
+      "fingerprint": "d330f1d92a1528dd5e179e04dccc63503835026d3f02d687f71c2bca7ae5849c",
+      "observation": {
+        "expected": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>\n        <div class=\"box\">\n          <ul>\n            <li>inner\n              <code>\ncode</code>\n            </li>\n          </ul>\n          <p>- tail</p>\n        </div>\n      </li>\n    </ul>\n  </blockquote>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>\n        <div class=\"box\">\n          <ul>\n            <li>inner\n              <code>\ncode</code>\n            </li>\n          </ul>\n        </div>\n      </li>\n    </ul>\n  </blockquote>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
+      }
+    },
+    {
+      "key": "tests/corpus/571-a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim.crv/js->php",
+      "reason": "A fence run past an item-hosted container's column opens a code block that stores no continuation claim (CARVE-P0-004, CARVE-P0-013); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2875",
+      "fingerprint": "0c4f8aa74897df9e717a227e8c17478c39cf76190b527cbe1c8a41e47e5fa21c",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p><code>\ncode\ntail</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/571-a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim.crv/js->rust",
+      "reason": "A fence run past an item-hosted container's column opens a code block that stores no continuation claim (CARVE-P0-004, CARVE-P0-013); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2875",
+      "fingerprint": "5af8e405493407b457c697b8726c815f1db790b5fc73da7a2e434eb5a678d72c",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p><code>\ncode</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p><code>\ncode\ntail</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/571-a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim.crv/php->js",
+      "reason": "A fence run past an item-hosted container's column opens a code block that stores no continuation claim (CARVE-P0-004, CARVE-P0-013); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2875",
+      "fingerprint": "634b3a291be1b89aff2a41dbe3f174f637c9862a6bc5dcf639132908b2a8919f",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p><code>\ncode\ntail</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/571-a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim.crv/php->rust",
+      "reason": "A fence run past an item-hosted container's column opens a code block that stores no continuation claim (CARVE-P0-004, CARVE-P0-013); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2875",
+      "fingerprint": "9a28d34f7f51cb4f63dfcee21cad5d3373cebd2d27d9a48a613939970731dc12",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p><code>\ncode</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/571-a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim.crv/rust->js",
+      "reason": "A fence run past an item-hosted container's column opens a code block that stores no continuation claim (CARVE-P0-004, CARVE-P0-013); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2875",
+      "fingerprint": "6467c0575d171e2d83a09f3d577516a34a0abf3fc08a01b85a6a19878e92f298",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p><code>\ncode\ntail</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p><code>\ncode</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
+      }
+    },
+    {
+      "key": "tests/corpus/571-a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim.crv/rust->php",
+      "reason": "A fence run past an item-hosted container's column opens a code block that stores no continuation claim (CARVE-P0-004, CARVE-P0-013); the pinned engines disagree until they follow.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2875",
+      "fingerprint": "2f3ad472af0afef3d59bf095bb8e3d46f8c87a8fa3310490d8e8d3160eb20353",
+      "observation": {
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>",
+        "status": 0,
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p><code>\ncode</code></p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
+      }
     }
   ]
 }

@@ -132,7 +132,7 @@ const HEADING = /^(#{1,6}) +(?=.*[^ \t\n\r\f])(.*)$/
 const HR = /^(-{3,}|\*{3,}|_{3,})[ \t]*$/
 const FENCE = /^(`{3,}|~{3,})(.*)$/
 const PURE_FENCE = /^(`{3,}|~{3,})[ \t]*$/
-const QUOTE = /^>(?: (.*)|)$/
+const QUOTE = /^>(?: (.*)|[ \t]*$)/
 // `reference_label = (character - ']' - '@'), {character - ']'}` - only those
 // two are excluded, and only `@` only at the first position. `^` was excluded
 // here too, so `[^]: %` matched nothing and fell through as a paragraph, where
@@ -383,7 +383,7 @@ function isCaptionableParagraph(para) {
   // literal text, where all three engines leave both lines as prose - the
   // tail patterns admit a newline inside `[...]` and `(...)` because they
   // never had to exclude one.
-  const line = para.join('\n')
+  const line = para.map(trimLineEnd).join('\n')
   if (CAPTIONABLE_MATH.test(line)) return 'math'
   if (!line.startsWith('![')) return null
   const altEnd = bracketRunEnd(line, 1)
@@ -1285,6 +1285,9 @@ function isBlankCell(seg) {
   return cell.content === '' && cell.align === null && cell.valign === null && cell.attrs === null
 }
 
+// Syntax readers trim line endings; line-block bodies keep their raw gap columns.
+const trimLineEnd = (line) => line.replace(/[ \t]+$/, '')
+
 // PART 9 SS15: try to read one-or-more attribute blocks starting at
 // lines[i] (adjacent blocks on one line merge; one block may wrap lines; a
 // blank line inside the braces invalidates). Returns { lists, next } or null.
@@ -1892,8 +1895,8 @@ function hostLadder() {
  */
 function hostAdvance(h, line, paraOpen) {
   const meas = indentCols(line)
-  if (meas.col === 0 && DEFLIST_TERM.test(meas.rest)) h.descriptionTerm = true
-  const description = h.descriptionTerm && meas.col === 0 && /^:( +)(.*)$/.exec(meas.rest)
+  const term = meas.col === 0 && DEFLIST_TERM.test(meas.rest)
+  const description = h.descriptionTerm && meas.col === 0 && /^:( +)(?=[ \t]*[^ \t])(.*)$/.exec(meas.rest)
   if (description && matchMarkerAt(indentCols(description[2]))) {
     const lead = markerFenceSummary(description[2], new Map())
     if (lead) {
@@ -1904,10 +1907,21 @@ function hostAdvance(h, line, paraOpen) {
       return { meas, inner: { col: column, rest: markerFreeContent(description[2]) }, blockStart: true, popped: false }
     }
   }
+  if (term) {
+    h.descriptionTerm = true
+    h.descriptionBlank = false
+  } else if (meas.rest === '') {
+    h.descriptionBlank = true
+  } else if (!description && !h.kinds.includes('description') &&
+      (h.descriptionBlank || !foldablePlainLine(line))) {
+    h.descriptionTerm = false
+  }
+  if (meas.rest !== '') h.descriptionBlank = false
   if (h.colons?.at(-1)?.mode === 'line-block' && meas.col >= h.colons.at(-1).base) {
     return { meas, inner: meas, blockStart: false, popped: false }
   }
   if (meas.rest === '' || h.colonComment || COMMENT_LINE.test(meas.rest)) {
+    h.descriptionParagraph = false
     if (COMMENT_LINE.test(meas.rest) && !h.colonComment) {
       h.retainedComment = meas.col > 0 && meas.col < h.columns.at(-1)
     }
@@ -1944,6 +1958,8 @@ function hostAdvance(h, line, paraOpen) {
     h.markerCols.pop()
     h.kinds.pop()
   }
+  if (!h.kinds.includes('description')) h.descriptionParagraph = false
+  if (h.kinds.at(-1) === 'description') paraOpen = h.descriptionParagraph ?? paraOpen
   const insideItem = h.kinds.at(-1) === 'item'
   let inner = meas
   let blockStart = false
@@ -1970,15 +1986,23 @@ function hostAdvance(h, line, paraOpen) {
       blockStart = true
       break
     }
-    // A DESCRIPTION BODY IS NOT A HOST HERE. Its column is its own separator
-    // run, but whether a `: ` line opens one at all depends on whether the
-    // term's list is still open, and a term's list ends at a blank followed by
-    // anything, at a block opener and at an indented list written before any
-    // description - while it survives text that folds into the term and content
-    // inside a description already open. That is paragraph-and-term state this
-    // tracker does not carry, and three separate readings came out wrong while
-    // it was guessed at, so the host stays out (carve#2538).
+    // A description carries its separator column only while its term's list survives.
+    if (description && inner === meas) {
+      const column = inner.col + 1 + description[1].length
+      h.markerCols.push(inner.col)
+      h.columns.push(column)
+      h.kinds.push('description')
+      blockStart = true
+      const next = indentCols(description[2])
+      inner = { col: column + next.col, rest: next.rest }
+      continue
+    }
     break
+  }
+  if (h.kinds.at(-1) === 'description') {
+    // A list-shaped line folds into the description's paragraph under section 10 I2.
+    h.descriptionParagraph = FENCE.test(inner.rest) && !blockStart
+      ? paraOpen : opensParagraph(inner.rest, blockStart)
   }
   return { meas, inner, blockStart, popped }
 }
@@ -2095,6 +2119,8 @@ function hostFenceOpener(h, inner, canOpen = () => true) {
   const f = FENCE.exec(inner.rest)
   const opener = f && parseFenceInfo(f[2]) !== null ? f : null
   if (inner.col !== column) {
+    // A shifted run in an open description paragraph is inline text, not a fence.
+    if (h.kinds.at(-1) === 'description' && h.descriptionParagraph) return null
     // An absorbed run of the other fence character is not waiting for this one.
     const awaited = h.unclaimed !== null && (opener === null || opener[1][0] === h.unclaimed.run[0])
     if (opener !== null && column > 0 && !h.unrebased.has(column) && !awaited && canOpen(opener)) return opener
@@ -2349,7 +2375,7 @@ function opensHostedColonBlock(line) {
 
 const opensAuthoredBase = (line) => opensSubBlock(line) || isLinkDef(line) ||
   FOOTNOTE_DEF.test(line) || COMMENT_LINE.test(line) ||
-  parseAttrList(line) !== null || isCaptionableParagraph([line])
+  parseAttrList(trimLineEnd(line)) !== null || isCaptionableParagraph([line])
 
 /**
  * Rebase an authored block opener inside a definition or footnote body.
@@ -2411,6 +2437,11 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
       const last = Math.min(close, lines.length - 1)
       for (let k = index; k <= last; k++) out.push(lines[k])
       index = last
+      continue
+    }
+    if (COMMENT_LINE.test(measured.rest) && !comment) {
+      out.push(!hostedColonBody && measured.col > 0 ? measured.rest : line)
+      flushedNote = false
       continue
     }
     const establishesBase = measured.col > 0 && (hostedColonBody ? opensHostedColonBlock(measured.rest) : opensAuthoredBase(measured.rest))
@@ -2889,7 +2920,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
       stop.next = i
       return blocks
     }
-    const line = lines[i]
+    const line = trimLineEnd(lines[i])
     if (ind(i).rest === '') { // isBlank, without re-walking the indent
       i++
       continue
@@ -2928,6 +2959,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
       let pullPending = false
       let afterComment = false
       let commentScanFrom = 0
+      let retainedParagraph = false
       // Indented continuation: the line's leading run must reach COLUMN 2
       // (PART 9 SS24 C1 column arithmetic), not two literal space characters.
       // A tab from column 0 already reaches column 4, so a bare tab or a
@@ -2937,6 +2969,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         const measured = ind(i)
         if (measured.col === 0 && FOOTNOTE_DEF.test(measured.rest)) break
         if (isBlank(lines[i])) afterComment = false
+        if (measured.col >= FOOTNOTE_BODY_COLUMN || isBlank(lines[i])) retainedParagraph = false
         if (isFootnoteContinuationLine(lines[i])) {
           afterComment = afterCommentTransition(false, {})
           bodyLines.push(dedent(lines[i], FOOTNOTE_BODY_COLUMN))
@@ -3009,7 +3042,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           pullPending = false
           i++
         } else if (measured.col < FOOTNOTE_BODY_COLUMN &&
-            (afterComment || paragraphOpenSince(bodyLines, commentScanFrom)) &&
+            (afterComment || retainedParagraph || paragraphOpenSince(bodyLines, commentScanFrom)) &&
             COMMENT_LINE.test(measured.rest) &&
             !(measured.col === 0 && commentFenceOpensSpan(lines, i))) {
           const comment = classifyLayoutComment(lines, i)
@@ -3019,6 +3052,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             i = comment.end
           } else i++
           commentScanFrom = bodyLines.length
+          retainedParagraph = false
           afterComment = afterCommentTransition(afterComment, { comment: true, belowComment: measured.col < FOOTNOTE_BODY_COLUMN })
         } else if (afterComment &&
             !startsVisibleBlock(lines[i]) && !isTableRow(lines[i]) &&
@@ -3026,6 +3060,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           // A retained marker is paragraph text and opens no list (PART 0 X1).
           bodyLines.push(BULLET.test(measured.rest) || isOrderedMarkerLine(measured.rest) ? LAZY + measured.rest : measured.rest)
           afterComment = afterCommentTransition(afterComment, {})
+          retainedParagraph = true
           i++
         } else break
         // NO LAZY CONTINUATION. A branch here used to fold any flush-left
@@ -3301,6 +3336,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           // Lines before the last comment this arm kept cannot hold a paragraph or a
           // span open, so the fold questions below read the tail only.
           let ddScanFrom = 0
+          let retainedParagraph = false
           const sinceComment = () => (ddScanFrom === 0 ? bodyLines : bodyLines.slice(ddScanFrom))
           let openFence = -1
           const nestedLeadFenceUnterminated = descriptionLeadHasUnterminatedNestedFence(
@@ -3308,6 +3344,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           )
           while (i < n) {
             const cur = lines[i] ?? ''
+            if (isDefinitionContinuationLine(cur, bodyColumn) || isBlank(cur)) retainedParagraph = false
             if (nestedLeadFenceUnterminated) {
               if (endsBodyAt(i)) break
               const measured = indentCols(cur)
@@ -3454,7 +3491,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             }
             if (classifyLayoutComment(lines, i) !== null) {
               if (authoredCol === 0 && commentFenceOpensSpan(lines, i)) break
-              if (!afterComment && !bodyLeavesParagraphOpen(asRead(sinceComment()))) break
+              if (!afterComment && !retainedParagraph && !bodyLeavesParagraphOpen(asRead(sinceComment()))) break
               const comment = classifyLayoutComment(lines, i)
               pushBody(keptCommentDelimiter(cur))
               if (comment.kind === 'fenced_comment') {
@@ -3462,6 +3499,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
                 i = comment.end
               } else i++
               ddScanFrom = bodyLines.length
+              retainedParagraph = false
               afterComment = afterCommentTransition(afterComment, { comment: true, belowComment: authoredCol < bodyColumn })
               continue
             }
@@ -3470,6 +3508,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
                 !(FENCE.test(cur) && hasCloser(lines, i))) {
               pushBody(BULLET.test(dedented) || isOrderedMarkerLine(dedented) ? LAZY + dedented : dedented)
               afterComment = afterCommentTransition(afterComment, {})
+              retainedParagraph = true
               i++
               continue
             }
@@ -3984,6 +4023,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           const before = qNestedTable[depth] ?? false
           qNestedTable[depth] = tableRunStep(before, text)
           const { inner, blockStart, popped } = hostAdvance(host, text, qNestedPara[depth] ?? false)
+          if (host.kinds.at(-1) === 'description') qNestedPara[depth] = host.descriptionParagraph
           if (blockStart) qNestedParaLines[depth] = []
           const inLineBlock = host.colons?.at(-1)?.mode === 'line-block'
           if (state.blockDepth + depth + 1 + (host.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(host, inner, (width, floor) => quotedCommentCloser(idx, depth + 2, width, floor), blockStart, qNestedParaLines[depth] ?? [], MAX_NESTING_DEPTH - state.blockDepth - depth - 1 - (host.columns.length - 1), (run, column, past) => closerFollows(idx, depth + 2, run, column, past))) {
@@ -4141,6 +4181,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           }
         }
         const { meas, inner: inner0, blockStart, popped } = hostAdvance(qHost, l, qOpenPara)
+        if (qHost.kinds.at(-1) === 'description') qOpenPara = qHost.descriptionParagraph
         if (blockStart) qPara = []
         const inLineBlock = qHost.colons?.at(-1)?.mode === 'line-block'
         if (state.blockDepth + (qHost.columns.length - 1) < MAX_NESTING_DEPTH && hostColonStep(qHost, inner0, (width, floor) => openComment === null && quotedCommentCloser(idx, 1, width, floor), blockStart, qPara, MAX_NESTING_DEPTH - state.blockDepth - (qHost.columns.length - 1), (run, column, past) => closerFollows(idx, 1, run, column, past))) {
@@ -5772,11 +5813,18 @@ function collectItems(lines, i, list, state, ind, meas) {
         closePara()
       }
     }
+    let paragraphOpenBeforeComments = false
+    let captureParagraphState = true
     while (i < n) {
+      if (captureParagraphState) paragraphOpenBeforeComments = deepestParagraphOpen()
       const line = lines[i]
       // `+` at the item's MARKER column attaches ONE following flush-left
       // block to this item (SS17 L3/L4)
       const lm = ind(i)
+      const commentLine = fence.opaque?.kind === 'comment' || nestedOpaque?.kind === 'comment' ||
+        (belowSpan !== null && lastCommentCloser(belowSpan.run) >= i) || lm.rest.startsWith('%%')
+      captureParagraphState = !commentLine
+      if (!commentLine && lm.rest === '') paragraphOpenBeforeComments = false
       if (lm.rest !== '') fenceBlankRun = 0
       if (CONT_MARKER.test(line) && lm.col === baseIndent) {
         i++
@@ -5995,7 +6043,7 @@ function collectItems(lines, i, list, state, ind, meas) {
             COMMENT_FENCE.test(dedented) ||
             FOOTNOTE_DEF.test(dedented) ||
             isLinkDef(dedented) ||
-            parseAttrList(dedented) !== null
+            parseAttrList(trimLineEnd(dedented)) !== null
           ) {
             // An INVISIBLE construct is not a second paragraph, and SS17 L1
             // asks for one: "some item holds a blank-line-separated second
@@ -6023,6 +6071,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           // a second PARAGRAPH inside the item -> loose (SS17 L1)
           if (!descendantFence) pushLine('', BLANK_MEAS)
           list.tight = false
+          if (col === contentCol) subCol = -1
           startPara()
           i = j
           continue
@@ -6163,7 +6212,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           !dmeas.rest.startsWith('%%') &&
           !FOOTNOTE_DEF.test(dedented) &&
           !isLinkDef(dedented) &&
-          parseAttrList(dedented) === null
+          parseAttrList(trimLineEnd(dedented)) === null
         ) {
           // §17 L1b: a second paragraph, still blank-line-separated.
           list.tight = false
@@ -6476,7 +6525,9 @@ function collectItems(lines, i, list, state, ind, meas) {
         // A block of this item below the sublist's column has ended the sublist,
         // so a later line past this column is no descendant's (CARVE-P0-004).
         if (subCol >= 0 && col < subCol && !nm && dmeas.rest !== '' && !belowCloser && !inCommentSpan &&
-            !inDefBody && !COMMENT_LINE.test(dedented) && !paragraphIsOpen()) subCol = -1
+            !inDefBody && !COMMENT_LINE.test(dedented) &&
+            (!paragraphIsOpen() ||
+              (col === contentCol && opensBlockAt(dedented, i)))) subCol = -1
         // A FENCED BODY IS NOT A PARAGRAPH whichever container opened it
         // (CARVE-P0-013, CARVE-P0-014). The branches above classify the line in
         // THIS item's coordinates, where a descendant's fence and its payload
@@ -6629,6 +6680,8 @@ function collectItems(lines, i, list, state, ind, meas) {
       if (!nm && atFrameColumn(lm.col) && lm.rest.startsWith('%%') && !paragraphIsOpen() && nestedOpaque?.kind !== 'comment' &&
           !bodyHoldsLiveCommentSpan()) break
       if (!nm && lm.rest.startsWith('%%') && itemLines.length > 0) {
+        if (!afterComment && !(deepestParagraphOpen() || paragraphOpenBeforeComments) && fence.opaque?.kind !== 'comment' &&
+            nestedOpaque?.kind !== 'comment' && !bodyHoldsLiveCommentSpan()) break
         // KEEP ONE COLUMN of the original indentation. Stripping it entirely
         // told the item's own parse that a line indented in the source had
         // been written flush left, and the rule above cannot then tell an

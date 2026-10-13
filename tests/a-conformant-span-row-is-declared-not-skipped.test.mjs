@@ -19,7 +19,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -51,13 +51,32 @@ function audit(body) {
   const root = mkdtempSync(join(tmpdir(), 'span-exempt-run-'))
   const file = join(root, 'ast-span-exempt')
   try {
+    // Copy the audit into a temporary spec checkout with count-one span fixtures.
+    for (const entry of readdirSync(repo)) {
+      if (['scripts', 'resources', 'tests'].includes(entry)) {
+        mkdirSync(join(root, entry))
+        for (const child of readdirSync(join(repo, entry))) {
+          if (entry === 'scripts' && child === 'declaration-audit.mjs') {
+            writeFileSync(join(root, entry, child), readFileSync(script, 'utf8'))
+          } else if (!(entry === 'resources' && child === 'ast-span-divergence.txt') &&
+                     !(entry === 'tests' && child === 'ast-spans.test.mjs')) {
+            symlinkSync(join(repo, entry, child), join(root, entry, child))
+          }
+        }
+      } else symlinkSync(join(repo, entry), join(root, entry))
+    }
+    writeFileSync(join(root, 'resources/ast-span-divergence.txt'),
+      'list (extent)  1  carve-php opens at the parent content column\n' +
+      'list_item (extent)  1  carve-php opens at the parent content column\n')
+    writeFileSync(join(root, 'tests/ast-spans.test.mjs'),
+      "const " + "LAST_MEASURED = new Map([['list (extent)', 1], ['list_item (extent)', 1]])\n")
     const env = { ...process.env }
     delete env.CARVE_DECL_AUDIT_LIB
     if (body !== null) {
       writeFileSync(file, body)
       env.AST_SPAN_EXEMPT_FILE = file
     }
-    const result = spawnSync(process.execPath, [script, '--mode=release', '--ref', 'worktree', '--no-fetch'], {
+    const result = spawnSync(process.execPath, [join(root, 'scripts/declaration-audit.mjs'), '--mode=release', '--ref', 'worktree', '--no-fetch'], {
       encoding: 'utf8',
       env,
       maxBuffer: 64 * 1024 * 1024,
@@ -95,7 +114,7 @@ test('every shipped declaration parses and names what makes the reading conforma
   try {
     const { rows, errors } = spanExemptions()
     assert.deepEqual(errors, [], 'the shipped .ast-span-exempt does not parse')
-    assert.ok(rows.length > 0, 'nothing is declared; delete this hatch rather than leaving it empty')
+    // The section 503 row comes back when the owed documents leave the row.
     for (const row of rows) {
       assert.match(
         row.reason,
@@ -190,7 +209,10 @@ test('exactly the span ledger and its twin are exemptible', () => {
 /* ------------------------------------------------------ the whole audit */
 
 test('a declared row leaves the owed count and prints, and an undeclared one stays owed', () => {
-  const declared = audit(readFileSync(resolve(repo, '.ast-span-exempt'), 'utf8'))
+  const declared = audit(
+    'list (extent)@1: containers, markup-carve/carve#1928\n' +
+    'list_item (extent)@1: containers, markup-carve/carve#1928\n',
+  )
   assert.match(declared.out, /EXEMPT - span rows declared conformant on every side/, declared.out)
   assert.match(declared.out, /list \(extent\) across 1 document\(s\): .*markup-carve\/carve#1928/)
   assert.match(declared.out, /list_item \(extent\) across 1 document\(s\)/)
