@@ -113,6 +113,10 @@
   overflow: auto;
 }
 
+.dogfood-carve-output {
+  overflow-x: auto;
+}
+
 .dogfood-carve-output > :first-child {
   margin-top: 0;
 }
@@ -123,7 +127,7 @@
 
 @media (max-width: 768px) {
   .dogfood-carve {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
