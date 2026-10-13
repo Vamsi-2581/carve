@@ -17,3 +17,29 @@ Table rowspan with multi-line content
   </tbody>
 </table>
 ```
+
+```
+| a | b |
+| ^ | c |
++ more | d |
+.
+<table>
+  <tbody>
+    <tr><td rowspan="2">a more</td><td>b</td></tr>
+    <tr><td>c d</td></tr>
+  </tbody>
+</table>
+```
+
+```
+| a | b |
++ more | d |
+| ^ | c |
+.
+<table>
+  <tbody>
+    <tr><td rowspan="2">a more</td><td>b d</td></tr>
+    <tr><td>c</td></tr>
+  </tbody>
+</table>
+```
