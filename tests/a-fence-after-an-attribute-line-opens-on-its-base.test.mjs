@@ -16,7 +16,7 @@ test('the no-attribute control stays a code block', () => {
   assert.match(render('- t\n  %% c\n   ````\n  x'), /<pre><code>x\n<\/code><\/pre>/)
 })
 
-test('the tab original matches the pinned shape', () => {
+test('the tab original strips payload from the authored base', () => {
   const html = render('- t\n  \t> q\n   \t{.c}\n\t\t%% c\n  \t ````\n \t{.c}\n \t```')
-  assert.match(html, /<blockquote><p>q<\/p><\/blockquote>\s*<pre class="c"><code>  \{\.c\}\n  ```\n<\/code><\/pre>/)
+  assert.match(html, /<blockquote><p>q<\/p><\/blockquote>\s*<pre class="c"><code>\{\.c\}\n```\n<\/code><\/pre>/)
 })

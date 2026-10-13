@@ -59,7 +59,8 @@ test('authored list bases preserve exact looseness, ownership, and fence payload
   assert.match(oracleHtml('- - a\n\n   # parent\n'), /<\/ul>\s*<h1 id="parent">/)
   const exactFence = '- item\n\n  ```\n  a\n\n   b\n  ```\n'
   const overFence = '- item\n\n     ```\n     a\n\n   b\n     ```\n'
-  assert.equal(oracleHtml(overFence), oracleHtml(exactFence))
+  assert.match(oracleHtml(exactFence), /<pre><code>a\n\n b\n<\/code><\/pre>/)
+  assert.match(oracleHtml(overFence), /<pre><code>a\n\nb\n<\/code><\/pre>/)
 })
 
 const here = dirname(fileURLToPath(import.meta.url))
