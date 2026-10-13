@@ -6807,7 +6807,12 @@ function collectItems(lines, i, list, state, ind, meas) {
         // are ordinary text, so they record a paragraph the deepest structure
         // does not hold.
         if (nestedVerbatim()) closePara()
-        if (markerNoteCommentSeen && inNoteBody) closePara()
+        // The note body keeps its reach past the closed paragraph (CARVE-P0-013).
+        if (markerNoteCommentSeen && inNoteBody) {
+          const noteBody = defBodyIndent
+          closePara()
+          defBodyIndent = noteBody
+        }
         // AN ABSORBED OPENER IS PARAGRAPH TEXT, NOT A BODY (§10 I4). Its span
         // stays tracked for the interior-blank rule, so a fence that really
         // opens under it never reached the tracker: its payload and closer
