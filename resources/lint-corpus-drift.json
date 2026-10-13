@@ -10,22 +10,6 @@
   },
   "differences": [
     {
-      "file": "tests/corpus/121-scheme-probe-strips-unicode-whitespace.crv",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "diagnostics": {
-        "js": [
-          [
-            "unresolved-reference-link",
-            1,
-            1
-          ]
-        ],
-        "php": [],
-        "rust": []
-      }
-    },
-    {
       "file": "tests/corpus/161-below-content-column-div-body-in-a-list-item-stays-literal.crv",
       "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3255",
@@ -336,65 +320,6 @@
       }
     },
     {
-      "file": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-11.crv",
-      "reason": "carve-php reads the code blocks of a footnote definition nested in a marker-line footnote as blocks of the list item, so it reports them as overindented item blocks; carve-js and carve-rs keep them in the nested note.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3240",
-      "diagnostics": {
-        "js": [
-          [
-            "list-item-block-overindented",
-            2,
-            5
-          ]
-        ],
-        "php": [
-          [
-            "list-item-block-overindented",
-            2,
-            5
-          ],
-          [
-            "list-item-block-overindented",
-            3,
-            7
-          ],
-          [
-            "list-item-block-overindented",
-            7,
-            7
-          ]
-        ],
-        "rust": [
-          [
-            "list-item-block-overindented",
-            2,
-            5
-          ]
-        ]
-      }
-    },
-    {
-      "file": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-12.crv",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "diagnostics": {
-        "js": [],
-        "php": [
-          [
-            "list-item-block-overindented",
-            3,
-            5
-          ],
-          [
-            "list-item-block-overindented",
-            4,
-            7
-          ]
-        ],
-        "rust": []
-      }
-    },
-    {
       "file": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-13.crv",
       "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3255",
@@ -501,107 +426,6 @@
             5
           ]
         ]
-      }
-    },
-    {
-      "file": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-2.crv",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "diagnostics": {
-        "js": [
-          [
-            "unresolved-reference-link",
-            1,
-            5
-          ]
-        ],
-        "php": [],
-        "rust": []
-      }
-    },
-    {
-      "file": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-4.crv",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "diagnostics": {
-        "js": [
-          [
-            "unresolved-footnote",
-            1,
-            5
-          ],
-          [
-            "unused-footnote-definition",
-            3,
-            1
-          ]
-        ],
-        "php": [],
-        "rust": []
-      }
-    },
-    {
-      "file": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-5.crv",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "diagnostics": {
-        "js": [
-          [
-            "unresolved-reference-link",
-            1,
-            5
-          ]
-        ],
-        "php": [],
-        "rust": []
-      }
-    },
-    {
-      "file": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker.crv",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "diagnostics": {
-        "js": [
-          [
-            "unresolved-reference-link",
-            1,
-            5
-          ]
-        ],
-        "php": [],
-        "rust": []
-      }
-    },
-    {
-      "file": "tests/corpus/565-a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id-4.crv",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "diagnostics": {
-        "js": [
-          [
-            "broken-crossref",
-            1,
-            3
-          ]
-        ],
-        "php": [],
-        "rust": []
-      }
-    },
-    {
-      "file": "tests/corpus/565-a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id.crv",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "diagnostics": {
-        "js": [
-          [
-            "unresolved-reference-link",
-            3,
-            5
-          ]
-        ],
-        "php": [],
-        "rust": []
       }
     },
     {
