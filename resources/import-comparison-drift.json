@@ -1,44 +1,18 @@
 {
   "version": 1,
   "measured": {
-    "date": "2026-09-30",
+    "date": "2026-10-13",
     "spec": "b41f89b4d858ec9e71171170c01ede3743b53ca9",
-    "js": "3352c0e465ddb2fb43f7dcc849154560bc16d58b",
-    "php": "a256e00aa6ee7d1fc3508b332b77fa15795f653e",
-    "rust": "ea87db0ad129f963bcfe5cadf5b96304e40fe4a6"
+    "js": "b8c309e43a0fdabb379727bebcb1d7b4f10c0bba",
+    "php": "be7dd4e720f5fecb75246ce313a6b548599ebaf7",
+    "rust": "a0d6c79000e98e8a2cf7366ed701c4281b5f65d5"
   },
   "differences": [
     {
-      "key": "djot/attributes.test:177",
-      "reason": "carve-rs imports Djot `{.blue}\\n***` as an escaped paragraph at the pin (e580eb31); carve-js and carve-php read it as a thematic break.",
-      "issue": "https://github.com/markup-carve/carve-rs/issues/2598",
-      "fingerprint": "71195c5e747b7a7cb53fb0ef213f4693dddbdd6266d4996752eeb054c22585c2",
-      "observation": {
-        "kind": "meaning",
-        "answers": {
-          "js": {
-            "status": 0,
-            "source": "{.blue}\n***\n",
-            "html": "<hr class=\"blue\">"
-          },
-          "php": {
-            "status": 0,
-            "source": "{.blue}\n***\n",
-            "html": "<hr class=\"blue\">"
-          },
-          "rust": {
-            "status": 0,
-            "source": "{.blue}\n\\*\\*\\*\n",
-            "html": "<p class=\"blue\">***</p>"
-          }
-        }
-      }
-    },
-    {
       "key": "commonmark/html/13",
-      "reason": "carve-js turns the literal tab after the first escaped backslash into a space on HTML import at the pin (b8c309e4), as carve-rs does at its pin (e580eb31); carve-php keeps the tab, which ruling 1 on carve#2978 (a tab is content) asks of every engine.",
+      "reason": "carve-js turns the literal tab after the first escaped backslash into a space on HTML import at the pin (b8c309e4); carve-php and carve-rs (a0d6c790) keep the tab, which ruling 1 on carve#2978 (a tab is content) asks of every engine.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2944",
-      "fingerprint": "1aef64534acad93a669266a51b33aa941fc3ec824e825f57dafb9fc635c1e5c7",
+      "fingerprint": "1dc0360c07fc48561d92e2bf23d8f6f3044b8c864233b9a2d0630479e3eba1aa",
       "observation": {
         "kind": "meaning",
         "answers": {
@@ -54,8 +28,8 @@
           },
           "rust": {
             "status": 0,
-            "source": "\\\\ \\\\A\\\\a\\\\ \\\\3\\\\φ\\\\«\n",
-            "html": "<p>\\ \\A\\a\\ \\3\\φ\\«</p>"
+            "source": "\\\\\t\\\\A\\\\a\\\\ \\\\3\\\\φ\\\\«\n",
+            "html": "<p>\\\t\\A\\a\\ \\3\\φ\\«</p>"
           }
         }
       }
