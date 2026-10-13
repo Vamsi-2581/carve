@@ -207,26 +207,33 @@
          (colspan) is a span marker; ANY other content disqualifies it --
          `{.x} <` is an ordinary cell with literal text `{.x} <` (no
          attributed span marker exists).
-      T5 SPAN WALK -- NORMATIVE [CARVE-P9-002], a total function. origin(marker) :=
-           for `<` at (r,c): the nearest c' < c walking LEFT with
-             avail(r,c'), skipping consumed positions;
-           for `^` at (r,c): the nearest r' < r walking UP with
-             avail(r',c), skipping consumed positions.
-         Origin found -> extend its colspan/rowspan across the marker's
-         position and mark that position consumed. A `^` MAY reach a HEADER
+      T5 SPAN WALK -- NORMATIVE [CARVE-P9-002], a total function. Markers
+         resolve in row-major order. Every position belongs to the cell whose
+         rectangle covers it; a span never covers a position another cell
+         owns, so the emitted grid has no overlap (carve#3047).
+           `<` at (r,c): the cell covering (r,c-1) gains one column, if that
+             cell starts in row r. A cell that started above would widen
+             across rows already placed.
+           `^` at (r,c): the cell covering (r-1,c) gains one row, if its
+             left edge is column c and every other position of the new row
+             strip it would cover, (r,c+1) to (r,c+colspan-1), is a span
+             marker not yet resolved or has no cell. Those markers resolve
+             into the same cell and render nothing.
+         The marker's position is then consumed. A `^` MAY reach a HEADER
          cell: the rowspan crosses the authored header/body partition
          (`<th rowspan="N">`), for native `|=` and GFM-promoted headers
          alike (corpus 101-table-header-cell-rowspan). PART 10 §7 puts every
          row in one `<tbody>` when a rowspan crosses a row-group boundary.
-         NO origin (the walk runs off the edge) -> the marker renders as an
-         EMPTY cell (`<td></td>` / `<th></th>`, no content, no span); never
-         dropped, never literal. Covers uniformly:
+         NO origin -> the marker renders as an EMPTY cell (`<td></td>` /
+         `<th></th>`, no content, no span); never dropped, never literal.
+         Covers uniformly:
            * ORPHAN -- `^` in the FIRST row / `<` in the FIRST column
              (corpus 98-table-span-marker-in-first-column);
-           * BLOCKED -- every intermediate position consumed by other spans
-             (corpus 106-blocked-span-marker-renders-as-empty-cell). A
-             marker that skips consumed neighbors and still reaches an
-             available cell DOES extend it -- not blocked.
+           * BLOCKED -- the neighbor is covered by a cell that started in an
+             earlier row (`<`), or the new row strip would cover a cell
+             (`^`) (corpus 106-blocked-span-marker-renders-as-empty-cell,
+             107-colspan-marker-scans-left-past-a-consumed-cell).
+         A 2x2 cell is `| a | < |` over `| ^ | < |` (or `| ^ | ^ |`).
       T6 CONTINUATION ROWS (`+` in the first column instead of `|`).
          Appends per-column onto the row ABOVE: each non-empty cell joins
          its column's cell content with a single space (soft wrap); empty
@@ -319,6 +326,10 @@
          first rows opens `<thead>`, one in a later row is a row header inside
          `<tbody>` (corpus 09-tables-7) -- so the attribute states an
          association the table already has rather than adding a concept.
+         The head-row run is the leading rows that own a cell and in which
+         every cell a row owns is a header cell; a span placeholder belongs
+         to the cell covering it, so `|= A | < |` heads its table
+         (CARVE-P11-056, carve#3048).
 
          AN AUTHORED `scope` REPLACES THE DEFAULT rather than joining it. A
          cell block naming `scope` suppresses the emitted one, so
