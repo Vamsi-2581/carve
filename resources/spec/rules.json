@@ -2025,6 +2025,12 @@
       "part": "9",
       "title": "A STRUCTURAL-ONLY LINE RESETS CAPTION SCOPE",
       "scope": "resolution-rendering"
+    },
+    {
+      "id": "CARVE-P9-081",
+      "part": "9",
+      "title": "A TIGHT ITEM'S ATTRIBUTED PARAGRAPH KEEPS ITS `<p>`",
+      "scope": "resolution-rendering"
     }
   ],
   "retired": [

@@ -701,6 +701,36 @@
       ]
     },
     {
+      "id": "code-block-empty-label",
+      "aheadOfPin": true,
+      "source": "```php []\necho 1;\n```\n",
+      "carriers": {
+        "data-carve-label": ""
+      },
+      "forbiddenExportAttributes": [
+        "data-carve-src",
+        "data-djot-src"
+      ],
+      "expectedNodes": [
+        {
+          "type": "code_block",
+          "lang": "php",
+          "label": ""
+        }
+      ],
+      "importModes": [
+        "safe",
+        "semantic",
+        "roundtrip"
+      ],
+      "carrierHosts": [
+        {
+          "attribute": "data-carve-label",
+          "element": "pre"
+        }
+      ]
+    },
+    {
       "id": "heading-id-slot",
       "source": "{.c #mine}\n# H\n\ntext\n",
       "carriers": {

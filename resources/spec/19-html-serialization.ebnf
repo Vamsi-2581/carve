@@ -460,6 +460,7 @@
         `list.tight`, where    `data-carve-tight` on `<ul>` or  none
         an item's paragraph    `<ol>`, presence
         keeps its `<p>`
+        (CARVE-P9-081)
         a resolved             `data-carve-xref` on `<a>`,      the
         `heading_ref`          presence; the `href` fragment    cross-reference
                                is its `target`                  marker
@@ -560,8 +561,10 @@
       A LABEL VALUE IS THE `label` PRODUCTION'S INTERIOR. `data-carve-label`
       holds what PART 2 writes between `[` and `]`, so a reader validates it
       against that production before rebuilding the fence label: a value that
-      holds `]`, a line break, or is empty is not a carrier, and CARVE-P10-017's rule
-      for an invalid value applies.
+      holds `]` or a line break is not a carrier, and CARVE-P10-017's rule
+      for an invalid value applies. An empty value is a carrier: it is the
+      empty label `[]`, which the AST keeps as `label: ""`, and a reader
+      rebuilds `[]`.
 
         ```php [Example]     ->  <pre data-carve-label="Example"><code
         echo 1;                  class="language-php">echo 1;
