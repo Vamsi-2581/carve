@@ -5629,10 +5629,20 @@ EOF = (* end of file *) ;
          all and there is no one list left to be loose. Tightness is a property of the
          WHOLE ITEM, not of an individual block: a tight item's paragraphs
          ALL render WITHOUT `<p>` (<li>text</li>), every one of them, not
-         only the first; a loose item's paragraphs are ALL wrapped
-         (<li><p>text</p></li>). An item can hold more than one paragraph
+         only the first, except as CARVE-P9-081 below states; a loose
+         item's paragraphs are ALL wrapped (<li><p>text</p></li>). An item can hold more than one paragraph
          block and still be tight -- L2 and L6 below cover the ways that
          happens without a blank line ever appearing.
+         A TIGHT ITEM'S ATTRIBUTED PARAGRAPH KEEPS ITS `<p>` -- NORMATIVE
+         [CARVE-P9-081]. In a tight item, a paragraph that carries block
+         attributes renders as `<p>` with those attributes; the item stays
+         tight and its other paragraphs stay bare. The attributes belong on
+         the paragraph's own element, so they are neither dropped nor moved
+         to the `<li>`.
+
+             - {.c}            ->  <ul><li><p class="c">text</p></li></ul>
+               text
+
       L1a THE ITEM'S FIRST BLOCK DOES NOT MATTER -- NORMATIVE [CARVE-P9-029]. L1 asks
          whether the item holds a blank-line-separated second PARAGRAPH. It
          does not ask what the FIRST block was, and nothing here depends on
@@ -7902,6 +7912,7 @@ EOF = (* end of file *) ;
         `list.tight`, where    `data-carve-tight` on `<ul>` or  none
         an item's paragraph    `<ol>`, presence
         keeps its `<p>`
+        (CARVE-P9-081)
         a resolved             `data-carve-xref` on `<a>`,      the
         `heading_ref`          presence; the `href` fragment    cross-reference
                                is its `target`                  marker
@@ -8002,8 +8013,10 @@ EOF = (* end of file *) ;
       A LABEL VALUE IS THE `label` PRODUCTION'S INTERIOR. `data-carve-label`
       holds what PART 2 writes between `[` and `]`, so a reader validates it
       against that production before rebuilding the fence label: a value that
-      holds `]`, a line break, or is empty is not a carrier, and CARVE-P10-017's rule
-      for an invalid value applies.
+      holds `]` or a line break is not a carrier, and CARVE-P10-017's rule
+      for an invalid value applies. An empty value is a carrier: it is the
+      empty label `[]`, which the AST keeps as `label: ""`, and a reader
+      rebuilds `[]`.
 
         ```php [Example]     ->  <pre data-carve-label="Example"><code
         echo 1;                  class="language-php">echo 1;

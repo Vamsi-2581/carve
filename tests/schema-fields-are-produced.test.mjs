@@ -74,10 +74,8 @@ const ENGINE_ROLLOUT_PENDING = {
   'ruby.*': 'structural publishing node: Carve 0.1 source has no spelling; produced only by AST and HTML-import consumers',
   'rubyPair.*': 'structural pair inside the ruby interchange node; produced only by AST and HTML-import consumers',
   'math.label': 'equation interchange field: Carve 0.1 source has no direct spelling; produced only by AST and format-bridge consumers',
-  'math.number': 'resolved equation number: the schema names it before the engines publish it (carve#3040)',
+  'math.number': 'equation interchange field (CARVE-P12-066): Carve 0.1 source has no direct spelling; produced only by AST and format-bridge consumers',
   'table.shortCaption': 'structural publishing field: Carve 0.1 source has no spelling; produced only by AST/Pandoc consumers',
-  'directive.title': 'no corpus case spells a titled directive yet, because carve-php and carve-rs do not render one (carve#3040)',
-  'directive.label': 'no corpus case spells a labeled directive yet; it lands with the titled case (carve#3040)',
   'table_cell.blocks': 'structural interchange field: Carve 0.1 source has no spelling for a block inside a cell; produced only by AST/Pandoc/HTML-import consumers',
 }
 
