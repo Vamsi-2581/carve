@@ -2172,8 +2172,7 @@
       ],
       "forbiddenLossCodes": [
         "list-style-dropped"
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "list-style-marker-roman",
@@ -2191,8 +2190,7 @@
       ],
       "forbiddenLossCodes": [
         "list-style-dropped"
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "list-style-marker-ambiguous-alpha",
@@ -2210,8 +2208,7 @@
       ],
       "forbiddenLossCodes": [
         "list-style-dropped"
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "list-style-marker-ambiguous-roman",
@@ -2228,8 +2225,7 @@
       ],
       "forbiddenLossCodes": [
         "list-style-dropped"
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "list-style-marker-ambiguous-single-item",
@@ -2246,8 +2242,7 @@
       ],
       "forbiddenLossCodes": [
         "list-style-dropped"
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "list-style-marker-under-attribute-line",
@@ -2267,8 +2262,7 @@
       ],
       "forbiddenLossCodes": [
         "list-style-dropped"
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "list-delimiter-changed-between-adjacent-lists",
@@ -2293,8 +2287,7 @@
       ],
       "forbiddenLossCodes": [
         "list-style-dropped"
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "list-delimiter-kept-when-lists-are-apart",
@@ -2517,8 +2510,7 @@
       "expectedDiagnostics": {
         "carrier-marker-dropped": 1,
         "carrier-markers-damaged": 0
-      },
-      "aheadOfPin": true
+      }
     },
     {
       "id": "depth-on-an-attribute-marker-drops-it-alone",
@@ -2543,8 +2535,7 @@
       "expectedDiagnostics": {
         "carrier-marker-dropped": 1,
         "carrier-markers-damaged": 0
-      },
-      "aheadOfPin": true
+      }
     },
     {
       "id": "list-style-marker-not-adjacent",
@@ -2563,8 +2554,7 @@
       ],
       "expectedDiagnostics": {
         "carrier-markers-damaged": 1
-      },
-      "aheadOfPin": true
+      }
     },
     {
       "id": "attribute-marker-over-a-block-between-it-and-the-list-style-marker",
@@ -2592,8 +2582,7 @@
       ],
       "expectedDiagnostics": {
         "carrier-markers-damaged": 0
-      },
-      "aheadOfPin": true
+      }
     }
   ]
 }

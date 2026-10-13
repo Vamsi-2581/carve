@@ -2,13 +2,35 @@
   "version": 1,
   "measured": {
     "date": "2026-10-13",
-    "spec": "7047606d8b81a9bf84d37c8add1ea55a341259a6",
-    "js": "d5f14c8c64565bc629e48e87afe6d8162ccb92ab",
+    "spec": "b2ab90008c9c9b503f463def01abecda87e6893c",
+    "js": "43dd609654c6b03e2c0068504f2a66dfd59eeb0a",
     "php": "be7dd4e720f5fecb75246ce313a6b548599ebaf7",
     "rust": "a0d6c79000e98e8a2cf7366ed701c4281b5f65d5",
-    "documents": 2536
+    "documents": 2588
   },
   "differences": [
+    {
+      "file": "tests/corpus/451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column.crv",
+      "reason": "carve-php (be7dd4e7) and carve-rs (a0d6c790) leave the link definition past the note's column as text and report the reference unresolved; carve-js (43dd6096) registers it, as the checker reads it (carve-rs#2639).",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3305",
+      "diagnostics": {
+        "js": [],
+        "php": [
+          [
+            "unresolved-reference-link",
+            6,
+            1
+          ]
+        ],
+        "rust": [
+          [
+            "unresolved-reference-link",
+            6,
+            1
+          ]
+        ]
+      }
+    },
     {
       "file": "tests/corpus/578-a-closed-fence-at-a-marker-line-note-s-body-column-opens-in-the-note-2.crv",
       "reason": "carve-php reports the child list as over-indented at the pin (be7dd4e7) where carve-js and carve-rs report a detached item body: it still gives the column-5 fence to the list item, not the note.",
@@ -38,46 +60,8 @@
       }
     },
     {
-      "file": "tests/corpus/581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-3.crv",
-      "reason": "carve-js (d5f14c8c) does not report unclosed-container-fence on the box whose closer the unclosed code fence swallows; carve-php (be7dd4e7) and carve-rs (a0d6c790) report it, as the corpus HTML implies.",
-      "issue": "https://github.com/markup-carve/carve-js/issues/2961",
-      "diagnostics": {
-        "js": [
-          [
-            "list-item-block-overindented",
-            5,
-            7
-          ]
-        ],
-        "php": [
-          [
-            "list-item-block-overindented",
-            5,
-            7
-          ],
-          [
-            "unclosed-container-fence",
-            1,
-            5
-          ]
-        ],
-        "rust": [
-          [
-            "list-item-block-overindented",
-            5,
-            7
-          ],
-          [
-            "unclosed-container-fence",
-            1,
-            5
-          ]
-        ]
-      }
-    },
-    {
       "file": "tests/corpus/581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-4.crv",
-      "reason": "carve-php (be7dd4e7) reports an over-indented block where both unclosed fences are code blocks; carve-js (d5f14c8c) and carve-rs (a0d6c790) read them as the corpus does and report nothing.",
+      "reason": "carve-php (be7dd4e7) reports an over-indented block where both unclosed fences are code blocks; carve-js (43dd6096) and carve-rs (a0d6c790) read them as the corpus does and report nothing.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3304",
       "diagnostics": {
         "js": [],
@@ -92,47 +76,9 @@
       }
     },
     {
-      "file": "tests/corpus/581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in.crv",
-      "reason": "carve-js (d5f14c8c) does not report unclosed-container-fence on the box whose closer the unclosed code fence swallows; carve-php (be7dd4e7) and carve-rs (a0d6c790) report it, as the corpus HTML implies.",
-      "issue": "https://github.com/markup-carve/carve-js/issues/2961",
-      "diagnostics": {
-        "js": [
-          [
-            "list-item-block-overindented",
-            5,
-            6
-          ]
-        ],
-        "php": [
-          [
-            "list-item-block-overindented",
-            5,
-            6
-          ],
-          [
-            "unclosed-container-fence",
-            1,
-            5
-          ]
-        ],
-        "rust": [
-          [
-            "list-item-block-overindented",
-            5,
-            6
-          ],
-          [
-            "unclosed-container-fence",
-            1,
-            5
-          ]
-        ]
-      }
-    },
-    {
-      "file": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing.crv",
-      "reason": "carve-js (d5f14c8c) and carve-php (be7dd4e7) let the comment line move the note's fence out of the note and report an over-indented block; carve-rs (a0d6c790) reads the fence inside the note, as the corpus does, and reports nothing.",
-      "issue": "https://github.com/markup-carve/carve-js/issues/2948",
+      "file": "tests/corpus/581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-5.crv",
+      "reason": "carve-rs (a0d6c790) still folds the closed fence below the sublist column into the sublist and reports its delimiters as over-indented fences; carve-js (43dd6096) and carve-php (be7dd4e7) open it in the outer item.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2636",
       "diagnostics": {
         "js": [
           [
@@ -141,6 +87,77 @@
             5
           ]
         ],
+        "php": [
+          [
+            "list-item-block-overindented",
+            3,
+            5
+          ]
+        ],
+        "rust": [
+          [
+            "fence-delimiter-indentation",
+            3,
+            5
+          ],
+          [
+            "fence-delimiter-indentation",
+            5,
+            5
+          ]
+        ]
+      }
+    },
+    {
+      "file": "tests/corpus/581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-6.crv",
+      "reason": "carve-rs (a0d6c790) reports nothing where carve-js (43dd6096) and carve-php (be7dd4e7) report the over-indented block below the closed sublist.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2636",
+      "diagnostics": {
+        "js": [
+          [
+            "list-item-block-overindented",
+            3,
+            7
+          ]
+        ],
+        "php": [
+          [
+            "list-item-block-overindented",
+            3,
+            7
+          ]
+        ],
+        "rust": []
+      }
+    },
+    {
+      "file": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing-2.crv",
+      "reason": "carve-php (be7dd4e7) and carve-rs (a0d6c790) let the comment line move the note's fence out of the note and report an over-indented block; carve-js (43dd6096) keeps it in the note (carve-rs#2643).",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3302",
+      "diagnostics": {
+        "js": [],
+        "php": [
+          [
+            "list-item-block-overindented",
+            4,
+            5
+          ]
+        ],
+        "rust": [
+          [
+            "list-item-block-overindented",
+            4,
+            5
+          ]
+        ]
+      }
+    },
+    {
+      "file": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing.crv",
+      "reason": "carve-php (be7dd4e7) lets the comment line move the note's fence out of the note and reports an over-indented block; carve-js (43dd6096) and carve-rs (a0d6c790) keep the fence in the note.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3302",
+      "diagnostics": {
+        "js": [],
         "php": [
           [
             "list-item-block-overindented",
@@ -149,6 +166,127 @@
           ]
         ],
         "rust": []
+      }
+    },
+    {
+      "file": "tests/corpus/586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note-2.crv",
+      "reason": "carve-php (be7dd4e7) and carve-rs (a0d6c790) open the unclosed fence below the comment and blank outside the note and report an over-indented block; carve-js (43dd6096) opens it in the note (carve-rs#2643).",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3302",
+      "diagnostics": {
+        "js": [],
+        "php": [
+          [
+            "list-item-block-overindented",
+            5,
+            5
+          ]
+        ],
+        "rust": [
+          [
+            "list-item-block-overindented",
+            5,
+            5
+          ]
+        ]
+      }
+    },
+    {
+      "file": "tests/corpus/586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note.crv",
+      "reason": "carve-php (be7dd4e7) and carve-rs (a0d6c790) open the unclosed fence below the comment outside the note and report an over-indented block; carve-js (43dd6096) opens it in the note (carve-rs#2643).",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3302",
+      "diagnostics": {
+        "js": [],
+        "php": [
+          [
+            "list-item-block-overindented",
+            4,
+            5
+          ]
+        ],
+        "rust": [
+          [
+            "list-item-block-overindented",
+            4,
+            5
+          ]
+        ]
+      }
+    },
+    {
+      "file": "tests/corpus/587-a-link-definition-or-an-attribute-line-past-a-box-s-column-opens-on-its-authored-base.crv",
+      "reason": "carve-php (be7dd4e7) leaves the link definition past the box's column as text and reports the reference unresolved; carve-js (43dd6096) and carve-rs (a0d6c790) register it.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3305",
+      "diagnostics": {
+        "js": [
+          [
+            "list-item-block-overindented",
+            2,
+            5
+          ]
+        ],
+        "php": [
+          [
+            "list-item-block-overindented",
+            2,
+            5
+          ],
+          [
+            "unresolved-reference-link",
+            5,
+            5
+          ]
+        ],
+        "rust": [
+          [
+            "list-item-block-overindented",
+            2,
+            5
+          ]
+        ]
+      }
+    },
+    {
+      "file": "tests/corpus/589-an-explicitly-delimited-row-of-blank-cells-is-a-table-33.crv",
+      "reason": "carve-php (be7dd4e7) and carve-rs (a0d6c790) do not read the row of blank cells as a table, so the `+` continuation line lints as a Djot bullet; carve-js (43dd6096) reads the table (carve-rs#2653).",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3319",
+      "diagnostics": {
+        "js": [],
+        "php": [
+          [
+            "djot-plus-bullet",
+            2,
+            1
+          ]
+        ],
+        "rust": [
+          [
+            "djot-plus-bullet",
+            2,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "file": "tests/corpus/589-an-explicitly-delimited-row-of-blank-cells-is-a-table-34.crv",
+      "reason": "carve-php (be7dd4e7) and carve-rs (a0d6c790) do not read the row of blank cells as a table, so the `+` continuation line lints as a Djot bullet; carve-js (43dd6096) reads the table (carve-rs#2653).",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3319",
+      "diagnostics": {
+        "js": [],
+        "php": [
+          [
+            "djot-plus-bullet",
+            2,
+            1
+          ]
+        ],
+        "rust": [
+          [
+            "djot-plus-bullet",
+            2,
+            1
+          ]
+        ]
       }
     }
   ]

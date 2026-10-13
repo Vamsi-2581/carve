@@ -160,21 +160,9 @@ test('PART 11 §10n: Markdown content or alignment keeps its header', () => {
   }
 })
 
-// Declared lag against the pinned build, which still omits a blank body row
-// because the all-blank rejection made it unspellable. EMPTY IS THE GOAL.
-const PIN_LAG = 'markdown-blank-body-row  carve#2879 keeps a blank Markdown body row as a row of empty cells (carve-js#2981)'
-
 test('PART 11 §10n: a blank Markdown body row is kept and does not split a table', () => {
   const markdown = '| A | B |\n| --- | --- |\n| 1 | 2 |\n| | |\n| 3 | 4 |\n'
   const imported = markdownToCarve(markdown)
-  if (PIN_LAG) {
-    assert.equal(
-      imported,
-      '|= A |= B |\n| 1 | 2 |\n| 3 | 4 |\n',
-      `pin lag is declared and the engine no longer has it - delete PIN_LAG: ${PIN_LAG}`,
-    )
-    return
-  }
   assert.equal(imported, '|= A |= B |\n| 1 | 2 |\n| | |\n| 3 | 4 |\n')
   const html = carveToHtml(imported)
   assert.equal((html.match(/<table>/g) ?? []).length, 1)

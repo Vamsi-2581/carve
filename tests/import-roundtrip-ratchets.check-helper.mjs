@@ -279,6 +279,15 @@ const visibleText = (html) =>
 // rule. The four rewritten expectations in 113 and 453 keep their .crv bytes,
 // so none of their counts move.
 
+// Pin 43dd6096 reads blank table rows (carve#2879) and takes the first-block
+// form in quotes and notes. HTML round trips gain eleven (437-4, 587-2, 588-2
+// and 589 rows 19, 24, 25, 27, 28, 30, 33, 34) and lose 589-22, whose tab-only
+// cell comes back empty. Markdown gains fourteen (437 and 437-4, 453 and
+// 453-2, 588 rows 2, 5, 6 and 589 rows 3, 4, 5, 25, 27, 33, 34) and loses
+// 589-13 (row attributes), 589-22 (the tab) and 589-30 (the caption), which
+// were paragraphs that round-tripped trivially under the old pin. Membership
+// was measured against both builds.
+
 test('HTML import and render/import round trips cannot drift silently', async () => {
   const names = (await readdir(root)).filter((name) => name.endsWith('.crv')).sort()
   const measured = {
