@@ -3574,6 +3574,10 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // own columns still fold, which is why the test is made here and not
             // in `bodyLeavesParagraphOpen`.
             if (authoredCol === 0 && descriptionBodyEndsInAbsorbedNote(asRead(bodyLines))) break
+            if (COMMENT_LINE.test(dedented) && !bodyHoldsOpenCommentSpan(asRead(sinceComment()))) {
+              openFence = descriptionOpenFenceAt(asRead(bodyLines), lines, i, bodyColumn, endsBodyAt)
+              if (openFence !== -1) break
+            }
             // carve#2488: a comment inside a span this body already holds is not
             // "a comment below the column" - see `bodyHoldsOpenCommentSpan`.
             if (COMMENT_LINE.test(dedented) && bodyHoldsOpenCommentSpan(asRead(sinceComment()))) {
