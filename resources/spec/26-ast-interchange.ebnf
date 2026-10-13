@@ -465,7 +465,8 @@
       leaves no marker. A cell with nothing on line k has no marker for k.
       Its part on line k is what lies between its markers for the lines
       before and after; what precedes the first marker is the standard row's
-      own part.
+      own part. A cell carrying `span` has the marker itself as its standard
+      row's part, so its children begin on the `+` line (CARVE-P12-048).
 
       UNDER A ROWSPAN the joined content belongs to the SPANNING cell (T6), so
       the marker goes there too, and it adds `row`: how many rows below the

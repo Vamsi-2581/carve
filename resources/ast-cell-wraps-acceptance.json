@@ -54,6 +54,20 @@
         { "type": "cell_wrap", "line": 1 },
         { "type": "text", "value": "b" }
       ]
+    },
+    {
+      "id": "blocked-marker-keeps-span-and-its-joined-text",
+      "source": "| ^ | b |\n+ t | u |\n",
+      "path": "/children/0/rows/0/cells/0",
+      "expected": { "type": "table_cell", "header": false, "span": "rowspan", "children": [{ "type": "text", "value": "t" }] },
+      "aheadOfPin": { "pinned": { "type": "table_cell", "header": false, "children": [], "span": "rowspan" }, "reason": "CARVE-P12-048 a blocked marker with joined text holds the text (carve#3158); the pinned carve-js drops it" }
+    },
+    {
+      "id": "blocked-marker-without-text-stays-empty",
+      "source": "| ^ | b |\n+   | u |\n",
+      "path": "/children/0/rows/0/cells/0",
+      "expected": { "type": "table_cell", "header": false, "span": "rowspan", "children": [] },
+      "html": "<td></td>"
     }
   ]
 }
