@@ -2128,6 +2128,57 @@
         "carrier-marker-dropped": 0,
         "carrier-markers-damaged": 0
       }
+    },
+    {
+      "id": "depth-on-a-container-opener-drops-the-pair",
+      "markdown": "<!-- carve:2 ::: note -->\nBody.\n<!-- carve: ::: -->\n\n<!-- carve: ::: tip -->\nok\n<!-- carve: ::: -->\n",
+      "expectedNodes": [
+        {
+          "type": "admonition",
+          "kind": "tip"
+        },
+        {
+          "type": "paragraph",
+          "children.0.value": "Body."
+        }
+      ],
+      "forbiddenNodes": [
+        {
+          "type": "admonition",
+          "kind": "note"
+        }
+      ],
+      "expectedDiagnostics": {
+        "carrier-marker-dropped": 1,
+        "carrier-markers-damaged": 0
+      },
+      "aheadOfPin": true
+    },
+    {
+      "id": "depth-on-an-attribute-marker-drops-it-alone",
+      "markdown": "<!-- carve:2 {.x} -->\n# Head\n\n<!-- carve: ::: tip -->\nok\n<!-- carve: ::: -->\n",
+      "expectedNodes": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "admonition",
+          "kind": "tip"
+        }
+      ],
+      "forbiddenNodes": [
+        {
+          "type": "heading",
+          "attrs.classes": [
+            "x"
+          ]
+        }
+      ],
+      "expectedDiagnostics": {
+        "carrier-marker-dropped": 1,
+        "carrier-markers-damaged": 0
+      },
+      "aheadOfPin": true
     }
   ]
 }
