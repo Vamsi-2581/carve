@@ -15,25 +15,25 @@
     },
     "php": {
       "html": {
-        "identical": 1974,
-        "strict": 1862,
+        "identical": 2029,
+        "strict": 1895,
         "total": 2492
       },
       "md": {
-        "identical": 1710,
-        "strict": 1296,
+        "identical": 1790,
+        "strict": 1350,
         "total": 2492
       }
     },
     "rs": {
       "html": {
-        "identical": 1896,
-        "strict": 1788,
+        "identical": 1987,
+        "strict": 1856,
         "total": 2492
       },
       "md": {
-        "identical": 1701,
-        "strict": 1509,
+        "identical": 1826,
+        "strict": 1595,
         "total": 2492
       }
     }
