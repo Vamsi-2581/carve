@@ -72,7 +72,7 @@ const CASES = [
   {
     name: 'form carrying a round-trip marker',
     html: '<form onclick="go()" data-carve-src="x">kept</form>\n',
-    subjects: [{ key: 'form.onclick' }, { key: 'form.data-carve-src', pending: 'markup-carve/carve-php#3222' }],
+    subjects: [{ key: 'form.onclick' }, { key: 'form.data-carve-src' }],
   },
   {
     name: 'form around a benign list-valued URL attribute',
@@ -87,7 +87,7 @@ const CASES = [
   {
     name: 'form retaining denied values on marker keys',
     html: '<form data-carve-src="javascript:x()"><cite cite="javascript:y()">t</cite></form>\n',
-    subjects: [{ key: 'form.data-carve-src', pending: 'markup-carve/carve-php#3222' }, { key: 'cite.cite' }],
+    subjects: [{ key: 'form.data-carve-src' }, { key: 'cite.cite' }],
   },
 ]
 
@@ -146,13 +146,7 @@ for (const attrs of ['align="right" style="text-align:left"', 'style="text-align
  * no longer describing their engine. A declared engine skips the case's
  * `expectedRows` check, since the comparison below holds it to the others' rows.
  */
-const DECLARED = ['safe', 'semantic'].flatMap((mode) => ['data-carve-src', 'data-djot-src'].map((name) => ({
-  case: `${mode} ignored nested ${name}`,
-  engine: 'php',
-  absent: ['attribute-dropped|info|dropped|exact|/form[1]/p[1]'],
-  reason: 'drops the stored marker attribute without a row',
-  ticket: 'markup-carve/carve-php#3222',
-})))
+const DECLARED = []
 
 /*
  * A clause every engine is behind, with the ticket that moves each one.

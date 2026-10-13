@@ -15,50 +15,6 @@
   },
   "differences": [
     {
-      "key": "tests/corpus/121-scheme-probe-strips-unicode-whitespace.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "51e9f0f313cc41196e6d7a58a2fe9ac86eccdafe2d479bb17624fe8af611bdda",
-      "observation": {
-        "expected": "<p><a href=\"\">click</a></p>",
-        "status": 0,
-        "actual": "<p>[click][a]</p>\n<p>[a]:  javascript:alert(1)</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/121-scheme-probe-strips-unicode-whitespace.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "51e9f0f313cc41196e6d7a58a2fe9ac86eccdafe2d479bb17624fe8af611bdda",
-      "observation": {
-        "expected": "<p><a href=\"\">click</a></p>",
-        "status": 0,
-        "actual": "<p>[click][a]</p>\n<p>[a]:  javascript:alert(1)</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/121-scheme-probe-strips-unicode-whitespace.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "2c5c6a265f3cfa27eddd42dd5f87d06979061ce96a5fb65b024ba3f5934aae5e",
-      "observation": {
-        "expected": "<p>[click][a]</p>\n<p>[a]:  javascript:alert(1)</p>",
-        "status": 0,
-        "actual": "<p><a href=\"\">click</a></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/121-scheme-probe-strips-unicode-whitespace.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "2c5c6a265f3cfa27eddd42dd5f87d06979061ce96a5fb65b024ba3f5934aae5e",
-      "observation": {
-        "expected": "<p>[click][a]</p>\n<p>[a]:  javascript:alert(1)</p>",
-        "status": 0,
-        "actual": "<p><a href=\"\">click</a></p>"
-      }
-    },
-    {
       "key": "tests/corpus/161-below-content-column-div-body-in-a-list-item-stays-literal.crv/js->php",
       "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3255",
@@ -144,50 +100,6 @@
         "expected": "<ul>\n  <li>a</li>\n</ul>\n<p>b</p>\n<ul>\n  <li>c</li>\n</ul>",
         "status": 0,
         "actual": "<ul>\n  <li><p>a</p>\n    <p>b</p>\n  </li>\n  <li><p>c</p></li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/273-the-inline-attribute-interior-is-space-only-the-attribute-line-is-not-2.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "15748a92fa023b3284c5440685efb73bbcf38a92fb1e48471cd7760ff5ba2032",
-      "observation": {
-        "expected": "<p class=\"a b\">paragraph</p>",
-        "status": 0,
-        "actual": "<p>{\t.a\t.b\t}</p>\n<p>paragraph</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/273-the-inline-attribute-interior-is-space-only-the-attribute-line-is-not-2.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "15748a92fa023b3284c5440685efb73bbcf38a92fb1e48471cd7760ff5ba2032",
-      "observation": {
-        "expected": "<p class=\"a b\">paragraph</p>",
-        "status": 0,
-        "actual": "<p>{\t.a\t.b\t}</p>\n<p>paragraph</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/273-the-inline-attribute-interior-is-space-only-the-attribute-line-is-not-2.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "2d2d88db88447545f5e9808a6841791944909cb184ce1125b10b374d641e128b",
-      "observation": {
-        "expected": "<p>{\t.a\t.b\t}</p>\n<p>paragraph</p>",
-        "status": 0,
-        "actual": "<p class=\"a b\">paragraph</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/273-the-inline-attribute-interior-is-space-only-the-attribute-line-is-not-2.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "2d2d88db88447545f5e9808a6841791944909cb184ce1125b10b374d641e128b",
-      "observation": {
-        "expected": "<p>{\t.a\t.b\t}</p>\n<p>paragraph</p>",
-        "status": 0,
-        "actual": "<p class=\"a b\">paragraph</p>"
       }
     },
     {
@@ -1115,182 +1027,6 @@
       }
     },
     {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-2.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "2371cce12ef4cf2b4c679093b3524c7b5626127b73bf08bad800ebaf610e3d56",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n~~~\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n~~~</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-2.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "2371cce12ef4cf2b4c679093b3524c7b5626127b73bf08bad800ebaf610e3d56",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n~~~\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n~~~</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-2.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "85d1146b512b4be5d0b099b249dad4559dae7dbb222f218afc72a04e67b0afb7",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n~~~</p>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n~~~\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-2.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "85d1146b512b4be5d0b099b249dad4559dae7dbb222f218afc72a04e67b0afb7",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n~~~</p>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n~~~\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-3.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "fae5ab174699ba64112e9bc1bf5e203576913f003080529330426001e0a1a610",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code>code\n```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n<code></code></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-3.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "fae5ab174699ba64112e9bc1bf5e203576913f003080529330426001e0a1a610",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code>code\n```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n<code></code></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-3.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "9b774e970456f4f98affb8c08bd78413b03905878499212f95a7868074d72e3d",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n<code></code></p>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code>code\n```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-3.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "9b774e970456f4f98affb8c08bd78413b03905878499212f95a7868074d72e3d",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n<code></code></p>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code>code\n```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-4.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "d40a526a7970cdcffffd85d70322d0d17a30be033fe12fdcd82934947686a84e",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n  <dt>t2</dt>\n  <dd>plain</dd>\n</dl>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code</p>\n<dl>\n  <dt>t2</dt>\n  <dd>plain</dd>\n</dl>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-4.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "d40a526a7970cdcffffd85d70322d0d17a30be033fe12fdcd82934947686a84e",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n  <dt>t2</dt>\n  <dd>plain</dd>\n</dl>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code</p>\n<dl>\n  <dt>t2</dt>\n  <dd>plain</dd>\n</dl>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-4.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "f8fad9ad20fcc99e4d4cb05baee6921833186c6866d4f5fc8fe49d61c7b0e756",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code</p>\n<dl>\n  <dt>t2</dt>\n  <dd>plain</dd>\n</dl>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n  <dt>t2</dt>\n  <dd>plain</dd>\n</dl>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-4.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "f8fad9ad20fcc99e4d4cb05baee6921833186c6866d4f5fc8fe49d61c7b0e756",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code</p>\n<dl>\n  <dt>t2</dt>\n  <dd>plain</dd>\n</dl>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n  <dt>t2</dt>\n  <dd>plain</dd>\n</dl>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "619fb59884b25c82620d1b190fade2b2211226bff28cc86feb44c297f7a66132",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n<code></code></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "619fb59884b25c82620d1b190fade2b2211226bff28cc86feb44c297f7a66132",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n<code></code></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "79c813c1dfe52d81e3eb0f79a07f4ff0c01119a09b42ce160135421a12263d4b",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n<code></code></p>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>"
-      }
-    },
-    {
-      "key": "tests/corpus/455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "79c813c1dfe52d81e3eb0f79a07f4ff0c01119a09b42ce160135421a12263d4b",
-      "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code\n<code></code></p>",
-        "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\">code\n```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>"
-      }
-    },
-    {
       "key": "tests/corpus/482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-2.crv/js->php",
       "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3255",
@@ -1643,6 +1379,50 @@
       }
     },
     {
+      "key": "tests/corpus/516-a-heading-comment-preserves-code-span-content-8.crv/js->php",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "b21be4ccdd58a3e62507c42e91e5870ba77f1f19cc9a0424ba5b3c9e14428abf",
+      "observation": {
+        "expected": "<section id=\"a\">\n  <h1>a</h1>\n</section>",
+        "status": 0,
+        "actual": "<section id=\"a-hidden\">\n  <h1>a\t%% hidden</h1>\n</section>"
+      }
+    },
+    {
+      "key": "tests/corpus/516-a-heading-comment-preserves-code-span-content-8.crv/js->rust",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "b21be4ccdd58a3e62507c42e91e5870ba77f1f19cc9a0424ba5b3c9e14428abf",
+      "observation": {
+        "expected": "<section id=\"a\">\n  <h1>a</h1>\n</section>",
+        "status": 0,
+        "actual": "<section id=\"a-hidden\">\n  <h1>a\t%% hidden</h1>\n</section>"
+      }
+    },
+    {
+      "key": "tests/corpus/516-a-heading-comment-preserves-code-span-content-8.crv/php->js",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "f43204d314096f58502a3b85063bb112a97cd7b37a09e8522f8649d58810fd09",
+      "observation": {
+        "expected": "<section id=\"a-hidden\">\n  <h1>a\t%% hidden</h1>\n</section>",
+        "status": 0,
+        "actual": "<section id=\"a\">\n  <h1>a</h1>\n</section>"
+      }
+    },
+    {
+      "key": "tests/corpus/516-a-heading-comment-preserves-code-span-content-8.crv/rust->js",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "f43204d314096f58502a3b85063bb112a97cd7b37a09e8522f8649d58810fd09",
+      "observation": {
+        "expected": "<section id=\"a-hidden\">\n  <h1>a\t%% hidden</h1>\n</section>",
+        "status": 0,
+        "actual": "<section id=\"a\">\n  <h1>a</h1>\n</section>"
+      }
+    },
+    {
       "key": "tests/corpus/517-a-band-paragraph-after-an-invisible-line-leaves-the-item-loose-2.crv/js->php",
       "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3255",
@@ -1819,188 +1599,254 @@
       }
     },
     {
-      "key": "tests/corpus/553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-29.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "38a14c969c2b6b6f74f41675e45d494926331bf1bdfa43c835a7e9b8052a1fa7",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-12.crv/js->php",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "2fc793e76dcd3b1585ccf79e2f7b3991fcc0bc17089c56746149172095d3f671",
       "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code>```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>",
+        "expected": "<p><a href=\"/u\">a</a></p>",
         "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<pre><code></code></pre>"
+        "actual": "<p><a href=\"/u\">a\t%% hidden</a></p>"
       }
     },
     {
-      "key": "tests/corpus/553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-29.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "38a14c969c2b6b6f74f41675e45d494926331bf1bdfa43c835a7e9b8052a1fa7",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-12.crv/js->rust",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "2fc793e76dcd3b1585ccf79e2f7b3991fcc0bc17089c56746149172095d3f671",
       "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code>```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>",
+        "expected": "<p><a href=\"/u\">a</a></p>",
         "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<pre><code></code></pre>"
+        "actual": "<p><a href=\"/u\">a\t%% hidden</a></p>"
       }
     },
     {
-      "key": "tests/corpus/553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-29.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "79e18cb201567b1a1d63b70424eb19a30c9c237f91e086e83f163354800f59d2",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-12.crv/php->js",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "e0d85f79e24a8bcea19d9f0cab52bbbf90e5f06920ab8f4271caca8feee1a2d3",
       "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<pre><code></code></pre>",
+        "expected": "<p><a href=\"/u\">a\t%% hidden</a></p>",
         "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code>```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>"
+        "actual": "<p><a href=\"/u\">a</a></p>"
       }
     },
     {
-      "key": "tests/corpus/553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-29.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "79e18cb201567b1a1d63b70424eb19a30c9c237f91e086e83f163354800f59d2",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-12.crv/rust->js",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "e0d85f79e24a8bcea19d9f0cab52bbbf90e5f06920ab8f4271caca8feee1a2d3",
       "observation": {
-        "expected": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<pre><code></code></pre>",
+        "expected": "<p><a href=\"/u\">a\t%% hidden</a></p>",
         "status": 0,
-        "actual": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code>```\n</code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>"
+        "actual": "<p><a href=\"/u\">a</a></p>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-10.crv/js->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "8156009143143905b6ba74f2f3240ec7b4181589e413e159e1117c3c1f982e7f",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-3.crv/js->php",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "f63f71634babc9731d59c4ec8323967326406cfba238969ee51613d0e04e5751",
       "observation": {
-        "expected": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <pre><code>x\n</code></pre>\n      </li>\n    </ul>\n    tail\n  </li>\n</ul>",
+        "expected": "<dl>\n  <dt>a</dt>\n  <dd>d</dd>\n</dl>",
         "status": 0,
-        "actual": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <pre><code>x\n</code></pre>\n      </li>\n    </ul>\n  </li>\n</ul>\n<p>tail</p>"
+        "actual": "<dl>\n  <dt>a\t%% hidden</dt>\n  <dd>d</dd>\n</dl>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-10.crv/php->js",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "44a570c06992142e740c0d7fb88de1d503f32c1a3669bb9b6e5bb961327ad810",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-3.crv/js->rust",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "f63f71634babc9731d59c4ec8323967326406cfba238969ee51613d0e04e5751",
       "observation": {
-        "expected": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <pre><code>x\n</code></pre>\n      </li>\n    </ul>\n  </li>\n</ul>\n<p>tail</p>",
+        "expected": "<dl>\n  <dt>a</dt>\n  <dd>d</dd>\n</dl>",
         "status": 0,
-        "actual": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <pre><code>x\n</code></pre>\n      </li>\n    </ul>\n    tail\n  </li>\n</ul>"
+        "actual": "<dl>\n  <dt>a\t%% hidden</dt>\n  <dd>d</dd>\n</dl>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-10.crv/php->rust",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "44a570c06992142e740c0d7fb88de1d503f32c1a3669bb9b6e5bb961327ad810",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-3.crv/php->js",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "f4c898742c7c774dfafc978c72190346c3beb4cab4cd8ee07f42670b278ca650",
       "observation": {
-        "expected": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <pre><code>x\n</code></pre>\n      </li>\n    </ul>\n  </li>\n</ul>\n<p>tail</p>",
+        "expected": "<dl>\n  <dt>a\t%% hidden</dt>\n  <dd>d</dd>\n</dl>",
         "status": 0,
-        "actual": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <pre><code>x\n</code></pre>\n      </li>\n    </ul>\n    tail\n  </li>\n</ul>"
+        "actual": "<dl>\n  <dt>a</dt>\n  <dd>d</dd>\n</dl>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-10.crv/rust->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "8156009143143905b6ba74f2f3240ec7b4181589e413e159e1117c3c1f982e7f",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-3.crv/rust->js",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "f4c898742c7c774dfafc978c72190346c3beb4cab4cd8ee07f42670b278ca650",
       "observation": {
-        "expected": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <pre><code>x\n</code></pre>\n      </li>\n    </ul>\n    tail\n  </li>\n</ul>",
+        "expected": "<dl>\n  <dt>a\t%% hidden</dt>\n  <dd>d</dd>\n</dl>",
         "status": 0,
-        "actual": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <pre><code>x\n</code></pre>\n      </li>\n    </ul>\n  </li>\n</ul>\n<p>tail</p>"
+        "actual": "<dl>\n  <dt>a</dt>\n  <dd>d</dd>\n</dl>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-11.crv/js->php",
-      "reason": "carve-php reads the code blocks of a footnote definition nested in a marker-line footnote as blocks of the list item; carve-js and carve-rs keep them in the nested note.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3240",
-      "fingerprint": "1589dbf749d7fc626b6bcac9983f21f58eed6d86ff005c0937c16937c5b2ce98",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-5.crv/js->php",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "b05cebdf1efbf90f122ef3c7e105cb7350aad5ef30012ce583aa54964b04d4fc",
       "observation": {
-        "expected": "<ul>\n  <li>\n    <pre><code>one\n</code></pre>\n    <pre><code>two\n</code></pre>\n  </li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner<a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\">a</th><th scope=\"col\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>1</td><td>2</td></tr>\n  </tbody>\n</table>",
         "status": 0,
-        "actual": "<ul>\n  <li></li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner</p>\n      <pre><code>one\n</code></pre>\n      <pre><code>two\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\">a\t%% hidden</th><th scope=\"col\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>1</td><td>2</td></tr>\n  </tbody>\n</table>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-11.crv/php->js",
-      "reason": "carve-php reads the code blocks of a footnote definition nested in a marker-line footnote as blocks of the list item; carve-js and carve-rs keep them in the nested note.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3240",
-      "fingerprint": "ad3c592e543d0ab249d65e10c5cba379bcf27330071b5c050fff1bd94677462d",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-5.crv/js->rust",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "b05cebdf1efbf90f122ef3c7e105cb7350aad5ef30012ce583aa54964b04d4fc",
       "observation": {
-        "expected": "<ul>\n  <li></li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner</p>\n      <pre><code>one\n</code></pre>\n      <pre><code>two\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\">a</th><th scope=\"col\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>1</td><td>2</td></tr>\n  </tbody>\n</table>",
         "status": 0,
-        "actual": "<ul>\n  <li>\n    <pre><code>one\n</code></pre>\n    <pre><code>two\n</code></pre>\n  </li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner<a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\">a\t%% hidden</th><th scope=\"col\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>1</td><td>2</td></tr>\n  </tbody>\n</table>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-11.crv/php->rust",
-      "reason": "carve-php reads the code blocks of a footnote definition nested in a marker-line footnote as blocks of the list item; carve-js and carve-rs keep them in the nested note.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3240",
-      "fingerprint": "ad3c592e543d0ab249d65e10c5cba379bcf27330071b5c050fff1bd94677462d",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-5.crv/php->js",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "81083b881622b577e96c95be289f7b84cce934bde779aff858a7b2100b2f3c17",
       "observation": {
-        "expected": "<ul>\n  <li></li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner</p>\n      <pre><code>one\n</code></pre>\n      <pre><code>two\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\">a\t%% hidden</th><th scope=\"col\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>1</td><td>2</td></tr>\n  </tbody>\n</table>",
         "status": 0,
-        "actual": "<ul>\n  <li>\n    <pre><code>one\n</code></pre>\n    <pre><code>two\n</code></pre>\n  </li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner<a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\">a</th><th scope=\"col\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>1</td><td>2</td></tr>\n  </tbody>\n</table>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-11.crv/rust->php",
-      "reason": "carve-php reads the code blocks of a footnote definition nested in a marker-line footnote as blocks of the list item; carve-js and carve-rs keep them in the nested note.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3240",
-      "fingerprint": "1589dbf749d7fc626b6bcac9983f21f58eed6d86ff005c0937c16937c5b2ce98",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-5.crv/rust->js",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "81083b881622b577e96c95be289f7b84cce934bde779aff858a7b2100b2f3c17",
       "observation": {
-        "expected": "<ul>\n  <li>\n    <pre><code>one\n</code></pre>\n    <pre><code>two\n</code></pre>\n  </li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner<a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\">a\t%% hidden</th><th scope=\"col\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>1</td><td>2</td></tr>\n  </tbody>\n</table>",
         "status": 0,
-        "actual": "<ul>\n  <li></li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner</p>\n      <pre><code>one\n</code></pre>\n      <pre><code>two\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\">a</th><th scope=\"col\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>1</td><td>2</td></tr>\n  </tbody>\n</table>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-12.crv/js->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "44af64b93887197c327e9c95538d95e2178639890eb0827ff156690bd7a9e584",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-7.crv/js->php",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "fb6910d921ce56960476868cce9821e62fd9a9e1e072058a2aa6d306a09cfa50",
       "observation": {
-        "expected": "<ul>\n  <li>\n    <pre><code>one\n</code></pre>\n  </li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text\n- child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner<a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "expected": "<figure>\n  <img src=\"u\" alt=\"alt\">\n  <figcaption>cap</figcaption>\n</figure>",
         "status": 0,
-        "actual": "<ul>\n  <li></li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text\n- child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner</p>\n      <pre><code>one\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+        "actual": "<figure>\n  <img src=\"u\" alt=\"alt\">\n  <figcaption>cap\t%% hidden</figcaption>\n</figure>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-12.crv/php->js",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "1f62403c93a56a55f95278107c51854c228936da49d87186f022cafbfa4d2f6d",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-7.crv/js->rust",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "fb6910d921ce56960476868cce9821e62fd9a9e1e072058a2aa6d306a09cfa50",
       "observation": {
-        "expected": "<ul>\n  <li></li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text\n- child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner</p>\n      <pre><code>one\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "expected": "<figure>\n  <img src=\"u\" alt=\"alt\">\n  <figcaption>cap</figcaption>\n</figure>",
         "status": 0,
-        "actual": "<ul>\n  <li>\n    <pre><code>one\n</code></pre>\n  </li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text\n- child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner<a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+        "actual": "<figure>\n  <img src=\"u\" alt=\"alt\">\n  <figcaption>cap\t%% hidden</figcaption>\n</figure>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-12.crv/php->rust",
-      "reason": "carve-php reads the code block of a footnote definition nested in a marker-line footnote as a block of the list item, and the pinned carve-js keeps the line below in the item; carve-rs conforms. carve-js is fixed after the pin.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3240",
-      "fingerprint": "1f62403c93a56a55f95278107c51854c228936da49d87186f022cafbfa4d2f6d",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-7.crv/php->js",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "36f3816cd87327b03cf3a2eb442f89fc46eb13ded27bc2aec0cd861de55167e4",
       "observation": {
-        "expected": "<ul>\n  <li></li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text\n- child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner</p>\n      <pre><code>one\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "expected": "<figure>\n  <img src=\"u\" alt=\"alt\">\n  <figcaption>cap\t%% hidden</figcaption>\n</figure>",
         "status": 0,
-        "actual": "<ul>\n  <li>\n    <pre><code>one\n</code></pre>\n  </li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text\n- child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner<a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+        "actual": "<figure>\n  <img src=\"u\" alt=\"alt\">\n  <figcaption>cap</figcaption>\n</figure>"
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-12.crv/rust->php",
-      "reason": "carve-php reads the code block of a footnote definition nested in a marker-line footnote as a block of the list item, and the pinned carve-js keeps the line below in the item; carve-rs conforms. carve-js is fixed after the pin.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3240",
-      "fingerprint": "44af64b93887197c327e9c95538d95e2178639890eb0827ff156690bd7a9e584",
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-7.crv/rust->js",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "36f3816cd87327b03cf3a2eb442f89fc46eb13ded27bc2aec0cd861de55167e4",
       "observation": {
-        "expected": "<ul>\n  <li>\n    <pre><code>one\n</code></pre>\n  </li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text\n- child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner<a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "expected": "<figure>\n  <img src=\"u\" alt=\"alt\">\n  <figcaption>cap\t%% hidden</figcaption>\n</figure>",
         "status": 0,
-        "actual": "<ul>\n  <li></li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text\n- child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner</p>\n      <pre><code>one\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+        "actual": "<figure>\n  <img src=\"u\" alt=\"alt\">\n  <figcaption>cap</figcaption>\n</figure>"
+      }
+    },
+    {
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-9.crv/php->js",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "53636e43b49f96018c6429b491e59b3140570a0f674cfed058659b4da70792c3",
+      "observation": {
+        "expected": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <p class=\"div-label\">a\t%% hidden</p>\n  <p>body</p>\n</aside>",
+        "status": 0,
+        "actual": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <p class=\"div-label\">a</p>\n  <p>body</p>\n</aside>"
+      }
+    },
+    {
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-9.crv/rust->js",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "53636e43b49f96018c6429b491e59b3140570a0f674cfed058659b4da70792c3",
+      "observation": {
+        "expected": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <p class=\"div-label\">a\t%% hidden</p>\n  <p>body</p>\n</aside>",
+        "status": 0,
+        "actual": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <p class=\"div-label\">a</p>\n  <p>body</p>\n</aside>"
+      }
+    },
+    {
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator.crv/js->php",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "ad81836e5ce5d670ba0f8e3ba69b45eb255f296137f70ff549c86e4e6f3e6239",
+      "observation": {
+        "expected": "<p>a</p>",
+        "status": 0,
+        "actual": "<p>a\t%% hidden</p>"
+      }
+    },
+    {
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator.crv/js->rust",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "ad81836e5ce5d670ba0f8e3ba69b45eb255f296137f70ff549c86e4e6f3e6239",
+      "observation": {
+        "expected": "<p>a</p>",
+        "status": 0,
+        "actual": "<p>a\t%% hidden</p>"
+      }
+    },
+    {
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator.crv/php->js",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3261",
+      "fingerprint": "4db6bb1bae753c5dfe03b9fc272c48c84ffb1bd51b555c00aa736b01614f08df",
+      "observation": {
+        "expected": "<p>a\t%% hidden</p>",
+        "status": 0,
+        "actual": "<p>a</p>"
+      }
+    },
+    {
+      "key": "tests/corpus/518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator.crv/rust->js",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2597",
+      "fingerprint": "4db6bb1bae753c5dfe03b9fc272c48c84ffb1bd51b555c00aa736b01614f08df",
+      "observation": {
+        "expected": "<p>a\t%% hidden</p>",
+        "status": 0,
+        "actual": "<p>a</p>"
       }
     },
     {
       "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-13.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "bc1198e2d8376ef167c30743df7b5c424172af13431f7946f7bc99d1b64d72db",
+      "fingerprint": "ff300a1e88588e286911c42e77bb16b54fc316350abf3b536d73ccf2df261cf1",
       "observation": {
-        "expected": "<ul>\n  <li>::: inner\n\ntext</li>\n</ul>",
+        "expected": "<ul>\n  <li>::: inner\n    text\n  </li>\n</ul>",
         "status": 0,
         "actual": "<ul>\n  <li>\n    <div class=\"inner\">\n\n    </div>\n  </li>\n</ul>\n<p>text</p>"
       }
@@ -2018,24 +1864,13 @@
     },
     {
       "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-13.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "3a63d4e6b898f105fd8878431c545aba5fb9850b071a68f56adee1fdc2b845e9",
+      "fingerprint": "74661cac3dece4abdee67bb6d9e961832e6b36a62108323e8686965e579ea82e",
       "observation": {
         "expected": "<ul>\n  <li>\n    <div class=\"inner\">\n\n    </div>\n  </li>\n</ul>\n<p>text</p>",
         "status": 0,
-        "actual": "<ul>\n  <li>::: inner\n\ntext</li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-13.crv/php->rust",
-      "reason": "carve-php does not continue the item paragraph with a line retained after a below-column comment; carve-js and carve-rs do.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3242",
-      "fingerprint": "2d38e82e883ca6f96a7f76751169afa6828c68ead867e64f8ee91a7fe158f9b3",
-      "observation": {
-        "expected": "<ul>\n  <li>::: inner\n    text\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>::: inner\n\ntext</li>\n</ul>"
+        "actual": "<ul>\n  <li>::: inner\n    text\n  </li>\n</ul>"
       }
     },
     {
@@ -2050,190 +1885,47 @@
       }
     },
     {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-13.crv/rust->php",
-      "reason": "carve-php does not continue the item paragraph with a line retained after a below-column comment; carve-js and carve-rs do.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3242",
-      "fingerprint": "531594f9786a1dc89be5b347edd9cf79ad1d4c86efaff48f662f32795a5b7870",
-      "observation": {
-        "expected": "<ul>\n  <li>::: inner\n\ntext</li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>::: inner\n    text\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-2.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "d73d9ba575c3afcb818cd9da5c60646d755deded82a6a758e920b4a493ede424",
-      "observation": {
-        "expected": "<ul>\n  <li>a\n<code></code>\n    <hr>\n    <pre><code>code\n</code></pre>\n    after\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>a\n<code></code>\n    <hr>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-2.crv/php->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "d73d9ba575c3afcb818cd9da5c60646d755deded82a6a758e920b4a493ede424",
-      "observation": {
-        "expected": "<ul>\n  <li>a\n<code></code>\n    <hr>\n    <pre><code>code\n</code></pre>\n    after\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>a\n<code></code>\n    <hr>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-2.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "e8a42fad846c87453b05364704395f8420f0707197d885ecb3b1e86fd00e463b",
-      "observation": {
-        "expected": "<ul>\n  <li>a\n<code></code>\n    <hr>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>a\n<code></code>\n    <hr>\n    <pre><code>code\n</code></pre>\n    after\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-2.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "e8a42fad846c87453b05364704395f8420f0707197d885ecb3b1e86fd00e463b",
-      "observation": {
-        "expected": "<ul>\n  <li>a\n<code></code>\n    <hr>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>a\n<code></code>\n    <hr>\n    <pre><code>code\n</code></pre>\n    after\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-8.crv/js->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "b3fb4d5dc988dfad3ac688e56af4d0d289861a20494ea59e635bec6ff7efff52",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>a\n      <h1 id=\"H\">H</h1>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>a\n      <h1 id=\"H\">H</h1>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-8.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "b3fb4d5dc988dfad3ac688e56af4d0d289861a20494ea59e635bec6ff7efff52",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>a\n      <h1 id=\"H\">H</h1>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>a\n      <h1 id=\"H\">H</h1>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-8.crv/php->js",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "d21ec0d8c5a8896e39bc91ec302df5c8b9e6470c338037c1cc33878f751b7aca",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>a\n      <h1 id=\"H\">H</h1>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>a\n      <h1 id=\"H\">H</h1>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below-8.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "d21ec0d8c5a8896e39bc91ec302df5c8b9e6470c338037c1cc33878f751b7aca",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>a\n      <h1 id=\"H\">H</h1>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>a\n      <h1 id=\"H\">H</h1>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "ee955f1a895007bc7e5af6a776b80e3bd68aaca9fe0000327eda243a675dcb4d",
-      "observation": {
-        "expected": "<ul>\n  <li>a\n<code></code>\n    <pre><code>code\n</code></pre>\n    after\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>a\n<code></code>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below.crv/php->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "ee955f1a895007bc7e5af6a776b80e3bd68aaca9fe0000327eda243a675dcb4d",
-      "observation": {
-        "expected": "<ul>\n  <li>a\n<code></code>\n    <pre><code>code\n</code></pre>\n    after\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>a\n<code></code>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "816bc4eeb147a5f43027eca03f3fc040b6a3b40aeb9467cfd3699945b77f9ed6",
-      "observation": {
-        "expected": "<ul>\n  <li>a\n<code></code>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>a\n<code></code>\n    <pre><code>code\n</code></pre>\n    after\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/556-a-closed-block-leaves-no-frame-for-the-line-below.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "816bc4eeb147a5f43027eca03f3fc040b6a3b40aeb9467cfd3699945b77f9ed6",
-      "observation": {
-        "expected": "<ul>\n  <li>a\n<code></code>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>a\n<code></code>\n    <pre><code>code\n</code></pre>\n    after\n  </li>\n</ul>"
-      }
-    },
-    {
       "key": "tests/corpus/557-a-line-retained-after-a-comment-opens-a-paragraph-2.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3242",
-      "fingerprint": "ce1506ff200ef5c83254aa3b378726744c56d106303ca3c3f1cad4b2a1b28f17",
+      "fingerprint": "eaafcbefd0231fccc46b4e6755ae009ff530b814c3c649a1c705cc6c104e3f00",
       "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p><code>\ncode</code></p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p><code>\ncode\n- tail</code></p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
         "status": 0,
         "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n\n            </div>\n          </li>\n        </ul>\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
       }
     },
     {
       "key": "tests/corpus/557-a-line-retained-after-a-comment-opens-a-paragraph-2.crv/js->rust",
-      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
-      "fingerprint": "ce1506ff200ef5c83254aa3b378726744c56d106303ca3c3f1cad4b2a1b28f17",
+      "fingerprint": "eaafcbefd0231fccc46b4e6755ae009ff530b814c3c649a1c705cc6c104e3f00",
       "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p><code>\ncode</code></p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p><code>\ncode\n- tail</code></p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
         "status": 0,
         "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n\n            </div>\n          </li>\n        </ul>\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
       }
     },
     {
       "key": "tests/corpus/557-a-line-retained-after-a-comment-opens-a-paragraph-2.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3242",
-      "fingerprint": "1ccaea6786d60c344212d09e985543d8563d70a4e15b8e48301db0c46dafe2c2",
+      "fingerprint": "a5365047b72817ed66129b8fd0a401a1479c2956b634844e99f78a6009a4d9ba",
       "observation": {
         "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n\n            </div>\n          </li>\n        </ul>\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
         "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p><code>\ncode</code></p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p><code>\ncode\n- tail</code></p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
       }
     },
     {
       "key": "tests/corpus/557-a-line-retained-after-a-comment-opens-a-paragraph-2.crv/rust->js",
-      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
-      "fingerprint": "1ccaea6786d60c344212d09e985543d8563d70a4e15b8e48301db0c46dafe2c2",
+      "fingerprint": "a5365047b72817ed66129b8fd0a401a1479c2956b634844e99f78a6009a4d9ba",
       "observation": {
         "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n\n            </div>\n          </li>\n        </ul>\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
         "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p><code>\ncode</code></p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p><code>\ncode\n- tail</code></p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
       }
     },
     {
@@ -2326,90 +2018,57 @@
     },
     {
       "key": "tests/corpus/557-a-line-retained-after-a-comment-opens-a-paragraph.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3242",
-      "fingerprint": "8714e8038bfd62762039cbcc7278f91f5d90c07681d0d21691bc1ee7f3f5c3ae",
+      "fingerprint": "580b906c7482c6724791e6417011ab4afd9fe3195c97cb84897ad6366a52c924",
       "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner\n            <code>\ncode</code>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner\n            <code>\ncode\n- tail</code>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
         "status": 0,
         "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner</li>\n        </ul>\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
       }
     },
     {
       "key": "tests/corpus/557-a-line-retained-after-a-comment-opens-a-paragraph.crv/js->rust",
-      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
-      "fingerprint": "8714e8038bfd62762039cbcc7278f91f5d90c07681d0d21691bc1ee7f3f5c3ae",
+      "fingerprint": "580b906c7482c6724791e6417011ab4afd9fe3195c97cb84897ad6366a52c924",
       "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner\n            <code>\ncode</code>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner\n            <code>\ncode\n- tail</code>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
         "status": 0,
         "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner</li>\n        </ul>\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
       }
     },
     {
       "key": "tests/corpus/557-a-line-retained-after-a-comment-opens-a-paragraph.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3242",
-      "fingerprint": "61150345c236ad43dceb7bb9c2f7b1d2fea11b5a016e33b7d9542e1207d792d0",
+      "fingerprint": "1a3f611b857983b5b813f945b947552f60636e2057282c14df614caa63de5b95",
       "observation": {
         "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner</li>\n        </ul>\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
         "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner\n            <code>\ncode</code>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner\n            <code>\ncode\n- tail</code>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
       }
     },
     {
       "key": "tests/corpus/557-a-line-retained-after-a-comment-opens-a-paragraph.crv/rust->js",
-      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
-      "fingerprint": "61150345c236ad43dceb7bb9c2f7b1d2fea11b5a016e33b7d9542e1207d792d0",
+      "fingerprint": "1a3f611b857983b5b813f945b947552f60636e2057282c14df614caa63de5b95",
       "observation": {
         "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner</li>\n        </ul>\n        <pre><code>code\n</code></pre>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
         "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner\n            <code>\ncode</code>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>inner\n            <code>\ncode\n- tail</code>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
       }
     },
     {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-2.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "9687a39859854ab66f55b9e02072be69c6f40381a3d0d84c43d536b002a1b35c",
+      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-3.crv/js->php",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3241",
+      "fingerprint": "465deceac32a141526a6fdbbd0fb5ab14b48160f38f544308cd9bd616779fe05",
       "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>::: note\nx\n:::</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n::: note\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
         "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <aside class=\"admonition note\" aria-label=\"Note\">\n          <p>x</p>\n        </aside>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-2.crv/php->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "9687a39859854ab66f55b9e02072be69c6f40381a3d0d84c43d536b002a1b35c",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>::: note\nx\n:::</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <aside class=\"admonition note\" aria-label=\"Note\">\n          <p>x</p>\n        </aside>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-2.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "ce2dcc285fa55b59da80f60a5e04bfc91b9637aef1d69a29a39955d266e4743f",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <aside class=\"admonition note\" aria-label=\"Note\">\n          <p>x</p>\n        </aside>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>::: note\nx\n:::</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-2.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "ce2dcc285fa55b59da80f60a5e04bfc91b9637aef1d69a29a39955d266e4743f",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <aside class=\"admonition note\" aria-label=\"Note\">\n          <p>x</p>\n        </aside>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p>::: note\nx\n:::</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <aside class=\"admonition note\" aria-label=\"Note\">\n        <p>x</p>\n      </aside>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
       }
     },
     {
@@ -2424,14 +2083,14 @@
       }
     },
     {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-3.crv/php->rust",
-      "reason": "carve-php opens a colon opener past the column under an open paragraph of the container; carve-js and carve-rs keep it text (CARVE-P0-004).",
+      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-3.crv/php->js",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3241",
-      "fingerprint": "465deceac32a141526a6fdbbd0fb5ab14b48160f38f544308cd9bd616779fe05",
+      "fingerprint": "130825e0a9eae6f9fdd65d37657628569b0b54ecf5b224ad0b50f912df47587f",
       "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n::: note\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <aside class=\"admonition note\" aria-label=\"Note\">\n        <p>x</p>\n      </aside>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
         "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <aside class=\"admonition note\" aria-label=\"Note\">\n        <p>x</p>\n      </aside>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n::: note\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
       }
     },
     {
@@ -2446,19 +2105,19 @@
       }
     },
     {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-3.crv/rust->php",
-      "reason": "carve-php opens a colon opener past the column under an open paragraph of the container; carve-js and carve-rs keep it text (CARVE-P0-004).",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3241",
-      "fingerprint": "130825e0a9eae6f9fdd65d37657628569b0b54ecf5b224ad0b50f912df47587f",
+      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-4.crv/js->php",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3247",
+      "fingerprint": "0d84836184277bc96b6cac68435cdc4b550ee0c6443cc345364f9e2476308be2",
       "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <aside class=\"admonition note\" aria-label=\"Note\">\n        <p>x</p>\n      </aside>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
+        "expected": "<ul>\n  <li>outer\n    <ul>\n      <li>para\n<code>\ncode</code></li>\n    </ul>\n    <h1 id=\"h\">h</h1>\n    <code></code>\n  </li>\n</ul>",
         "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n::: note\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
+        "actual": "<ul>\n  <li>outer\n    <ul>\n      <li>para\n<code>\ncode</code></li>\n    </ul>\n    <h1 id=\"h\">h</h1>\n    <pre><code></code></pre>\n  </li>\n</ul>"
       }
     },
     {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-4.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
+      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-4.crv/js->rust",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3247",
       "fingerprint": "0d84836184277bc96b6cac68435cdc4b550ee0c6443cc345364f9e2476308be2",
       "observation": {
@@ -2479,718 +2138,14 @@
       }
     },
     {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-4.crv/php->rust",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
+      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-4.crv/rust->js",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3247",
       "fingerprint": "1fbf3c814cfef6bdf0c1dd63b8fd3af2ff45153764717ee6af551af48f89bc5b",
       "observation": {
         "expected": "<ul>\n  <li>outer\n    <ul>\n      <li>para\n<code>\ncode</code></li>\n    </ul>\n    <h1 id=\"h\">h</h1>\n    <pre><code></code></pre>\n  </li>\n</ul>",
         "status": 0,
         "actual": "<ul>\n  <li>outer\n    <ul>\n      <li>para\n<code>\ncode</code></li>\n    </ul>\n    <h1 id=\"h\">h</h1>\n    <code></code>\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column-4.crv/rust->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3247",
-      "fingerprint": "0d84836184277bc96b6cac68435cdc4b550ee0c6443cc345364f9e2476308be2",
-      "observation": {
-        "expected": "<ul>\n  <li>outer\n    <ul>\n      <li>para\n<code>\ncode</code></li>\n    </ul>\n    <h1 id=\"h\">h</h1>\n    <code></code>\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>outer\n    <ul>\n      <li>para\n<code>\ncode</code></li>\n    </ul>\n    <h1 id=\"h\">h</h1>\n    <pre><code></code></pre>\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "c010699e9eea9459578996a2e60bb5c684c71c6e5a2f884fbd8f46ae31b75ae5",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: note\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <aside class=\"admonition note\" aria-label=\"Note\">\n        <p>x</p>\n      </aside>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column.crv/php->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "c010699e9eea9459578996a2e60bb5c684c71c6e5a2f884fbd8f46ae31b75ae5",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: note\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <aside class=\"admonition note\" aria-label=\"Note\">\n        <p>x</p>\n      </aside>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "ff3b3b0aa900008d18615efc381497a35c270b3b003324971ae656d1e9e9b4f2",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <aside class=\"admonition note\" aria-label=\"Note\">\n        <p>x</p>\n      </aside>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: note\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/558-a-container-boundary-is-read-at-the-container-s-own-column.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "ff3b3b0aa900008d18615efc381497a35c270b3b003324971ae656d1e9e9b4f2",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <aside class=\"admonition note\" aria-label=\"Note\">\n        <p>x</p>\n      </aside>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: note\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-2.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "2db9fbfe6d5cfc96281702f74332d3531b9527d3d160a02df2778240e338d98f",
-      "observation": {
-        "expected": "<p>see <a href=\"/u\">t</a></p>",
-        "status": 0,
-        "actual": "<p>see [t][a\fb]</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-2.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "2db9fbfe6d5cfc96281702f74332d3531b9527d3d160a02df2778240e338d98f",
-      "observation": {
-        "expected": "<p>see <a href=\"/u\">t</a></p>",
-        "status": 0,
-        "actual": "<p>see [t][a\fb]</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-2.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "884f40fc775909dd05658ddb902360a1cb43249e849666a65e5ad62a537abed2",
-      "observation": {
-        "expected": "<p>see [t][a\fb]</p>",
-        "status": 0,
-        "actual": "<p>see <a href=\"/u\">t</a></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-2.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "884f40fc775909dd05658ddb902360a1cb43249e849666a65e5ad62a537abed2",
-      "observation": {
-        "expected": "<p>see [t][a\fb]</p>",
-        "status": 0,
-        "actual": "<p>see <a href=\"/u\">t</a></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-4.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "19477ea800841e704b19b60ff2fbd6cfa5482e969dcd3d2539902da62247ddac",
-      "observation": {
-        "expected": "<p>see <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>note<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
-        "status": 0,
-        "actual": "<p>see [^a\tb]</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-4.crv/php->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "19477ea800841e704b19b60ff2fbd6cfa5482e969dcd3d2539902da62247ddac",
-      "observation": {
-        "expected": "<p>see <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>note<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
-        "status": 0,
-        "actual": "<p>see [^a\tb]</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-4.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "19477ea800841e704b19b60ff2fbd6cfa5482e969dcd3d2539902da62247ddac",
-      "observation": {
-        "expected": "<p>see <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>note<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
-        "status": 0,
-        "actual": "<p>see [^a\tb]</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-5.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "1dfb69e6809f371e2d07813d024815e590385283499bf8a7899dd2b530544a69",
-      "observation": {
-        "expected": "<p>see <a href=\"/u\">t</a></p>",
-        "status": 0,
-        "actual": "<p>see [t][a]</p>\n<p>[a]: \t/u</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-5.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "1dfb69e6809f371e2d07813d024815e590385283499bf8a7899dd2b530544a69",
-      "observation": {
-        "expected": "<p>see <a href=\"/u\">t</a></p>",
-        "status": 0,
-        "actual": "<p>see [t][a]</p>\n<p>[a]: \t/u</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-5.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "a678bf03576660f3c7b2144028b2a1e3b48f4122e2ff2721a791d800178f443f",
-      "observation": {
-        "expected": "<p>see [t][a]</p>\n<p>[a]: \t/u</p>",
-        "status": 0,
-        "actual": "<p>see <a href=\"/u\">t</a></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-5.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "a678bf03576660f3c7b2144028b2a1e3b48f4122e2ff2721a791d800178f443f",
-      "observation": {
-        "expected": "<p>see [t][a]</p>\n<p>[a]: \t/u</p>",
-        "status": 0,
-        "actual": "<p>see <a href=\"/u\">t</a></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "f84ade12b8e2aeb90f801f8bd39933f2cea053a24a3b997fe2deae1cc1034599",
-      "observation": {
-        "expected": "<p>see <a href=\"/u\">t</a></p>",
-        "status": 0,
-        "actual": "<p>see [t][a\tb]</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "f84ade12b8e2aeb90f801f8bd39933f2cea053a24a3b997fe2deae1cc1034599",
-      "observation": {
-        "expected": "<p>see <a href=\"/u\">t</a></p>",
-        "status": 0,
-        "actual": "<p>see [t][a\tb]</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "c39ad9f369ec8dcbe946ff8e05ff0ca57c5b978384678b462bafaf622c39a703",
-      "observation": {
-        "expected": "<p>see [t][a\tb]</p>",
-        "status": 0,
-        "actual": "<p>see <a href=\"/u\">t</a></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "c39ad9f369ec8dcbe946ff8e05ff0ca57c5b978384678b462bafaf622c39a703",
-      "observation": {
-        "expected": "<p>see [t][a\tb]</p>",
-        "status": 0,
-        "actual": "<p>see <a href=\"/u\">t</a></p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-2.crv/js->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "6b8945176a15e9fa491024853cb1e4c4fc5d9cf010b4cca9078464c2bdbd7bbd",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>desc</dd>\n    </dl>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>desc</p>\n        <pre><code>code\n</code></pre>\n      </dd>\n    </dl>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-2.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "6b8945176a15e9fa491024853cb1e4c4fc5d9cf010b4cca9078464c2bdbd7bbd",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>desc</dd>\n    </dl>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>desc</p>\n        <pre><code>code\n</code></pre>\n      </dd>\n    </dl>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-2.crv/php->js",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "d06bc576508075b57952f7565397be270df081befcf6830ecb6086b113bffb09",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>desc</p>\n        <pre><code>code\n</code></pre>\n      </dd>\n    </dl>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>desc</dd>\n    </dl>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-2.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "d06bc576508075b57952f7565397be270df081befcf6830ecb6086b113bffb09",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>desc</p>\n        <pre><code>code\n</code></pre>\n      </dd>\n    </dl>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>desc</dd>\n    </dl>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-3.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "3050666f161c6c69151675fd625c29a9177d1f7ab8a88bf2054737903f1cac50",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>term</dt>\n        <dd>definition</dd>\n      </dl>\n      <pre><code>code\n</code></pre>\n    </li>\n  </ul>\n</blockquote>\n<p>after</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>term</dt>\n        <dd>\n          <p>definition</p>\n          <pre><code>code\n</code></pre>\n        </dd>\n      </dl>\n    </li>\n  </ul>\n</blockquote>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-3.crv/php->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "3050666f161c6c69151675fd625c29a9177d1f7ab8a88bf2054737903f1cac50",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>term</dt>\n        <dd>definition</dd>\n      </dl>\n      <pre><code>code\n</code></pre>\n    </li>\n  </ul>\n</blockquote>\n<p>after</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>term</dt>\n        <dd>\n          <p>definition</p>\n          <pre><code>code\n</code></pre>\n        </dd>\n      </dl>\n    </li>\n  </ul>\n</blockquote>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-3.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "4a50698097a8b6c67bb9bdaf73cf8c8accebe8fb6fa8c6e3e16f8bac8cebf9ec",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>term</dt>\n        <dd>\n          <p>definition</p>\n          <pre><code>code\n</code></pre>\n        </dd>\n      </dl>\n    </li>\n  </ul>\n</blockquote>\n<p>after</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>term</dt>\n        <dd>definition</dd>\n      </dl>\n      <pre><code>code\n</code></pre>\n    </li>\n  </ul>\n</blockquote>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-3.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "4a50698097a8b6c67bb9bdaf73cf8c8accebe8fb6fa8c6e3e16f8bac8cebf9ec",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>term</dt>\n        <dd>\n          <p>definition</p>\n          <pre><code>code\n</code></pre>\n        </dd>\n      </dl>\n    </li>\n  </ul>\n</blockquote>\n<p>after</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>term</dt>\n        <dd>definition</dd>\n      </dl>\n      <pre><code>code\n</code></pre>\n    </li>\n  </ul>\n</blockquote>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "190da3ead0aadd46f809f5904b0d5dd51bbed29448f3480e8de3bddf6397a716",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>definition</dd>\n    </dl>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>definition</p>\n        <pre><code>code\n</code></pre>\n      </dd>\n    </dl>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item.crv/php->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "190da3ead0aadd46f809f5904b0d5dd51bbed29448f3480e8de3bddf6397a716",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>definition</dd>\n    </dl>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>definition</p>\n        <pre><code>code\n</code></pre>\n      </dd>\n    </dl>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "4f049e6cedf4fe0b0ff3b71849e9b1f9b93d9a212a0ccb84ff259e4693692ae6",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>definition</p>\n        <pre><code>code\n</code></pre>\n      </dd>\n    </dl>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>definition</dd>\n    </dl>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "4f049e6cedf4fe0b0ff3b71849e9b1f9b93d9a212a0ccb84ff259e4693692ae6",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>definition</p>\n        <pre><code>code\n</code></pre>\n      </dd>\n    </dl>\n  </li>\n</ul>\n<p>after</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>definition</dd>\n    </dl>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column-2.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "e27e771b431be1420f485b477c878595a47ff828dca56ad0c06b22f2669aa79a",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p><code>\n:::\n</code></p>\n    </div>\n    para\n  </li>\n</ul>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code>\n:::\n&nbsp;&nbsp;</code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column-2.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "ef4d3bb8b95f2c284900bc26fe04424d06f00e6eb021397fae409ae7a673cd07",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code></code></p>\n    </div>\n    <pre><code>:::\npara\n</code></pre>\n  </li>\n</ul>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code>\n:::\n&nbsp;&nbsp;</code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column-2.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "8c017c67ad1824564b4edcbf6614889ed7e20470b63b773745a7e09fdb81052c",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code>\n:::\n&nbsp;&nbsp;</code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p><code>\n:::\n</code></p>\n    </div>\n    para\n  </li>\n</ul>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column-2.crv/php->rust",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "c6bb586106173ae211fbfc74909e7db1fe6c8ff52c8f2e11d49bcc47336651c6",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code></code></p>\n    </div>\n    <pre><code>:::\npara\n</code></pre>\n  </li>\n</ul>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p><code>\n:::\n</code></p>\n    </div>\n    para\n  </li>\n</ul>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column-2.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "ec221d149846c87217b038d6b65be1d20ba1a1323340ae55c5ed2396a21b74b6",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code>\n:::\n&nbsp;&nbsp;</code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code></code></p>\n    </div>\n    <pre><code>:::\npara\n</code></pre>\n  </li>\n</ul>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column-2.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "ffecddcea304811da5a899aaa499583f8da947e267b4235737502b374182323d",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p><code>\n:::\n</code></p>\n    </div>\n    para\n  </li>\n</ul>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code></code></p>\n    </div>\n    <pre><code>:::\npara\n</code></pre>\n  </li>\n</ul>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column-3.crv/js->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "c3e4978ae1414450762dcda6fd8ff211c5f0135130e983caa83abee551348818",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p><code></code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code></code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column-3.crv/php->js",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "5790e23c8c8c1fea40502cefb9a8bf79b29a3140d139b8311327e5d50049ab1f",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code></code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p><code></code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column-3.crv/php->rust",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "5790e23c8c8c1fea40502cefb9a8bf79b29a3140d139b8311327e5d50049ab1f",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code></code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p><code></code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column-3.crv/rust->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "c3e4978ae1414450762dcda6fd8ff211c5f0135130e983caa83abee551348818",
-      "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p><code></code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code></code></p>\n    </div>\n    para\ntail\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "48235b41005e5d9ba5f5280fb6ce324942b153873dd5a13b5166ecd7276b3246",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p><code>\n:::\n</code></p>\n      </div>\n      :::bad\n:::\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p>&nbsp;&nbsp;<code>\n:::\n&nbsp;&nbsp;</code></p>\n      </div>\n      :::bad\n:::\n- tail\n    </li>\n  </ul>\n</blockquote>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "d42eee9a572eb88f530eae886cdbf4eb8d10a98319b7eac10962d769f898da07",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p>&nbsp;&nbsp;<code></code></p>\n      </div>\n      <pre><code>:::\n:::bad\n:::\n</code></pre>\n    </li>\n  </ul>\n  <p>- tail</p>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p>&nbsp;&nbsp;<code>\n:::\n&nbsp;&nbsp;</code></p>\n      </div>\n      :::bad\n:::\n- tail\n    </li>\n  </ul>\n</blockquote>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "09c938fa855f469d3c5bc607525ba9666383f054b14cf5433e26ff20b0f922bb",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p>&nbsp;&nbsp;<code>\n:::\n&nbsp;&nbsp;</code></p>\n      </div>\n      :::bad\n:::\n- tail\n    </li>\n  </ul>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p><code>\n:::\n</code></p>\n      </div>\n      :::bad\n:::\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column.crv/php->rust",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "40059b21282c2af1e83b561a5f0dd78e2720963bf09016be57e00a3f66a289e8",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p>&nbsp;&nbsp;<code></code></p>\n      </div>\n      <pre><code>:::\n:::bad\n:::\n</code></pre>\n    </li>\n  </ul>\n  <p>- tail</p>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p><code>\n:::\n</code></p>\n      </div>\n      :::bad\n:::\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "c1e05559455caac3d1eabe6574c51443ac8798465db701753f1732313a3ca12e",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p>&nbsp;&nbsp;<code>\n:::\n&nbsp;&nbsp;</code></p>\n      </div>\n      :::bad\n:::\n- tail\n    </li>\n  </ul>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p>&nbsp;&nbsp;<code></code></p>\n      </div>\n      <pre><code>:::\n:::bad\n:::\n</code></pre>\n    </li>\n  </ul>\n  <p>- tail</p>\n</blockquote>"
-      }
-    },
-    {
-      "key": "tests/corpus/561-a-line-block-payload-span-pairs-past-the-content-column.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "f107fb924fd5e93b8b20f8a1a57425831a921cfcc5a36ace30f1aefa895e775d",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p><code>\n:::\n</code></p>\n      </div>\n      :::bad\n:::\n    </li>\n  </ul>\n</blockquote>\n<ul>\n  <li>tail</li>\n</ul>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p>&nbsp;&nbsp;<code></code></p>\n      </div>\n      <pre><code>:::\n:::bad\n:::\n</code></pre>\n    </li>\n  </ul>\n  <p>- tail</p>\n</blockquote>"
-      }
-    },
-    {
-      "key": "tests/corpus/562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "aea3eb62b84e45f98a25eb1325ab84e40d995afa76b29486be10c6108b41be72",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>b\n      <ul>\n        <li>c\n          <h1 id=\"h\">h</h1>\n        </li>\n      </ul>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>b\n      <ul>\n        <li>c\n          <h1 id=\"h\">h</h1>\n        </li>\n      </ul>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "aea3eb62b84e45f98a25eb1325ab84e40d995afa76b29486be10c6108b41be72",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>b\n      <ul>\n        <li>c\n          <h1 id=\"h\">h</h1>\n        </li>\n      </ul>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>b\n      <ul>\n        <li>c\n          <h1 id=\"h\">h</h1>\n        </li>\n      </ul>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "aeb781ff6a7113dd1cc4384e07c9aa7a83d5d7187c1a303e7936fd6ce191e2a7",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>b\n      <ul>\n        <li>c\n          <h1 id=\"h\">h</h1>\n        </li>\n      </ul>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>b\n      <ul>\n        <li>c\n          <h1 id=\"h\">h</h1>\n        </li>\n      </ul>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>"
-      }
-    },
-    {
-      "key": "tests/corpus/562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "aeb781ff6a7113dd1cc4384e07c9aa7a83d5d7187c1a303e7936fd6ce191e2a7",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>b\n      <ul>\n        <li>c\n          <h1 id=\"h\">h</h1>\n        </li>\n      </ul>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>b\n      <ul>\n        <li>c\n          <h1 id=\"h\">h</h1>\n        </li>\n      </ul>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>"
-      }
-    },
-    {
-      "key": "tests/corpus/563-a-paragraph-in-a-held-container-does-not-loosen-the-item.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "0f26e140a772a6c5afa899e683f20f01510ef4ea5fd782a1571aae70c91fc967",
-      "observation": {
-        "expected": "<ul>\n  <li><p>intro</p>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>body</p>\n        <p>text</p>\n      </dd>\n    </dl>\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>intro\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>body</p>\n        <p>text</p>\n      </dd>\n    </dl>\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/563-a-paragraph-in-a-held-container-does-not-loosen-the-item.crv/php->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "0f26e140a772a6c5afa899e683f20f01510ef4ea5fd782a1571aae70c91fc967",
-      "observation": {
-        "expected": "<ul>\n  <li><p>intro</p>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>body</p>\n        <p>text</p>\n      </dd>\n    </dl>\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li>intro\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>body</p>\n        <p>text</p>\n      </dd>\n    </dl>\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/563-a-paragraph-in-a-held-container-does-not-loosen-the-item.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "0ede59cb49755eef28be1d6ab7a084edd52b49645145f8f02cd1c0e368b641a2",
-      "observation": {
-        "expected": "<ul>\n  <li>intro\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>body</p>\n        <p>text</p>\n      </dd>\n    </dl>\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li><p>intro</p>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>body</p>\n        <p>text</p>\n      </dd>\n    </dl>\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/563-a-paragraph-in-a-held-container-does-not-loosen-the-item.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "0ede59cb49755eef28be1d6ab7a084edd52b49645145f8f02cd1c0e368b641a2",
-      "observation": {
-        "expected": "<ul>\n  <li>intro\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>body</p>\n        <p>text</p>\n      </dd>\n    </dl>\n  </li>\n</ul>",
-        "status": 0,
-        "actual": "<ul>\n  <li><p>intro</p>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>body</p>\n        <p>text</p>\n      </dd>\n    </dl>\n  </li>\n</ul>"
-      }
-    },
-    {
-      "key": "tests/corpus/565-a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id-4.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "0e9fe2f48bbce1014ae6aa0165a2e2cd30892110f5fd2a32542686ce53f05533",
-      "observation": {
-        "expected": "<p>a &lt;/<span class=\"tag\"><strong>#no</strong></span>\tpe&gt; b</p>",
-        "status": 0,
-        "actual": "<p>a &lt;/#no\tpe&gt; b</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/565-a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id-4.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "0e9fe2f48bbce1014ae6aa0165a2e2cd30892110f5fd2a32542686ce53f05533",
-      "observation": {
-        "expected": "<p>a &lt;/<span class=\"tag\"><strong>#no</strong></span>\tpe&gt; b</p>",
-        "status": 0,
-        "actual": "<p>a &lt;/#no\tpe&gt; b</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/565-a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id-4.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "8f8b204621604ca02ae5a59ce4922aacc108cd3983b789a63028f9466baecf12",
-      "observation": {
-        "expected": "<p>a &lt;/#no\tpe&gt; b</p>",
-        "status": 0,
-        "actual": "<p>a &lt;/<span class=\"tag\"><strong>#no</strong></span>\tpe&gt; b</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/565-a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id-4.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "8f8b204621604ca02ae5a59ce4922aacc108cd3983b789a63028f9466baecf12",
-      "observation": {
-        "expected": "<p>a &lt;/#no\tpe&gt; b</p>",
-        "status": 0,
-        "actual": "<p>a &lt;/<span class=\"tag\"><strong>#no</strong></span>\tpe&gt; b</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/565-a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "2e4f36d9302314a6cdb313bb5a8d6153f292f245646ab65ebba9de2dfaa4c2d0",
-      "observation": {
-        "expected": "<section id=\"A-B\">\n  <h1>A\tB</h1>\n  <p>see <a href=\"#A-B\">A B</a></p>\n</section>",
-        "status": 0,
-        "actual": "<section id=\"A-B\">\n  <h1>A\tB</h1>\n  <p>see [A B][]</p>\n</section>"
-      }
-    },
-    {
-      "key": "tests/corpus/565-a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "2e4f36d9302314a6cdb313bb5a8d6153f292f245646ab65ebba9de2dfaa4c2d0",
-      "observation": {
-        "expected": "<section id=\"A-B\">\n  <h1>A\tB</h1>\n  <p>see <a href=\"#A-B\">A B</a></p>\n</section>",
-        "status": 0,
-        "actual": "<section id=\"A-B\">\n  <h1>A\tB</h1>\n  <p>see [A B][]</p>\n</section>"
-      }
-    },
-    {
-      "key": "tests/corpus/565-a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "8b122a36b597e6b315306b89cab9c6fee50bd1b55de6d609f292ab0e1b2a835a",
-      "observation": {
-        "expected": "<section id=\"A-B\">\n  <h1>A\tB</h1>\n  <p>see [A B][]</p>\n</section>",
-        "status": 0,
-        "actual": "<section id=\"A-B\">\n  <h1>A\tB</h1>\n  <p>see <a href=\"#A-B\">A B</a></p>\n</section>"
-      }
-    },
-    {
-      "key": "tests/corpus/565-a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "8b122a36b597e6b315306b89cab9c6fee50bd1b55de6d609f292ab0e1b2a835a",
-      "observation": {
-        "expected": "<section id=\"A-B\">\n  <h1>A\tB</h1>\n  <p>see [A B][]</p>\n</section>",
-        "status": 0,
-        "actual": "<section id=\"A-B\">\n  <h1>A\tB</h1>\n  <p>see <a href=\"#A-B\">A B</a></p>\n</section>"
       }
     },
     {
@@ -3238,69 +2193,58 @@
       }
     },
     {
-      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3241",
-      "fingerprint": "bbf1b3834e722202e6fd67f4b840812bd277faa5e615c091ee23f56baef45986",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <h1 id=\"h\">h</h1>\n        <p>tail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <h1 id=\"h\">h</h1>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
-      }
-    },
-    {
       "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/js->rust",
-      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
-      "fingerprint": "eed3ee0aaa3ecb7930168e49f22687a6fcd9bb037c85d899da600b55a4f6ba44",
+      "fingerprint": "0e558719ff04ac72c98adb4bb0cb85b6994602bdf2a13300d9bb4f908002f1e7",
       "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p># h\ntail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p># h</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
         "status": 0,
         "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <h1 id=\"h\">h</h1>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
-      }
-    },
-    {
-      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3241",
-      "fingerprint": "65d8df4b0d5989ad28c4c466ddf5305d61d7530e084b9833de2fe189bc5ff7a9",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <h1 id=\"h\">h</h1>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <h1 id=\"h\">h</h1>\n        <p>tail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
       }
     },
     {
       "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/php->rust",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3241",
-      "fingerprint": "5654c3729bcd7d99112184e8bff3a7dfe11dd9527679cefddf771225a5ce2477",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-php reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
+      "fingerprint": "0e558719ff04ac72c98adb4bb0cb85b6994602bdf2a13300d9bb4f908002f1e7",
       "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p># h\ntail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p># h</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
         "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <h1 id=\"h\">h</h1>\n        <p>tail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <h1 id=\"h\">h</h1>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
       }
     },
     {
       "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/rust->js",
-      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
-      "fingerprint": "5aed89f2facd8796a636e196ff3e2f867273193538382bff829da26818042842",
+      "fingerprint": "18186b5fed57b71dc11aeac198190e9841340d1cc65006580b4489dc5a6b375e",
       "observation": {
         "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <h1 id=\"h\">h</h1>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
         "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p># h\ntail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p># h</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
       }
     },
     {
       "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-3.crv/rust->php",
-      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-php reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
-      "fingerprint": "1de0257d5e0c91ae17c0cbc3d8a221fb3e805324c5cf3c6d84064a7282ae1f32",
+      "fingerprint": "18186b5fed57b71dc11aeac198190e9841340d1cc65006580b4489dc5a6b375e",
       "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <h1 id=\"h\">h</h1>\n        <p>tail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <h1 id=\"h\">h</h1>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
         "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p># h\ntail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <p># h</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>"
+      }
+    },
+    {
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/js->php",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3241",
+      "fingerprint": "1dd4ae395e72283594e4588dc68c6739c8c6ff338e42bae03b6b002f955f527d",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n::: |\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <div class=\"line-block\">\n        <p>x</p>\n      </div>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
       }
     },
     {
@@ -3315,14 +2259,25 @@
       }
     },
     {
-      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/php->rust",
-      "reason": "Under an open paragraph of an item-hosted container a shifted line-block opener is text; carve-php opens it, and carve-rs keeps the line below the closed container in the item.",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/php->js",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3241",
-      "fingerprint": "0dccceff4ab7bab9041fbc5bf78981096cb30f058698712655756c39f972bc0a",
+      "fingerprint": "1b156dc0be41db404861d382a65942cc3a4335bb574f7d36114e6d6061b582b9",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <div class=\"line-block\">\n        <p>x</p>\n      </div>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n::: |\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
+      }
+    },
+    {
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/php->rust",
+      "reason": "carve-php and carve-rs render this document differently from its corpus HTML at the pin (f1a1d89a, e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3241",
+      "fingerprint": "d9b171ccfc5a5ef3890056030d2c9a0a426d40bbf762708cbdba8cd8563f89c5",
       "observation": {
         "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n::: |\nx\n:::</p>\n    </div>\n    tail\n  </li>\n</ul>",
         "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <div class=\"line-block\">\n        <p>x</p>\n      </div>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n::: |\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
       }
     },
     {
@@ -3338,11 +2293,11 @@
     },
     {
       "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there-4.crv/rust->php",
-      "reason": "Under an open paragraph of an item-hosted container a shifted line-block opener is text; carve-php opens it, and carve-rs keeps the line below the closed container in the item.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3241",
-      "fingerprint": "3d367a0a8c5cc47158436f2fab139b1bb1f443506a4f7a345f340c5f32796171",
+      "reason": "carve-rs and carve-php render this document differently from its corpus HTML at the pin (e580eb31, f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
+      "fingerprint": "3fbff9751cd77671e66a92209fced4ed1bd2d188c9d3762b299ffb9882ec1bd0",
       "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text</p>\n      <div class=\"line-block\">\n        <p>x</p>\n      </div>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n::: |\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
         "status": 0,
         "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>text\n::: |\nx\n:::</p>\n    </div>\n    tail\n  </li>\n</ul>"
       }
@@ -3392,6 +2347,17 @@
       }
     },
     {
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/js->php",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
+      "fingerprint": "4dd5359cf7685c817dc27aff5b194572ae115abf8436fdfc027f2c728cd9982f",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: |\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <div class=\"line-block\">\n        <p>x</p>\n      </div>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
+      }
+    },
+    {
       "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/js->rust",
       "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
@@ -3403,14 +2369,25 @@
       }
     },
     {
-      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/php->rust",
-      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/php->js",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
-      "fingerprint": "10eb1723bce9a0f0765d5ce448101e3270a9ac8f213870d03b21372696fa7d0f",
+      "fingerprint": "62612b0e0243eaf22edc7c1206b3521dd6ece057aa5e76269e13553edcc78217",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <div class=\"line-block\">\n        <p>x</p>\n      </div>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: |\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
+      }
+    },
+    {
+      "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/php->rust",
+      "reason": "carve-php and carve-rs render this document differently from its corpus HTML at the pin (f1a1d89a, e580eb31); carve-js reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
+      "fingerprint": "f41d16380ef9f1663b5342693a0dad5d26eda305c80b13e306606c2c3d0b6334",
       "observation": {
         "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: |\nx\n:::</p>\n    </div>\n    tail\n  </li>\n</ul>",
         "status": 0,
-        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <div class=\"line-block\">\n        <p>x</p>\n      </div>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
+        "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: |\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>"
       }
     },
     {
@@ -3426,11 +2403,11 @@
     },
     {
       "key": "tests/corpus/566-an-opener-past-a-hosted-container-s-column-opens-there.crv/rust->php",
-      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-rs and carve-php render this document differently from its corpus HTML at the pin (e580eb31, f1a1d89a); carve-js reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
-      "fingerprint": "1b6f697ff0f4ee4e8e20270ab470de661ca6afcd19dae6ad00a6ab56767e614e",
+      "fingerprint": "09fd88e29217168e89dd400b97cd2dd81fd229270baf3c9b079375047753290a",
       "observation": {
-        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <div class=\"line-block\">\n        <p>x</p>\n      </div>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
+        "expected": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: |\nx\n:::</p>\n    </div>\n  </li>\n</ul>\n<p>tail</p>",
         "status": 0,
         "actual": "<ul>\n  <li>\n    <div class=\"box\">\n      <p>::: |\nx\n:::</p>\n    </div>\n    tail\n  </li>\n</ul>"
       }
@@ -3579,17 +2556,6 @@
       }
     },
     {
-      "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/js->rust",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "65ea81795bf3959e215ae151a0116d1de12a95388793bef77c4c4ae6dd9d2a28",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n\n            </div>\n          </li>\n        </ul>\n        <p>text\ntail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
-      }
-    },
-    {
       "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/php->js",
       "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3255",
@@ -3602,35 +2568,24 @@
     },
     {
       "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/php->rust",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-rs reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "19a0a67e6dc4fe292f5598db768746572fa59b2390c9f521758fedd12bae9294",
+      "fingerprint": "51a8067abd8149519b44a95b114bb8133b0b2919e098a22f3de1a8091c304382",
       "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>",
+        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n\n            </div>\n          </li>\n        </ul>\n        <p>text\ntail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
         "status": 0,
         "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text\ntail</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
       }
     },
     {
-      "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/rust->js",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "a957753e049091f99d75151256c0f8e30d98d0bb5cbf9818aa1dd604711cd770",
-      "observation": {
-        "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n\n            </div>\n          </li>\n        </ul>\n        <p>text\ntail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
-        "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>"
-      }
-    },
-    {
       "key": "tests/corpus/570-an-at-column-comment-retains-nothing.crv/rust->php",
-      "reason": "carve-rs ee85c4ca renders this document differently from its corpus HTML; carve-rs main (e580eb3) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "ea6062d08e12c5ada4e49c04943165f8d4aed1471c585061932acfc3629fa9f4",
+      "reason": "carve-php renders this document differently from its corpus HTML at the pin (f1a1d89a); carve-rs reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
+      "fingerprint": "9142a58d43665d484f8d16d28ffc8f5110eb16123e68471489ef068937307cbd",
       "observation": {
         "expected": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text\ntail</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
         "status": 0,
-        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n              <p>text</p>\n            </div>\n          </li>\n        </ul>\n      </div>\n    </li>\n  </ul>\n  <p>tail</p>\n</blockquote>"
+        "actual": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n\n            </div>\n          </li>\n        </ul>\n        <p>text\ntail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>"
       }
     },
     {
@@ -3832,105 +2787,6 @@
       }
     },
     {
-      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column-2.crv/js->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "d6dc1b3483dc908b10930ed499a10b0b10dae9ee9765a992bc69079c34db2c1a",
-      "observation": {
-        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>",
-        "status": 0,
-        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: center;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>"
-      }
-    },
-    {
-      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column-2.crv/php->js",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "aafa05c690607e84e88d9aa498ab8e5f0e0bf5e04996a72ba4753761fb5a0b15",
-      "observation": {
-        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: center;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>",
-        "status": 0,
-        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>"
-      }
-    },
-    {
-      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column-2.crv/php->rust",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "aafa05c690607e84e88d9aa498ab8e5f0e0bf5e04996a72ba4753761fb5a0b15",
-      "observation": {
-        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: center;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>",
-        "status": 0,
-        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>"
-      }
-    },
-    {
-      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column-2.crv/rust->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "d6dc1b3483dc908b10930ed499a10b0b10dae9ee9765a992bc69079c34db2c1a",
-      "observation": {
-        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>",
-        "status": 0,
-        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: center;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: center;\">1</td><td style=\"text-align: right;\">2</td></tr>\n    <tr><td style=\"text-align: center;\">3</td><td style=\"text-align: left;\">4</td></tr>\n  </tbody>\n</table>"
-      }
-    },
-    {
-      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column.crv/js->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "74ce98b7a2b0c6ef8878f42f55a704989fdff6cbbf1038eabec313d52ab804ab",
-      "observation": {
-        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: left;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>",
-        "status": 0,
-        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>"
-      }
-    },
-    {
-      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column.crv/php->js",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "2ae70a697cebed07c7dd8b09e42d186ba74fe1822b590d8e4e5c70b845992028",
-      "observation": {
-        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>",
-        "status": 0,
-        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: left;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>"
-      }
-    },
-    {
-      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column.crv/php->rust",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "2ae70a697cebed07c7dd8b09e42d186ba74fe1822b590d8e4e5c70b845992028",
-      "observation": {
-        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>",
-        "status": 0,
-        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: left;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>"
-      }
-    },
-    {
-      "key": "tests/corpus/574-a-head-row-alignment-marker-sets-the-whole-column.crv/rust->php",
-      "reason": "carve-php 29e42817 renders this document differently from its corpus HTML; carve-php main (2813194e) renders it as the corpus does, and that pin move waits on carve#3014.",
-      "issue": "https://github.com/markup-carve/carve/issues/3014",
-      "fingerprint": "74ce98b7a2b0c6ef8878f42f55a704989fdff6cbbf1038eabec313d52ab804ab",
-      "observation": {
-        "expected": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: left;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>",
-        "status": 0,
-        "actual": "<table>\n  <thead>\n    <tr><th scope=\"col\" style=\"text-align: right;\">a</th><th scope=\"col\" style=\"text-align: left;\">b</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">1</td><td style=\"text-align: left;\">2</td></tr>\n  </tbody>\n</table>"
-      }
-    },
-    {
-      "key": "tests/corpus/575-a-line-block-takes-a-lazy-line-whatever-its-last-payload-line.crv/js->php",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
-      "fingerprint": "cf682720e6a6e0e4f9329ce3bd801146f472c0345fcebd5278739c39e04dd09b",
-      "observation": {
-        "expected": "<blockquote>\n  <div class=\"line-block\">\n    <p><code>\nx</code></p>\n  </div>\n</blockquote>\n<p>after</p>",
-        "status": 0,
-        "actual": "<blockquote>\n  <div class=\"line-block\">\n    <p><code>\nx\nafter</code></p>\n  </div>\n</blockquote>"
-      }
-    },
-    {
       "key": "tests/corpus/575-a-line-block-takes-a-lazy-line-whatever-its-last-payload-line.crv/js->rust",
       "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
@@ -3942,9 +2798,20 @@
       }
     },
     {
-      "key": "tests/corpus/575-a-line-block-takes-a-lazy-line-whatever-its-last-payload-line.crv/php->js",
-      "reason": "carve-php renders this document differently from its corpus HTML at the pin (29e42817) and at main (2813194e); carve-js reads it as the corpus does since 672d0a0a.",
-      "issue": "https://github.com/markup-carve/carve-php/issues/3255",
+      "key": "tests/corpus/575-a-line-block-takes-a-lazy-line-whatever-its-last-payload-line.crv/php->rust",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-php reads it as the corpus does.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
+      "fingerprint": "cf682720e6a6e0e4f9329ce3bd801146f472c0345fcebd5278739c39e04dd09b",
+      "observation": {
+        "expected": "<blockquote>\n  <div class=\"line-block\">\n    <p><code>\nx</code></p>\n  </div>\n</blockquote>\n<p>after</p>",
+        "status": 0,
+        "actual": "<blockquote>\n  <div class=\"line-block\">\n    <p><code>\nx\nafter</code></p>\n  </div>\n</blockquote>"
+      }
+    },
+    {
+      "key": "tests/corpus/575-a-line-block-takes-a-lazy-line-whatever-its-last-payload-line.crv/rust->js",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
       "fingerprint": "58c83b6a23e5cf12df8b77176d9e6c6e866d33a9ddd1cf4656a082b079f34509",
       "observation": {
         "expected": "<blockquote>\n  <div class=\"line-block\">\n    <p><code>\nx\nafter</code></p>\n  </div>\n</blockquote>",
@@ -3953,8 +2820,8 @@
       }
     },
     {
-      "key": "tests/corpus/575-a-line-block-takes-a-lazy-line-whatever-its-last-payload-line.crv/rust->js",
-      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (ee85c4ca) and at main (e580eb3); carve-js reads it as the corpus does since 672d0a0a.",
+      "key": "tests/corpus/575-a-line-block-takes-a-lazy-line-whatever-its-last-payload-line.crv/rust->php",
+      "reason": "carve-rs renders this document differently from its corpus HTML at the pin (e580eb31); carve-php reads it as the corpus does.",
       "issue": "https://github.com/markup-carve/carve-rs/issues/2592",
       "fingerprint": "58c83b6a23e5cf12df8b77176d9e6c6e866d33a9ddd1cf4656a082b079f34509",
       "observation": {

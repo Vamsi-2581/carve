@@ -57,7 +57,6 @@
 
 # A list written past its container's column inside a quote starts its span in
 # the indentation (corpus 556 rows 4 and 5). carve-js fixed it after the pin.
-carve-rs  starts-past-opening-markup  list  4  markup-carve/carve-rs#2578
-carve-rs  starts-past-opening-markup  list_item  4  markup-carve/carve-rs#2578
 carve-php  starts-past-opening-markup  list  4  markup-carve/carve-php#3238
 carve-php  starts-past-opening-markup  list_item  4  markup-carve/carve-php#3238
+carve-rs  starts-past-opening-markup  code  1  markup-carve/carve-rs#2592
