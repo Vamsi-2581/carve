@@ -3905,6 +3905,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         ) {
           node.rows[0].cells.forEach((c) => (c.header = true))
           node.rows[0].isHead = true
+          node.rows[0].gfmHead = true
           sr.cells.forEach((seg, ci) => {
             // Equivalent to `trim()` here, and spelled `padTrim` for the same
             // reason as the span fallback above: every cell that reached this

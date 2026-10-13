@@ -3765,23 +3765,16 @@ that rowspan, so the leftward walk runs off the edge with nothing to merge and t
 
 ## Colspan marker scans left past a consumed cell
 
-The same leftward walk SUCCEEDS when an available cell sits beyond the consumed
-columns: a `<` skips every column already taken by another span and merges into
-the nearest cell that is still free, only falling back to an empty cell when the
-walk reaches the table edge with nothing to merge.
+A `<` does NOT reach past a column another cell's rowspan holds. It widens the
+cell covering its left neighbor only when that cell starts in the same row;
+widening anything else would place one cell on top of another, which is not a
+table HTML can hold (carve#3047).
 
 Here the second body row is `| p | ^ | < | e |`. The `^` (column 2) continues the
-rowspan of `b` directly above it, so column 2 is consumed and `b` gains
-`rowspan="2"`. The `<` (column 3) then walks left, skips that consumed column, and
-merges into `p` (column 1), so `p` gains `colspan="2"`. The trailing `e` follows
-as a plain cell.
-
-The walk counts the consumed column toward the span it grows, so the resulting
-`colspan` can visually overlap the cell occupying that column (here `p`'s
-`colspan="2"` covers the column `b`'s rowspan still holds). That overlap is the
-defined result of the walk-and-merge model, not an error: span markers only ever
-grow an existing cell or, when blocked at the edge, become an empty cell - the
-author chooses the layout by where they place the markers.
+rowspan of `b` directly above it, so `b` gains `rowspan="2"` and covers column 2
+of this row. The `<` (column 3) has `b` as its left neighbor, and `b` started a
+row earlier, so the marker is BLOCKED and renders as an empty cell. `p` keeps one
+column, and the trailing `e` follows as a plain cell.
 
 ::: compare
 
@@ -3799,7 +3792,7 @@ author chooses the layout by where they place the markers.
   </thead>
   <tbody>
     <tr><td>a</td><td rowspan="2">b</td><td>c</td><td>d</td></tr>
-    <tr><td colspan="2">p</td><td>e</td></tr>
+    <tr><td>p</td><td></td><td>e</td></tr>
   </tbody>
 </table>
 ```
@@ -49930,3 +49923,80 @@ after [^n]
 ```
 
 ::::
+
+## A span never covers another cell
+
+A marker grows the cell covering its neighbor only when the new cells it would take
+are free (CARVE-P9-002). A `^` under a cell two columns wide takes the whole
+two-column strip of its row, so the strip must hold span markers or nothing. In the
+last row the `^` under `spans 4 cells` takes the `<` beside it, which renders
+nothing, and the row owns no cell of its own.
+
+::: compare
+
+```carve
+|= 2-col header|<|= header|
+|spans 3 rows|foo|bar|
+|^|spans 4 cells|<|
+|^|^|<|
+```
+
+```html
+<table>
+  <thead>
+    <tr><th scope="col" colspan="2">2-col header</th><th scope="col">header</th></tr>
+  </thead>
+  <tbody>
+    <tr><td rowspan="3">spans 3 rows</td><td>foo</td><td>bar</td></tr>
+    <tr><td rowspan="2" colspan="2">spans 4 cells</td></tr>
+    <tr></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+When the strip holds a cell, the `^` is blocked and renders as an empty cell, so
+`a` keeps one row and `b` keeps its place.
+
+::: compare
+
+```carve
+| a | < |
+| ^ | b |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td colspan="2">a</td></tr>
+    <tr><td></td><td>b</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+A header row is a row in which every cell it owns is a header cell. A span
+placeholder belongs to the cell covering it, so a `<` beside a `|=` cell keeps the
+row in `<thead>` (CARVE-P9-006).
+
+::: compare
+
+```carve
+|= a |<|= b |
+| 1 | 2 | 3 |
+```
+
+```html
+<table>
+  <thead>
+    <tr><th scope="col" colspan="2">a</th><th scope="col">b</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>2</td><td>3</td></tr>
+  </tbody>
+</table>
+```
+
+:::

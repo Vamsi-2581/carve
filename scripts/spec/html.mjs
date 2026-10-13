@@ -1091,43 +1091,74 @@ function renderTable(node, depth, ctx) {
     throw new Refuse('table column attribute has more entries than columns')
   }
   // resolve span markers (T5): row-major; consumed positions are skipped in
-  // the output; a marker with no reachable origin renders as an EMPTY cell
+  // the output; a marker whose span would cover another cell renders as an
+  // EMPTY cell (carve#3047)
   const consumed = new Set()
   const key = (r, c) => `${r}:${c}`
+  const cover = new Map()
+  // A CELL CARRYING ATTRIBUTES IS NEVER A BARE SPAN MARKER (§5 T4,
+  // carve#1463). The attribute block is what makes the cell ordinary
+  // content, so the `<` is the literal character and the attributes stay on
+  // the cell that carries them.
+  const bareMarker = (cell) => (cell.content === '<' || cell.content === '^') && cell.align === null && cell.attrs == null
+  const absorb = (origin, cell, r, c) => {
+    consumed.add(key(r, c))
+    cover.set(key(r, c), origin)
+    for (const jn of cell.joins ?? []) origin.content += (origin.content ? ' ' : '') + jn
+  }
   for (let r = 0; r < rows.length; r++) {
     const cells = rows[r].cells
     for (let c = 0; c < cells.length; c++) {
       const cell = cells[c]
       if (consumed.has(key(r, c))) continue
-      // A CELL CARRYING ATTRIBUTES IS NEVER A BARE SPAN MARKER (§5 T4,
-      // carve#1463). The attribute block is what makes the cell ordinary
-      // content, so the `<` is the literal character and the attributes stay on
-      // the cell that carries them.
-      if (cell.content === '<' && cell.align === null && cell.attrs == null) {
-        let cc = c - 1
-        while (cc >= 0 && consumed.has(key(r, cc))) cc--
-        if (cc >= 0 && rows[r].cells[cc] !== undefined) {
-          const origin = rows[r].cells[cc]
+      if (bareMarker(cell) && cell.content === '<') {
+        const origin = cover.get(key(r, c - 1))
+        // Widening a cell that started in an earlier row would cover cells
+        // already placed above.
+        if (origin && origin.spanTop === r) {
           origin.colspan = (origin.colspan ?? 1) + 1
-          consumed.add(key(r, c))
-          for (const jn of cell.joins ?? []) origin.content += (origin.content ? ' ' : '') + jn
-        } else {
-          cell.content = ''
-          cell.empty = true
+          absorb(origin, cell, r, c)
+          continue
         }
-      } else if (cell.content === '^' && cell.align === null && cell.attrs == null) {
-        let rr = r - 1
-        while (rr >= 0 && consumed.has(key(rr, c))) rr--
-        if (rr >= 0 && rows[rr].cells[c] !== undefined) {
-          const origin = rows[rr].cells[c]
+      } else if (bareMarker(cell)) {
+        const origin = cover.get(key(r - 1, c))
+        const width = origin?.colspan ?? 1
+        const strip = []
+        for (let k = c + 1; origin && k < c + width; k++) strip.push(k)
+        // Under its left edge only, and the rest of the new row strip must be
+        // span markers or missing cells, or the rowspan covers a cell.
+        if (origin && origin.spanLeft === c && strip.every((k) => cells[k] === undefined || (bareMarker(cells[k]) && !consumed.has(key(r, k))))) {
           origin.rowspan = (origin.rowspan ?? 1) + 1
-          consumed.add(key(r, c))
-          for (const jn of cell.joins ?? []) origin.content += (origin.content ? ' ' : '') + jn
-        } else {
-          cell.content = ''
-          cell.empty = true
+          absorb(origin, cell, r, c)
+          for (const k of strip) {
+            if (cells[k] === undefined) cover.set(key(r, k), origin)
+            else absorb(origin, cells[k], r, k)
+          }
+          continue
         }
+      } else {
+        cell.spanTop = r
+        cell.spanLeft = c
+        cover.set(key(r, c), cell)
+        continue
       }
+      cell.content = ''
+      cell.empty = true
+      cell.spanTop = r
+      cell.spanLeft = c
+      cover.set(key(r, c), cell)
+    }
+  }
+  // The native head-row run: a row is a header row when it owns a cell and
+  // every cell it owns is a header cell; a span placeholder belongs to the cell
+  // covering it (PART 11, carve#3048).
+  if (!rows[0]?.gfmHead) {
+    let run = true
+    for (let r = 0; r < rows.length; r++) {
+      run = run &&
+        rows[r].cells.some((_, c) => !consumed.has(key(r, c))) &&
+        rows[r].cells.every((cell, c) => (consumed.has(key(r, c)) ? cover.get(key(r, c)) : cell).header === true)
+      rows[r].isHead = run
     }
   }
   // column alignment: from the thead row's cells (native marker or GFM)
