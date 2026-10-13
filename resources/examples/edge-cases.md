@@ -34144,8 +34144,9 @@ consumed definition resolves to a link, and one left as text shows its own
 source in the output. Without it the two answers render alike and the row pins
 nothing.
 
-THE HOST DECIDES CONSUMPTION, and that is the whole content of the regression.
-A definition written in a container in a LIST ITEM stays text.
+A definition past the container's content column opens on its authored base and is
+consumed, in a list item as under a definition or footnote body (CARVE-P0-004,
+CARVE-P0-011, CARVE-P2-017).
 
 :::: compare
 
@@ -34162,11 +34163,11 @@ A definition written in a container in a LIST ITEM stays text.
 <ul>
   <li>a
     <aside class="admonition note" aria-label="Note">
-      <p>[r]: /url</p>
+
     </aside>
   </li>
 </ul>
-<p>[r][]</p>
+<p><a href="/url">r</a></p>
 ```
 
 ::::
@@ -34236,7 +34237,8 @@ see[^f]
 
 :::
 
-A BLOCKQUOTE HOST agrees with the list item.
+A BLOCKQUOTE HOST keeps the definition as text. The note there opens at the
+quote's column 0, so the line past it has no authored base, as at top level.
 
 ::: compare
 
@@ -34261,9 +34263,7 @@ A BLOCKQUOTE HOST agrees with the list item.
 
 :::
 
-THE INNER CONTAINER FLIPS IT TOO, under one host. Swap the div for a quote in
-the SAME list item and the definition IS consumed, which is the opposite answer
-on the same host and the same geometry.
+A QUOTE INSIDE THE LIST ITEM also consumes the definition past its content column.
 
 ::: compare
 
@@ -34286,10 +34286,7 @@ on the same host and the same geometry.
 
 :::
 
-THE FLIP DOES NOT GENERALIZE, which is why the next row is here rather than
-left to inference. A quote under a DEFINITION BODY consumes exactly as the div
-did, so it is the list item's div that is the odd one out and not quotes that
-are special. Without this row the one above reads as "a quote always consumes".
+A quote under a DEFINITION BODY consumes the definition the same way.
 
 ::: compare
 
@@ -50599,6 +50596,79 @@ more</p>
     </li>
   </ol>
 </section>
+```
+
+::::
+
+## A link definition or an attribute line past a box's column opens on its authored base
+
+A link definition or attribute line past a box's content column opens on its authored base (CARVE-P0-004, CARVE-P0-011, CARVE-P2-017), as a footnote definition there is hoisted (corpus 582).
+
+:::: compare
+
+````carve
+- ::: box
+    [r]: /u
+  :::
+
+see [x][r]
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+
+    </div>
+  </li>
+</ul>
+<p>see <a href="/u">x</a></p>
+```
+
+::::
+
+:::: compare
+
+````carve
+- ::: box
+    {.k}
+    para
+  :::
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+      <p class="k">para</p>
+    </div>
+  </li>
+</ul>
+```
+
+::::
+
+The same definition at the box's own column already opens there.
+
+:::: compare
+
+````carve
+- ::: box
+  [r]: /u
+  :::
+
+see [x][r]
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+
+    </div>
+  </li>
+</ul>
+<p>see <a href="/u">x</a></p>
 ```
 
 ::::

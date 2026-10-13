@@ -53,8 +53,8 @@ for (const sublist of [false, true]) test(`an item heading releases the child co
   const source = '- outer\n' + (sublist ? '  - para\n    ```\n    code\n\n' : '') + '  # h\n    ```\n'
   assert.equal(compact(source), '<ul><li>outer' + (sublist ? '<ul><li>para<code>code</code></li></ul>' : '') + '<h1 id="h">h</h1><pre><code></code></pre></li></ul>')
 })
-test('a shifted reference definition stays paragraph text in a hosted box', () => {
-  assert.equal(compact('- ::: box\n   [r]: /url\n  :::\n'), '<ul><li><div class="box"><p>[r]: /url</p></div></li></ul>')
+test('a shifted reference definition opens on its authored base in a hosted box', () => {
+  assert.equal(compact('- ::: box\n   [r]: /url\n  :::\n\n[r][]\n'), '<ul><li><div class="box"></div></li></ul><p><a href="/url">r</a></p>')
 })
 for (const nested of [false, true]) test(`a comment releases the below-child-column fence to the box, nested box ${nested}`, () => {
   const source = '> - ::: box\n>   - ' + (nested ? '::: inner' : 'inner') + '\n>     %%%\n>     hidden\n>     %%%\n>    ```\n>    code\n- tail\n'
@@ -87,6 +87,6 @@ for (const lines of [['```', 'x'], ['~~~', 'x'], [':::broken']]) {
   })
 }
 
-test('a shifted reference under an open paragraph stays text in a hosted box', () => {
-  assert.deepEqual(parse('- ::: box\n  text\n   [r]: /url\n  :::\n').blocks[0].items[0].blocks[0].children, [{t: 'para', lines: ['text', '[r]: /url']}])
+test('a shifted reference interrupts an open paragraph in a hosted box as in an item', () => {
+  assert.equal(compact('- ::: box\n  text\n   [r]: /url\n  :::\n\n[r][]\n'), '<ul><li><div class="box"><p>text</p></div></li></ul><p><a href="/url">r</a></p>')
 })

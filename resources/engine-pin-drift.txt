@@ -31,3 +31,6 @@
 585-a-comment-in-a-marker-line-note-changes-nothing-2  ahead of the pin: a comment in a marker-line note changes nothing (checker reading, carve-js not yet)
 586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note  ahead of the pin: the comment closes the note paragraph, the unclosed fence opens in the note and the line below is a document paragraph (checker reading, carve-js not yet, carve-js#2948)
 586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note-2  ahead of the pin: the same shape after a blank (checker reading, carve-js not yet, carve-js#2948)
+451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column  ahead of the pin: a link definition past the note's column in a list item registers (checker reading, carve-js not yet, carve-js#2964)
+587-a-link-definition-or-an-attribute-line-past-a-box-s-column-opens-on-its-authored-base  ahead of the pin: a link definition past the box's column in a list item registers (checker reading, carve-js not yet, carve-js#2964)
+587-a-link-definition-or-an-attribute-line-past-a-box-s-column-opens-on-its-authored-base-2  ahead of the pin: an attribute line past the box's column in a list item applies to the next block (checker reading, carve-js not yet, carve-js#2964)

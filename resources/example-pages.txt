@@ -516,6 +516,7 @@ index: examples/edge-cases/index.md
   an-opener-past-a-hosted-container-s-column-opens-there
   a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in
   a-footnote-definition-past-a-box-s-column-is-hoisted
+  a-link-definition-or-an-attribute-line-past-a-box-s-column-opens-on-its-authored-base
   an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph
   a-closed-fence-in-a-quoted-sub-item-after-a-lazy-line-leaves-no-paragraph
   a-caption-scope-resets-at-a-structural-only-line
