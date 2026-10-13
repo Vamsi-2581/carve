@@ -110,7 +110,7 @@ at all.
 
 **4. The `:name[…]` spelling lost its handlers.** `:kbd[Tab]` renders
 `<span class="ext-kbd">Tab</span>` in a core processor; the SemanticSpan
-extension accepts it as a soft-deprecated form, scheduled for removal in 0.2.
+extension accepts it as a soft-deprecated form.
 This is the one break in RELEASED behavior rather than in a development window:
 `:kbd[x]` has rendered `<kbd>` in carve-js since its first release. The rewrite
 is mechanical - `:kbd[Tab]` becomes `[Tab]{kbd}`.

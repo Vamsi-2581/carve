@@ -1579,9 +1579,9 @@ attributes on the element.
 
 It is accepted for compatibility, not because two spellings are wanted: it was
 released behavior in carve-js and carve-rs, so removing it outright would break
-documents that shipped. **Write the span attribute.** The form is scheduled for
-removal in 0.2, and it cannot express a combination - `:dfn[:abbr[CSS]]` does
-not nest, where `[CSS]{dfn abbr="…"}` does.
+documents that shipped. **Write the span attribute.** The form cannot express a
+combination - `:dfn[:abbr[CSS]]` does not nest, where `[CSS]{dfn abbr="…"}`
+does.
 
 Core registers no `:name[…]` handler at all, so with the extension off every one
 of the seven takes the ordinary `<span class="ext-NAME">` fallback.

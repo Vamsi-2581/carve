@@ -126,16 +126,15 @@ const REPOS = {
  * code.
  *
  * So where `staleness` is present it names a LITERAL STRING that must appear
- * in the file - the assertion providing the reverse direction. Deleting or
+ * in the file, or in `stalenessFile` for data ledgers - the assertion providing
+ * the reverse direction. Deleting or
  * renaming that assertion now fails here, which is the regression mode that
  * actually happens. It does NOT prove the assertion FIRES; only a mutation run
  * does that, and each of these carries one in its own PR.
  *
  * Where `staleness` is ABSENT the guard is reported as CLAIMED rather than
- * verified, and the run says how many of each there are. That is deliberate:
- * back-filling every entry at once would mean inventing anchors for two dozen
- * files in one commit, and a wrong anchor is a false failure on the pre-tag
- * gate. The honest intermediate state is to say which claims are checked.
+ * verified, and the run says how many of each there are. A forward-only check
+ * cannot supply a staleness anchor.
  */
 const MANIFEST = [
   // -- the spec repo's own ledgers ------------------------------------------
@@ -158,7 +157,7 @@ const MANIFEST = [
   // the rows here are one document read two ways inside a line's leading
   // indentation, which carve#1928 permits, so no engine will ever close them and
   // an owed-must-be-empty gate could not be satisfied at all.
-  { repo: 'spec', path: 'resources/ast-span-divergence.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', exempt: 'ast-span', owner: 'npm run ast:check' },
+  { repo: 'spec', path: 'resources/ast-span-divergence.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', exempt: 'ast-span', stalenessFile: 'scripts/spec/ast-spans.mjs', staleness: 'no longer disagrees - delete its line', owner: 'npm run ast:check' },
   // RELAXED, because the reason that covered both AST ledgers was only ever
   // true of the span one. A VALUE row is `<type.field>  <count>  <who diverges
   // and where it is tracked>`, and `tests/ast-values.test.mjs` has asserted
@@ -172,12 +171,12 @@ const MANIFEST = [
   // (markup-carve/carve-php#2298). Without this, no pull request could record
   // that window at all, and the daily AST conformance run stayed red on a gap
   // whose only fix lives in another repo (carve#2175).
-  { repo: 'spec', path: 'resources/ast-value-divergence.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', owner: 'npm run ast:check' },
+  { repo: 'spec', path: 'resources/ast-value-divergence.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', stalenessFile: 'scripts/spec/ast-values.mjs', staleness: 'no longer diverges - delete its line', owner: 'npm run ast:check' },
   // DECLARED INSIDE A PULL REQUEST, OWED BEFORE A TAG (carve#2179). A row
   // here cannot parse unless its status is `owner/repo#N`, and `permitted` is
   // refused outright, so a declaration is always tracked work with an owner
   // and it leaves when that issue closes.
-  { repo: 'spec', path: 'resources/ast-extent-findings.txt', kind: 'txt', rows: 'extent', policy: 'owed', prPolicy: 'declared', guard: 'two-way', owner: 'npm run ast:check' },
+  { repo: 'spec', path: 'resources/ast-extent-findings.txt', kind: 'txt', rows: 'extent', policy: 'owed', prPolicy: 'declared', guard: 'two-way', stalenessFile: 'scripts/spec/ast-waivers.mjs', staleness: 'line.rule}  ${line.type}  is declared', owner: 'npm run ast:check' },
   // ONE OF THE ENGINE-LAG ENTRIES: see the `prPolicy` note on the
   // engine-pin ledger below. Same window, described from the writer side.
   //
@@ -187,33 +186,33 @@ const MANIFEST = [
   // check honors a declaration, and the wrong answer sent a ruling on carve#2588
   // to declare a cross-engine shard red here, where nothing would have read it.
   // `compare:impls --roundtrip` consults no ledger by design.
-  { repo: 'spec', path: 'resources/engine-fmt-drift.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', owner: 'tests/corpus-fmt-roundtrip.test.mjs' },
-  { repo: 'spec', path: 'resources/converter-drift.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', owner: 'npm run compare:convert' },
+  { repo: 'spec', path: 'resources/engine-fmt-drift.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', stalenessFile: 'tests/corpus-fmt-roundtrip.test.mjs', staleness: 'resources/engine-fmt-drift.txt declares drift that no longer happens', owner: 'tests/corpus-fmt-roundtrip.test.mjs' },
+  { repo: 'spec', path: 'resources/converter-drift.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', stalenessFile: 'scripts/lib/drift-ledger.mjs', staleness: 'and the engine now matches - delete the STALE line', owner: 'npm run compare:convert' },
   // ANOTHER ENGINE-LAG ENTRY, AND THE ONE THE RULE WAS WRITTEN FOR. All
   // are owed before a tag and declared inside a pull request: see the
   // two-verdicts note at the top of this file (carve#1811). `prPolicy` is
   // deliberately a per-entry opt-in rather than a blanket relaxation of
   // `owed`, so relaxing a third ledger stays a visible edit here.
-  { repo: 'spec', path: 'resources/engine-pin-drift.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', owner: 'npm run engine:report -- --check' },
+  { repo: 'spec', path: 'resources/engine-pin-drift.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', stalenessFile: 'scripts/engine-report.mjs', staleness: 'reproduces now; drop the line (reason was:', owner: 'npm run engine:report -- --check' },
   // Declared inside a pull request for the same reason: a spec rule the
   // oracle already renders lands before the pin, on every authored document
   // that uses the construct (carve#2887).
-  { repo: 'spec', path: 'resources/oracle-divergence.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', owner: 'tests/the-oracle-reads-the-authored-documents.test.mjs' },
+  { repo: 'spec', path: 'resources/oracle-divergence.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', stalenessFile: 'tests/the-oracle-reads-the-authored-documents.test.mjs', staleness: 'const stale = [...declared.keys()].filter((id) => !diverging.has(id))', owner: 'tests/the-oracle-reads-the-authored-documents.test.mjs' },
   // 132 rows, every one `permitted`: PART 12 §4 exempts a REASSEMBLED node
   // forever. The last field decides, so a row that stops being permitted is
   // counted as owed without anyone editing this manifest.
   //
   // Per-PR accepts permitted rows and tracked debt; release still requires no debt.
-  { repo: 'spec', path: 'resources/ast-position-waivers.txt', kind: 'txt', policy: 'split', prPolicy: 'split-declared', guard: 'two-way', owner: 'tests/ast-waivers.test.mjs' },
-  { repo: 'spec', path: 'resources/import-comparison-drift.json', name: 'differences', kind: 'json', policy: 'manual', guard: 'two-way', owner: 'npm run import:compare' },
-  { repo: 'spec', path: 'resources/ingest-comparison-drift.json', name: 'differences', kind: 'json', policy: 'manual', guard: 'two-way', owner: 'npm run ast:ingest' },
-  { repo: 'spec', path: 'resources/roundtrip-export-acceptance-fixtures.json', name: 'aheadOfPin', kind: 'json-flag', flag: 'aheadOfPin', policy: 'owed', prPolicy: 'declared', guard: 'two-way', owner: 'tests/roundtrip-export-acceptance.test.mjs' },
+  { repo: 'spec', path: 'resources/ast-position-waivers.txt', kind: 'txt', policy: 'split', prPolicy: 'split-declared', guard: 'two-way', stalenessFile: 'scripts/spec/ast-waivers.mjs', staleness: 'line.document}  ${line.type}  is declared', owner: 'tests/ast-waivers.test.mjs' },
+  { repo: 'spec', path: 'resources/import-comparison-drift.json', name: 'differences', kind: 'json', policy: 'manual', guard: 'two-way', stalenessFile: 'scripts/lib/import-comparison.mjs', staleness: 'STALE comparison declaration:', owner: 'npm run import:compare' },
+  { repo: 'spec', path: 'resources/ingest-comparison-drift.json', name: 'differences', kind: 'json', policy: 'manual', guard: 'two-way', stalenessFile: 'scripts/lib/import-comparison.mjs', staleness: 'STALE comparison declaration:', owner: 'npm run ast:ingest' },
+  { repo: 'spec', path: 'resources/roundtrip-export-acceptance-fixtures.json', name: 'aheadOfPin', kind: 'json-flag', flag: 'aheadOfPin', policy: 'owed', prPolicy: 'declared', guard: 'two-way', stalenessFile: 'tests/roundtrip-export-acceptance.test.mjs', staleness: 'is declared aheadOfPin but the pinned engine passes it: drop the flag', owner: 'tests/roundtrip-export-acceptance.test.mjs' },
   // A counts ratchet rather than a ledger, but it carries a per-document
   // allowlist inside it. Two-directional by construction - the whole object is
   // compared with deepEqual - so a row here cannot rot silently.
-  { repo: 'spec', path: 'resources/import-roundtrip-baseline.json', name: 'htmlImportPopulation.expectedRejections', kind: 'json', policy: 'manual', guard: 'two-way', owner: 'tests/import-roundtrip-ratchets.check-helper.mjs' },
+  { repo: 'spec', path: 'resources/import-roundtrip-baseline.json', name: 'htmlImportPopulation.expectedRejections', kind: 'json', policy: 'manual', guard: 'two-way', stalenessFile: 'tests/import-roundtrip-ratchets.check-helper.mjs', staleness: 'htmlImportPopulation: baseline.htmlImportPopulation,', owner: 'tests/import-roundtrip-ratchets.check-helper.mjs' },
 
-  { repo: 'spec', path: 'resources/html-import-pin-drift.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', owner: 'npm run html-import:check' },
+  { repo: 'spec', path: 'resources/html-import-pin-drift.txt', kind: 'txt', policy: 'owed', prPolicy: 'declared', guard: 'two-way', stalenessFile: 'tests/html-import-contract.check.mjs', staleness: 'pinned build now reproduces it. Delete the entry', owner: 'npm run html-import:check' },
 
   // THE THIRD ENGINE-LAG ENTRY, and the only one about a PUBLISHED pin rather
   // than a committed one: carve-rb links `carve-lang` from crates.io, so
@@ -223,15 +222,15 @@ const MANIFEST = [
   // carve-rb bumps - and declared inside a pull request, because no pull
   // request in any repo can close it (carve#2175, markup-carve/carve-rb#143).
 
-  { repo: 'spec', path: 'resources/lint-corpus-drift.json', name: 'differences', kind: 'json', policy: 'manual', guard: 'two-way', owner: 'npm run lint:parity' },
+  { repo: 'spec', path: 'resources/lint-corpus-drift.json', name: 'differences', kind: 'json', policy: 'manual', guard: 'two-way', stalenessFile: 'scripts/lib/lint-corpus.mjs', staleness: 'STALE lint declaration:', owner: 'npm run lint:parity' },
 
   // -- the spec repo's declaration CONSTANTS, which the ledgers do not cover -
   // Codes the fixture and corpus oracles cannot reach (carve#1835). PRINTED
   // rather than judged, because no rule separates the two kinds it holds: one
   // entry is unreachable by construction - a cap marker, and a spec MAY at that
   // - and two name coverage that carve#1878 may or may not close.
-  { repo: 'spec', path: 'tests/html-import-contract.check.mjs', name: 'NOT_COVERED_HERE', kind: 'js', policy: 'manual', guard: 'two-way', owner: 'npm run html-import:check' },
-  { repo: 'spec', path: 'tests/ast-positions.test.mjs', name: 'DECLARED_OVER_REACH', kind: 'js', policy: 'owed', guard: 'two-way', owner: 'tests/ast-positions.test.mjs' },
+  { repo: 'spec', path: 'tests/html-import-contract.check.mjs', name: 'NOT_COVERED_HERE', kind: 'js', policy: 'manual', guard: 'two-way', staleness: 'NOT_COVERED_HERE names code(s) something now produces:', owner: 'npm run html-import:check' },
+  { repo: 'spec', path: 'tests/ast-positions.test.mjs', name: 'DECLARED_OVER_REACH', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'update DECLARED_OVER_REACH in the commit that moves the engines', owner: 'tests/ast-positions.test.mjs' },
   // carve#1928's ruling made a LEAF begin at its markup, so fourteen corpus
   // documents are owed by carve-js and carve-rs until they move. `manual` for
   // the reason DECLARED_UNREACHABLE below is: the count is judged by the test
@@ -242,22 +241,22 @@ const MANIFEST = [
   // `liveRows` collapses every whitespace run in a `js` row to one space - so
   // `declared` on a `js` entry reports every row UNDECLARED and can never pass.
   // Filed as markup-carve/carve#1939; when it is fixed this entry can move.
-  { repo: 'spec', path: 'tests/ast-positions.test.mjs', name: 'DECLARED_LEAF_INDENT_START', kind: 'js', policy: 'declared', guard: 'two-way', owner: 'tests/ast-positions.test.mjs' },
+  { repo: 'spec', path: 'tests/ast-positions.test.mjs', name: 'DECLARED_LEAF_INDENT_START', kind: 'js', policy: 'declared', guard: 'two-way', staleness: 'update DECLARED_LEAF_INDENT_START in the commit that moves the engines', owner: 'tests/ast-positions.test.mjs' },
   // A pin window, like the AHEAD_OF_PIN rows below: while the pinned parser
   // cannot read a ruled tree back out of expected.crv, the two exits cannot
   // agree. Read by hand inside a PR, owed before a tag.
-  { repo: 'spec', path: 'tests/the-two-import-exits-agree.test.mjs', name: 'UNMET', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', owner: 'tests/the-two-import-exits-agree.test.mjs' },
-  { repo: 'spec', path: 'tests/optional-corpus.test.mjs', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', owner: 'tests/optional-corpus.test.mjs' },
+  { repo: 'spec', path: 'tests/the-two-import-exits-agree.test.mjs', name: 'UNMET', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', staleness: 'but its two exits now agree. Delete the entry', owner: 'tests/the-two-import-exits-agree.test.mjs' },
+  { repo: 'spec', path: 'tests/optional-corpus.test.mjs', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', staleness: 'the pinned build reproduces this now - delete its AHEAD_OF_PIN entry', owner: 'tests/optional-corpus.test.mjs' },
   // Tier-3 twin of the Tier-2 AHEAD_OF_PIN above: read by hand inside a PR, owed before a tag.
-  { repo: 'spec', path: 'tests/examples-tier3.test.mjs', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', owner: 'tests/a-tier3-example-ahead-of-the-pin-is-declared.test.mjs' },
-  { repo: 'spec', path: 'tests/every-labels-key-reaches-the-output.test.mjs', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', owner: 'tests/every-labels-key-reaches-the-output.test.mjs' },
-  { repo: 'spec', path: 'tests/ast-schema.test.mjs', name: 'SCHEMA_ROLLOUT_PENDING', kind: 'js', policy: 'owed', guard: 'two-way', owner: 'tests/ast-schema.test.mjs' },
-  { repo: 'spec', path: 'tests/corpus-convert.test.mjs', name: 'PINNED_DRIFT', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', owner: 'per-PR twin of resources/converter-drift.txt' },
+  { repo: 'spec', path: 'tests/examples-tier3.test.mjs', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', stalenessFile: 'scripts/lib/tier3-ledger.mjs', staleness: 'the pinned build reproduces this example now, so its AHEAD_OF_PIN', owner: 'tests/a-tier3-example-ahead-of-the-pin-is-declared.test.mjs' },
+  { repo: 'spec', path: 'tests/every-labels-key-reaches-the-output.test.mjs', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'Delete the AHEAD_OF_PIN entry so the key is checked for real.', owner: 'tests/every-labels-key-reaches-the-output.test.mjs' },
+  { repo: 'spec', path: 'tests/ast-schema.test.mjs', name: 'SCHEMA_ROLLOUT_PENDING', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'these documents validate now and are still listed in SCHEMA_ROLLOUT_PENDING', owner: 'tests/ast-schema.test.mjs' },
+  { repo: 'spec', path: 'tests/corpus-convert.test.mjs', name: 'PINNED_DRIFT', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', staleness: 'but the pinned build now matches - delete the STALE entry', owner: 'per-PR twin of resources/converter-drift.txt' },
   // Capability statements about the PINNED build and about each engine's CLI,
   // not pin lag: no rule separates one that will clear from one that never
   // will, so they are printed for a reader instead of judged.
-  { repo: 'spec', path: 'tests/corpus-convert.test.mjs', name: 'PINNED_UNIMPLEMENTED', kind: 'js', policy: 'manual', guard: 'two-way', owner: 'the pinned build exports no djotToCarve' },
-  { repo: 'spec', path: 'tests/optional-feature-adapters.test.mjs', name: 'DECLARED_UNREACHABLE', kind: 'js', policy: 'manual', guard: 'two-way', owner: 'per-engine CLI reachability' },
+  { repo: 'spec', path: 'tests/corpus-convert.test.mjs', name: 'PINNED_UNIMPLEMENTED', kind: 'js', policy: 'manual', guard: 'two-way', staleness: 'but the pinned build exports ${exportName} - delete the stale entry', owner: 'the pinned build exports no djotToCarve' },
+  { repo: 'spec', path: 'tests/optional-feature-adapters.test.mjs', name: 'DECLARED_UNREACHABLE', kind: 'js', policy: 'manual', guard: 'two-way', staleness: 'the adapter now names it. Delete the declaration', owner: 'per-engine CLI reachability' },
   // The measurement twin of `resources/ast-span-divergence.txt`, reading the
   // same way its sibling below does and for the same reason: it moves in the
   // same commit as the ledger, and its rows are `['<type> (kind)', <count>]`
@@ -266,28 +265,27 @@ const MANIFEST = [
   // It reads the same keys as the ledger it mirrors, so it takes the same
   // exemptions: declaring a row in one place and not the other would leave
   // release mode blocked on the twin for a fact both sides record.
-  { repo: 'spec', path: 'tests/ast-spans.test.mjs', name: 'LAST_MEASURED', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', exempt: 'ast-span', owner: 'tests/ast-spans.test.mjs' },
+  { repo: 'spec', path: 'tests/ast-spans.test.mjs', name: 'LAST_MEASURED', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', exempt: 'ast-span', staleness: 'assert.deepEqual(reconcileSpans(asMeasured(LAST_MEASURED), shippedSpanDeclaration()), [])', owner: 'tests/ast-spans.test.mjs' },
   // The measurement twin of `resources/ast-value-divergence.txt`, and it moves
   // in the same commit, so it reads as that ledger does inside a pull request.
   // `manual` rather than `declared` for the reason PINNED_DRIFT carries it: the
   // rows are `['<type.field>', <count>]` and hold no reference to check - the
   // reference is on the ledger row this mirrors.
-  { repo: 'spec', path: 'tests/ast-values.test.mjs', name: 'LAST_MEASURED', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', owner: 'tests/ast-values.test.mjs' },
+  { repo: 'spec', path: 'tests/ast-values.test.mjs', name: 'LAST_MEASURED', kind: 'js', policy: 'owed', prPolicy: 'manual', guard: 'two-way', staleness: 'assert.deepEqual(reconcileDeclared(asMeasured(LAST_MEASURED), shippedDeclaration()), [])', owner: 'tests/ast-values.test.mjs' },
   // Engine-rollout and opt-in exemptions in the schema-field sweep. Neither is
   // separable by a rule - `definition_list.loose` is owed and clears with the
   // engine bumps, the two `shortCaption` fields are structural and never will -
   // so the rows are PRINTED rather than judged.
-  { repo: 'spec', path: 'tests/schema-fields-are-produced.test.mjs', name: 'ENGINE_ROLLOUT_PENDING', kind: 'js', policy: 'manual', guard: 'two-way', owner: 'tests/schema-fields-are-produced.test.mjs' },
-  { repo: 'spec', path: 'tests/schema-fields-are-produced.test.mjs', name: 'OPT_IN_ONLY', kind: 'js', policy: 'permitted', guard: 'two-way', owner: 'Tier-2 opt-in: citations are off by default' },
-  { repo: 'spec', path: 'tests/optional-corpus.test.mjs', name: 'DECLARED_UNIMPLEMENTED', kind: 'js', policy: 'manual', guard: 'two-way', owner: 'tests/optional-corpus.test.mjs' },
+  { repo: 'spec', path: 'tests/schema-fields-are-produced.test.mjs', name: 'ENGINE_ROLLOUT_PENDING', kind: 'js', policy: 'manual', guard: 'two-way', staleness: 'ENGINE_ROLLOUT_PENDING names promise(s) the pinned engine now keeps:', owner: 'tests/schema-fields-are-produced.test.mjs' },
+  { repo: 'spec', path: 'tests/schema-fields-are-produced.test.mjs', name: 'OPT_IN_ONLY', kind: 'js', policy: 'permitted', guard: 'two-way', staleness: 'OPT_IN_ONLY names promise(s) the corpus now keeps:', owner: 'Tier-2 opt-in: citations are off by default' },
+  { repo: 'spec', path: 'tests/optional-corpus.test.mjs', name: 'DECLARED_UNIMPLEMENTED', kind: 'js', policy: 'manual', guard: 'two-way', staleness: 'give the feature a runner', owner: 'tests/optional-corpus.test.mjs' },
   // Single-string lags against the pinned build. Deleting the constant IS the
   // fix, so an absent one counts zero rather than failing - the undeclared
   // sweep below is what catches a RENAME.
-  { repo: 'spec', path: 'tests/a-wrapper-its-content-spells-away-is-a-ceiling.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', guard: 'two-way', optional: true, owner: 'markup-carve/carve-js#1422' },
-  { repo: 'spec', path: 'tests/an-ingested-default-start-is-not-re-emitted.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', guard: 'two-way', optional: true, owner: 'markup-carve/carve-js#1391, markup-carve/carve-rs#1293' },
-  { repo: 'spec', path: 'tests/an-unspellable-block-does-not-cancel-list-adjacency.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', guard: 'two-way', optional: true, owner: 'markup-carve/carve#1621' },
-  { repo: 'spec', path: 'tests/a-markdown-destination-keeps-its-brackets.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', prPolicy: 'declared', guard: 'two-way', optional: true, owner: 'markup-carve/carve#2865' },
-  { repo: 'spec', path: 'tests/empty-raw-list-placement.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', prPolicy: 'declared', guard: 'two-way', optional: true, owner: 'markup-carve/carve#2887' },
+  { repo: 'spec', path: 'tests/a-wrapper-its-content-spells-away-is-a-ceiling.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', guard: 'two-way', optional: true, staleness: 'pin lag is declared and the engine no longer has it - delete PIN_LAG', owner: 'markup-carve/carve-js#1422' },
+  { repo: 'spec', path: 'tests/an-ingested-default-start-is-not-re-emitted.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', guard: 'two-way', optional: true, staleness: 'pin lag is declared and the engine no longer has it - delete PIN_LAG', owner: 'markup-carve/carve-js#1391, markup-carve/carve-rs#1293' },
+  { repo: 'spec', path: 'tests/an-unspellable-block-does-not-cancel-list-adjacency.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', guard: 'two-way', optional: true, staleness: 'pin lag is declared and the engine no longer has it - delete PIN_LAG', owner: 'markup-carve/carve#1621' },
+  { repo: 'spec', path: 'tests/empty-raw-list-placement.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', prPolicy: 'declared', guard: 'two-way', optional: true, staleness: 'pin lag is declared and the class is no longer missing - delete PIN_LAG', owner: 'markup-carve/carve#2887' },
   // An engine-pin window scoped to the CAPTION ROWS of CARVE-P11-063, not to
   // the clause: carve#2851's ruling landed spec-first and the pinned build
   // writes no caption marker, while every other row in that file is live. The
@@ -298,18 +296,18 @@ const MANIFEST = [
   { repo: 'spec', path: 'tests/an-element-less-container-is-carried-in-a-comment.test.mjs', name: 'CAPTION_LAG', kind: 'js-string', policy: 'owed', prPolicy: 'declared', guard: 'two-way', optional: true, staleness: 'delete CAPTION_LAG', owner: 'markup-carve/carve#2851' },
 
   // -- carve-js --------------------------------------------------------------
-  { repo: 'carve-js', path: 'test/corpus.test.ts', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', owner: 'test/corpus.test.ts' },
+  { repo: 'carve-js', path: 'test/corpus.test.ts', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'now matches: delete its AHEAD_OF_PIN entry', owner: 'test/corpus.test.ts' },
   { repo: 'carve-js', path: 'test/include-conformance.test.ts', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'golden already regenerated - delete its entry', owner: 'test/include-conformance.test.ts' },
-  { repo: 'carve-js', path: 'test/canonical-ahead-of-pin.ts', name: 'CANONICAL_AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', owner: 'test/corpus-canonical-form.test.ts and test/corpus-render-fixtures.test.ts' },
+  { repo: 'carve-js', path: 'test/canonical-ahead-of-pin.ts', name: 'CANONICAL_AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', stalenessFile: 'test/corpus-canonical-form.test.ts', staleness: 'now matches: delete its AHEAD_OF_PIN entry', owner: 'test/corpus-canonical-form.test.ts and test/corpus-render-fixtures.test.ts' },
   // The `.md` half of the same window, declared where it is read because only
   // one suite reads a Markdown sidecar (markup-carve/carve-js#2056).
   { repo: 'carve-js', path: 'test/corpus-render-fixtures.test.ts', name: 'MARKDOWN_AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'now matches: delete its AHEAD_OF_PIN entry', owner: 'test/corpus-render-fixtures.test.ts' },
   { repo: 'carve-js', path: 'test/ast-vocabulary.test.ts', name: 'PENDING_SPEC_DECISION', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'is pending only on types that still exist and still need a decision', owner: 'test/ast-vocabulary.test.ts' },
-  { repo: 'carve-js', path: 'test/optional-corpus.test.ts', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', owner: 'test/optional-corpus.test.ts' },
-  { repo: 'carve-js', path: 'test/optional-corpus.test.ts', name: 'DECLARED_UNIMPLEMENTED', kind: 'js', policy: 'owed', guard: 'two-way', owner: 'test/optional-corpus.test.ts' },
-  { repo: 'carve-js', path: 'test/html-import-conformance.test.ts', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', owner: 'mirrors spec PIN_LAG' },
-  { repo: 'carve-js', path: 'test/the-report-answers-to-the-published-schema.test.ts', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', owner: 'test/the-report-answers-to-the-published-schema.test.ts' },
-  { repo: 'carve-js', path: 'test/an-import-s-two-exits-say-the-same-thing.test.ts', name: 'UNMET', kind: 'js', policy: 'owed', guard: 'two-way', owner: 'mirrors spec UNMET' },
+  { repo: 'carve-js', path: 'test/optional-corpus.test.ts', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'now matches: delete its AHEAD_OF_PIN entry', owner: 'test/optional-corpus.test.ts' },
+  { repo: 'carve-js', path: 'test/optional-corpus.test.ts', name: 'DECLARED_UNIMPLEMENTED', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'this build exports the feature now - give it a runner', owner: 'test/optional-corpus.test.ts' },
+  { repo: 'carve-js', path: 'test/html-import-conformance.test.ts', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'now matches: delete its AHEAD_OF_PIN entry', owner: 'mirrors spec PIN_LAG' },
+  { repo: 'carve-js', path: 'test/the-report-answers-to-the-published-schema.test.ts', name: 'AHEAD_OF_PIN', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'is in the pinned schema now: delete its AHEAD_OF_PIN entry', owner: 'test/the-report-answers-to-the-published-schema.test.ts' },
+  { repo: 'carve-js', path: 'test/an-import-s-two-exits-say-the-same-thing.test.ts', name: 'UNMET', kind: 'js', policy: 'owed', guard: 'two-way', staleness: 'now MEETS the invariant - delete its entry', owner: 'mirrors spec UNMET' },
   { repo: 'carve-js', path: 'test/no-whitespace-only-line.test.ts', name: 'KNOWN_REMAINING', kind: 'js', policy: 'owed', guard: 'two-way', staleness: "it('is behind only what it is still behind on'", owner: 'markup-carve/carve-js#1449' },
   // ONE-WAY, and it hid four stale rows. Nothing asserts a listed document
   // still loses, so a document that STOPS losing sits here reading as coverage.
@@ -323,14 +321,14 @@ const MANIFEST = [
 
   // -- carve-php -------------------------------------------------------------
   { repo: 'carve-php', path: 'tests/CarveCorpusTest.php', name: 'KNOWN_GAPS', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'tests/CarveCorpusTest.php' },
-  { repo: 'carve-php', path: 'tests/CarveCorpusTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'tests/CarveCorpusTest.php' },
+  { repo: 'carve-php', path: 'tests/CarveCorpusTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'now matches the pinned corpus: delete its AHEAD_OF_PIN entry', owner: 'tests/CarveCorpusTest.php' },
   { repo: 'carve-php', path: 'tests/OptionalCorpusTest.php', name: 'KNOWN_GAPS', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'tests/OptionalCorpusTest.php' },
-  { repo: 'carve-php', path: 'tests/OptionalCorpusTest.php', name: 'DECLARED_UNIMPLEMENTED', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'tests/OptionalCorpusTest.php' },
-  { repo: 'carve-php', path: 'tests/OptionalCorpusTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'tests/OptionalCorpusTest.php' },
-  { repo: 'carve-php', path: 'tests/TestCase/Converter/HtmlImportReportTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'mirrors spec PIN_LAG' },
-  { repo: 'carve-php', path: 'tests/TestCase/Converter/HtmlImportReportTest.php', name: 'AST_DIVERGENCES', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'the two import exits disagree in this engine' },
-  { repo: 'carve-php', path: 'tests/TestCase/ProfileVocabularyTest.php', name: 'KNOWN_LOSSY_UNDER_A_FULL_PROFILE', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'tests/TestCase/ProfileVocabularyTest.php' },
-  { repo: 'carve-php', path: 'tests/TestCase/Filter/ProfileVocabularyConformanceTest.php', name: 'KNOWN_GAPS', kind: 'php', policy: 'manual', guard: 'two-way', owner: 'markup-carve/carve#362' },
+  { repo: 'carve-php', path: 'tests/OptionalCorpusTest.php', name: 'DECLARED_UNIMPLEMENTED', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'this build supports the feature now - give it a runner', owner: 'tests/OptionalCorpusTest.php' },
+  { repo: 'carve-php', path: 'tests/OptionalCorpusTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'now matches the pinned corpus: delete its AHEAD_OF_PIN entry', owner: 'tests/OptionalCorpusTest.php' },
+  { repo: 'carve-php', path: 'tests/TestCase/Converter/HtmlImportReportTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'now matches the pin: delete its AHEAD_OF_PIN entry', owner: 'mirrors spec PIN_LAG' },
+  { repo: 'carve-php', path: 'tests/TestCase/Converter/HtmlImportReportTest.php', name: 'AST_DIVERGENCES', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'now agrees: delete its AST_DIVERGENCES entry', owner: 'the two import exits disagree in this engine' },
+  { repo: 'carve-php', path: 'tests/TestCase/ProfileVocabularyTest.php', name: 'KNOWN_LOSSY_UNDER_A_FULL_PROFILE', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'array_diff(self::KNOWN_LOSSY_UNDER_A_FULL_PROFILE, $offenders)', owner: 'tests/TestCase/ProfileVocabularyTest.php' },
+  { repo: 'carve-php', path: 'tests/TestCase/Filter/ProfileVocabularyConformanceTest.php', name: 'KNOWN_GAPS', kind: 'php', policy: 'manual', guard: 'two-way', staleness: 'Remove it from KNOWN_GAPS.', owner: 'markup-carve/carve#362' },
   // ONE-WAY, like its carve-js twin, and its single row names a corpus
   // document that upstream renumbered - so it excuses nothing and no check
   // reports it.
@@ -347,7 +345,7 @@ const MANIFEST = [
   // The converter corpus's own ahead-of-pin list, landed by carve-php#3071 with
   // the task-list hooks. Two-way: each row asserts the pinned golden still
   // differs, so an entry cannot outlive the pin bump that closes it.
-  { repo: 'carve-php', path: 'tests/TestCase/Converter/ConverterCorpusTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'tests/TestCase/Converter/ConverterCorpusTest.php' },
+  { repo: 'carve-php', path: 'tests/TestCase/Converter/ConverterCorpusTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'remove its ahead-of-pin expectation', owner: 'tests/TestCase/Converter/ConverterCorpusTest.php' },
   // Empty cross-engine skip-list for the include/transclusion conformance
   // vectors (markup-carve/carve-php#373). Two-way since carve-php#2491: the
   // staleness half re-runs each declared vector and fails when every golden
@@ -365,15 +363,15 @@ const MANIFEST = [
   { repo: 'carve-php', path: 'tests/TestCase/Transform/IncludeSecurityConformanceTest.php', name: 'DIVERGENCES', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'testNoDeclaredDivergenceIsStale', owner: 'markup-carve/carve-php#1953' },
 
   // -- carve-rs --------------------------------------------------------------
-  { repo: 'carve-rs', path: 'tests/corpus.rs', name: 'KNOWN_GAPS', kind: 'rust', policy: 'owed', guard: 'two-way', owner: 'tests/corpus.rs' },
-  { repo: 'carve-rs', path: 'tests/corpus.rs', name: 'AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', owner: 'tests/corpus.rs' },
-  { repo: 'carve-rs', path: 'tests/corpus_canonical_form.rs', name: 'AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', owner: 'tests/corpus_canonical_form.rs' },
+  { repo: 'carve-rs', path: 'tests/corpus.rs', name: 'KNOWN_GAPS', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'KNOWN_GAPS document(s) already match: move the category to IMPLEMENTED', owner: 'tests/corpus.rs' },
+  { repo: 'carve-rs', path: 'tests/corpus.rs', name: 'AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'now matches the pinned corpus: delete its AHEAD_OF_PIN entry', owner: 'tests/corpus.rs' },
+  { repo: 'carve-rs', path: 'tests/corpus_canonical_form.rs', name: 'AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'the pin has caught up; delete its AHEAD_OF_PIN entry', owner: 'tests/corpus_canonical_form.rs' },
   // Named FMT_AHEAD_OF_PIN until carve-rs widened it past the `fmt` target; the
   // rows carry a target now, so the constant lost the prefix with them.
   { repo: 'carve-rs', path: 'tests/corpus_render_fixtures.rs', name: 'AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'the pin has caught up; delete its AHEAD_OF_PIN entry', owner: 'tests/corpus_render_fixtures.rs' },
-  { repo: 'carve-rs', path: 'tests/optional_corpus.rs', name: 'DECLARED_UNIMPLEMENTED', kind: 'rust', policy: 'owed', guard: 'two-way', owner: 'tests/optional_corpus.rs' },
-  { repo: 'carve-rs', path: 'tests/optional_corpus.rs', name: 'AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', owner: 'tests/optional_corpus.rs' },
-  { repo: 'carve-rs', path: 'tests/html_import.rs', name: 'AHEAD_OF_PIN',      kind: 'rust', policy: 'owed', guard: 'two-way', owner: 'mirrors spec PIN_LAG' },
+  { repo: 'carve-rs', path: 'tests/optional_corpus.rs', name: 'DECLARED_UNIMPLEMENTED', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'fn declared_unimplemented_is_still_true()', owner: 'tests/optional_corpus.rs' },
+  { repo: 'carve-rs', path: 'tests/optional_corpus.rs', name: 'AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'now matches the pinned corpus: delete its AHEAD_OF_PIN entry', owner: 'tests/optional_corpus.rs' },
+  { repo: 'carve-rs', path: 'tests/html_import.rs', name: 'AHEAD_OF_PIN',      kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'the source exit matches the fixture now - drop `carve` from its', owner: 'mirrors spec PIN_LAG' },
   // Not a waiver: the set of JSON Schema keywords this hand-written validator
   // implements. Meeting one that is NOT listed is the failure, which is the
   // opposite direction from every other row here.
@@ -930,6 +928,17 @@ function read(repo, path) {
   }
 }
 
+function stalenessCheck(entry, source, reader = read) {
+  if (entry.stalenessFile !== undefined && entry.staleness === undefined) {
+    return new Error(`stalenessFile requires staleness: ${entry.path}`)
+  }
+  if (entry.staleness === undefined) return null
+  const path = entry.stalenessFile ?? entry.path
+  const text = path === entry.path ? source : reader(entry.repo, path)
+  if (text instanceof Error) return text
+  return text.includes(entry.staleness) ? true : new Error(`GUARD GONE: ${path} no longer contains ${JSON.stringify(entry.staleness)}`)
+}
+
 function listFiles(repo, dir) {
   const info = REPOS[repo]
   if (info.alwaysWorktree || ref === 'worktree') {
@@ -973,7 +982,7 @@ function perPrPolicy(entry) {
   return entry.policy
 }
 
-export const __internals = { blankComments, perPrPolicy, collapseBetweenLiterals, declarationIndex, bracketedBlock, topLevelEntries, liveRows, classifyPinDistance, gitPinStatus, gitReferenceBuildStatus, isDeclarationName, undeclaredLedgerRows, undeclaredWaiverRows, undeclaredExtentRows, spanRowKey, spanExemptions, MANIFEST }
+export const __internals = { blankComments, perPrPolicy, collapseBetweenLiterals, declarationIndex, bracketedBlock, topLevelEntries, liveRows, classifyPinDistance, gitPinStatus, gitReferenceBuildStatus, isDeclarationName, undeclaredLedgerRows, undeclaredWaiverRows, undeclaredExtentRows, spanRowKey, spanExemptions, stalenessCheck, MANIFEST }
 
 if (process.env.CARVE_DECL_AUDIT_LIB === '1') {
   // Imported for its helpers by the self-test; do not run the audit.
@@ -1151,13 +1160,14 @@ for (const entry of MANIFEST) {
   // THE CLAIM, CHECKED. `guard` describes the file; `staleness` is the string
   // that proves it is still there. A named anchor that has gone is a guard that
   // was removed, and the manifest would otherwise keep vouching for it.
-  else if (entry.staleness !== undefined) {
-    if (src.includes(entry.staleness)) verifiedGuards.push(entry)
-    else {
-      console.log(`${' '.repeat(12)}GUARD GONE: ${entry.path} no longer contains ${JSON.stringify(entry.staleness)}`)
+  else {
+    const check = stalenessCheck(entry, src)
+    if (check === true) verifiedGuards.push(entry)
+    else if (check instanceof Error) {
+      console.log(`${' '.repeat(12)}${check.message}`)
       failed += 1
-    }
-  } else claimedGuards.push(entry)
+    } else claimedGuards.push(entry)
+  }
 }
 
 /* ------ the escape hatch, judged in both directions ----------------------- */

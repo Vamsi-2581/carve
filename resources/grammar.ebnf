@@ -7960,8 +7960,9 @@ EOF = (* end of file *) ;
          is not a reason to trust that document, and export selects no import
          mode (CARVE-P10-017).
       S4 A VALUE OUTSIDE ITS GRAMMAR IS NOT A CARRIER, AND IT IS REPORTED.
-         Nothing is rebuilt from it, and only that carrier falls with it on
-         both targets (CARVE-P10-017, CARVE-P11-063). A Markdown marker set
+         Nothing is rebuilt from it, and only that carrier falls with it, except
+         that an invalid Markdown opener marker falls together with its closer
+         (CARVE-P10-017, CARVE-P11-063). A Markdown marker set
          whose opener and closer pairing breaks reads the whole file as plain
          Markdown (CARVE-P11-063).
       S5 CONTRADICTORY CARRIERS RESTORE NEITHER MEANING. The pairs are the
@@ -10513,11 +10514,15 @@ EOF = (* end of file *) ;
       setting, and this is not the byte-identical source round trip CARVE-P11-043's
       comparison governs.
 
-      AN INVALID PAYLOAD DROPS ONLY ITS OWN MARKER. A marker whose payload is
-      not an opener, closer or caption line it can stand for is not a carrier:
-      it stays an ordinary comment, the import reports it with a diagnostic as
-      an invalid HTML carrier is reported (CARVE-P10-017), and the rest of the
-      set restores unless its pairing breaks.
+      AN INVALID OPENER DROPS TOGETHER WITH ITS CLOSER. Pairing is read on
+      marker shapes before payloads are validated, so an opener whose payload
+      is not an opener it can stand for still pairs with its closer, and the
+      two drop as one unit: both stay ordinary comments and the container's
+      content stays in place as ordinary Markdown. Any other marker whose
+      payload is invalid drops alone. The import reports each dropped pair or
+      marker once as `carrier-marker-dropped` at the marker's line, as an
+      invalid HTML carrier is reported (CARVE-P10-017), and the rest of the set
+      restores, since an invalid payload does not break pairing.
 
       A DAMAGED SET, ONE WHOSE PAIRING BREAKS, IMPORTS AS PLAIN MARKDOWN,
       NEVER A GUESS. A Markdown editor that deleted one marker, reordered two,

@@ -193,9 +193,17 @@ for (const fixture of fixtures.markdownExportImport) test(`shared Markdown expor
 
 for (const fixture of fixtures.markdownImportNegative) test(`shared Markdown import rejection: ${fixture.id}`, aheadOfPin(fixture, () => {
   const imported = migrateMarkdown(fixture.markdown)
-  assert.ok(imported.report.diagnostics.some((row) => row.code === fixture.expectedDiagnostic.code), fixture.expectedDiagnostic.code)
-  const actualTypes = new Set(nodes(parse(imported.value)).map((node) => node.type))
-  for (const type of fixture.forbiddenTypes) assert.ok(!actualTypes.has(type), type)
+  const tree = parse(imported.value)
+  if (fixture.expectedDiagnostic) assert.ok(imported.report.diagnostics.some((row) => row.code === fixture.expectedDiagnostic.code), fixture.expectedDiagnostic.code)
+  const actualTypes = new Set(nodes(tree).map((node) => node.type))
+  for (const type of fixture.forbiddenTypes ?? []) assert.ok(!actualTypes.has(type), type)
+  assertProjection(tree, fixture.expectedNodes ?? [])
+  for (const forbidden of fixture.forbiddenNodes ?? []) assert.throws(() => assertProjection(tree, [forbidden]), { code: 'ERR_ASSERTION' }, JSON.stringify(forbidden))
+  for (const [code, count] of Object.entries(fixture.expectedDiagnostics ?? {})) {
+    const rows = imported.report.diagnostics.filter((row) => row.code === code)
+    assert.equal(rows.length, count, code)
+    for (const row of rows) assert.deepEqual([row.fidelity, row.confidence], ['degraded', 'fallback'], code)
+  }
 }))
 
 test('a Markdown row without a declared loss still fails when its HTML moves', () => {
@@ -213,6 +221,6 @@ test('shared acceptance cases have distinct identities and explicit assertions',
     assert.ok(!ids.has(row.id), row.id)
     ids.add(row.id)
     assert.ok(typeof row.source === 'string' || typeof row.html === 'string' || typeof row.markdown === 'string', row.id)
-    assert.ok(row.expectedNodes?.length || row.expectedDiagnostic || row.attribute, row.id)
+    assert.ok(row.expectedNodes?.length || row.expectedDiagnostic || row.expectedDiagnostics || row.attribute, row.id)
   }
 })
