@@ -51674,3 +51674,226 @@ marker extends, and no rule fills blank cells (T5):
 ```
 
 :::
+
+## A closed fence in a nested child leaves no paragraph open
+
+A closed child code block leaves no paragraph open. An unclosed fence at the enclosing item column opens there, and a column-zero line ends that item (CARVE-P0-014). A heading closes the child paragraph too. An open child paragraph retains a lazy line.
+
+:::: compare
+
+````carve
+- a
+    - child
+      ```
+      x
+      ```
+  ~~~
+after
+````
+
+```html
+<ul>
+  <li>a
+    <ul>
+      <li>child
+        <pre><code>x
+</code></pre>
+      </li>
+    </ul>
+    <pre><code></code></pre>
+  </li>
+</ul>
+<p>after</p>
+```
+
+::::
+
+:::: compare
+
+````carve
+> - a
+>     - child
+>       ```
+>       x
+>       ```
+>   ~~~
+after
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>a
+      <ul>
+        <li>child
+          <pre><code>x
+</code></pre>
+        </li>
+      </ul>
+      <pre><code></code></pre>
+    </li>
+  </ul>
+</blockquote>
+<p>after</p>
+```
+
+::::
+
+:::: compare
+
+````carve
+- a
+    - # h
+  ~~~
+after
+````
+
+```html
+<ul>
+  <li>a
+    <ul>
+      <li>
+        <h1 id="h">h</h1>
+      </li>
+    </ul>
+    <pre><code></code></pre>
+  </li>
+</ul>
+<p>after</p>
+```
+
+::::
+
+:::: compare
+
+````carve
+- a
+    - child
+      text
+  ~~~
+after
+````
+
+```html
+<ul>
+  <li>a
+    <ul>
+      <li>child
+text
+~~~
+after</li>
+    </ul>
+  </li>
+</ul>
+```
+
+::::
+
+## A code line left of an authored-base fence opener is measured from that base
+
+A fence past the box content column establishes its own authored base. Payload left of that base loses its available prefix, while payload to the right keeps its extra spaces (CARVE-P0-004). A fence at the box content column uses that column as its base.
+
+:::: compare
+
+````carve
+- ::: box
+     ```
+    x
+     y
+  :::
+after
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+      <pre><code>x
+y
+</code></pre>
+    </div>
+  </li>
+</ul>
+<p>after</p>
+```
+
+::::
+
+:::: compare
+
+````carve
+- ::: box
+     ```
+       z
+  :::
+after
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+      <pre><code>  z
+</code></pre>
+    </div>
+  </li>
+</ul>
+<p>after</p>
+```
+
+::::
+
+:::: compare
+
+````carve
+- ::: box
+  ```
+ x
+  y
+  :::
+after
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+      <pre><code></code></pre>
+    </div>
+  </li>
+</ul>
+<p>x
+y
+:::
+after</p>
+```
+
+::::
+
+The same authored base applies in a definition body.
+
+:::: compare
+
+````carve
+:: t
+: x
+
+     ```
+    a
+     b
+     ```
+````
+
+```html
+<dl>
+  <dt>t</dt>
+  <dd>
+    <p>x</p>
+    <pre><code>a
+b
+</code></pre>
+  </dd>
+</dl>
+```
+
+::::

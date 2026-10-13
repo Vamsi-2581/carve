@@ -2534,13 +2534,17 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
 
     const base = establishesBase ? measured.col : 0
     const candidateColumns = []
-    const candidate = lines.slice(index).map((source) => {
+    const codeOpener = base > 0 ? FENCE.exec(measured.rest) : null
+    let codeRun = codeOpener && parseFenceInfo(codeOpener[2]) !== null ? codeOpener[1] : null
+    const candidate = lines.slice(index).map((source, offset) => {
       const sourceMeasured = indentCols(source)
       candidateColumns.push(sourceMeasured.col - base)
       if (isBlank(source)) return dedent(source, base)
-      return sourceMeasured.col < base
-        ? source
-        : dedentMeasured(sourceMeasured, source, base).text
+      const text = sourceMeasured.col < base && codeRun === null
+        ? source : dedentMeasured(sourceMeasured, source, base).text
+      const closer = offset > 0 && sourceMeasured.col <= base && PURE_FENCE.exec(sourceMeasured.rest)
+      if (closer && codeRun && closer[1][0] === codeRun[0] && closer[1].length >= codeRun.length) codeRun = null
+      return text
     })
     let relativeEnd = Math.max(1, firstBlockEnd(candidate, 0, candidate.length, state, candidateColumns))
     const noteChild = footnoteBody && noteListOpens && matchMarkerAt(measured)
@@ -6416,7 +6420,8 @@ function collectItems(lines, i, list, state, ind, meas) {
           (i <= noteFenceEnd || i <= markerNoteCommentEnd || COMMENT_LINE.test(lm.rest)) ? contentCol
           : i <= noteFenceEnd && noteListBodyColumn !== null
           ? noteListBodyColumn - FOOTNOTE_BODY_COLUMN
-          : inOpenColonOnly ? openerBase : authoredBlockBase !== null && insideFence() && col < authoredBlockBase
+          : inOpenColonOnly ? openerBase : authoredBlockBase !== null && insideFence() && col < authoredBlockBase &&
+            (fence.opaque?.kind !== 'code' || fence.opaque.opens === false)
           ? contentCol
           : authoredBlockBase ?? openerBase ?? contentCol
         const dd = dedentMeasured(lm, line, localBase)
@@ -6768,7 +6773,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // THIS item's coordinates, where a descendant's fence and its payload
         // are ordinary text, so they record a paragraph the deepest structure
         // does not hold.
-        if (nestedVerbatim()) closePara()
+        if (nestedVerbatim() || wasNested?.kind === 'code') closePara()
         // The note body keeps its reach past the closed paragraph (CARVE-P0-013).
         if (markerNoteCommentSeen && inNoteBody) {
           const noteBody = defBodyIndent
