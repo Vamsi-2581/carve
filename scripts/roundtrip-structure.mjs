@@ -17,7 +17,7 @@ import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { resolve, basename } from 'node:path'
 import { phpDir, rustBinary } from './lib/engine-locations.mjs'
-import { normalize, firstDiff, record, validateBaseline, checkCounts, jsRoundtrip, finishMeasurement, baselineCounts } from './lib/roundtrip-structure.mjs'
+import { acceptHtmlLosses, normalize, firstDiff, record, validateBaseline, checkCounts, jsRoundtrip, finishMeasurement, baselineCounts } from './lib/roundtrip-structure.mjs'
 const root = fileURLToPath(new URL('..', import.meta.url))
 const baselinePath = resolve(root, 'resources/roundtrip-structure-baseline.json')
 function options(args) {
@@ -107,8 +107,10 @@ async function main() {
     const rows = Object.fromEntries(opt.targets.map(target => [target, { engine, target, status: unavailable ? 'skipped' : 'measured', ...(unavailable ? { reason: unavailable } : {}), total: 0, identical: 0, strict: 0, different: 0, errors: 0, buckets: {}, errorBuckets: {}, strictBuckets: {} }]))
     const tick = performance.now()
     const consume = row => {
-      const diff = row.error ? null : firstDiff(normalize(row.before), normalize(row.after))
-      const strictDiff = row.error || diff ? null : firstDiff(normalize(row.before, true), normalize(row.after, true))
+      const before = row.target === 'html' ? acceptHtmlLosses(row.before) : row.before
+      const after = row.target === 'html' ? acceptHtmlLosses(row.after) : row.after
+      const diff = row.error ? null : firstDiff(normalize(before), normalize(after))
+      const strictDiff = row.error || diff ? null : firstDiff(normalize(before, true), normalize(after, true))
       record(rows[row.target], row.file, diff, row.error, row.message, strictDiff)
     }
     if (!unavailable && engine === 'php') {

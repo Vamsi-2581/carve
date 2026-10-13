@@ -1,3 +1,62 @@
+import { labelKey } from '../spec/label-key.mjs'
+
+// CARVE-P11-028 and carve-js#2905 permit HTML to lose unused definitions and literalize unresolved references.
+export function acceptHtmlLosses(tree) {
+  const out = structuredClone(tree)
+  const definitions = new Set(), references = new Set(), footnotes = new Set()
+  const walk = (node, visit) => {
+    if (!node || typeof node !== 'object') return
+    visit(node)
+    for (const child of node.children ?? []) walk(child, visit)
+  }
+  walk(out, node => {
+    if (node.type === 'link_reference_definition') definitions.add(labelKey(node.label))
+  })
+  const literalize = node => {
+    if (!node || typeof node !== 'object') return
+    if (node.children) node.children = node.children.flatMap(child => {
+      literalize(child)
+      if (['link', 'image'].includes(child.type) && typeof child.ref === 'string' && !definitions.has(labelKey(child.ref))) {
+        return [{ type: 'text', value: child.type === 'image' ? '![' : '[' },
+          ...(child.children ?? []), { type: 'text', value: child.rawRef?.match(/\][^\]]*\]$/)?.[0] ?? ']' }]
+      }
+      return [child]
+    })
+  }
+  literalize(out)
+  // A reference counts only where it renders: outside notes, or in a note
+  // that is itself referenced.
+  const bodies = new Map()
+  const pending = []
+  const collect = node => {
+    if (!node || typeof node !== 'object') return
+    if (node.type === 'footnote') {
+      bodies.set(node.label, node)
+      return
+    }
+    if (['link', 'image'].includes(node.type) && typeof node.ref === 'string') references.add(labelKey(node.ref))
+    if (node.type === 'footnote_ref' && !footnotes.has(node.label)) {
+      footnotes.add(node.label)
+      pending.push(node.label)
+    }
+    for (const child of node.children ?? []) collect(child)
+  }
+  collect(out)
+  while (pending.length) {
+    const body = bodies.get(pending.pop())
+    for (const child of body?.children ?? []) collect(child)
+  }
+  const prune = node => {
+    if (!node || typeof node !== 'object') return
+    if (node.children) node.children = node.children.filter(child =>
+      (child.type !== 'link_reference_definition' || references.has(labelKey(child.label))) &&
+      (child.type !== 'footnote' || footnotes.has(child.label)))
+    for (const child of node.children ?? []) prune(child)
+  }
+  prune(out)
+  return out
+}
+
 const cosmetic = new Set(['pos', 'position', 'srcByteLength', 'bulletChar', 'marker', 'delim', 'ref', 'rawRef', 'separatorWidths', 'tight', 'boldItalic', 'order'])
 // Strict keeps what PART 10 §13 carries; rawRef stays out because §13 does not recover a reference's form.
 const strictCosmetic = new Set(['pos', 'position', 'srcByteLength', 'rawRef', 'boldItalic', 'order'])
