@@ -2,8 +2,8 @@
   "version": 1,
   "measured": {
     "date": "2026-10-13",
-    "spec": "73f56f27637ce1de8acdaaa3031ab0e750ce7e94",
-    "js": "b8c309e43a0fdabb379727bebcb1d7b4f10c0bba",
+    "spec": "7047606d8b81a9bf84d37c8add1ea55a341259a6",
+    "js": "d5f14c8c64565bc629e48e87afe6d8162ccb92ab",
     "php": "be7dd4e720f5fecb75246ce313a6b548599ebaf7",
     "rust": "a0d6c79000e98e8a2cf7366ed701c4281b5f65d5",
     "documents": 2536
@@ -38,125 +38,49 @@
       }
     },
     {
-      "file": "tests/corpus/579-a-span-never-covers-another-cell.crv",
-      "reason": "carve-js reports djot-superscript-caret on a rowspan marker cell at the pin (b8c309e4); carve-php and carve-rs report the table padding rows only.",
-      "issue": "https://github.com/markup-carve/carve-js/issues/2947",
+      "file": "tests/corpus/581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-3.crv",
+      "reason": "carve-js (d5f14c8c) does not report unclosed-container-fence on the box whose closer the unclosed code fence swallows; carve-php (be7dd4e7) and carve-rs (a0d6c790) report it, as the corpus HTML implies.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2961",
       "diagnostics": {
         "js": [
           [
-            "djot-superscript-caret",
-            3,
-            2
-          ],
-          [
-            "table-alignment-run-padding",
-            1,
-            17
-          ],
-          [
-            "table-alignment-run-padding",
-            3,
-            2
-          ],
-          [
-            "table-alignment-run-padding",
-            3,
-            18
-          ],
-          [
-            "table-alignment-run-padding",
-            4,
-            2
-          ],
-          [
-            "table-alignment-run-padding",
-            4,
-            4
-          ],
-          [
-            "table-alignment-run-padding",
-            4,
-            6
+            "list-item-block-overindented",
+            5,
+            7
           ]
         ],
         "php": [
           [
-            "table-alignment-run-padding",
+            "list-item-block-overindented",
+            5,
+            7
+          ],
+          [
+            "unclosed-container-fence",
             1,
-            17
-          ],
-          [
-            "table-alignment-run-padding",
-            3,
-            2
-          ],
-          [
-            "table-alignment-run-padding",
-            3,
-            18
-          ],
-          [
-            "table-alignment-run-padding",
-            4,
-            2
-          ],
-          [
-            "table-alignment-run-padding",
-            4,
-            4
-          ],
-          [
-            "table-alignment-run-padding",
-            4,
-            6
+            5
           ]
         ],
         "rust": [
           [
-            "table-alignment-run-padding",
+            "list-item-block-overindented",
+            5,
+            7
+          ],
+          [
+            "unclosed-container-fence",
             1,
-            17
-          ],
-          [
-            "table-alignment-run-padding",
-            3,
-            2
-          ],
-          [
-            "table-alignment-run-padding",
-            3,
-            18
-          ],
-          [
-            "table-alignment-run-padding",
-            4,
-            2
-          ],
-          [
-            "table-alignment-run-padding",
-            4,
-            4
-          ],
-          [
-            "table-alignment-run-padding",
-            4,
-            6
+            5
           ]
         ]
       }
     },
     {
       "file": "tests/corpus/581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-4.crv",
-      "reason": "carve-js and carve-php fold the two unclosed fences into paragraphs and report an over-indented block; carve-rs (a0d6c790) reads them as code blocks, as the corpus does, and reports nothing.",
-      "issue": "https://github.com/markup-carve/carve-js/issues/2927",
+      "reason": "carve-php (be7dd4e7) reports an over-indented block where both unclosed fences are code blocks; carve-js (d5f14c8c) and carve-rs (a0d6c790) read them as the corpus does and report nothing.",
+      "issue": "https://github.com/markup-carve/carve-php/issues/3304",
       "diagnostics": {
-        "js": [
-          [
-            "list-item-block-overindented",
-            5,
-            9
-          ]
-        ],
+        "js": [],
         "php": [
           [
             "list-item-block-overindented",
@@ -168,8 +92,46 @@
       }
     },
     {
+      "file": "tests/corpus/581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in.crv",
+      "reason": "carve-js (d5f14c8c) does not report unclosed-container-fence on the box whose closer the unclosed code fence swallows; carve-php (be7dd4e7) and carve-rs (a0d6c790) report it, as the corpus HTML implies.",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2961",
+      "diagnostics": {
+        "js": [
+          [
+            "list-item-block-overindented",
+            5,
+            6
+          ]
+        ],
+        "php": [
+          [
+            "list-item-block-overindented",
+            5,
+            6
+          ],
+          [
+            "unclosed-container-fence",
+            1,
+            5
+          ]
+        ],
+        "rust": [
+          [
+            "list-item-block-overindented",
+            5,
+            6
+          ],
+          [
+            "unclosed-container-fence",
+            1,
+            5
+          ]
+        ]
+      }
+    },
+    {
       "file": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing.crv",
-      "reason": "carve-js (b8c309e4) and carve-php (be7dd4e7) let the comment line move the note's fence out of the note and report an over-indented block; carve-rs (a0d6c790) reads the fence inside the note, as the corpus does, and reports nothing.",
+      "reason": "carve-js (d5f14c8c) and carve-php (be7dd4e7) let the comment line move the note's fence out of the note and report an over-indented block; carve-rs (a0d6c790) reads the fence inside the note, as the corpus does, and reports nothing.",
       "issue": "https://github.com/markup-carve/carve-js/issues/2948",
       "diagnostics": {
         "js": [
