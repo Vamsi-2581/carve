@@ -245,7 +245,10 @@
         or a footnote body) a recognized opener PAST it establishes its
         authored visual column as the local `base_column` for that ONE
         complete block; the opener, payload, structural continuations,
-        metadata and closer are measured from that base. Canonical output
+        metadata and closer are measured from that base. A closer written
+        below that base is measured as a payload line there is: once the
+        line's available prefix is gone, a run matching the opener closes
+        the block. Canonical output
         returns the block to the container's minimum column. Ordinary
         over-indented text establishes no base.
 
