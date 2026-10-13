@@ -29,6 +29,9 @@ const PHP_SANDBOX_URL = 'https://sandbox.dereuromark.de/sandbox/carve'
 
 const source = ref(DEFAULT_SOURCE)
 const fullscreen = ref(false)
+// Off by default: aligned tables and other column-sensitive source read best unwrapped.
+const wrapLines = ref(false)
+const WRAP_KEY = 'carve-playground-wrap'
 
 // --- Share links ---
 //
@@ -627,12 +630,26 @@ onMounted(() => {
   // highlighted, mermaid-rendered and math-rendered.
   void applyShareLink().then(() => nextTick(postProcessOutput))
   window.addEventListener('keydown', onKeydown)
+  try {
+    wrapLines.value = localStorage.getItem(WRAP_KEY) === '1'
+  } catch {
+    // Storage blocked (private mode, sandboxed preview): keep the default.
+  }
 })
 onBeforeUnmount(() => {
   clearTimeout(shareStatusTimer)
   window.removeEventListener('keydown', onKeydown)
   clearTimeout(debounce)
 })
+
+function toggleWrap(): void {
+  wrapLines.value = !wrapLines.value
+  try {
+    localStorage.setItem(WRAP_KEY, wrapLines.value ? '1' : '0')
+  } catch {
+    // Not persisted; the toggle still applies to this visit.
+  }
+}
 
 // --- Full screen ---
 function toggleFullscreen(): void {
@@ -736,8 +753,55 @@ void mermaidInit
         <button class="pg-btn pg-import" type="button" @click="openImport">
           Import Markdown
         </button>
-        <button class="pg-btn" type="button" @click="toggleFullscreen">
-          {{ fullscreen ? 'Exit full screen (Esc)' : 'Full screen' }}
+        <button
+          class="pg-btn pg-icon-btn"
+          type="button"
+          :class="{ active: wrapLines }"
+          :aria-pressed="wrapLines"
+          :title="wrapLines ? 'Wrap long lines: on' : 'Wrap long lines: off (scroll horizontally)'"
+          aria-label="Wrap long lines"
+          @click="toggleWrap"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="15"
+            height="15"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M3 12h15a3 3 0 0 1 0 6h-4" />
+            <polyline points="16 16 14 18 16 20" />
+            <line x1="3" y1="18" x2="10" y2="18" />
+          </svg>
+        </button>
+        <button
+          class="pg-btn pg-icon-btn"
+          type="button"
+          :class="{ active: fullscreen }"
+          :aria-pressed="fullscreen"
+          :title="fullscreen ? 'Exit full screen (Esc)' : 'Full screen'"
+          aria-label="Full screen"
+          @click="toggleFullscreen"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="15"
+            height="15"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path v-if="!fullscreen" d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+            <path v-else d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+          </svg>
         </button>
       </div>
     </div>
@@ -748,7 +812,7 @@ void mermaidInit
           ref="sourceEl"
           v-model="source"
           spellcheck="false"
-          wrap="off"
+          :wrap="wrapLines ? 'soft' : 'off'"
           @pointerenter="claimScroll(sourceEl)"
           @wheel.passive="claimScroll(sourceEl)"
           @touchstart.passive="claimScroll(sourceEl)"
@@ -898,6 +962,10 @@ void mermaidInit
   width: 2rem;
   padding: 0.35rem 0;
 }
+.pg-icon-btn.active {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+}
 .pg-icon-btn.is-copied {
   border-color: var(--vp-c-brand-1);
   color: var(--vp-c-brand-1);
@@ -944,7 +1012,7 @@ void mermaidInit
 }
 /* HTML-source pane header: label on the left, live render status on the
    right. Moving the status here frees the toolbar so Import Markdown fits
-   beside Full screen. */
+   beside the icon buttons. */
 .pane-label-row {
   display: flex;
   align-items: baseline;
