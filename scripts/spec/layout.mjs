@@ -2525,6 +2525,7 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
     // A structural block (a container, a list marker) ends the note-sibling run:
     // its own indented continuations are its content, not an over-reach.
     flushedNote = false
+    const noteListOpens = !paragraphOpen
     paragraphOpen = false
 
     const base = establishesBase ? measured.col : 0
@@ -2537,7 +2538,42 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
         ? source
         : dedentMeasured(sourceMeasured, source, base).text
     })
-    const relativeEnd = Math.max(1, firstBlockEnd(candidate, 0, candidate.length, state, candidateColumns))
+    let relativeEnd = Math.max(1, firstBlockEnd(candidate, 0, candidate.length, state, candidateColumns))
+    const noteChild = footnoteBody && noteListOpens && matchMarkerAt(measured)
+    if (noteChild) {
+      let childColumn = measured.col + noteChild.markerWidth
+      for (let at = index + 1; at < index + relativeEnd; at++) {
+        const next = indentCols(lines[at])
+        if (next.rest !== '' && next.col < base) break
+        const comment = COMMENT_FENCE_BODY.exec(next.rest)
+        if (comment) {
+          const close = cachedForwardSearch(descriptionClosers, `note-comment:${base}:${comment[1]}`, at + 1, index + relativeEnd, (k) => {
+            const end = indentCols(lines[k])
+            const closer = COMMENT_FENCE_BODY.exec(end.rest)
+            return !!(closer && closer[1].length === comment[1].length)
+          })
+          if (close >= 0) { at = close; continue }
+        }
+        const marker = matchMarkerAt(next)
+        if (marker) childColumn = marker.indent + marker.markerWidth
+        const run = FENCE.exec(next.rest)
+        if (!run || parseFenceInfo(run[2]) === null) continue
+        // I1 interrupts at the surviving note body; O2 ends the child first.
+        const close = cachedForwardSearch(descriptionClosers, `note:${base}:${next.col}:${run[1]}`, at + 1, lines.length, (k) => {
+          const end = indentCols(lines[k])
+          if (end.rest !== '' && end.col < base) return null
+          const closer = end.col === next.col && PURE_FENCE.exec(end.rest)
+          return !!(closer && closer[1][0] === run[1][0] && closer[1].length >= run[1].length)
+        })
+        if (close >= 0) {
+          if (next.col < childColumn) {
+            relativeEnd = Math.max(1, firstBlockEnd(candidate, 0, at - index, state, candidateColumns))
+            break
+          }
+          at = close // A child's closed fence has opaque payload.
+        }
+      }
+    }
     // A definition inside a footnote-hosted colon container is consumed by
     // the shared symbol table, but it does not end the container. Keep a
     // closer at the rebased opener's column with that container; otherwise it
@@ -5181,6 +5217,9 @@ function collectItems(lines, i, list, state, ind, meas) {
     let markerNoteEligible = FOOTNOTE_DEF.test(head.text)
     const markerNoteBodyColumn = markerNoteEligible ? indentCols(lines[i].slice(0, lines[i].indexOf('[^')).replace(/[^\t]/g, ' ')).col + FOOTNOTE_BODY_COLUMN : null
     let noteMarkerSeen = false
+    let noteTailList = false
+    let noteListBodyColumn = null
+    let noteListChildColumn = null
     let noteFenceEnd = -1
     const noteCloserSearches = new Map()
     const closePara = () => { openPara = false; para = []; defBodyIndent = null }
@@ -5882,6 +5921,13 @@ function collectItems(lines, i, list, state, ind, meas) {
       // `+` at the item's MARKER column attaches ONE following flush-left
       // block to this item (SS17 L3/L4)
       const lm = ind(i)
+      // Item content below the note body ends the note's list ownership.
+      if (noteListBodyColumn !== null && lm.rest !== '' &&
+          lm.col >= contentCol && lm.col < noteListBodyColumn && !insideFence()) {
+        noteTailList = false
+        noteListBodyColumn = null
+        noteListChildColumn = null
+      }
       if (i > noteFenceEnd && (lm.rest === '' || FOOTNOTE_DEF.test(lm.rest))) {
         markerNoteEligible = false
         noteMarkerSeen = false
@@ -6152,6 +6198,11 @@ function collectItems(lines, i, list, state, ind, meas) {
         // mirroring the top level.) Falls through to detach below.
         if (nm && nm.indent >= contentCol) {
           // sub-list after a blank: attaches, stays tight (SS17 L2)
+          if (defBodyIndent !== null && nm.indent >= (authoredBlockBase ?? contentCol) + defBodyIndent + FOOTNOTE_BODY_COLUMN) {
+            noteTailList = true
+            noteListBodyColumn = (authoredBlockBase ?? contentCol) + defBodyIndent + FOOTNOTE_BODY_COLUMN
+            noteListChildColumn = nm.indent + nm.markerWidth
+          }
           if (subCol < 0) subCol = nm.indent + nm.markerWidth
           // THE WHOLE RUN, not one blank standing in for it. §11 N1's boundary
           // applies at every level, and the sub-list is parsed recursively from
@@ -6170,6 +6221,8 @@ function collectItems(lines, i, list, state, ind, meas) {
         break
       }
       const { col } = lm
+      // A note's later list leaves no item paragraph for a below-column tail.
+      if (noteTailList && col < contentCol && lm.rest !== '' && !insideFence()) break
       // A marker in a line-block payload is payload: it opens no sublist.
       // A span closer remains payload after trackFence clears the span.
       const inPayload = col >= contentCol && fence.colon.length !== 0 &&
@@ -6214,7 +6267,21 @@ function collectItems(lines, i, list, state, ind, meas) {
         const inOpenColonOnly = fence.opaque === null && fence.colon.length !== 0 &&
           col > contentCol && !descendantOwned && !COLON_CLOSER.test(lm.rest) && !inPayload && !retainedAfterComment && opensHostedColonBlock(lm.rest)
         if (markerNoteEligible && defBodyIndent !== null && nm && col >= contentCol + defBodyIndent + FOOTNOTE_BODY_COLUMN) noteMarkerSeen = true
+        if (nm && defBodyIndent !== null && col >= contentCol + defBodyIndent + FOOTNOTE_BODY_COLUMN &&
+            COMMENT_LINE.test(FOOTNOTE_DEF.exec(head.text)?.[2] ?? '')) {
+          noteListBodyColumn = (authoredBlockBase ?? contentCol) + defBodyIndent + FOOTNOTE_BODY_COLUMN
+          noteListChildColumn = nm.indent + nm.markerWidth
+        }
         const noteFence = FENCE.exec(lm.rest)
+        if (noteFence && noteListBodyColumn !== null && col >= noteListBodyColumn && col < noteListChildColumn) {
+          const closer = cachedForwardSearch(noteCloserSearches, `body-child:${noteListBodyColumn}:${col}:${noteFence[1]}`, i + 1, lines.length, (at) => {
+            const measured = ind(at)
+            if (measured.rest !== '' && measured.col < noteListBodyColumn) return null
+            const run = measured.col === col && PURE_FENCE.exec(measured.rest)
+            return !!(run && run[1][0] === noteFence[1][0] && run[1].length >= noteFence[1].length)
+          })
+          if (closer >= 0) noteFenceEnd = Math.max(noteFenceEnd, closer)
+        }
         let absorbedNoteFence = false
         if (noteMarkerSeen && defBodyIndent !== null &&
             col > markerNoteBodyColumn && noteFence && i > noteFenceEnd) {
@@ -6278,7 +6345,9 @@ function collectItems(lines, i, list, state, ind, meas) {
         // base at the item's content column then held it over a quote written
         // one column deeper, which arrived at body column 1 instead of 0 and
         // stopped being an opener at all (carve#1772, corpus 422-8).
-        const localBase = inOpenColonOnly ? openerBase : authoredBlockBase !== null && insideFence() && col < authoredBlockBase
+        const localBase = i <= noteFenceEnd && noteListBodyColumn !== null
+          ? noteListBodyColumn - FOOTNOTE_BODY_COLUMN
+          : inOpenColonOnly ? openerBase : authoredBlockBase !== null && insideFence() && col < authoredBlockBase
           ? contentCol
           : authoredBlockBase ?? openerBase ?? contentCol
         const dd = dedentMeasured(lm, line, localBase)

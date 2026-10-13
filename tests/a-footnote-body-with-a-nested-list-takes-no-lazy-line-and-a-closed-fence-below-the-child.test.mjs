@@ -1,0 +1,105 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { parse } from '../scripts/spec/layout.mjs'
+import { renderDoc } from '../scripts/spec/html.mjs'
+
+const render = (src) => renderDoc(parse(src))
+const F = '\x60'.repeat(3)
+
+test('literal repro 1', () => {
+  assert.equal(render("- a\n  [^b]: text\n\n    - c2\nafter [^b]\n"), "<ul>\n  <li>a</li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <ul>\n        <li>c2</li>\n      </ul>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test('literal repro 2', () => {
+  assert.equal(render("- a\n  [^b]: text\n\n    - c2\n    ~~~\n    code\n    ~~~\nafter [^b]\n"), "<ul>\n  <li>a</li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <ul>\n        <li>c2</li>\n      </ul>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test('literal repro 3', () => {
+  assert.equal(render("- a\n\n  [^b]: text\n\n    - c2\n    ~~~\n    code\n    ~~~\nafter [^b]\n"), "<ul>\n  <li>a</li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <ul>\n        <li>c2</li>\n      </ul>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test('literal repro 4', () => {
+  assert.equal(render("- [^a]: text\n    - child\n    [^b]: text\n\n      - c2\n      ~~~\n      code\n      ~~~\nafter [^a] [^b]\n"), "<ul>\n  <li></li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text\n- child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>text</p>\n      <ul>\n        <li>c2</li>\n      </ul>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test('literal repro 5', () => {
+  assert.equal(render("- [^n]: %% c\n    - child\n     ```\n     code\n     ```\nafter [^n]\n"), "<ul>\n  <li></li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <ul>\n        <li>child</li>\n      </ul>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test('unchanged at control', () => {
+  assert.equal(render("- [^n]: %% c\n    - child\n      ```\n      code\n      ```\nafter [^n]\n"), "<ul>\n  <li></li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <ul>\n        <li>child\n          <pre><code>code\n</code></pre>\n        </li>\n      </ul>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test('unchanged unclosed control', () => {
+  assert.equal(render("- [^n]: %% c\n    - child\n     ```\n     code\nafter [^n]\n"), "<ul>\n  <li></li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <ul>\n        <li>child\n<code>\ncode</code></li>\n      </ul>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test('unchanged noBlank control', () => {
+  assert.equal(render("- [^a]: text\n    - child\n    [^b]: text\n      - c2\n      ~~~\n      code\n      ~~~\nafter [^a] [^b]\n"), "<ul>\n  <li></li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text\n- child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>text\n- c2</p>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test('a note tail list takes no document lazy line', () => {
+  for (const column of [2, 4]) for (const blank of ['', '\n']) {
+    for (const marker of ['-', '*', '1.']) for (const run of ['', F, '~~~']) {
+      for (const tailBlank of ['', '\n']) {
+        const head = column === 2 ? '- a\n' : '- [^a]: text\n    - child\n'
+        const pad = ' '.repeat(column + 2)
+        const src = head + blank + ' '.repeat(column) + '[^b]: text\n\n' +
+          pad + marker + ' c2\n' + (run ? pad + run + '\n' + pad + 'code\n' + pad + run + '\n' : '') +
+          tailBlank + 'after [^b]\n'
+        assert.ok(render(src).includes('</ul>\n<p>after'), src)
+      }
+    }
+  }
+})
+
+test('a closed fence below the child opens in the note body', () => {
+  for (const marker of ['-', '*', '1.', '1)']) for (const shape of ['marker', 'comment', 'text']) {
+    const bodyColumn = shape === 'marker' ? 4 : 2
+    const head = shape === 'marker' ? '- [^n]: %% c' : shape === 'comment' ? '[^n]: %% c' : '[^n]: text\n'
+    for (const run of [F, '~~~']) for (let column = bodyColumn; column < bodyColumn + marker.length + 1; column++) {
+      for (const q of ['', '> ', '> > ']) {
+        const lines = [head, ' '.repeat(bodyColumn) + marker + ' child',
+          ' '.repeat(column) + run, ' '.repeat(column) + 'code', ' '.repeat(column) + run]
+        const src = lines.flatMap(line => line.split('\n')).map(line => q + line).join('\n') + '\nafter [^n]\n'
+        const html = render(src)
+        const note = html.slice(html.indexOf('<li id="fn1">'))
+        assert.match(note, /<\/(?:ul|ol)>\s*<pre><code>code\n/, src)
+        assert.match(note, /<li>child<\/li>/, src)
+        assert.ok(html.includes(q ? '</blockquote>\n<p>after' : '</ul>\n<p>after') || shape !== 'marker' && html.startsWith('<p>after'), src)
+      }
+    }
+  }
+})
+
+test('a fence below the note body keeps its original ownership', () => {
+  assert.equal(render("[^n]: %% c\n  - child\n ```\n code\n ```\nafter [^n]\n"), "<p><code>\ncode\n</code>\nafter <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <ul>\n        <li>child</li>\n      </ul>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test('a run at the marker-line note body column stays in the outer item', () => {
+  assert.equal(render("- [^n]: text\n    ```\n    code\n    ```\nafter [^n]\n"), "<ul>\n  <li>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test("item paragraph after a note list accepts a lazy tail", () => {
+  assert.equal(render("- a\n  [^b]: text\n\n    - c2\n\n  more\ntail [^b]\n"), "<ul>\n  <li><p>a</p>\n    <p>more\ntail <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n  </li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <ul>\n        <li>c2</li>\n      </ul>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test("item sublist after a note list accepts a lazy tail", () => {
+  assert.equal(render("- a\n  [^b]: text\n\n    - c2\n\n  - e\ntail [^b]\n"), "<ul>\n  <li>a\n    <ul>\n      <li>e\ntail <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></li>\n    </ul>\n  </li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <ul>\n        <li>c2</li>\n      </ul>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test("item paragraph after a note accepts a lazy tail", () => {
+  assert.equal(render("- a\n  [^b]: text\n\n  more\ntail [^b]\n"), "<ul>\n  <li><p>a</p>\n    <p>more\ntail <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n  </li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test("item fence after a note list leaves no paragraph for a tail", () => {
+  assert.equal(render("- a\n  [^b]: text\n\n    - c2\n\n  ~~~\n  code\n  ~~~\ntail [^b]\n"), "<ul>\n  <li>a\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>tail <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <ul>\n        <li>c2</li>\n      </ul>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test("second note after a note list ends before item prose", () => {
+  assert.equal(render("- a\n  [^b]: text\n\n    - c2\n\n  [^d]: second\n\n  more\ntail [^b] [^d]\n"), "<ul>\n  <li><p>a</p>\n    <p>more\ntail <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n  </li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <ul>\n        <li>c2</li>\n      </ul>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>second<a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
+
+test("item sublist after a comment-led note list owns its fence and tail", () => {
+  assert.equal(render("- [^b]: %% c\n    - c2\n\n  - e\n    ~~~\n    code\n    ~~~\n  more\ntail [^b]\n"), "<ul>\n  <li>\n    <ul>\n      <li>e\n        <pre><code>code\n</code></pre>\n      </li>\n    </ul>\n    more\ntail <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a>\n  </li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <ul>\n        <li>c2</li>\n      </ul>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+})
