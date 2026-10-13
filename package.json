@@ -85,7 +85,7 @@
     "@codemirror/search": "^6.7.2",
     "@codemirror/state": "^6.7.6",
     "@codemirror/view": "^6.43.14",
-    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#20e1f465df7d3ead8bf220005d112c800622050e",
+    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#291583c2601fc3957a3f55e02b8c546cb55fc78a",
     "chart.js": "^4.5.1",
     "mermaid": "^11.15.0"
   },
