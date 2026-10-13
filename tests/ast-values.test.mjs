@@ -148,8 +148,11 @@ const shippedDeclaration = () =>
  */
 const LAST_MEASURED = new Map([
   ['list.tight', 3],
-  ['text.value', 4],
+  ['text.value', 6],
   ['admonition.label', 1],
+  ['table_cell.rowspan', 1],
+  ['table_cell.colspan', 1],
+  ['table_cell.header', 2],
 ])
 
 /** A measurement of `count` distinct documents - the reconciler counts them. */
