@@ -12810,11 +12810,17 @@ EOF = (* end of file *) ;
       THE CARVE WRITER WRITES THE LINES BACK. It cuts each cell at its
       markers and writes `continuationLines` `+` lines after the row, each
       holding the matching part of every column, empty where a cell has no
-      part. A `table_row` with no `continuationLines`, such as an imported
+      part. A `+` line is spelled like a standard row with `+` for its first
+      pipe, so an empty part is the single space of any empty cell:
+
+        | Complex | A long description |
+        + | that continues |
+
+      A `table_row` with no `continuationLines`, such as an imported
       one, is written on one line. A `cell_wrap` outside a `table_cell`, a
-      `line` above the `continuationLines` of the row it names, a `row` past
-      the cell's `rowspan`, or two markers with one `line` and `row` in a cell
-      is invalid in the sense of CARVE-P12-030
+      `line` above the `continuationLines` of the row it names, a `row` equal
+      to or above the cell's `rowspan`, or two markers in one cell with the
+      same `line` and `row` is invalid in the sense of CARVE-P12-030
       ([carve#3094](https://github.com/markup-carve/carve/issues/3094)).
 
    ============================================================================ *)

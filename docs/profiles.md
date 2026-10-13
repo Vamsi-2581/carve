@@ -43,10 +43,12 @@ and `table` each carry their caption as an inline array, so there is nothing for
 profile to deny separately from its host. It used to be listed here and no
 implementation could act on it ([carve#2207](https://github.com/markup-carve/carve/issues/2207)).
 
-Four types the schema declares are **not** deniable and so are not listed either:
+Five types the schema declares are **not** deniable and so are not listed either:
 `smart_punctuation`, `literal_inline` and `tag`, which a profile refusing them
-would leave with no way to represent the characters the author typed, and
-`document`, which is the root. `section` and `small_caps` are listed and denyable,
+would leave with no way to represent the characters the author typed,
+`document`, which is the root, and `cell_wrap`, which marks where a `+`
+continuation row joined a table cell and renders as the space it replaced.
+Denying `table` or `table_cell` removes it with its cell. `section` and `small_caps` are listed and denyable,
 but Carve 0.1 source spells neither - they reach a tree through a format bridge.
 
 An **`autolink`** is its own type, not a `link`. The two differ in what the
