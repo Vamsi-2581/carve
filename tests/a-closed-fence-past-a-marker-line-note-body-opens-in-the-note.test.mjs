@@ -9,14 +9,15 @@ const backlink = '<a href="#fnref1" role="doc-backlink" aria-label="Back to refe
 const norm = (html) => html.replace(/\s+/g, ' ').replace(/>\s+</g, '><').replace(/\s+(?=<a|<pre)/g, '').trim()
 const endnotes = (body) => `<section role="doc-endnotes" aria-label="Footnotes"><hr><ol><li id="fn1">${body}</li></ol></section>`
 
-for (const q of ['', '> ']) {
-  const wrap = (body) => q ? `<blockquote>${body}</blockquote>` : body
+for (const q of ['', '> ', '> > ']) {
+  const wrap = (body) => q === '' ? body : q === '> '
+    ? `<blockquote>${body}</blockquote>` : `<blockquote><blockquote>${body}</blockquote></blockquote>`
   const source = (lead, marker, column, closed = true) => [
     `- [^n]: ${lead}`, `    ${marker} child`, `${' '.repeat(column)}${F}`,
     `${' '.repeat(column)}code`, ...(closed ? [`${' '.repeat(column)}${F}`] : []), 'after [^n]',
   ].map((line) => q + line).join('\n') + '\n'
 
-  test(`a closed fence past a marker-line note paragraph opens in the note, quote ${!!q}`, () => {
+  test(`a closed fence past a marker-line note paragraph opens in the note, quote depth ${q.length / 2}`, () => {
     for (const marker of ['-', '*', '1.', '1)', '- [ ]', '- [x]']) for (const column of [6, 8]) {
       const src = source('text', marker, column)
       const body = `<p>text ${marker} child</p><pre><code>code </code></pre><p>${backlink}</p>`
@@ -24,27 +25,34 @@ for (const q of ['', '> ']) {
     }
   })
 
-  test(`a closed child fence belongs to the list in a marker-line term note, quote ${!!q}`, () => {
+  test(`a closed child fence belongs to the list in a marker-line term note, quote depth ${q.length / 2}`, () => {
     const body = `<dl><dt>term</dt></dl><ul><li>child<pre><code>code </code></pre></li></ul><p>${backlink}</p>`
     assert.equal(norm(renderDoc(parse(source(':: term', '-', 6)))),
       wrap(`<ul><li></li></ul><p>after${ref}</p>`) + endnotes(body))
   })
 
-  test(`an unclosed fence after a marker-line note keeps the outer item code, quote ${!!q}`, () => {
-    const html = renderDoc(parse(source('text', '-', 6, false)))
-    const body = `<p>text - child${backlink}</p>`
-    assert.equal(norm(html), wrap(`<ul><li><pre><code>code </code></pre></li></ul><p>after${ref}</p>`) + endnotes(body))
+  test(`an unclosed fence past a marker-line note body stays note text, quote depth ${q.length / 2}`, () => {
+    for (const marker of ['-', '*', '1.', '1)', '- [ ]', '- [x]']) {
+      for (const column of [5, 6, 7, 8]) for (const run of [F, '~~~']) {
+        const src = source('text', marker, column, false).replace(F, run)
+        // Keep the inline reading with a single backtick or an escaped tilde run.
+        const twin = src.replace(run, run === F ? '`' : '\\~~~')
+        assert.equal(renderDoc(parse(src)), renderDoc(parse(twin)), src)
+      }
+    }
+    const body = `<p>text - child <code> code</code>${backlink}</p>`
+    assert.equal(norm(renderDoc(parse(source('text', '-', 6, false)))),
+      wrap(`<ul><li></li></ul><p>after${ref}</p>`) + endnotes(body))
   })
 }
 
-for (const [boundary, expected] of [
-  ['- sibling', '<ul><li><pre><code>code </code></pre></li><li>sibling <code> after [^n]</code></li></ul>'],
-  ['outside', '<ul><li><pre><code>code </code></pre></li></ul><p>outside <code> after [^n]</code></p>'],
-  ['\n- sibling', '<ul><li><pre><code>code </code></pre></li><li><p>sibling <code> after [^n]</code></p></li></ul>'],
-]) {
-  test(`a closer beyond the note boundary keeps the first item's code: ${JSON.stringify(boundary)}`, () => {
-    const src = `- [^n]: text\n    - child\n      ${F}\n      code\n${boundary}\n      ${F}\nafter [^n]\n`
-    assert.equal(norm(renderDoc(parse(src))), expected)
+for (const q of ['', '> ', '> > ']) for (const boundary of ['- sibling', 'outside', '\n- sibling']) {
+  test(`a closer beyond the note boundary leaves the run as note text: ${JSON.stringify(boundary)}, quote depth ${q.length / 2}`, () => {
+    const lines = ['- [^n]: text', '    - child', `      ${F}`, '      code',
+      ...boundary.split('\n'), `      ${F}`, 'after [^n]']
+    const src = lines.map(line => q + line).join('\n') + '\n'
+    const twin = lines.map((line, index) => q + (index === 2 ? '      `' : line)).join('\n') + '\n'
+    assert.equal(renderDoc(parse(src)), renderDoc(parse(twin)), src)
   })
 }
 

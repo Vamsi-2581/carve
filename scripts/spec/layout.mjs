@@ -6214,6 +6214,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           col > contentCol && !descendantOwned && !COLON_CLOSER.test(lm.rest) && !inPayload && !retainedAfterComment && opensHostedColonBlock(lm.rest)
         if (markerNoteEligible && defBodyIndent !== null && nm && col >= contentCol + defBodyIndent + FOOTNOTE_BODY_COLUMN) noteMarkerSeen = true
         const noteFence = FENCE.exec(lm.rest)
+        let absorbedNoteFence = false
         if (noteMarkerSeen && defBodyIndent !== null &&
             col > markerNoteBodyColumn && noteFence && i > noteFenceEnd) {
           const closer = cachedForwardSearch(noteCloserSearches, `${col}:${noteFence[1]}`, i + 1, lines.length, (at) => {
@@ -6223,8 +6224,9 @@ function collectItems(lines, i, list, state, ind, meas) {
             return !!(run && run[1][0] === noteFence[1][0] && run[1].length >= noteFence[1].length)
           })
           if (closer >= 0) noteFenceEnd = closer
+          else absorbedNoteFence = true
         }
-        const inNoteBody = i <= noteFenceEnd
+        const inNoteBody = i <= noteFenceEnd || absorbedNoteFence
         const mayOpenAuthoredBlock = !inNoteBody && !foldsIntoLeadTerm && !descendantOwned &&
           (!insideFence() || inOpenColonOnly) && opensAuthoredBase(lm.rest)
         if (pendingHeadQuote !== null && mayOpenAuthoredBlock) {
