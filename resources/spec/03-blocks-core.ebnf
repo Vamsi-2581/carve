@@ -245,7 +245,8 @@ code_fence_close = (backtick_fence | tilde_fence):close
    the quote prefixes are stripped (PART 0), NO leading whitespace. In a list
    item, a definition body or a footnote body an opener past the content
    column sets the base, and the closer is measured from it (CARVE-P0-004).
-   Carve has no indented-code-block construct, so at the document level an
+   A closer written below that base is read at the base once its available
+   prefix is gone, as a payload line there is. Carve has no indented-code-block construct, so at the document level an
    indented fence is plain text, as an indented heading, thematic break or
    block quote is (PART 9 §10). Consequences:
      - A backtick/tilde run indented at the document level is an ordinary
