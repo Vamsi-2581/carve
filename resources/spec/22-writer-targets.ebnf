@@ -315,6 +315,20 @@
       carries its destination; that is CARVE-P11-033's test, one design for
       both.
 
+      UNDER ROUNDTRIP EXPORT A REFERENCE LINK IS WRITTEN NATIVELY. With the
+      carrier mode on (CARVE-P10-015), a link that resolved through a
+      reference definition keeps its reference form, the full `[a][r]` or the
+      collapsed `[r][]`, and the definition it resolved by writes its
+      `[r]: /u` line where it stands. Markdown has the construct, so this
+      needs no carrier. An unused definition is written as it is without the
+      mode. Without the mode nothing here changes: the link is written inline
+      and a referenced definition writes no line.
+
+          [a][r]          ->  markdown             [a](/u)
+          (blank)             markdown roundtrip   [a][r]
+          [r]: /u                                  (blank)
+                                                   [r]: /u
+
           [^n]: %         ->  markdown  [^n]: %
                               plain     [^n]: %
                               html      (nothing)
@@ -446,7 +460,11 @@
          for an abbreviation, so on this target the line is CONTENT rather
          than leaked source, and keeping it is what lets the export round-trip
          back to a working abbreviation. The duplication is the price of that
-         round trip, and it is paid only here.
+         round trip, and it is paid only here. THE MARKDOWN IMPORT READS
+         THE LINE BACK: a `*[TERM]: expansion` line is an abbreviation
+         definition, not a paragraph, and an `<abbr>` whose title is the
+         expansion a definition in the same document gives its text imports
+         as the plain term that definition resolves. No carrier is needed.
 
       T2 PLAIN TEXT AND THE TERMINAL DROP THE LINE and emit only the
          expansion, in the `TERM (expansion)` shape, at every occurrence:

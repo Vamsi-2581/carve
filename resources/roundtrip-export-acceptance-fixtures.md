@@ -10,6 +10,8 @@ Markdown rows sample container-kind recovery (§10s) and the attribute-line, def
 
 Markdown rows include nested definition lists whose markers carry list depth (CARVE-P11-067). `markdownImportNegative` rows are hand-written Markdown imports; one with `expectedDiagnostic` must report that diagnostic.
 
+Reference-link rows pin the native reference form roundtrip Markdown export writes (CARVE-P11-028). A row marked `defaultExportOnly` checks the default export alone: `ordinaryFragments` must appear in it and `forbiddenOrdinaryFragments` must not. The `bare-div` row compares a bare div's marker bytes, and the wrapped-term row holds a marker whose payload spans two lines (CARVE-P11-063).
+
 The adjacent ordered-list row expects `list-delimiter-changed`; the separated-list row forbids it.
 
 `lossCodes` lists render-loss codes an HTML case reports with preservation off and on, and that a Markdown row reports under roundtrip export. A Markdown row that declares a loss returns degraded by definition, so it asserts the loss and its projection and is not compared against the source's HTML; every other Markdown row must come back rendering the same HTML. `forbiddenLossCodes` lists codes a Markdown row must not report under roundtrip export, such as `list-style-dropped` once the list-style marker carries the style (CARVE-P11-067). `returnedSourceFragments` lists text the reconstructed source holds in every listed import mode.

@@ -182,6 +182,9 @@ for (const fixture of fixtures.markdownExportImport) test(`shared Markdown expor
   const ordinary = carveToMarkdown(fixture.source)
   assert.equal(carveToMarkdown(fixture.source, { roundtrip: false }), ordinary)
   assert.ok(!ordinary.includes('<!-- carve:'))
+  for (const fragment of fixture.ordinaryFragments ?? []) assert.ok(ordinary.includes(fragment), fragment)
+  for (const fragment of fixture.forbiddenOrdinaryFragments ?? []) assert.ok(!ordinary.includes(fragment), fragment)
+  if (fixture.defaultExportOnly) return
   const exported = carveToMarkdown(fixture.source, { roundtrip: true })
   for (const fragment of fixture.carrierFragments) assert.ok(exported.includes(fragment), fragment)
   // CARVE-P11-068: inline markers only add; stripping them gives the ordinary bytes.
@@ -208,7 +211,7 @@ for (const fixture of fixtures.markdownImportNegative) test(`shared Markdown imp
 }))
 
 test('a Markdown row without a declared loss still fails when its HTML moves', () => {
-  const lossless = fixtures.markdownExportImport.filter((row) => !(row.lossCodes ?? []).length)
+  const lossless = fixtures.markdownExportImport.filter((row) => !(row.lossCodes ?? []).length && !row.defaultExportOnly)
   assert.ok(lossless.length > 0, 'no lossless Markdown row is left to compare')
   for (const fixture of lossless) {
     assertMarkdownReturn(fixture, fixture.source)
