@@ -5040,6 +5040,9 @@ const attachmentBoundary = (lines) => (idx) =>
 function authoredBlockEnd(lines, start, base, state) {
   const comment = classifyLayoutComment(lines, start)
   if (comment) return comment.end
+  // An attribute line ends at its closing brace; it cannot own the next block.
+  const attributes = tryAttrLine(lines.slice(start).map((line) => dedent(line, base)), 0)
+  if (attributes) return start + attributes.next
   if (state.measuringAuthoredBlock) return start + 1
   const candidate = lines.slice(start).map((source) => {
     if (isBlank(source)) return source
@@ -5782,8 +5785,10 @@ function collectItems(lines, i, list, state, ind, meas) {
     // come: without one it is the line form (CARVE-P9-053, carve#2950).
     const bodyHoldsLiveCommentSpan = () =>
       bodyHoldsOpenCommentSpan(itemLines, (run) => lastCommentCloser(run) >= i)
+    // A descendant span cannot carry payload across a shallower block. Its
+    // closer still pairs by run length at any column.
     const commentHoldsLine = (span, measured) => span?.kind === 'comment' &&
-      (!span.markerLine || measured.col >= span.col || measured.rest.startsWith('%%'))
+      (measured.col >= span.col || measured.rest.startsWith('%%'))
     // Set by `trackNestedFence` for the one line it is reading, drained by the
     // caller into the descendant's Q1 state. A return value cannot carry it:
     // the function's `null` is load-bearing (carve#2746).
@@ -5821,7 +5826,7 @@ function collectItems(lines, i, list, state, ind, meas) {
       const comment = COMMENT_FENCE_BODY.exec(dmeas.rest)
       if (comment) {
         return commentFenceCloserAhead(lines, idx, comment[1])
-          ? { kind: 'comment', run: comment[1] }
+          ? { kind: 'comment', run: comment[1], col: dmeas.col }
           : null
       }
       const f = FENCE.exec(dmeas.rest)
