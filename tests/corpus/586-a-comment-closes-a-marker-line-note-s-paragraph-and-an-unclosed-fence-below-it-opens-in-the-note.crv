@@ -1,0 +1,6 @@
+- [^n]: text
+    more
+    %% c
+    ~~~
+    code
+after [^n]
