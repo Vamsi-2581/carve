@@ -1142,7 +1142,9 @@ function renderTable(node, depth, ctx) {
         cover.set(key(r, c), cell)
         continue
       }
-      cell.content = ''
+      // A blocked marker renders nothing, but `+` text on it stays in its
+      // cell (carve#3151).
+      cell.content = (cell.joins ?? []).join(' ')
       cell.empty = true
       cell.spanTop = r
       cell.spanLeft = c
@@ -1235,7 +1237,7 @@ function renderTable(node, depth, ctx) {
       if (valign) declarations.push(`vertical-align: ${valign};`)
       a += ` style="${declarations.join(' ')}"`
     }
-    const content = cell.empty || cell.content === '' ? '' : renderInline(cell.content)
+    const content = cell.content === '' ? '' : renderInline(cell.content)
     return `<${tag}${a}>${content}</${tag}>`
   }
   const renderRow = (row, r) => {
