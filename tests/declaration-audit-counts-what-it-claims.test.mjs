@@ -33,7 +33,7 @@ import { fileURLToPath } from 'node:url'
 
 process.env.CARVE_DECL_AUDIT_LIB = '1'
 const { __internals } = await import('../scripts/declaration-audit.mjs')
-const { liveRows, blankComments, classifyPinDistance, gitPinStatus, gitReferenceBuildStatus, isDeclarationName, undeclaredLedgerRows, MANIFEST } = __internals
+const { liveRows, blankComments, classifyPinDistance, gitPinStatus, gitReferenceBuildStatus, isDeclarationName, undeclaredLedgerRows, stalenessCheck, MANIFEST } = __internals
 
 const rows = (kind, name, src) => {
   const out = liveRows({ kind, name }, src)
@@ -217,6 +217,7 @@ test('a staleness anchor belongs only to a guard that claims to be two-direction
   // The field VERIFIES the `two-way` claim, so naming one beside `one-way` or
   // `none` would read as evidence for a claim the same row denies.
   for (const entry of MANIFEST) {
+    if (entry.stalenessFile !== undefined) assert.ok(entry.staleness, `${entry.path} names stalenessFile without staleness`)
     if (entry.staleness === undefined) continue
     assert.equal(
       entry.guard,
@@ -228,6 +229,19 @@ test('a staleness anchor belongs only to a guard that claims to be two-direction
       `${entry.path} :: ${entry.name} has an anchor too short to identify one assertion`,
     )
   }
+})
+
+test('a ledger anchor is read from stalenessFile and a missing assertion fails', () => {
+  const entry = { repo: 'spec', path: 'resources/ledger.txt', stalenessFile: 'tests/owner.test.mjs', staleness: 'declared row still differs' }
+  assert.equal(stalenessCheck(entry, 'ledger content', (repo, path) => {
+    assert.equal(repo, 'spec')
+    assert.equal(path, 'tests/owner.test.mjs')
+    return 'assert: declared row still differs'
+  }), true)
+  assert.match(stalenessCheck(entry, 'declared row still differs', () => 'forward check only').message, /GUARD GONE/)
+  assert.match(stalenessCheck(entry, '', () => new Error('file not found')).message, /file not found/)
+  assert.match(stalenessCheck({ ...entry, staleness: undefined }, '', () => '').message, /requires staleness/)
+  assert.equal(stalenessCheck({ ...entry, stalenessFile: undefined }, 'declared row still differs'), true)
 })
 
 test('at least one guard is verified rather than merely claimed', () => {
