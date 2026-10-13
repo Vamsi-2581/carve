@@ -316,11 +316,13 @@ try {
   rmSync(tmp, { recursive: true, force: true })
 }
 
-const squash = (html) => html.replace(/\s+/g, ' ').trim()
+// Whitespace is the output in Carve, so a squashed canonical divergence reads as agreement.
+const squash = (out) => target === 'carve' ? JSON.stringify(out) : out.replace(/\s+/g, ' ').trim()
 
 for (const f of findings) {
   console.log(`=== minimal reproducer (${f.kind})`)
   console.log(f.minimal.replace(/\n$/, '').split('\n').map((l) => `    ${l}`).join('\n'))
+  if (target === 'carve') console.log(`  source: ${JSON.stringify(f.minimal)}`)
   console.log(`  js : ${squash(f.js).slice(0, 160)}`)
   if (f.rs !== f.js) console.log(`  rs : ${squash(f.rs).slice(0, 160)}`)
   if (f.php !== f.js) console.log(`  php: ${squash(f.php).slice(0, 160)}`)
