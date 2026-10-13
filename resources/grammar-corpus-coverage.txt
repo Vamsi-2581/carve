@@ -50,7 +50,3 @@ hashes         LOOKAHEAD  reached only through `headingStart`, itself lookahead-
 colonFence     LOOKAHEAD  reached only through `structural`
 ordMarker      LOOKAHEAD  reached only through `structural`
 spaceOrEnd     LOOKAHEAD  only in `boldItalic = "/*" ~spaceOrEnd biInner+ "*/" attrs?`
-
-at             GAP  `other` admits it, so an `@` NOT followed by a word character reaches it: `a @ b` (carve#3039)
-delimRun       GAP  a doubled delimiter run inside bold-italic reaches it: `/*a // b*/` (carve#3039)
-dRun           GAP  reached with `delimRun`, by the same spelling (carve#3039)
