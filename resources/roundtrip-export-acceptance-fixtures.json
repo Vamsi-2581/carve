@@ -939,6 +939,97 @@
           "element": "h1"
         }
       ]
+    },
+    {
+      "id": "cross-reference",
+      "source": "{#fig-sun}\n![Sun](sun.png)\n^ Figure #: The sun\n\nSee </#fig-sun>.\n",
+      "carriers": {
+        "data-carve-xref": null,
+        "data-carve-caption-number": null
+      },
+      "forbiddenExportAttributes": [],
+      "expectedNodes": [
+        {
+          "type": "heading_ref",
+          "target": "fig-sun"
+        },
+        {
+          "type": "caption_number"
+        }
+      ],
+      "importModes": [
+        "safe",
+        "semantic",
+        "roundtrip"
+      ],
+      "carrierHosts": [
+        {
+          "attribute": "data-carve-xref",
+          "element": "a"
+        },
+        {
+          "attribute": "data-carve-caption-number",
+          "element": "span"
+        }
+      ],
+      "aheadOfPin": true,
+      "exportedHtml": "<figure id=\"fig-sun\">\n  <img src=\"sun.png\" alt=\"Sun\">\n  <figcaption>Figure <span data-carve-caption-number>1</span>: The sun</figcaption>\n</figure>\n<p>See <a href=\"#fig-sun\" data-carve-xref>Figure 1</a>.</p>"
+    },
+    {
+      "id": "cross-reference-unicode-heading",
+      "source": "# Café\n\nSee </#Café>.\n",
+      "carriers": {
+        "data-carve-xref": null,
+        "data-carve-generated-id": "1"
+      },
+      "expectedNodes": [
+        {
+          "type": "heading_ref",
+          "target": "Café"
+        }
+      ],
+      "forbiddenExportAttributes": [],
+      "importModes": [
+        "safe",
+        "semantic",
+        "roundtrip"
+      ],
+      "carrierHosts": [
+        {
+          "attribute": "data-carve-xref",
+          "element": "a"
+        }
+      ],
+      "exportedHtml": "<section id=\"Café\" data-carve-generated-id=\"1\">\n  <h1>Café</h1>\n  <p>See <a href=\"#Café\" data-carve-xref>Café</a>.</p>\n</section>",
+      "aheadOfPin": true
+    },
+    {
+      "id": "cross-reference-assigned-id",
+      "source": "{id=\"a.b\"}\n# Head\n\nSee </#a.b>.\n",
+      "carriers": {
+        "data-carve-xref": null,
+        "data-carve-explicit-id": "1"
+      },
+      "expectedNodes": [
+        {
+          "type": "heading_ref",
+          "target": "a.b"
+        }
+      ],
+      "forbiddenExportAttributes": [],
+      "importModes": [
+        "safe",
+        "semantic",
+        "roundtrip"
+      ],
+      "carrierHosts": [
+        {
+          "attribute": "data-carve-xref",
+          "element": "a"
+        }
+      ],
+      "exportedHtml": "<section id=\"a.b\" data-carve-explicit-id=\"1\">\n  <h1>Head</h1>\n  <p>See <a href=\"#a.b\" data-carve-xref>Head</a>.</p>\n</section>",
+      "aheadOfPin": true
     }
   ],
   "importNegative": [
