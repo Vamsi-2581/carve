@@ -24,3 +24,5 @@
 # Emptying this file is the normal end state after `npm run bump-carve-pin`.
 #
 # Format: <slug><space><space><reason>
+578-a-closed-fence-at-a-marker-line-note-s-body-column-opens-in-the-note  ahead of the pin: a closed fence at a marker-line note's body column opens in the note (checker reading, carve-js not yet)
+578-a-closed-fence-at-a-marker-line-note-s-body-column-opens-in-the-note-2  ahead of the pin: a closed fence at a marker-line note's body column opens in the note (checker reading, carve-js not yet)

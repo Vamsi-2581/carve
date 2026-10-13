@@ -1812,21 +1812,52 @@
       ]
     },
     {
-      "id": "nested-definition-list-flattened",
+      "id": "nested-definition-list",
       "source": ":: Outer\n: body\n\n  :: Inner\n  : inner body\n",
       "carrierFragments": [
         "<!-- carve: :: Outer -->",
         "<!-- carve: : -->",
+        "<!-- carve:2 :: Inner -->",
+        "<!-- carve:2 : -->",
+        "<!-- carve:2 -->",
         "<!-- carve: -->"
       ],
       "expectedNodes": [
         {
           "type": "definition_list"
+        },
+        {
+          "type": "definition_list"
         }
       ],
-      "lossCodes": [
-        "definition-list-flattened"
-      ]
+      "aheadOfPin": true
+    },
+    {
+      "id": "nested-definition-list-two-levels",
+      "source": ":: Outer\n: body\n\n  :: Middle\n  : middle body\n\n    :: Inner\n    : inner body\n",
+      "carrierFragments": [
+        "<!-- carve: :: Outer -->",
+        "<!-- carve: : -->",
+        "<!-- carve:2 :: Middle -->",
+        "<!-- carve:2 : -->",
+        "<!-- carve:3 :: Inner -->",
+        "<!-- carve:3 : -->",
+        "<!-- carve:3 -->",
+        "<!-- carve:2 -->",
+        "<!-- carve: -->"
+      ],
+      "expectedNodes": [
+        {
+          "type": "definition_list"
+        },
+        {
+          "type": "definition_list"
+        },
+        {
+          "type": "definition_list"
+        }
+      ],
+      "aheadOfPin": true
     },
     {
       "id": "inline-link-attributes",
@@ -1967,6 +1998,19 @@
         }
       ],
       "inlineMarkers": true
+    }
+  ],
+  "markdownImportNegative": [
+    {
+      "id": "nested-definition-marker-without-outer-list",
+      "markdown": "<!-- carve:2 :: Inner -->\n**Inner**\n\n<!-- carve:2 : -->\ninner body\n\n<!-- carve:2 -->\n",
+      "expectedDiagnostic": {
+        "code": "carrier-markers-damaged"
+      },
+      "forbiddenTypes": [
+        "definition_list"
+      ],
+      "aheadOfPin": true
     }
   ]
 }

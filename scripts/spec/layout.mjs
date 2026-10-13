@@ -5977,7 +5977,8 @@ function collectItems(lines, i, list, state, ind, meas) {
         noteListBodyColumn = null
         noteListChildColumn = null
       }
-      if (i > noteFenceEnd && (lm.rest === '' || FOOTNOTE_DEF.test(lm.rest))) {
+      if (i > noteFenceEnd && (FOOTNOTE_DEF.test(lm.rest) ||
+          (lm.rest !== '' && lm.col < markerNoteBodyColumn && !insideFence()))) {
         markerNoteEligible = false
         noteMarkerSeen = false
       }
@@ -6321,6 +6322,15 @@ function collectItems(lines, i, list, state, ind, meas) {
           noteListBodyColumn = (authoredBlockBase ?? contentCol) + defBodyIndent + FOOTNOTE_BODY_COLUMN
           noteListChildColumn = nm.indent + nm.markerWidth
         }
+        // An authored block here belongs to the item. Once it interrupts the
+        // note, a later fence at the note body column belongs to the item too.
+        if (markerNoteEligible && i > noteFenceEnd && col >= markerNoteBodyColumn && !nm &&
+            !descendantOwned && !insideFence() && !foldsIntoLeadTerm &&
+            opensAuthoredBase(lm.rest) && !FENCE.test(lm.rest) &&
+            !COMMENT_LINE.test(lm.rest)) {
+          markerNoteEligible = false
+          noteMarkerSeen = false
+        }
         const noteFence = FENCE.exec(lm.rest)
         if (noteFence && noteListBodyColumn !== null && col >= noteListBodyColumn && col < noteListChildColumn) {
           const closer = cachedForwardSearch(noteCloserSearches, `body-child:${noteListBodyColumn}:${col}:${noteFence[1]}`, i + 1, lines.length, (at) => {
@@ -6332,8 +6342,8 @@ function collectItems(lines, i, list, state, ind, meas) {
           if (closer >= 0) noteFenceEnd = Math.max(noteFenceEnd, closer)
         }
         let absorbedNoteFence = false
-        if (noteMarkerSeen && defBodyIndent !== null &&
-            col > markerNoteBodyColumn && noteFence && i > noteFenceEnd) {
+        if (markerNoteEligible && !descendantOwned &&
+            col >= markerNoteBodyColumn && noteFence && i > noteFenceEnd) {
           const closer = cachedForwardSearch(noteCloserSearches, `${col}:${noteFence[1]}`, i + 1, lines.length, (at) => {
             const measured = ind(at)
             if (measured.rest !== '' && measured.col < markerNoteBodyColumn) return null
