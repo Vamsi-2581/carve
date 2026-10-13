@@ -2429,6 +2429,35 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
   let paragraphOpen = false
   const descriptionSearches = new Map()
   const descriptionClosers = new Map()
+  // Pure fence runs per column and character, with suffix maxima of their
+  // widths, so each closer question is one binary search.
+  let fenceRuns = null
+  const closerAfter = (col, opener, index) => {
+    if (fenceRuns === null) {
+      fenceRuns = new Map()
+      lines.forEach((raw, k) => {
+        const m = indentCols(raw)
+        const c = PURE_FENCE.exec(m.rest)
+        if (!c) return
+        const key = `${m.col}:${c[1][0]}`
+        if (!fenceRuns.has(key)) fenceRuns.set(key, { at: [], width: [] })
+        fenceRuns.get(key).at.push(k)
+        fenceRuns.get(key).width.push(c[1].length)
+      })
+      for (const runs of fenceRuns.values()) {
+        for (let k = runs.width.length - 2; k >= 0; k--) runs.width[k] = Math.max(runs.width[k], runs.width[k + 1])
+      }
+    }
+    const runs = fenceRuns.get(`${col}:${opener[0]}`)
+    if (!runs) return false
+    let lo = 0, hi = runs.at.length
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1
+      if (runs.at[mid] > index) hi = mid
+      else lo = mid + 1
+    }
+    return lo < runs.at.length && runs.width[lo] >= opener.length
+  }
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index]
     const measured = indentCols(line)
@@ -2481,7 +2510,12 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
       flushedNote = false
       continue
     }
-    const establishesBase = measured.col > 0 && (hostedColonBody ? opensHostedColonBlock(measured.rest) : opensAuthoredBase(measured.rest))
+    // §10 I4: a code fence under an open paragraph with no closer at the
+    // body's column or its own is that paragraph's text (CARVE-P2-017).
+    const run = paragraphOpen && FENCE.exec(measured.rest)
+    const unclosedFenceText = !!run && !(closerAfter(0, run[1], index) ||
+      (measured.col > 0 && closerAfter(measured.col, run[1], index)))
+    const establishesBase = measured.col > 0 && !unclosedFenceText && (hostedColonBody ? opensHostedColonBlock(measured.rest) : opensAuthoredBase(measured.rest))
     // A LIST ITEM IS A CONTAINER TOO (carve#1781). `opensSubBlock` answers a
     // different question - whether a blank-separated sub-block leaves a list
     // TIGHT - and a list marker is deliberately absent from it there, because a
@@ -2507,7 +2541,7 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
         }) >= 0
       }) >= 0
     }
-    const protectsInnermostContainer = measured.col === 0 &&
+    const protectsInnermostContainer = measured.col === 0 && !unclosedFenceText &&
       (opensSubBlock(measured.rest) || !((absorbedNoteMarker || absorbedDescriptionMarker) && paragraphOpen) && matchMarkerAt(measured) !== null)
     if (!establishesBase && !protectsInnermostContainer) {
       // A plain PARAGRAPH sibling of a note just flushed to column 0 keeps a
