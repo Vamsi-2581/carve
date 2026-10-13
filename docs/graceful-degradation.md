@@ -206,6 +206,12 @@ the nesting a document usually has. A table cell is the one host that carries
 nothing, and permanently, because this target flattens a cell to one line and
 flattens the container's body with it.
 
+The mode carries more than containers. An attribute line, a definition list and
+the caption of a quote, table, image, code listing or equation each take a
+marker of the same form (`CARVE-P11-067`), and a link's, image's or span's
+attributes, a span and a cross-reference take an inline marker beside the
+construct (`CARVE-P11-068`).
+
 `CARVE-P11-063` has the normative rule, including the escape for a payload that
 carries `-->`. carve-js, carve-php and carve-rs ship the mode.
 

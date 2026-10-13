@@ -189,7 +189,8 @@
 # carve-rs since e1a68059 writes Markdown `$x+y$` as inline math; 55533b7e, the
 # commit before, leaves it text. carve-php since 8d32ead9 imports
 # `<pre class="mermaid" role="img">` as a mermaid fence, which that change
-# intends, so which side moves is an open decision.
+# intends, and the default import keeping the class form was ruled on
+# 2026-10-12 (markup-carve/carve-php#3203).
 #
 # BOTH LANDED, and both moved the engine rather than the case: carve-rs keeps
 # dollar-delimited text as text again (markup-carve/carve-rs#2552) and carve-php

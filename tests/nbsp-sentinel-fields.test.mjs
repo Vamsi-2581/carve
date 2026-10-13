@@ -28,22 +28,14 @@ test('text and verbatim fields document literal Unicode', () => {
 })
 
 const engine = await import('@markup-carve/carve')
-const legacyEngine = !engine.carveToAstJson('a\\ b\n').children[0].children.some(node => node.type === 'non_breaking_space')
 
 test('the pinned engine identifies its whitespace contract', () => {
   const ast = engine.carveToAstJson('a\\ b\n')
   const types = ast.children[0].children.map(node => node.type)
-  if (legacyEngine) {
-    assert.deepEqual(types, ['text'])
-    assert.equal(ast.children[0].children[0].value, 'a\ue000b')
-  } else {
-    assert.deepEqual(types, ['text', 'non_breaking_space', 'text'])
-  }
+  assert.deepEqual(types, ['text', 'non_breaking_space', 'text'])
 })
 
-test('updated engines pass the shared annotation projection fixture', {
-  skip: legacyEngine ? 'Pending the coordinated engine PRs: the package pin still emits whitespace markers.' : false,
-}, () => {
+test('updated engines pass the shared annotation projection fixture', () => {
   const fixture = JSON.parse(readFileSync(new URL('./fixtures/annotation-projection.json', import.meta.url), 'utf8'))
   assert.equal([...fixture.projection].length, 11)
   for (const [key, accepted] of [['valid', true], ['invalid', false]]) {
@@ -86,9 +78,7 @@ function valuesHoldingE000(node, found = []) {
 }
 
 /** Coverage control: the probes pin only the sources someone thought of. */
-test('no corpus document publishes U+E000 its own source does not contain', {
-  skip: legacyEngine ? 'the package pin still spells generated spaces as U+E000 in a value' : false,
-}, () => {
+test('no corpus document publishes U+E000 its own source does not contain', () => {
   const dir = new URL('./corpus/', import.meta.url)
   const names = readdirSync(dir).filter(name => name.endsWith('.crv')).sort()
   assert.ok(names.length >= 10, `found ${names.length} corpus documents`)

@@ -69,19 +69,16 @@ const OPT_IN_ONLY = {
 
 /** Fields permitted by the schema before the corresponding engine rollout. */
 const ENGINE_ROLLOUT_PENDING = {
-  // TODO(carve#2209): add resolver fixtures for counter sharing, id collisions,
-  // figure and figure-group ownership, and numbered cross-references when
-  // engines emit these fields.
   'figure.shortCaption': 'structural publishing field: Carve 0.1 source has no spelling; produced only by AST/Pandoc consumers',
-  'small_caps.*': 'structural publishing node: Carve 0.1 source has no spelling; produced only by AST and format-bridge consumers (carve#2210)',
-  'ruby.*': 'structural publishing node: Carve 0.1 source has no spelling; produced only by AST and HTML-import consumers (carve#2208)',
-  'rubyPair.*': 'structural pair inside the ruby interchange node; produced only by AST and HTML-import consumers (carve#2208)',
-  'math.label': 'equation interchange field: Carve 0.1 source has no direct spelling; produced only by AST and format-bridge consumers (carve#2209)',
-  'math.number': 'resolved equation number: the schema names it before the engines publish it (carve#2209)',
+  'small_caps.*': 'structural publishing node: Carve 0.1 source has no spelling; produced only by AST and format-bridge consumers',
+  'ruby.*': 'structural publishing node: Carve 0.1 source has no spelling; produced only by AST and HTML-import consumers',
+  'rubyPair.*': 'structural pair inside the ruby interchange node; produced only by AST and HTML-import consumers',
+  'math.label': 'equation interchange field: Carve 0.1 source has no direct spelling; produced only by AST and format-bridge consumers',
+  'math.number': 'resolved equation number: the schema names it before the engines publish it (carve#3040)',
   'table.shortCaption': 'structural publishing field: Carve 0.1 source has no spelling; produced only by AST/Pandoc consumers',
-  'directive.title': 'no corpus case spells a titled directive yet, because carve-php and carve-rs do not render one (carve#2264)',
-  'directive.label': 'no corpus case spells a labeled directive yet; it lands with the titled case (carve#2264)',
-  'table_cell.blocks': 'structural interchange field: Carve 0.1 source has no spelling for a block inside a cell; produced only by AST/Pandoc/HTML-import consumers (carve#2191)',
+  'directive.title': 'no corpus case spells a titled directive yet, because carve-php and carve-rs do not render one (carve#3040)',
+  'directive.label': 'no corpus case spells a labeled directive yet; it lands with the titled case (carve#3040)',
+  'table_cell.blocks': 'structural interchange field: Carve 0.1 source has no spelling for a block inside a cell; produced only by AST/Pandoc/HTML-import consumers',
 }
 
 /**

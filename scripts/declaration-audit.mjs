@@ -207,6 +207,7 @@ const MANIFEST = [
   { repo: 'spec', path: 'resources/ast-position-waivers.txt', kind: 'txt', policy: 'split', prPolicy: 'split-declared', guard: 'two-way', owner: 'tests/ast-waivers.test.mjs' },
   { repo: 'spec', path: 'resources/import-comparison-drift.json', name: 'differences', kind: 'json', policy: 'manual', guard: 'two-way', owner: 'npm run import:compare' },
   { repo: 'spec', path: 'resources/ingest-comparison-drift.json', name: 'differences', kind: 'json', policy: 'manual', guard: 'two-way', owner: 'npm run ast:ingest' },
+  { repo: 'spec', path: 'resources/roundtrip-export-acceptance-fixtures.json', name: 'aheadOfPin', kind: 'json-flag', flag: 'aheadOfPin', policy: 'owed', prPolicy: 'declared', guard: 'two-way', owner: 'tests/roundtrip-export-acceptance.test.mjs' },
   // A counts ratchet rather than a ledger, but it carries a per-document
   // allowlist inside it. Two-directional by construction - the whole object is
   // compared with deepEqual - so a row here cannot rot silently.
@@ -855,9 +856,28 @@ const LANG_OF = { js: 'js', 'js-string': 'js', php: 'php', rust: 'rust' }
 /** Live rows for one manifest entry, or an Error explaining why not. */
 function liveRows(entry, src) {
   if (entry.kind === 'txt') return txtRows(src)
-  if (entry.kind === 'json') {
+  if (entry.kind === 'json' || entry.kind === 'json-flag') {
     let node
     try { node = JSON.parse(src) } catch (error) { return new Error(`invalid JSON: ${error.message}`) }
+    if (entry.kind === 'json-flag') {
+      const rows = []
+      const visit = (value, group = '') => {
+        if (value === null || typeof value !== 'object') return
+        if (Array.isArray(value)) {
+          for (const row of value) visit(row, group)
+          return
+        }
+        if (value[entry.flag] === true) {
+          if (typeof value.id !== 'string' || !value.id || !group) {
+            throw new Error(`flagged fixture needs an id and group: ${JSON.stringify(value)}`)
+          }
+          rows.push(`${group}/${value.id}`)
+        }
+        for (const [key, child] of Object.entries(value)) visit(child, key)
+      }
+      try { visit(node) } catch (error) { return error }
+      return rows
+    }
     for (const key of entry.name.split('.')) {
       if (node === null || typeof node !== 'object' || !(key in node)) {
         return new Error(`no ${entry.name} in this file - renamed, moved, or deleted`)
@@ -1101,7 +1121,8 @@ for (const entry of MANIFEST) {
   } else if (policy === 'declared' || policy === 'split-declared') {
     detail = policy === 'split-declared'
       ? undeclaredWaiverRows(judgedRows)
-      : entry.rows === 'extent' ? undeclaredExtentRows(judgedRows) : undeclaredLedgerRows(judgedRows)
+      : entry.kind === 'json-flag' ? []
+        : entry.rows === 'extent' ? undeclaredExtentRows(judgedRows) : undeclaredLedgerRows(judgedRows)
     owed = detail.length
     permitted = judgedRows.length - owed
   }

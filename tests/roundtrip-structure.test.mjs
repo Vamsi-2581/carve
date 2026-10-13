@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { normalize, firstDiff, record, validateBaseline, checkCounts, jsRoundtrip, finishMeasurement, baselineCounts } from '../scripts/lib/roundtrip-structure.mjs'
+import { acceptHtmlLosses, normalize, firstDiff, record, validateBaseline, checkCounts, jsRoundtrip, finishMeasurement, baselineCounts } from '../scripts/lib/roundtrip-structure.mjs'
 
 test('normalization matches the PHP measurement, including non-text strings', () => {
   const tree = { type: 'document', pos: {}, srcByteLength: 99, attrs: { order: ['x'] }, children: [
@@ -262,4 +262,61 @@ test('Rust driver emits one compact object per document and target', { skip: !pr
     assert.equal(firstDiff(normalize(row.before), normalize(row.after)), null)
     assert.equal(row.before.children[0].content, 'quote " slash \\ and ☃\nsecond line\n')
   }
+})
+
+const text = value => ({ type: 'text', value })
+const doc = children => ({ type: 'document', children })
+const definition = label => ({ type: 'link_reference_definition', label, href: '/url' })
+
+test('HTML losses drop unused link definitions and keep used definitions and resolved references', () => {
+  const link = { type: 'link', ref: ' used ', rawRef: '[t][ used ]', href: '/url', children: [text('t')] }
+  const tree = doc([definition('unused'), definition('used'), { type: 'paragraph', children: [link] }])
+  assert.deepEqual(acceptHtmlLosses(tree), doc([definition('used'), { type: 'paragraph', children: [link] }]))
+})
+
+test('HTML unresolved references preserve children and raw label whitespace', () => {
+  const children = [{ type: 'emphasis', children: [text('t')] }]
+  const tree = doc([definition('a b'), { type: 'paragraph', children: [
+    { type: 'link', ref: 'a\tb', rawRef: '[t][a\tb]', href: '', children },
+  ] }])
+  assert.deepEqual(acceptHtmlLosses(tree), doc([{ type: 'paragraph', children: [text('['), ...children, text('][a\tb]')] }]))
+})
+
+test('HTML unresolved images, collapsed references and shortcuts preserve their spelling', () => {
+  const tree = doc([{ type: 'paragraph', children: [
+    { type: 'image', ref: 't', rawRef: '![t][]', children: [text('t')] },
+    { type: 'link', ref: 'u', rawRef: '[u]', children: [text('u')] },
+  ] }])
+  assert.deepEqual(acceptHtmlLosses(tree), doc([{ type: 'paragraph', children: [text('!['), text('t'), text('][]'), text('['), text('u'), text(']')] }]))
+})
+
+test('HTML losses match footnote labels exactly and preserve abbreviation definitions', () => {
+  const used = { type: 'footnote', label: 'a b', children: [text('used')] }
+  const unused = { type: 'footnote', label: ' a b ', children: [text('unused')] }
+  const abbreviation = { type: 'abbreviation_def', abbr: 'ABC', expansion: 'words' }
+  const reference = { type: 'footnote_ref', label: 'a b' }
+  assert.deepEqual(acceptHtmlLosses(doc([unused, used, abbreviation, reference])), doc([used, abbreviation, reference]))
+})
+
+test('HTML losses count a reference only where it renders', () => {
+  const inner = { type: 'footnote', label: 'inner', children: [text('content')] }
+  const unused = { type: 'footnote', label: 'unused', children: [{ type: 'paragraph', children: [
+    text('see '), { type: 'footnote_ref', label: 'inner' }, { type: 'link', ref: 'r', rawRef: '[t][r]', href: '/u', children: [text('t')] },
+  ] }] }
+  assert.deepEqual(acceptHtmlLosses(doc([unused, inner, definition('r')])), doc([]))
+  const used = { type: 'footnote', label: 'used', children: [{ type: 'paragraph', children: [{ type: 'footnote_ref', label: 'inner' }] }] }
+  const reference = { type: 'paragraph', children: [{ type: 'footnote_ref', label: 'used' }] }
+  assert.deepEqual(acceptHtmlLosses(doc([reference, used, inner])), doc([reference, used, inner]))
+})
+
+test('HTML loss acceptance returns an independent tree without mutating input', () => {
+  const tree = doc([definition('unused'), { type: 'paragraph', children: [
+    { type: 'link', ref: 'missing', rawRef: '[t][missing]', children: [text('t')] },
+  ] }])
+  const original = structuredClone(tree)
+  const result = acceptHtmlLosses(tree)
+  assert.deepEqual(tree, original)
+  assert.notEqual(result, tree)
+  result.children[0].children[1].value = 'changed'
+  assert.deepEqual(tree, original)
 })
