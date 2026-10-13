@@ -34,3 +34,4 @@
 451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column  ahead of the pin: a link definition past the note's column in a list item registers (checker reading, carve-js not yet, carve-js#2964)
 587-a-link-definition-or-an-attribute-line-past-a-box-s-column-opens-on-its-authored-base  ahead of the pin: a link definition past the box's column in a list item registers (checker reading, carve-js not yet, carve-js#2964)
 587-a-link-definition-or-an-attribute-line-past-a-box-s-column-opens-on-its-authored-base-2  ahead of the pin: an attribute line past the box's column in a list item applies to the next block (checker reading, carve-js not yet, carve-js#2964)
+64-table-rowspan-with-multi-line-content-2  ahead of the pin: a continuation row after the `^` row joins the spanning cell (checker reading; carve-js drops the text, carve-js#2965; carve-rs#2641, carve-php#3306)

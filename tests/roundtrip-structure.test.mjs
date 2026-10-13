@@ -31,6 +31,15 @@ test('strict normalization keeps the carrier fields and drops only bookkeeping a
   assert.equal(firstDiff(normalize(before, true), normalize({ ...before, bulletChar: '-' }, true)).kind, 'value list.bulletChar')
 })
 
+test('a span placeholder compares without its header field in both modes', () => {
+  const cell = header => ({ type: 'table_cell', header, span: 'colspan', children: [] })
+  for (const strict of [false, true]) {
+    assert.equal(firstDiff(normalize(cell(false), strict), normalize(cell(true), strict)), null)
+    const covering = { type: 'table_cell', header: false, children: [] }
+    assert.equal(firstDiff(normalize(covering, strict), normalize({ ...covering, header: true }, strict)).kind, 'value table_cell.header')
+  }
+})
+
 test('first difference follows reference traversal and sequence attribution', () => {
   assert.deepEqual(firstDiff({ type: 'text' }, { type: 'link' }), { path: '', kind: 'type doc>text => link' })
   assert.equal(firstDiff({ type: 'link', destination: 'a' }, { type: 'link' }).kind, 'lost link.destination')

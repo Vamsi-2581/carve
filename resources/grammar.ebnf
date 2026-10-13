@@ -4460,7 +4460,9 @@ EOF = (* end of file *) ;
          Appends per-column onto the row ABOVE: each non-empty cell joins
          its column's cell content with a single space (soft wrap); empty
          cells append nothing; no `<tr>` is produced. Under rowspan the
-         joined content belongs to the SPANNING cell (corpus 40, 41). A
+         joined content belongs to the SPANNING cell, whether the continuation
+         stands before or after the `^` row (corpus
+         64-table-rowspan-with-multi-line-content). A
          table cannot BEGIN with a continuation row (PART 2 `table`).
 
          THE ROW ABOVE IS A LINE, NOT A `<tr>` -- NORMATIVE [CARVE-P9-069]. What
