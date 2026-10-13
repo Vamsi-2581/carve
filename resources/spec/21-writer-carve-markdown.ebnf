@@ -125,6 +125,13 @@
       An EMPTY cell takes a single space (`|= |`, `| |`), not one from each end,
       so a column does not grow a space each time the document is formatted.
 
+      A ROW OF EMPTY CELLS IS WRITTEN AS A ROW. Every AST cell gets one
+      explicit slot, so one empty data cell is `| |` and two are `| | |`; a
+      marked empty cell keeps its prefix and the space after it (`|=~{.x} |`).
+      PART 9 §5 CARVE-P9-082 reads that row back with the same row count,
+      cell count, kinds, alignment, attributes and empty children. A table
+      with zero rows has no spelling, and this clause does not give it one.
+
       THE PREFIX IS GLUED BECAUSE THE READER REQUIRES IT. A space in front of
       `=` or of an attribute block makes it literal cell content (PART 9 §5
       T10, corpus `table cell attributes`), so only the CONTENT side is the

@@ -3,19 +3,31 @@ A row whose every cell is blank is not a table
 ```
 |||
 .
-<p>|||</p>
+<table>
+  <tbody>
+    <tr><td></td><td></td></tr>
+  </tbody>
+</table>
 ```
 
 ```
 | | |
 .
-<p>| | |</p>
+<table>
+  <tbody>
+    <tr><td></td><td></td></tr>
+  </tbody>
+</table>
 ```
 
 ```
 |= |
 .
-<p>|= |</p>
+<table>
+  <thead>
+    <tr><th scope="col"></th></tr>
+  </thead>
+</table>
 ```
 
 ```

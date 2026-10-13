@@ -272,6 +272,13 @@ const visibleText = (html) =>
 // #2833). Membership was measured across the two pinned builds; the other
 // populations hold document for document.
 
+// Corpus 589's thirty-six documents all import, stay canonical and keep their
+// visible text (+36 each); 26 round-trip through HTML and 18 through Markdown.
+// The pinned carve-js still reads most blank rows as paragraphs (carve#2879),
+// so this is a snapshot of the lagging pin and moves again when it ships the
+// rule. The four rewritten expectations in 113 and 453 keep their .crv bytes,
+// so none of their counts move.
+
 test('HTML import and render/import round trips cannot drift silently', async () => {
   const names = (await readdir(root)).filter((name) => name.endsWith('.crv')).sort()
   const measured = {

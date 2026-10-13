@@ -3,5 +3,9 @@ A pipe pair with no cell is not a table
 ```
 ||
 .
-<p>||</p>
+<table>
+  <tbody>
+    <tr><td></td></tr>
+  </tbody>
+</table>
 ```

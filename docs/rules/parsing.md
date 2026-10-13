@@ -9,7 +9,7 @@ description: "Input normalization, layout, block and inline recognition, attribu
 
 Input normalization, layout, block and inline recognition, attributes, and lexical boundaries.
 
-This view contains 117 of 335 active rules. Every rule remains mandatory where applicable.
+This view contains 118 of 336 active rules. Every rule remains mandatory where applicable.
 
 Return to the [rule index](./) or read the complete [formal grammar](../grammar).
 
@@ -57,10 +57,10 @@ Return to the [rule index](./) or read the complete [formal grammar](../grammar)
 | [`CARVE-P2-017`](https://github.com/markup-carve/carve/blob/main/resources/spec/03-blocks-core.ebnf#L625) | 2 | BELOW THE BODY'S COLUMN THE BODY ENDS |
 | [`CARVE-P2-018`](https://github.com/markup-carve/carve/blob/main/resources/spec/03-blocks-core.ebnf#L694) | 2 | AUTHORED BLOCK BASES |
 | [`CARVE-P2-019`](https://github.com/markup-carve/carve/blob/main/resources/spec/04-blocks-tables-containers.ebnf#L14) | 2 | THE ROW TERMINATOR AND AN OPEN RUN |
-| [`CARVE-P2-020`](https://github.com/markup-carve/carve/blob/main/resources/spec/04-blocks-tables-containers.ebnf#L138) | 2 | THE CAPTION MARKER SEPARATOR IS A RUN |
-| [`CARVE-P2-021`](https://github.com/markup-carve/carve/blob/main/resources/spec/04-blocks-tables-containers.ebnf#L157) | 2 | MULTI-LINE CAPTIONS |
-| [`CARVE-P2-022`](https://github.com/markup-carve/carve/blob/main/resources/spec/04-blocks-tables-containers.ebnf#L190) | 2 | CAPTION NUMBER PLACEHOLDER |
-| [`CARVE-P2-023`](https://github.com/markup-carve/carve/blob/main/resources/spec/04-blocks-tables-containers.ebnf#L536) | 2 | THE INTERIOR IS VERBATIM, THE OPENING IS PLACED |
+| [`CARVE-P2-020`](https://github.com/markup-carve/carve/blob/main/resources/spec/04-blocks-tables-containers.ebnf#L143) | 2 | THE CAPTION MARKER SEPARATOR IS A RUN |
+| [`CARVE-P2-021`](https://github.com/markup-carve/carve/blob/main/resources/spec/04-blocks-tables-containers.ebnf#L162) | 2 | MULTI-LINE CAPTIONS |
+| [`CARVE-P2-022`](https://github.com/markup-carve/carve/blob/main/resources/spec/04-blocks-tables-containers.ebnf#L195) | 2 | CAPTION NUMBER PLACEHOLDER |
+| [`CARVE-P2-023`](https://github.com/markup-carve/carve/blob/main/resources/spec/04-blocks-tables-containers.ebnf#L541) | 2 | THE INTERIOR IS VERBATIM, THE OPENING IS PLACED |
 | [`CARVE-P2-025`](https://github.com/markup-carve/carve/blob/main/resources/spec/05-blocks-paragraphs.ebnf#L7) | 2 | NO TRAILING WHITESPACE |
 | [`CARVE-P3-001`](https://github.com/markup-carve/carve/blob/main/resources/spec/06-inline-links-images.ebnf#L130) | 3 | WHICH SPANS THE SCAN SKIPS |
 | [`CARVE-P3-002`](https://github.com/markup-carve/carve/blob/main/resources/spec/06-inline-links-images.ebnf#L217) | 3 | WHITESPACE HERE IS UNICODE WHITESPACE |
@@ -92,13 +92,13 @@ Return to the [rule index](./) or read the complete [formal grammar](../grammar)
 | [`CARVE-P7-002`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L60) | 7 | MARKER SEPARATORS AND PADDING SLOTS |
 | [`CARVE-P7-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L130) | 7 | ONE WHITESPACE DEFINITION, IN EVERY CONSTRUCT |
 | [`CARVE-P7-004`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L186) | 7 | ESCAPE CONTEXTS |
-| [`CARVE-P9-002`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L210) | 9 | T5 SPAN WALK |
-| [`CARVE-P9-069`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L248) | 9 | THE ROW ABOVE IS A LINE, NOT A `<tr>` |
-| [`CARVE-P9-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L275) | 9 | A CONTINUATION ROW LEAVES NO PARAGRAPH OPEN |
-| [`CARVE-P9-004`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L291) | 9 | T7 GFM DELIMITER ROW |
-| [`CARVE-P9-005`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L313) | 9 | T8 ROW ATTRIBUTES |
-| [`CARVE-P9-007`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L358) | 9 | T10 CELL ATTRIBUTES BIND LAST |
-| [`CARVE-P9-008`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L377) | 9 | T11 A MARKER RUN ENDS AT A SPACE |
+| [`CARVE-P9-002`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L234) | 9 | T5 SPAN WALK |
+| [`CARVE-P9-069`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L272) | 9 | THE ROW ABOVE IS A LINE, NOT A `<tr>` |
+| [`CARVE-P9-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L300) | 9 | A CONTINUATION ROW LEAVES NO PARAGRAPH OPEN |
+| [`CARVE-P9-004`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L316) | 9 | T7 GFM DELIMITER ROW |
+| [`CARVE-P9-005`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L338) | 9 | T8 ROW ATTRIBUTES |
+| [`CARVE-P9-007`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L383) | 9 | T10 CELL ATTRIBUTES BIND LAST |
+| [`CARVE-P9-008`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L402) | 9 | T11 A MARKER RUN ENDS AT A SPACE |
 | [`CARVE-P9-013`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L126) | 9 | AN INVISIBLE LINE IS ONE CLASSIFICATION |
 | [`CARVE-P9-014`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L254) | 9 | N1a HARD BOUNDARY AFTER THREE BLANK LINES |
 | [`CARVE-P9-016`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L312) | 9 | A COLON-FENCE LINE THAT FAILS THE OPENER TEST LEAVES THE PARAGRAPH EXPECTING A CLOSER |
@@ -132,3 +132,4 @@ Return to the [rule index](./) or read the complete [formal grammar](../grammar)
 | [`CARVE-P12-040`](https://github.com/markup-carve/carve/blob/main/resources/spec/25-ast-extensions.ebnf#L143) | 12 | TABLE ALIGNMENT RUNS CARRY TWO INDEPENDENT AXES |
 | [`CARVE-P0-022`](https://github.com/markup-carve/carve/blob/main/resources/spec/01-layout.ebnf#L343) | 0 | AN OPAQUE MARKER-LINE QUOTE PRESERVES THE BAND AS TEXT |
 | [`CARVE-P3-023`](https://github.com/markup-carve/carve/blob/main/resources/spec/07-inline-rich-text.ebnf#L483) | 3 | SMART QUOTE DIRECTION |
+| [`CARVE-P9-082`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L205) | 9 | A CELL SLOT IS COUNTED, NOT WEIGHED |
