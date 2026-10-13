@@ -191,6 +191,13 @@ for (const fixture of fixtures.markdownExportImport) test(`shared Markdown expor
   assertMarkdownReturn(fixture, migrateMarkdown(exported).value)
 }))
 
+for (const fixture of fixtures.markdownImportNegative) test(`shared Markdown import rejection: ${fixture.id}`, aheadOfPin(fixture, () => {
+  const imported = migrateMarkdown(fixture.markdown)
+  assert.ok(imported.report.diagnostics.some((row) => row.code === fixture.expectedDiagnostic.code), fixture.expectedDiagnostic.code)
+  const actualTypes = new Set(nodes(parse(imported.value)).map((node) => node.type))
+  for (const type of fixture.forbiddenTypes) assert.ok(!actualTypes.has(type), type)
+}))
+
 test('a Markdown row without a declared loss still fails when its HTML moves', () => {
   const lossless = fixtures.markdownExportImport.filter((row) => !(row.lossCodes ?? []).length)
   assert.ok(lossless.length > 0, 'no lossless Markdown row is left to compare')
@@ -202,10 +209,10 @@ test('a Markdown row without a declared loss still fails when its HTML moves', (
 
 test('shared acceptance cases have distinct identities and explicit assertions', () => {
   const ids = new Set()
-  for (const row of [...fixtures.exportImport, ...fixtures.importNegative, ...fixtures.collisionExport, ...fixtures.markdownExportImport]) {
+  for (const row of [...fixtures.exportImport, ...fixtures.importNegative, ...fixtures.collisionExport, ...fixtures.markdownExportImport, ...fixtures.markdownImportNegative]) {
     assert.ok(!ids.has(row.id), row.id)
     ids.add(row.id)
-    assert.ok(typeof row.source === 'string' || typeof row.html === 'string', row.id)
-    assert.ok(row.expectedNodes?.length || row.attribute, row.id)
+    assert.ok(typeof row.source === 'string' || typeof row.html === 'string' || typeof row.markdown === 'string', row.id)
+    assert.ok(row.expectedNodes?.length || row.expectedDiagnostic || row.attribute, row.id)
   }
 })

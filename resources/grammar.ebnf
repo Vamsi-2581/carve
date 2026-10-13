@@ -10425,6 +10425,11 @@ EOF = (* end of file *) ;
       Carve source, so Carve's own escape is the one the reader already has.
       The import reverses exactly those two.
 
+      A MARKER MAY CARRY A DEPTH directly after `carve:`, with no space
+      before it: a decimal of 2 or more, as in `<!-- carve:2 : -->`. A bare
+      `carve:` is depth 1, so a marker written without a depth keeps its
+      meaning. CARVE-P11-067 states which markers carry one.
+
       A COMPOSITE FIGURE'S CAPTION LINE TAKES A MARKER OF ITS OWN, directly
       after the closer's. The caption slot hangs BELOW the closing fence, so
       the pair bracketing the container cannot enclose it, and carrying it the
@@ -10576,14 +10581,21 @@ EOF = (* end of file *) ;
       empty `definitions` records it. A definition marker with no term before
       it, or a list with no closing marker, is a damaged set.
 
-      ONLY THE OUTERMOST DEFINITION LIST IS CARRIED. This target writes a
+      A NESTED DEFINITION LIST'S MARKERS CARRY ITS DEPTH. This target writes a
       definition's blocks unindented (CARVE-P11-058), so a list nested inside a
-      definition would write the same `:` and closing markers as the list
-      around it and the import could not tell which list a marker closes. A
-      nested list therefore takes no markers and degrades as CARVE-P11-058 writes it,
-      inside the outer definition that is carried. This is a LIMIT: the export
-      reports each nested definition list that took no markers with one
-      `definition-list-flattened` loss (CARVE-P2-024).
+      definition writes its term, definition and closing markers with its
+      depth (CARVE-P11-063): the outermost list is depth 1, a list inside one
+      of its definitions depth 2, and so on. Markers pair by depth: the
+      "markers of the same list" above are the markers of the same depth. A
+      marker of depth 2 or more with no open list of the depth one less around
+      it breaks the pairing, and the set is damaged.
+
+        <!-- carve: :: Outer -->
+        <!-- carve: : -->
+        <!-- carve:2 :: Inner -->
+        <!-- carve:2 : -->
+        <!-- carve:2 -->
+        <!-- carve: -->
 
       A DEFINITION LIST'S OWN ATTRIBUTE LINE stands directly above its first
       term marker, as that list's prelude, the way a container's attribute

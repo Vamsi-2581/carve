@@ -8,6 +8,8 @@ Consumers export with preservation off and on, import the preserved output, comp
 
 Markdown rows sample container-kind recovery (§10s) and the attribute-line, definition-list, caption and inline carriers (§10t, §10u); existing §10s tests cover the wider container contract. Collision rows require the carrier to win and report the dropped authored attribute. A collision row whose `value` is null names a reserved name with no carrier: roundtrip export writes no attribute of that name and still reports the drop, and `defaultValue` is what default export keeps. The deprecated `data-djot-` spelling of a reserved name is dropped and reported the same way. A row marked `kept` is the control: roundtrip export keeps the attribute and reports no drop. The footnote recovery resource supplies the approved paired-carrier matrix.
 
+Markdown rows include nested definition lists whose markers carry list depth (CARVE-P11-067). `markdownImportNegative` rows are hand-written Markdown imports that must report the named diagnostic.
+
 `lossCodes` lists render-loss codes an HTML case reports with preservation off and on, and that a Markdown row reports under roundtrip export. A Markdown row that declares a loss returns degraded by definition, so it asserts the loss and its projection and is not compared against the source's HTML; every other Markdown row must come back rendering the same HTML. `returnedSourceFragments` lists text the reconstructed source holds in every listed import mode.
 
 Invalid generic spans are tested in safe and semantic modes. Their trusted roundtrip raw-HTML fallback is excluded here; these fixtures do not settle that separate recovery question.
