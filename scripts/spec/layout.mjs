@@ -2099,6 +2099,7 @@ function hostFenceStep(h, line) {
 // column, the opener must stay at column zero. A shifted run that cannot open
 // under the current paragraph still leaves a possible closer to account for.
 function hostFenceOpener(h, inner, canOpen = () => true) {
+  if (h.colons?.at(-1)?.mode === 'line-block') return null
   const column = h.columns.at(-1)
   if (inner.col < column) return null
   if (h.unclaimed !== null && h.unclaimed.host > column) h.unclaimed = null
@@ -5598,15 +5599,12 @@ function collectItems(lines, i, list, state, ind, meas) {
           const close = PURE_FENCE.exec(measured.rest)
           return !!(close && close[1][0] === code[1][0] && close[1].length >= code[1].length)
         }) : -1
-        if (payloadCloser >= 0 && ind(payloadCloser).col < ind(index).col) return
-        // `opens` is §10 I4's answer for this line. The SPAN is tracked either
-        // way, because the interior-blank rule (carve#1383) reads it and a
-        // fence-shaped line the paragraph absorbed still runs to the same
-        // place; what the flag records is whether a verbatim BODY exists for
-        // §24 S2 to want.
+        // A paired payload run shields inline delimiters but owns no fence.
+        if (payload && (payloadCloser < 0 || ind(payloadCloser).col < ind(index).col)) return
         fence.opaque = { kind: 'code', run: code[1], opens, payload }
         return
       }
+      if (payload && !COLON_CLOSER.test(line)) return
       const comment = COMMENT_FENCE_BODY.exec(unindented)
       if (comment) {
         // §28 AGAIN, AND THIS IS WHERE THE SPAN IS DECIDED (carve#1914). A
@@ -6500,8 +6498,9 @@ function collectItems(lines, i, list, state, ind, meas) {
         // A line in that body is the definition's: a marker there opens no
         // sublist of this item and a fence there is no descendant's.
         const inDefBody = defBody !== null && dmeas.col >= defBody + FOOTNOTE_BODY_COLUMN && dmeas.rest !== ''
-        const codeColonText = fence.colon.length && fence.opaque?.kind === 'code' && fence.opaque.opens &&
-          authoredBlockBase > colonBases.at(-1) && col === authoredBlockBase && COLON_CLOSER.test(lm.rest)
+        const codeColonText = fence.colon.length && fence.opaque?.kind === 'code' &&
+          col > colonBases.at(-1) &&
+          col === authoredBlockBase && COLON_CLOSER.test(lm.rest)
         pushLine(codeColonText ? LAZY + dedented : dedented, dmeas)
         // Advance the incremental three-kind tracker so the blank-line branch
         // above knows whether an interior blank is fence content.
