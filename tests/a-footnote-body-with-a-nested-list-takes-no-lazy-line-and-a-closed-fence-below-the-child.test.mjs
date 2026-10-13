@@ -76,8 +76,10 @@ test('a fence below the note body keeps its original ownership', () => {
   assert.equal(render("[^n]: %% c\n  - child\n ```\n code\n ```\nafter [^n]\n"), "<p><code>\ncode\n</code>\nafter <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <ul>\n        <li>child</li>\n      </ul>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
 })
 
-test('a run at the marker-line note body column stays in the outer item', () => {
-  assert.equal(render("- [^n]: text\n    ```\n    code\n    ```\nafter [^n]\n"), "<ul>\n  <li>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>")
+test('a run at the marker-line note body column opens in the note', () => {
+  const html = render("- [^n]: text\n    ```\n    code\n    ```\nafter [^n]\n")
+  assert.match(html, /<li id="fn1">\s*<p>text<\/p>\s*<pre><code>code\n/)
+  assert.doesNotMatch(html.slice(0, html.indexOf('<section')), /<pre>/)
 })
 
 test("item paragraph after a note list accepts a lazy tail", () => {
