@@ -3663,6 +3663,8 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
              * one for that reason, not the shape test.
              */
             if (isColonBlockOpener(dedented) || COLON_CLOSER.test(dedented)) break
+            if (!top && authoredCol > 0 && isCodeBlockOpener(dedented) &&
+                hasCloser([dedented, ...lines.slice(i + 1)], 0)) break
             const lazyFence = !foldablePlain(dedented) && FENCE.test(dedented) &&
               !(FENCE.test(cur) && hasCloser(lines, i))
             if ((foldablePlain(dedented) || lazyFence || BULLET.test(trimLineEnd(dedented)) || isOrderedMarkerLine(dedented)) && bodyLeavesParagraphOpen(asRead(bodyLines))) {
