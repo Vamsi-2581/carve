@@ -1813,8 +1813,7 @@
           ]
         }
       ],
-      "inlineMarkers": true,
-      "aheadOfPin": true
+      "inlineMarkers": true
     },
     {
       "id": "inline-image-attributes",
@@ -1831,8 +1830,7 @@
           }
         }
       ],
-      "inlineMarkers": true,
-      "aheadOfPin": true
+      "inlineMarkers": true
     },
     {
       "id": "inline-span",
@@ -1848,8 +1846,7 @@
           ]
         }
       ],
-      "inlineMarkers": true,
-      "aheadOfPin": true
+      "inlineMarkers": true
     },
     {
       "id": "inline-span-nested",
@@ -1871,8 +1868,7 @@
           ]
         }
       ],
-      "inlineMarkers": true,
-      "aheadOfPin": true
+      "inlineMarkers": true
     },
     {
       "id": "inline-span-holding-a-link",
@@ -1895,8 +1891,7 @@
           ]
         }
       ],
-      "inlineMarkers": true,
-      "aheadOfPin": true
+      "inlineMarkers": true
     },
     {
       "id": "inline-attribute-payload-escape",
@@ -1913,8 +1908,7 @@
           }
         }
       ],
-      "inlineMarkers": true,
-      "aheadOfPin": true
+      "inlineMarkers": true
     },
     {
       "id": "cross-reference-marker",
@@ -1928,8 +1922,7 @@
           "target": "Rise"
         }
       ],
-      "inlineMarkers": true,
-      "aheadOfPin": true
+      "inlineMarkers": true
     },
     {
       "id": "cross-reference-marker-unicode",
@@ -1943,8 +1936,7 @@
           "target": "Café"
         }
       ],
-      "inlineMarkers": true,
-      "aheadOfPin": true
+      "inlineMarkers": true
     }
   ]
 }
