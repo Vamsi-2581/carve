@@ -3049,6 +3049,94 @@
         "status": 0,
         "actual": "<blockquote>\n  <dl>\n    <dt>t</dt>\n  </dl>\n</blockquote>\n<p>~</p>"
       }
+    },
+    {
+      "key": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing-2.crv/js->php",
+      "reason": "carve-js still folds the line below a marker-line note comment into the list item at the pin (b8c309e4).",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2948",
+      "fingerprint": "edfd8d399c56a073b7d8136bf0b1c1dfe05895c2d92c8532804a0a0130d30568",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "status": 0,
+        "actual": "<ul>\n  <li><code>\ncode\n</code>\nafter <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+      }
+    },
+    {
+      "key": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing-2.crv/js->rust",
+      "reason": "carve-js still folds the line below a marker-line note comment into the list item at the pin (b8c309e4).",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2948",
+      "fingerprint": "edfd8d399c56a073b7d8136bf0b1c1dfe05895c2d92c8532804a0a0130d30568",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "status": 0,
+        "actual": "<ul>\n  <li><code>\ncode\n</code>\nafter <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+      }
+    },
+    {
+      "key": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing-2.crv/php->js",
+      "reason": "carve-js still folds the line below a marker-line note comment into the list item at the pin (b8c309e4).",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2948",
+      "fingerprint": "a74b747b8897199120db623173fa6ff782fa52f53f575fcf1941976afc70861e",
+      "observation": {
+        "expected": "<ul>\n  <li><code>\ncode\n</code>\nafter <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+      }
+    },
+    {
+      "key": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing-2.crv/rust->js",
+      "reason": "carve-js still folds the line below a marker-line note comment into the list item at the pin (b8c309e4).",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2948",
+      "fingerprint": "a74b747b8897199120db623173fa6ff782fa52f53f575fcf1941976afc70861e",
+      "observation": {
+        "expected": "<ul>\n  <li><code>\ncode\n</code>\nafter <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+      }
+    },
+    {
+      "key": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing.crv/js->php",
+      "reason": "carve-js still folds the line below a marker-line note comment into the list item at the pin (b8c309e4).",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2948",
+      "fingerprint": "15e1cb09815ead6f0b6c363dea828c57042bf0e83a708e9041b1991ccbedb5a9",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "status": 0,
+        "actual": "<ul>\n  <li>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+      }
+    },
+    {
+      "key": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing.crv/js->rust",
+      "reason": "carve-js still folds the line below a marker-line note comment into the list item at the pin (b8c309e4).",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2948",
+      "fingerprint": "15e1cb09815ead6f0b6c363dea828c57042bf0e83a708e9041b1991ccbedb5a9",
+      "observation": {
+        "expected": "<ul>\n  <li>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "status": 0,
+        "actual": "<ul>\n  <li>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+      }
+    },
+    {
+      "key": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing.crv/php->js",
+      "reason": "carve-js still folds the line below a marker-line note comment into the list item at the pin (b8c309e4).",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2948",
+      "fingerprint": "25da5ca74ae0b7a891f6459da3ce13d1eda4f511bcf8ddeaa121f0915deb4d6d",
+      "observation": {
+        "expected": "<ul>\n  <li>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+      }
+    },
+    {
+      "key": "tests/corpus/585-a-comment-in-a-marker-line-note-changes-nothing.crv/rust->js",
+      "reason": "carve-js still folds the line below a marker-line note comment into the list item at the pin (b8c309e4).",
+      "issue": "https://github.com/markup-carve/carve-js/issues/2948",
+      "fingerprint": "25da5ca74ae0b7a891f6459da3ce13d1eda4f511bcf8ddeaa121f0915deb4d6d",
+      "observation": {
+        "expected": "<ul>\n  <li>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text</p>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+        "status": 0,
+        "actual": "<ul>\n  <li>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>"
+      }
     }
   ]
 }
