@@ -2069,12 +2069,6 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    content of the finding and a message is not compared. Only the HTML target
    writes carriers, so only that target reports this code.
 
-   Each definition list that CARVE-P11-067 leaves without carrier markers
-   under roundtrip export contributes one loss in document order with the
-   stable code `definition-list-flattened`, the selected `target`, `nodeType`
-   of `block`, its `pos` when recorded, and NO `format`. Only the Markdown
-   target reports this code.
-
    Each alphabetic or roman ordered list (`a.`, `A.`, `i.`, `I.`) the
    Markdown target writes contributes one loss in document order with the
    stable code `list-style-dropped`, the selected `target`, `nodeType` of
@@ -2112,8 +2106,7 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    explicit exceptions `--allow-loss raw-format-dropped`,
    `--allow-loss ruby-flattened`,
    `--allow-loss editorial-comment-flattened`,
-   `--allow-loss carrier-attribute-dropped`,
-   `--allow-loss definition-list-flattened` and
+   `--allow-loss carrier-attribute-dropped` and
    `--allow-loss list-style-dropped`. The list is closed:
    `destination-denied` is not waivable, because a blanked destination is a
    policy refusal that a different profile avoids, not a loss the target
@@ -8299,7 +8292,7 @@ EOF = (* end of file *) ;
       reader makes a trust decision about that value.
 
       A VALUE OUTSIDE ITS GRAMMAR OR CARRIER ENUMERATION IS NOT A CARRIER.
-      The reader drops the invalid value with a diagnostic and keeps the
+      The reader drops the invalid value with a warning and keeps the
       reserved name out of the reconstructed document's authored attributes
       (CARVE-P10-021). It does not rebuild syntax from an invalid value.
 
@@ -10633,7 +10626,8 @@ EOF = (* end of file *) ;
       term marker, as that list's prelude, the way a container's attribute
       line precedes its opener. That one adjacency is not "a marker followed
       by another marker": an attribute marker directly above a list's first
-      term marker attaches to the list.
+      term marker attaches to the list. A nested list's attribute line is
+      carried the same way, and an attribute marker carries no depth.
 
       A CAPTION ON ANY CAPTIONED BLOCK TAKES THE COMPOSITE FIGURE'S CAPTION
       MARKER. A block quote's attribution, a table's, an image's, a code

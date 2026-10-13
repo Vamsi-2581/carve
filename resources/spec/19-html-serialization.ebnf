@@ -822,7 +822,7 @@
       reader makes a trust decision about that value.
 
       A VALUE OUTSIDE ITS GRAMMAR OR CARRIER ENUMERATION IS NOT A CARRIER.
-      The reader drops the invalid value with a diagnostic and keeps the
+      The reader drops the invalid value with a warning and keeps the
       reserved name out of the reconstructed document's authored attributes
       (CARVE-P10-021). It does not rebuild syntax from an invalid value.
 
