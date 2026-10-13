@@ -50091,3 +50091,198 @@ after <a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p></blockq
 ```
 
 ::::
+
+## A fence that leaves a closed nested item opens in the host it lands in
+
+A closed block leaves no paragraph open, so a fence run below a nested item's
+column leaves that item and is read in the enclosing host (CARVE-P0-009). With
+nothing to interrupt and no closer to take, an unclosed fence opens a code block
+that runs to the end of that host, and a bare `:::` past a box's column is
+text, not the box's closer (PART 2 `admonition`, A CLOSER IS REQUIRED).
+
+:::: compare
+
+````carve
+> - ::: box
+>   - ::: |
+>     ```
+>     :::
+>    ```
+>    :::bad
+>    :::
+- tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <ul>
+          <li>
+            <div class="line-block">
+              <p><code></code></p>
+            </div>
+          </li>
+        </ul>
+        <pre><code>:::bad
+:::
+</code></pre>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+<ul>
+  <li>tail</li>
+</ul>
+```
+
+::::
+
+:::: compare
+
+````carve
+> 1. ::: box
+>    - ::: |
+>      ```
+>      x
+>      ```
+>      :::
+>     ```
+>     - x
+> ```
+````
+
+```html
+<blockquote>
+  <ol>
+    <li>
+      <div class="box">
+        <ul>
+          <li>
+            <div class="line-block">
+              <p><code>
+x
+</code></p>
+            </div>
+          </li>
+        </ul>
+        <pre><code>- x
+</code></pre>
+      </div>
+    </li>
+  </ol>
+  <pre><code></code></pre>
+</blockquote>
+```
+
+::::
+
+:::: compare
+
+````carve
+> - ::: box
+>   -   ::: |
+>       ```
+>       :::
+>     ```
+>     :::
+>     :::bad
+>     :::
+- tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <ul>
+          <li>
+            <div class="line-block">
+              <p><code></code></p>
+            </div>
+          </li>
+        </ul>
+        <pre><code>:::
+:::bad
+:::
+</code></pre>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+<ul>
+  <li>tail</li>
+</ul>
+```
+
+::::
+
+:::: compare
+
+````carve
+> - a
+>     - child
+>     ```
+>
+>       ```
+>   ~~~
+after
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>a
+      <ul>
+        <li>child
+<code></code>
+          <pre><code></code></pre>
+        </li>
+      </ul>
+      <pre><code></code></pre>
+    </li>
+  </ul>
+</blockquote>
+<p>after</p>
+```
+
+::::
+
+## A footnote definition past a box's column is hoisted
+
+A footnote definition past a colon body's content column is a block on its
+authored base, so it is hoisted like one at the box's own column (CARVE-P0-004,
+CARVE-P2-017).
+
+:::: compare
+
+````carve
+- ::: box
+    [^n]: note
+  :::
+
+ref[^n]
+````
+
+```html
+<ul>
+  <li>
+    <div class="box">
+
+    </div>
+  </li>
+</ul>
+<p>ref<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>note<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+    </li>
+  </ol>
+</section>
+```
+
+::::

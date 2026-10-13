@@ -10518,8 +10518,10 @@ EOF = (* end of file *) ;
       marker shapes before payloads are validated, so an opener whose payload
       is not an opener it can stand for still pairs with its closer, and the
       two drop as one unit: both stay ordinary comments and the container's
-      content stays in place as ordinary Markdown. Any other marker whose
-      payload is invalid drops alone. The import reports each dropped pair or
+      content stays in place as ordinary Markdown. A composite figure's
+      caption marker belongs to the container that closer ends, so it drops
+      with the pair and its caption paragraph stays ordinary text; the set is
+      not damaged. Any other marker whose payload is invalid drops alone. The import reports each dropped pair or
       marker once as `carrier-marker-dropped` at the marker's line, as an
       invalid HTML carrier is reported (CARVE-P10-017), and the rest of the set
       restores, since an invalid payload does not break pairing.
