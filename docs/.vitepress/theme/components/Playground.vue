@@ -752,7 +752,8 @@ function toggleFullscreen(): void {
   fullscreen.value = !fullscreen.value
 }
 function onKeydown(e: KeyboardEvent): void {
-  if (e.key !== 'Escape') return
+  // The editor handled it already (closing a completion list or a lint tooltip).
+  if (e.key !== 'Escape' || e.defaultPrevented) return
   if (showImport.value) { showImport.value = false; return }
   if (fullscreen.value) fullscreen.value = false
 }

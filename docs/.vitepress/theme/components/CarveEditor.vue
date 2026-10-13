@@ -16,12 +16,14 @@ import { defaultKeymap, history, historyKeymap, indentMore, indentLess } from '@
 import type { Command } from '@codemirror/view'
 import { parse } from '@markup-carve/carve'
 import {
+  bareMarkerItem,
   continuationPrefix,
   listContinuationEdits,
   listIndentEdits,
+  listItems,
   type ContinuationEdit,
-} from '../editor/carve-lsp/format'
-import { bareMarkerItem, listItems } from '../editor/carve-lsp/list-items'
+} from '@markup-carve/carve-lsp/browser'
+import { carveCompletion, carveDiagnostics, carveHover, carveLanguageTheme, carveTooltips } from '../editor/carve-language'
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search'
 
 const props = defineProps<{
@@ -296,6 +298,11 @@ onMounted(() => {
         EditorView.contentAttributes.of({ spellcheck: 'false', 'aria-label': 'Carve source' }),
         tokenField,
         theme,
+        carveDiagnostics,
+        carveCompletion,
+        carveHover,
+        carveLanguageTheme,
+        carveTooltips,
         EditorView.updateListener.of((u) => {
           if (u.geometryChanged) syncGutterWidth(u.view)
           if (u.docChanged || u.selectionSet) {
