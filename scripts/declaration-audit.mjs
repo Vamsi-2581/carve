@@ -320,9 +320,9 @@ const MANIFEST = [
   { repo: 'carve-js', path: 'test/include-security-conformance.test.ts', name: 'KNOWN_EXPECTED_KEYS', kind: 'js', policy: 'permitted', guard: 'two-way', owner: 'adapter capability list, not an exemption' },
 
   // -- carve-php -------------------------------------------------------------
-  { repo: 'carve-php', path: 'tests/CarveCorpusTest.php', name: 'KNOWN_GAPS', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'tests/CarveCorpusTest.php' },
+  { repo: 'carve-php', path: 'tests/CarveCorpusTest.php', name: 'KNOWN_GAPS', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'now matches the pinned corpus: delete its KNOWN_GAPS entry', owner: 'tests/CarveCorpusTest.php' },
   { repo: 'carve-php', path: 'tests/CarveCorpusTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'now matches the pinned corpus: delete its AHEAD_OF_PIN entry', owner: 'tests/CarveCorpusTest.php' },
-  { repo: 'carve-php', path: 'tests/OptionalCorpusTest.php', name: 'KNOWN_GAPS', kind: 'php', policy: 'owed', guard: 'two-way', owner: 'tests/OptionalCorpusTest.php' },
+  { repo: 'carve-php', path: 'tests/OptionalCorpusTest.php', name: 'KNOWN_GAPS', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'now matches the pinned corpus: delete its KNOWN_GAPS entry', owner: 'tests/OptionalCorpusTest.php' },
   { repo: 'carve-php', path: 'tests/OptionalCorpusTest.php', name: 'DECLARED_UNIMPLEMENTED', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'this build supports the feature now - give it a runner', owner: 'tests/OptionalCorpusTest.php' },
   { repo: 'carve-php', path: 'tests/OptionalCorpusTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'now matches the pinned corpus: delete its AHEAD_OF_PIN entry', owner: 'tests/OptionalCorpusTest.php' },
   { repo: 'carve-php', path: 'tests/TestCase/Converter/HtmlImportReportTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'now matches the pin: delete its AHEAD_OF_PIN entry', owner: 'mirrors spec PIN_LAG' },
@@ -355,7 +355,7 @@ const MANIFEST = [
   // capability list in KNOWN_KEYWORDS' direction, not an exemption: a corpus
   // member it does not name FAILS the adapter, which is what keeps a newly
   // added limit from silently never applying.
-  { repo: 'carve-php', path: 'tests/TestCase/Transform/IncludeSecurityConformanceTest.php', name: 'KNOWN_KEYS', kind: 'php', policy: 'permitted', guard: 'two-way', owner: 'adapter capability list, not an exemption' },
+  { repo: 'carve-php', path: 'tests/TestCase/Transform/IncludeSecurityConformanceTest.php', name: 'KNOWN_KEYS', kind: 'php', policy: 'permitted', guard: 'two-way', staleness: 'KNOWN_KEYS lists keys absent from the corpus', owner: 'adapter capability list, not an exemption' },
   // A real waiver, owed against carve-php#1953: vectors whose chargedBytes this
   // engine answers differently, with the value it actually produces. The
   // staleness half is the adapter's own test, which fails the moment a row
