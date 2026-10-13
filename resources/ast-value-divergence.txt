@@ -44,8 +44,9 @@
 
 # Parse differences on corpus rows ahead of an engine, not value defects of
 # their own. Each closes with the parser fix its reference names.
-list.tight  3  carve-rs loosens an item whose description body holds a second paragraph; markup-carve/carve-rs#2583
+list.tight  8  carve-php and carve-rs loosen an item carve-js keeps tight, sections 362, 517, 560 and 563; carve-js reads these documents as the corpus does since 672d0a0a and the pinned carve-php and carve-rs do not; markup-carve/carve-php#3255, markup-carve/carve-rs#2592, markup-carve/carve#3014 where an engine main already does
 footnote_ref.label  1  carve-php reads a nested footnote definition as item text and numbers the references differently; markup-carve/carve-php#3240
-footnote_ref.number  1  the same document as the `footnote_ref.label` row; markup-carve/carve-php#3240
-text.value  2  carve-js and carve-rs read a heading past an item-hosted container's column as text; markup-carve/carve-js#2875, markup-carve/carve-js#2881
-table_cell.align  2  carve-php lets the delimiter colon win over a head-row alignment marker, section 574; markup-carve/carve-php#3249
+footnote_ref.number  2  carve-php and carve-rs number a note carve-js leaves unresolved or reads in another body, sections 556 and 559; carve-js reads these documents as the corpus does since 672d0a0a and the pinned carve-php and carve-rs do not; markup-carve/carve-php#3240, markup-carve/carve-php#3255, markup-carve/carve#3014 where an engine main already does
+text.value  5  carve-php and carve-rs keep a line in the paragraph that carve-js opens past a container's column, sections 435, 565, 566 and 572; carve-js reads these documents as the corpus does since 672d0a0a and the pinned carve-php and carve-rs do not; markup-carve/carve-php#3241, markup-carve/carve-php#3255, markup-carve/carve-rs#2592, markup-carve/carve#3014 where an engine main already does
+table_cell.align  2  carve-php lets the delimiter colon win over a head-row alignment marker, section 574; carve-php main renders it as the corpus does, and that pin move waits on markup-carve/carve#3014
+link.href  3  carve-php and carve-rs resolve a reference whose label holds a tab, sections 559 and 565; carve-js reads these documents as the corpus does since 672d0a0a and the pinned carve-php and carve-rs do not; markup-carve/carve-php#3255, markup-carve/carve#3014 where an engine main already does
