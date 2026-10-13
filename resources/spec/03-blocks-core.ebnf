@@ -464,11 +464,12 @@ indent = whitespace, {whitespace} ;
    prefix, or indentation, keeping the container tight. *)
 continuation_marker = '+', newline ;
 continuation_marker_block = continuation_marker, block ;
-(* First-block item (Carve addition; see PART 9 §17): a lone `+` as the sole
-   content right after the marker (`- +`) opens an item whose body is the
-   ONE flush-left block that follows, with no inline lead and no indentation.
-   `- + text` keeps `+ text` as literal inline content -- only a bare `+`
-   triggers this. *)
+(* First-block form (Carve addition; see PART 9 §17 L4): a lone `+` as the
+   sole content right after a container's opener (`- +`, `: +`, `> +`,
+   `[^a]: +`) opens a body that is the ONE flush-left block that follows, with
+   no inline lead and no indentation. `- + text` keeps `+ text` as literal
+   inline content -- only a bare `+` triggers this. With no flush-left block
+   after it, `> +` and `[^a]: +` keep the `+` as text. *)
 (* One block, exactly as `continuation_marker_block` above: the two forms
    differ in WHERE the marker sits, never in how much it takes. *)
 first_block_content = continuation_marker, block ;

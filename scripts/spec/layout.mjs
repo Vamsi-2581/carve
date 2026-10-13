@@ -3083,6 +3083,12 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
       const absorbedNoteMarker = i === 0 && state.absorbedMarkerNotes?.has(lines)
       const bodyLines = [m[2]]
       i++
+      if (CONT_MARKER.test(m[2]) && i < n && !isBlank(lines[i]) && attachesFlushLeft(ind(i))) {
+        const attached = takeOneBlock(lines, i, state, ind(i))
+        bodyLines[0] = ''
+        bodyLines.push(...attached.rawMarker, '')
+        i = attached.next
+      }
       // `pullPending` is set by a `+` marker: the NEXT flush-left line begins a
       // pulled-in block (SS17 L4). It is a distinct signal from an empty body
       // line, so an empty note (`[^a]:`) never swallows the following block.
@@ -3978,6 +3984,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
        * time and needs no lookahead.
        */
       let qTableOpen = false
+      let qLastMarked = -1 // the last marked line collected, for the first-block test
       /*
        * The same run, one level down and per depth: a nested quote's own table
        * state. `opensParagraph` is handed ONE line and cannot see it, so the
@@ -4467,6 +4474,28 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         layoutWork.quoteStrips += 1
         const qm = QUOTE.exec(lines[i])
         if (qm) {
+          // `+` on the line that opens the innermost quote is its first-block marker.
+          // Depths are counted only for a candidate, so deep nesting stays linear.
+          if (!qHost.fence && openComment === null && /^[> \t]*\+[ \t]*$/.test(qm[1] ?? '') &&
+              i + 1 < n && !isBlank(lines[i + 1]) && !QUOTE.test(lines[i + 1]) && attachesFlushLeft(ind(i + 1))) {
+            const depthOf = (line) => {
+              let d = 0
+              while (QUOTE.test(line)) {
+                line = QUOTE.exec(line)[1] ?? ''
+                d++
+              }
+              return { d, rest: line }
+            }
+            const here = depthOf(lines[i])
+            if (CONT_MARKER.test(here.rest) && here.d > (qLastMarked < 0 ? 0 : depthOf(lines[qLastMarked]).d)) {
+              const attached = takeOneBlock(lines, i + 1, state, ind(i + 1))
+              inner.push(here.d > 1 ? qm[1] : '', ...attached.rawMarker, '')
+              qLastMarked = i
+              i = attached.next
+              continue
+            }
+          }
+          qLastMarked = i
           carryPrefixMemo(state, lines, i, inner, inner.length)
           inner.push(qm[1] ?? '')
           // The final line has no follower whose ownership needs this state.
@@ -4584,39 +4613,8 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
       continue
     }
 
-    // A `+` reaching HERE is NOT a marker, in any container.
-    //
-    // THE FIRST-BLOCK FORM IS THE LIST ITEM AND THE DESCRIPTION, and nothing
-    // else. SS17 L4 spells it for those two - `- +` and `:  +` open a body
-    // whose content is the following flush-left block - and a footnote body and
-    // a block quote have no such form. A `+` that opens one of THOSE bodies is
-    // ordinary text, and its payload lands wherever the ordinary column rules
-    // put it, which is a different answer from "place by column" rather than a
-    // narrower one.
-    //
-    // This used to Refuse the whole document, `stray continuation marker`, and
-    // that was the one implementation of four saying so: carve-js, carve-php and
-    // carve-rs render the text, agreeing byte for byte, at every payload column
-    // (carve#1821). The refusal was not even a conservative reading of the
-    // shipped form - it fired at COLUMN 0 too, the one column where the
-    // first-block form attaches cleanly in the two containers that have it.
-    //
-    // And it was never scoped to those two containers: every caller but the list
-    // item's own body reaches here, so a lone `+` refused the document at top
-    // level, in a `:::` div, in a line block, in a `dd` below its first block
-    // and in every nesting of those. All twenty measured shapes now agree with
-    // the engines.
-    //
-    // IN A LIST ITEM'S BODY it was never a marker either, for a separate reason.
-    // Every position where SS17 L3 makes it one is consumed before this: the
-    // OUTER list's marker column by the parseListRun that collected this body,
-    // and a SUB-LIST's marker column by that sub-list's own parseListRun,
-    // which runs from the marker branch above. What is left is a `+` the
-    // author wrote at the item's CONTENT column, which the dedent moved to
-    // column 0 - so consuming it here read the content column as a marker
-    // column and swallowed a marker that never existed. It is ordinary text:
-    // it falls through to the paragraph below and folds with the line after
-    // it, which is what all three engines do (carve#812, carve#863).
+    // A `+` reaching HERE is ordinary text. First-block markers in lists,
+    // descriptions, quotes, and notes are consumed by their collectors.
 
     // --- paragraph ---
     const para = []
