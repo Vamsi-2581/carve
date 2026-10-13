@@ -12,7 +12,7 @@ Markdown rows include nested definition lists whose markers carry list depth (CA
 
 `lossCodes` lists render-loss codes an HTML case reports with preservation off and on, and that a Markdown row reports under roundtrip export. A Markdown row that declares a loss returns degraded by definition, so it asserts the loss and its projection and is not compared against the source's HTML; every other Markdown row must come back rendering the same HTML. `returnedSourceFragments` lists text the reconstructed source holds in every listed import mode.
 
-Invalid generic spans are tested in safe and semantic modes. Their trusted roundtrip raw-HTML fallback is excluded here; these fixtures do not settle that separate recovery question.
+An invalid carrier on a generic span is consumed in roundtrip mode too, never kept inside a raw-HTML fallback (CARVE-P10-021); the `-in-roundtrip-mode` rows pin that mode on its own so the flag can be dropped separately.
 
 A row marked `aheadOfPin` states behavior the pinned engine does not have yet. A flagged negative case fails in every import mode it lists. Its test passes while the pinned engine fails the row and fails once the engine passes it, so the flag is dropped in the pin bump that ships the behavior.
 

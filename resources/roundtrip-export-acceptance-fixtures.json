@@ -1142,6 +1142,47 @@
       "diagnosticControlHtml": "<p><span>z</span></p>"
     },
     {
+      "id": "invalid-raw-format-in-roundtrip-mode",
+      "aheadOfPin": true,
+      "html": "<p><span data-carve-raw=\"x y\">z</span></p>",
+      "expectedNodes": [
+        {
+          "type": "text",
+          "value": "z"
+        }
+      ],
+      "forbiddenTypes": [
+        "raw_inline"
+      ],
+      "importModes": [
+        "roundtrip"
+      ],
+      "requiresDiagnostic": true,
+      "expectedDiagnostic": {
+        "code": "attribute-dropped",
+        "severity": "warning"
+      }
+    },
+    {
+      "id": "invalid-multichar-escape-in-roundtrip-mode",
+      "aheadOfPin": true,
+      "html": "<p><span data-carve-escaped>ab</span></p>",
+      "expectedNodes": [
+        {
+          "type": "text",
+          "value": "ab"
+        }
+      ],
+      "forbiddenTypes": [
+        "escaped_text",
+        "raw_inline"
+      ],
+      "importModes": [
+        "roundtrip"
+      ],
+      "requiresDiagnostic": false
+    },
+    {
       "id": "invalid-width-whole-carrier",
       "html": "<table data-carve-col-widths=\"3,1001\"><thead><tr><th>a</th><th>b</th></tr></thead></table>",
       "expectedNodes": [
