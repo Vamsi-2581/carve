@@ -387,7 +387,7 @@ const MANIFEST = [
   // The carve-rs twin of carve-php's include KNOWN_DIFFERENCES. Two-way since
   // carve-rs#2010, which also asserts a row naming no vector.
   { repo: 'carve-rs', path: 'tests/include_conformance.rs', name: 'KNOWN_DIFFERENCES', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'the difference is gone; delete its KNOWN_DIFFERENCES entry', owner: 'tests/include_conformance.rs' },
-  { repo: 'carve-rs', path: 'tests/include_conformance.rs', name: 'AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'remove its retired AHEAD_OF_PIN entry', owner: 'tests/include_conformance.rs' },
+  { repo: 'carve-rs', path: 'tests/include_conformance.rs', name: 'AHEAD_OF_PIN', kind: 'rust', policy: 'owed', guard: 'two-way', staleness: 'retire the caught-up declaration', owner: 'tests/include_conformance.rs' },
 ]
 
 /**
@@ -1252,12 +1252,14 @@ if (failed > 0) {
     `DECLARATION AUDIT FAILED (mode: ${mode}) - ${failed} finding(s). ` +
       (strict ? 'Not clear to tag.' : 'This pull request has a declaration finding to fix.'),
   )
-  process.exit(1)
+  // exitCode, not exit(): exit() drops stdout still queued on a pipe.
+  process.exitCode = 1
+} else {
+  console.log(
+    `DECLARATION AUDIT PASSED (mode: ${mode}) - ` +
+      (strict
+        ? 'every owed list is empty, the reference build is current, and every guard is two-directional.'
+        : 'every owed list is empty, every engine-lag window is declared, and every guard is two-directional.'),
+  )
 }
-console.log(
-  `DECLARATION AUDIT PASSED (mode: ${mode}) - ` +
-    (strict
-      ? 'every owed list is empty, the reference build is current, and every guard is two-directional.'
-      : 'every owed list is empty, every engine-lag window is declared, and every guard is two-directional.'),
-)
 }
