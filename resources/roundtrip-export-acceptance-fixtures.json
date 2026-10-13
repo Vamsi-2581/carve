@@ -2053,6 +2053,43 @@
         }
       ],
       "aheadOfPin": true
+    },
+    {
+      "id": "list-style-marker-alpha",
+      "source": "a. one\na. two\n",
+      "carrierFragments": [
+        "<!-- carve: a. -->\n1. one"
+      ],
+      "expectedNodes": [
+        {
+          "type": "list",
+          "ordered": true,
+          "olType": "a"
+        }
+      ],
+      "forbiddenLossCodes": [
+        "list-style-dropped"
+      ],
+      "aheadOfPin": true
+    },
+    {
+      "id": "list-style-marker-roman",
+      "source": "iv. one\nv. two\n",
+      "carrierFragments": [
+        "<!-- carve: iv. -->\n4. one"
+      ],
+      "expectedNodes": [
+        {
+          "type": "list",
+          "ordered": true,
+          "olType": "i",
+          "start": 4
+        }
+      ],
+      "forbiddenLossCodes": [
+        "list-style-dropped"
+      ],
+      "aheadOfPin": true
     }
   ],
   "markdownImportNegative": [
@@ -2177,6 +2214,26 @@
       "expectedDiagnostics": {
         "carrier-marker-dropped": 1,
         "carrier-markers-damaged": 0
+      },
+      "aheadOfPin": true
+    },
+    {
+      "id": "list-style-marker-not-adjacent",
+      "markdown": "<!-- carve: a. -->\n\n1. one\n2. two\n",
+      "expectedNodes": [
+        {
+          "type": "list",
+          "ordered": true
+        }
+      ],
+      "forbiddenNodes": [
+        {
+          "type": "list",
+          "olType": "a"
+        }
+      ],
+      "expectedDiagnostics": {
+        "carrier-markers-damaged": 1
       },
       "aheadOfPin": true
     }

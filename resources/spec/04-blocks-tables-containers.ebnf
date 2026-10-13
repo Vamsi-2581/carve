@@ -607,7 +607,8 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    `block`, its `pos` when recorded, NO `format`, and `style`, one of
    `lower-alpha`, `upper-alpha`, `lower-roman` or `upper-roman`. Markdown
    numbers in decimal only, so the list keeps its start and delimiter and
-   loses its style, with roundtrip export on or off. Only the Markdown
+   loses its style. Under roundtrip export the list-style marker carries the
+   style (CARVE-P11-067) and the list reports no loss. Only the Markdown
    target reports this code.
 
    The canonical Carve writer contributes no `destination-denied` row

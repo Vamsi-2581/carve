@@ -2075,7 +2075,8 @@ raw_block = code_fence_open, [space], "=", format_name, newline,
    `block`, its `pos` when recorded, NO `format`, and `style`, one of
    `lower-alpha`, `upper-alpha`, `lower-roman` or `upper-roman`. Markdown
    numbers in decimal only, so the list keeps its start and delimiter and
-   loses its style, with roundtrip export on or off. Only the Markdown
+   loses its style. Under roundtrip export the list-style marker carries the
+   style (CARVE-P11-067) and the list reports no loss. Only the Markdown
    target reports this code.
 
    The canonical Carve writer contributes no `destination-denied` row
@@ -10673,6 +10674,19 @@ EOF = (* end of file *) ;
       not directly above a fenced code block is a damaged set. Without the
       mode nothing is reported: the info string holds both tokens, so this
       target writes them (CARVE-P2-024).
+
+      A LIST'S NUMBERING STYLE TAKES A LIST-STYLE MARKER. This target writes
+      an alphabetic or roman ordered list as a decimal list (CARVE-P2-024), so
+      under the carrier mode such a list takes one marker directly above its
+      first item, holding the first item's marker as the canonical writer
+      spells it. The import takes the style from that marker and the start
+      and delimiter from the Markdown list, so a marker supplies the style
+      only. A list-style marker not directly above an ordered list is a
+      damaged set.
+
+        a. one                   ->  <!-- carve: a. -->
+        a. two                       1. one
+                                     2. two
 
   10u. THE CARRIER MODE CARRIES AN INLINE CONSTRUCT'S ATTRIBUTES, A SPAN AND
       A CROSS-REFERENCE IN INLINE MARKERS -- NORMATIVE [CARVE-P11-068].
