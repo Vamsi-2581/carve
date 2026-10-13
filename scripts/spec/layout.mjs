@@ -4398,7 +4398,8 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           else break
         }
         // PART 0 T leaves a term open for plain lazy text.
-        qTermOpen = qOpenPara && (DEFLIST_TERM.test(leaf) || qTermOpen)
+        qTermOpen = qOpenPara && !/^:( +)/.test(leaf.trimStart()) &&
+          (DEFLIST_TERM.test(leaf) || qTermOpen)
       }
       while (i < n) {
         // The MARKER is `>` plus a space, or `>` alone - the same rule the
