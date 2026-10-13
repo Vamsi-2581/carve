@@ -25,10 +25,11 @@
  */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
-import { mkdirSync, mkdtempSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { execFileSync, spawnSync } from 'node:child_process'
+import { mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 process.env.CARVE_DECL_AUDIT_LIB = '1'
 const { __internals } = await import('../scripts/declaration-audit.mjs')
@@ -430,4 +431,22 @@ test('reference build gate accepts only an ancestral spec gitlink update', (t) =
   git('config', 'diff.ignoreSubmodules', 'all')
   assert.equal(gitReferenceBuildStatus(dir, pin, updated).specPinOnly, true)
   assert.equal(gitReferenceBuildStatus(dir, ordinary, updated).relation, 'ahead')
+})
+
+test('JSON fixture flags count across groups as an owed list', () => {
+  const entry = MANIFEST.find(row => row.path === 'resources/roundtrip-export-acceptance-fixtures.json')
+  assert.ok(entry)
+  assert.equal(entry.policy, 'owed')
+  assert.equal(__internals.perPrPolicy(entry), 'declared')
+  assert.equal(entry.guard, 'two-way')
+  assert.equal(entry.owner, 'tests/roundtrip-export-acceptance.test.mjs')
+  const flagged = {
+    exportImport: [{ id: 'star-bullet', aheadOfPin: true }, { id: 'unflagged' }],
+    nested: { importNegative: [{ id: 'invalid-tight-value', aheadOfPin: true }] },
+  }
+  assert.deepEqual(liveRows(entry, JSON.stringify(flagged)), [
+    'exportImport/star-bullet', 'importNegative/invalid-tight-value',
+  ])
+  assert.deepEqual(liveRows(entry, JSON.stringify({ exportImport: [{ id: 'star-bullet', aheadOfPin: false }] })), [])
+  assert.ok(liveRows(entry, '{broken') instanceof Error)
 })
