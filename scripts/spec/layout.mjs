@@ -3397,6 +3397,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           // rest -- matching the real output the corpus pins for all engines.
           // (`:  \+` stays a literal `+`, never a marker.)
           const bodyLines = []
+          let bodyHasFenceCandidate = false
           const measurement = state.opaqueMeasurement
           const parentOrigins = measurement?.origins.get(lines)
           const markerLead = matchMarkerAt(indentCols(dm[2])) && markerFenceSummary(dm[2], new Map())
@@ -3404,6 +3405,9 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           if (bodyOrigins) measurement.origins.set(bodyLines, bodyOrigins)
           const pushBody = (text, row = i) => {
             bodyLines.push(text)
+            // Rebasing can expose an indented fence. Keep the full scan for
+            // any candidate, but skip it for bodies containing none.
+            if (!bodyHasFenceCandidate && FENCE.test(stripIndent(text))) bodyHasFenceCandidate = true
             if (bodyOrigins) bodyOrigins.push(typeof parentOrigins === 'number' ? parentOrigins + row : parentOrigins[row])
           }
           // The fold question is asked of the body AS IT WILL BE READ (§10 I5,
@@ -3576,7 +3580,9 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // in `bodyLeavesParagraphOpen`.
             if (authoredCol === 0 && descriptionBodyEndsInAbsorbedNote(asRead(bodyLines))) break
             if (COMMENT_LINE.test(dedented) && !bodyHoldsOpenCommentSpan(asRead(sinceComment()))) {
-              openFence = descriptionOpenFenceAt(asRead(bodyLines), lines, i, bodyColumn, endsBodyAt)
+              openFence = bodyHasFenceCandidate
+                ? descriptionOpenFenceAt(asRead(bodyLines), lines, i, bodyColumn, endsBodyAt)
+                : -1
               if (openFence !== -1) break
             }
             // carve#2488: a comment inside a span this body already holds is not
