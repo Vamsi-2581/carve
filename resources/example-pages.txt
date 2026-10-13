@@ -686,6 +686,7 @@ index: examples/edge-cases/index.md
   a-footnote-in-link-text-nests-the-anchors
   a-footnote-in-reference-link-text-nests-the-anchors-too
   a-footnote-reference-in-link-text-keeps-its-id-on-the-sup
+  a-titled-footnotes-marker-names-the-endnotes-section
   a-note-body-s-own-references-resolve
   a-reference-link-s-text-survives-its-own-frame
   an-authored-base-carries-opaque-payload-captions-and-nested-metadata
