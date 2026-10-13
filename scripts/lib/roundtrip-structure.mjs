@@ -57,7 +57,7 @@ export function acceptHtmlLosses(tree) {
   return out
 }
 
-const cosmetic = new Set(['pos', 'position', 'srcByteLength', 'bulletChar', 'marker', 'delim', 'ref', 'rawRef', 'separatorWidths', 'tight', 'boldItalic', 'order'])
+const cosmetic = new Set(['pos', 'position', 'srcByteLength', 'bulletChar', 'marker', 'delim', 'ref', 'rawRef', 'separatorWidths', 'tight', 'boldItalic', 'order', 'continuationLines'])
 // Strict keeps what PART 10 §13 carries; rawRef stays out because §13 does not recover a reference's form.
 const strictCosmetic = new Set(['pos', 'position', 'srcByteLength', 'rawRef', 'boldItalic', 'order'])
 // PCRE's Unicode \s includes NEL but excludes JavaScript's BOM whitespace.
@@ -69,7 +69,7 @@ export function normalize(value, strict = false) {
     const merged = []
     for (let node of value.map(item => normalize(item, strict))) {
       if (['comment', 'comment_block', 'block_comment', 'inline_comment'].includes(node?.type)) continue
-      if (node?.type === 'soft_break') node = { type: 'text', value: ' ' }
+      if (node?.type === 'soft_break' || (!strict && node?.type === 'cell_wrap')) node = { type: 'text', value: ' ' }
       const last = merged.at(-1)
       if (node?.type === 'text' && last?.type === 'text') last.value = collapse(last.value + node.value)
       else merged.push(node)

@@ -9,13 +9,13 @@ description: "The core serialized tree shape, source positions, and cross-implem
 
 The core serialized tree shape, source positions, and cross-implementation AST guarantees.
 
-This view contains 59 of 334 active rules. Every rule remains mandatory where applicable.
+This view contains 60 of 335 active rules. Every rule remains mandatory where applicable.
 
 Return to the [rule index](./) or read the complete [formal grammar](../grammar).
 
 | Rule | Part | Clause |
 |---|---:|---|
-| [`CARVE-P9-012`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L485) | 9 | SMART TYPOGRAPHY RECORDS SOURCE AND RESOLVED KIND |
+| [`CARVE-P9-012`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L487) | 9 | SMART TYPOGRAPHY RECORDS SOURCE AND RESOLVED KIND |
 | [`CARVE-P12-001`](https://github.com/markup-carve/carve/blob/main/resources/spec/23-ast-foundations.ebnf#L12) | 12 | AST TYPE NAMES FOLLOW THE PROFILE VOCABULARY |
 | [`CARVE-P12-002`](https://github.com/markup-carve/carve/blob/main/resources/spec/23-ast-foundations.ebnf#L16) | 12 | ADJACENT TEXT RUNS ARE COALESCED |
 | [`CARVE-P12-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/23-ast-foundations.ebnf#L34) | 12 | TEXT COALESCING OCCURS DURING `parse(x)`, NOT SERIALIZATION |
@@ -74,3 +74,4 @@ Return to the [rule index](./) or read the complete [formal grammar](../grammar)
 | [`CARVE-P12-066`](https://github.com/markup-carve/carve/blob/main/resources/spec/24-ast-contract.ebnf#L365) | 12 | A SHAPE NO CARVE SOURCE SPELLS IS CARRIED, NOT INVENTED |
 | [`CARVE-P12-067`](https://github.com/markup-carve/carve/blob/main/resources/spec/24-ast-contract.ebnf#L263) | 12 | A SIDECAR TRAVELS BESIDE THE TREE AND NEVER IN IT |
 | [`CARVE-P12-068`](https://github.com/markup-carve/carve/blob/main/resources/spec/24-ast-contract.ebnf#L224) | 12 | AN INGEST REFUSAL IS A TYPED ERROR NAMING WHAT AND WHERE |
+| [`CARVE-P12-069`](https://github.com/markup-carve/carve/blob/main/resources/spec/26-ast-interchange.ebnf#L448) | 12 | A CONTINUATION LINE IS A MARKER IN THE JOINED CELL |

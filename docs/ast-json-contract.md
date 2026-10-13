@@ -201,6 +201,15 @@ most local available spelling. The column record keeps format bridges from
 smearing column facts onto individual cells. A `table_cell` may likewise carry
 `valign`; horizontal and vertical inheritance resolve independently.
 
+**A continuation row stays in the tree as markers**
+([`CARVE-P12-069`](./rules/ast-interchange)). A `+` row is joined into the row
+above before inline parsing, so a cell's `children` hold the joined content.
+Each join is a `cell_wrap` inline node carrying `line`, the continuation line
+it came from, plus `row` when it sits in a cell spanning down from an earlier
+row. `table_row.continuationLines` counts the row's `+` lines. Renderers output
+`cell_wrap` as one space; the Carve writer uses the markers to write the `+`
+lines back.
+
 **The root carries exactly three fields** - `type`, `children`, `srcByteLength`
 ([`CARVE-P12-024`](./rules/ast-interchange)). Frontmatter and definitions are **block nodes in the tree**, not
 root fields, because a root field cannot carry a position and both are source an
