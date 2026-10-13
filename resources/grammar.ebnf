@@ -1194,11 +1194,12 @@ indent = whitespace, {whitespace} ;
    prefix, or indentation, keeping the container tight. *)
 continuation_marker = '+', newline ;
 continuation_marker_block = continuation_marker, block ;
-(* First-block item (Carve addition; see PART 9 §17): a lone `+` as the sole
-   content right after the marker (`- +`) opens an item whose body is the
-   ONE flush-left block that follows, with no inline lead and no indentation.
-   `- + text` keeps `+ text` as literal inline content -- only a bare `+`
-   triggers this. *)
+(* First-block form (Carve addition; see PART 9 §17 L4): a lone `+` as the
+   sole content right after a container's opener (`- +`, `: +`, `> +`,
+   `[^a]: +`) opens a body that is the ONE flush-left block that follows, with
+   no inline lead and no indentation. `- + text` keeps `+ text` as literal
+   inline content -- only a bare `+` triggers this. With no flush-left block
+   after it, `> +` and `[^a]: +` keep the `+` as text. *)
 (* One block, exactly as `continuation_marker_block` above: the two forms
    differ in WHERE the marker sits, never in how much it takes. *)
 first_block_content = continuation_marker, block ;
@@ -5828,31 +5829,34 @@ EOF = (* end of file *) ;
          - DEFINITION DESCRIPTION: the same marker, the same reach, for a
            `<dd>` (`definition_body` carries `continuation_marker_block`).
 
-         THE FIRST-BLOCK FORM IS THE ITEM AND THE DESCRIPTION -- NORMATIVE [CARVE-P9-067].
-         The four containers above take the marker; only TWO of
-         them take it in the FIRST-BLOCK position. `- +` and `: +` open a body
-         whose content is the following flush-left block, and over a line that
-         is not flush-left the marker is refused and the body ends. A FOOTNOTE
-         BODY and a BLOCK QUOTE have no such form: `[^a]: +` and `> +` open a
-         body whose first line is a lone `+`, and there the `+` is NOT A MARKER
-         AT ALL. It is ordinary text, the payload lands wherever the ordinary
-         column rules put it, and no column is read as a marker column --
+         EVERY CONTAINER THAT TAKES THE MARKER TAKES THE FIRST-BLOCK FORM --
+         NORMATIVE [CARVE-P9-067]. The four containers above take the marker in
+         the FIRST-BLOCK position too. `- +`, `: +`, `> +` and `[^a]: +` open a
+         body whose content is the following flush-left block, one block as
+         everywhere else in L3.
 
-             [^a]: +
-             flush
-
-         is a note whose text is `+` with `flush` a top-level paragraph, and
+         With no flush-left block after it (the end of the input, a blank line,
+         or a line that is not flush-left), the `+` is not a marker. In a list
+         item and a definition description the marker is refused and the body
+         ends. In a block quote and a footnote body the `+` is ordinary text:
+         `> +` is a quote holding the paragraph `+`, `[^a]: +` is a note holding
+         the text `+`, and a line that is not flush-left lands wherever the
+         ordinary column rules put it. So
 
              > +
              flush
 
-         is a quote holding one paragraph `+ flush`, the second line reaching
-         the first by §10 I6's lazy fold. At the body's own column the payload
-         folds into the paragraph the `+` opened, so `[^a]: +` over a column-2
-         line is the single paragraph `+ flush` inside the note.
+         is a quote holding the paragraph `flush`, and
 
-         That is a DIFFERENT ANSWER from "place the payload by its column", not
-         a narrower one.
+             [^a]: +
+             flush
+
+         is a note holding the paragraph `flush`. Over a column-2 line the note
+         holds the single paragraph `+ flush` instead: that line is at the
+         body's own column and folds into the paragraph the `+` opened. A nested
+         quote needs no rule of its own, because in `> > +` the inner quote's
+         first line is the lone `+`.
+
       L5 NOT CONTINUATION CONTAINERS (a lone `+` keeps its plain meaning):
          - fenced containers (admonition / generic div / line block) --
            their bodies already hold flush-left blocks; a lone `+` inside

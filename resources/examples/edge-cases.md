@@ -30836,23 +30836,15 @@ a rule.
 :::
 ## A leading continuation marker in a footnote body or a quote is text
 
-The FIRST-BLOCK form of the continuation marker (§17 L4) belongs to the LIST
-ITEM and the DEFINITION DESCRIPTION: `- +` and the accepted wider-separator
-`:  +` open a body whose content
-is the following flush-left block, and over a column-1 line the marker is
-refused and the body ends. A FOOTNOTE BODY and a BLOCK QUOTE have no such form.
-A `+` that opens one of those two bodies is not a marker at all - it is ordinary
-text, and the line under it lands wherever the ordinary column rules put it,
-which is a different answer from "place by column" rather than a narrower one
-(markup-carve/carve#1821).
+Every container that takes the continuation marker also takes it in the
+FIRST-BLOCK position (§17 L4): `- +`, `:  +`, `> +` and `[^a]: +` open a body
+whose content is the following flush-left block. In a footnote body and a
+block quote, a `+` with no flush-left block under it is ordinary text, and a
+line below it that is not flush-left lands wherever the ordinary column rules
+put it (markup-carve/carve#1821, markup-carve/carve#3105).
 
-The executable spec used to REFUSE the whole document here, `stray continuation
-marker`, at every payload column including column 0 - one reader of four, while
-carve-js, carve-php and carve-rs all rendered the text and agreed byte for byte.
-The band below pins all six documents so the next divergence cannot be silent.
-
-A footnote body whose first line is a lone `+`. The `+` is the note's text, and
-`flush` is a top-level paragraph: the note ended at the line below its column.
+A footnote body whose first line is a lone `+` over a flush-left line. The
+`+` is the marker, and the note holds the paragraph `flush`.
 
 ::: compare
 
@@ -30864,13 +30856,12 @@ see[^a]
 ```
 
 ```html
-<p>flush</p>
 <p>see<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
 <section role="doc-endnotes" aria-label="Footnotes">
   <hr>
   <ol>
     <li id="fn1">
-      <p>+<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+      <p>flush<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
     </li>
   </ol>
 </section>
@@ -30878,9 +30869,8 @@ see[^a]
 
 :::
 
-Column 1 is still below the body's column, so it answers the same way. Nothing
-about the `+` decides this - the same document with any other one-character
-first line ends the note here too.
+Column 1 is not flush-left, so the `+` is the note's text, and the line is
+below the body's column, so it ends the note.
 
 ::: compare
 
@@ -30933,9 +30923,8 @@ flush<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a
 
 :::
 
-The block quote gives one answer across the whole band, because the `+` opens a
-quoted paragraph and every column below it reaches that paragraph by §10 I6's
-lazy fold. Column 0 first.
+In a block quote, column 0 is the first-block form: the quote holds the
+paragraph `flush`.
 
 ::: compare
 
@@ -30945,14 +30934,13 @@ flush
 ```
 
 ```html
-<blockquote><p>+
-flush</p></blockquote>
+<blockquote><p>flush</p></blockquote>
 ```
 
 :::
 
-Column 1 - a lazily folded line supplies no `>` prefix, so its column says
-nothing about which container it reached.
+Column 1 is not flush-left, so the `+` is the quote's text, and the line
+reaches that paragraph by §10 I6's lazy fold.
 
 ::: compare
 
@@ -50717,3 +50705,177 @@ see [x][r]
 ```
 
 ::::
+
+## A block quote and a footnote body take the first-block form
+
+`> +` and `[^a]: +` over a flush-left block open a body that is that one block,
+the same reach as `- +` and `:  +` (§17 L4, markup-carve/carve#3105). With no
+flush-left block after it, the `+` stays the container's text.
+
+A table under `> +` is the quote's body.
+
+::: compare
+
+```carve
+> +
+|= 2-col header | < |= header |
+```
+
+```html
+<blockquote>
+  <table>
+    <thead>
+      <tr><th scope="col" colspan="2">2-col header</th><th scope="col">header</th></tr>
+    </thead>
+  </table>
+</blockquote>
+```
+
+:::
+
+A paragraph under `> +` is the quote's paragraph, not a fold into `+`.
+
+::: compare
+
+```carve
+> +
+flush
+```
+
+```html
+<blockquote><p>flush</p></blockquote>
+```
+
+:::
+
+At the end of the input the `+` is the quote's text.
+
+::: compare
+
+```carve
+> +
+```
+
+```html
+<blockquote><p>+</p></blockquote>
+```
+
+:::
+
+A blank line next gives the same answer, and the line after the blank is a
+top-level paragraph.
+
+::: compare
+
+```carve
+> +
+
+after
+```
+
+```html
+<blockquote><p>+</p></blockquote>
+<p>after</p>
+```
+
+:::
+
+A nested quote needs no rule of its own: the inner quote's first line is the
+lone `+`, so the fence is the inner quote's body.
+
+::: compare
+
+````carve
+> > +
+```
+x
+```
+````
+
+```html
+<blockquote>
+  <blockquote>
+    <pre><code>x
+</code></pre>
+  </blockquote>
+</blockquote>
+```
+
+:::
+
+A fence under `[^a]: +` is the note's body.
+
+::: compare
+
+````carve
+[^a]: +
+```
+x
+```
+
+see[^a]
+````
+
+```html
+<p>see<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <pre><code>x
+</code></pre>
+      <p><a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+    </li>
+  </ol>
+</section>
+```
+
+:::
+
+A note whose `+` ends the input holds the text `+`.
+
+::: compare
+
+```carve
+see[^a]
+
+[^a]: +
+```
+
+```html
+<p>see<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>+<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+    </li>
+  </ol>
+</section>
+```
+
+:::
+
+So does a note with a blank line next.
+
+::: compare
+
+```carve
+[^a]: +
+
+see[^a]
+```
+
+```html
+<p>see<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>+<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+    </li>
+  </ol>
+</section>
+```
+
+:::
