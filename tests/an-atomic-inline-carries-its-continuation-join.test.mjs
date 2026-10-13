@@ -9,12 +9,17 @@ const schema = JSON.parse(readFileSync(new URL('../resources/ast-schema.json', i
 const ajv = new Ajv2020({ allErrors: true, strict: true })
 const validators = new Map()
 
-function withoutPos(value) {
-  if (Array.isArray(value)) return value.map(withoutPos)
+function withoutFields(value, fields) {
+  if (Array.isArray(value)) return value.map((child) => withoutFields(child, fields))
   if (value && typeof value === 'object') return Object.fromEntries(
-    Object.entries(value).filter(([key]) => key !== 'pos').map(([key, child]) => [key, withoutPos(child)]),
+    Object.entries(value).filter(([key]) => !fields.has(key)).map(([key, child]) => [key, withoutFields(child, fields)]),
   )
   return value
+}
+
+function hasField(value, field) {
+  if (!value || typeof value !== 'object') return false
+  return Object.hasOwn(value, field) || Object.values(value).some((child) => hasField(child, field))
 }
 
 function atPointer(tree, pointer) {
@@ -49,8 +54,19 @@ for (const fixture of fixtures.rows) {
     if (fixture.id === 'join-between-nodes-takes-a-marker') {
       assert.ok(nodes(row).every((node) => !Object.hasOwn(node, 'cellWraps')))
     }
-    const body = () => assert.deepEqual(withoutPos(atPointer(tree, fixture.path)), fixture.expected)
-    if (!fixture.aheadOfPin) return body()
-    assert.throws(body, undefined, `${fixture.id} is declared aheadOfPin but the pinned engine passes it: drop the flag`)
+    const actual = atPointer(tree, fixture.path)
+    const expected = fixture.expected
+    const compare = () => assert.deepEqual(withoutFields(actual, new Set(['pos'])), withoutFields(expected, new Set(['pos'])))
+    if (!Object.hasOwn(fixture, 'aheadOfPin')) return compare()
+    const flag = fixture.aheadOfPin
+    assert.ok(flag && typeof flag === 'object' && !Array.isArray(flag) && Array.isArray(flag.missingFields) &&
+      flag.missingFields.length > 0 && flag.missingFields.every((field) => typeof field === 'string' && field.length > 0),
+    `${fixture.id}: aheadOfPin flag must name the missing fields`)
+    const fields = flag.missingFields
+    for (const field of fields) assert.ok(hasField(expected, field), `${fixture.id}: expected does not contain declared missing field ${field}`)
+    const omitted = new Set(['pos', ...fields])
+    assert.deepEqual(withoutFields(actual, omitted), withoutFields(expected, omitted),
+      `${fixture.id}: the pinned engine differs beyond the declared missing fields (${fields})`)
+    assert.throws(compare, { code: 'ERR_ASSERTION' }, `${fixture.id} is declared aheadOfPin but the pinned engine passes it: drop the flag`)
   })
 }
