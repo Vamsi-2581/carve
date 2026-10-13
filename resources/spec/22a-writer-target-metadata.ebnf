@@ -239,8 +239,9 @@
       it breaks the pairing, and the set is damaged. Only term, definition
       and closing markers carry a depth; a depth on any other marker, such as
       `<!-- carve:2 ::: note -->` or `<!-- carve:2 {.x} -->`, makes that marker
-      invalid, and it drops alone and is reported as `carrier-marker-dropped`
-      (CARVE-P11-063).
+      invalid. It drops alone, an opener together with its closer under the
+      invalid-opener rule above, and is reported once as
+      `carrier-marker-dropped` (CARVE-P11-063).
 
         <!-- carve: :: Outer -->
         <!-- carve: : -->
@@ -305,6 +306,24 @@
 
         a. one                   ->  <!-- carve: a. -->
         a. two                       1. one
+                                     2. two
+
+      AN AMBIGUOUS FIRST LETTER TAKES TWO MARKERS. When the first item's
+      marker is a letter that is also a roman numeral (`i`, `v`, `x`, `l`,
+      `c`, `d`, `m`, in either case), one marker cannot tell an alphabetic
+      list from a roman one, so the list-style marker holds the first two
+      item markers, separated by one space, and the import applies the
+      ambiguous-letter tie-break (PART 9 §11 N3) to them as Carve source
+      does. A single-item list with such a first marker holds its one
+      marker and takes the reading N3 gives a lone first marker. Every other
+      list keeps the one-marker form.
+
+        i. one                   ->  <!-- carve: i. j. -->
+        j. two                       9. one
+                                     10. two
+
+        i. one                   ->  <!-- carve: i. ii. -->
+        ii. two                      1. one
                                      2. two
 
       A list's attribute marker stands directly above its list-style
