@@ -83,12 +83,12 @@ const cases = [
   [
     'a line block payload has no closer after its list ends',
     '- ::: |\n  ```\n  :::\n\n  y\n- b\n',
-    '<ul><li><div class="line-block"><p><code></code></p></div>y</li><li>b</li></ul>',
+    '<ul><li><div class="line-block"><p><code></code></p></div><p>y</p></li><li><p>b</p></li></ul>',
   ],
   [
     'a later fence cannot close a prior list payload',
     '- ::: |\n  ```\n  :::\n\n  y\n- b\n\npara\n\n  ```\n',
-    '<ul><li><div class="line-block"><p><code></code></p></div>y</li><li>b</li></ul><p>para</p><p><code></code></p>',
+    '<ul><li><div class="line-block"><p><code></code></p></div><p>y</p></li><li><p>b</p></li></ul><p>para</p><p><code></code></p>',
   ],
   [
     'a bare closer beyond the box column is code content',

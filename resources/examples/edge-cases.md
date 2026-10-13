@@ -50145,6 +50145,8 @@ that runs to the end of that host, and a bare `:::` past a box's column is
 text, not the box's closer (PART 2 `admonition`, A CLOSER IS REQUIRED).
 A fence below the sublist's column interrupts its paragraph only when a closer
 follows (CARVE-P0-014); without one it stays sublist text.
+A fence-shaped line-block payload line opens nothing, so the box reads the same
+when that line is plain text. A `:::` inside an open code fence is code text.
 
 :::: compare
 
@@ -50370,6 +50372,115 @@ code
 after</code></li>
     </ul>
   </li>
+</ul>
+```
+
+::::
+
+:::: compare
+
+````carve
+> - ::: box
+>   - ::: |
+>     x
+>     :::
+>    ```
+>    :::bad
+>    :::
+- tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <ul>
+          <li>
+            <div class="line-block">
+              <p>x</p>
+            </div>
+          </li>
+        </ul>
+        <pre><code>:::bad
+:::
+</code></pre>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+<ul>
+  <li>tail</li>
+</ul>
+```
+
+::::
+
+:::: compare
+
+````carve
+> - ::: box
+>   -   ::: |
+>       x
+>       :::
+>     ```
+>     :::
+>     :::bad
+>     :::
+- tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <ul>
+          <li>
+            <div class="line-block">
+              <p>x</p>
+            </div>
+          </li>
+        </ul>
+        <pre><code>:::
+:::bad
+:::
+</code></pre>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+<ul>
+  <li>tail</li>
+</ul>
+```
+
+::::
+
+:::: compare
+
+````carve
+> - ::: box
+>    ```
+>    :::bad
+>    :::
+- tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li>
+      <div class="box">
+        <pre><code>:::bad
+:::
+</code></pre>
+      </div>
+    </li>
+  </ul>
+</blockquote>
+<ul>
+  <li>tail</li>
 </ul>
 ```
 
