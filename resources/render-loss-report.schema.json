@@ -27,8 +27,9 @@
         "type": "object",
         "required": ["code", "target", "nodeType", "message"],
         "properties": {
-          "code": { "enum": ["raw-format-dropped", "ruby-flattened", "destination-denied", "editorial-comment-flattened", "carrier-attribute-dropped", "definition-list-flattened"] },
+          "code": { "enum": ["raw-format-dropped", "ruby-flattened", "destination-denied", "editorial-comment-flattened", "carrier-attribute-dropped", "list-style-dropped"] },
           "attribute": { "type": "string" },
+          "style": { "enum": ["lower-alpha", "upper-alpha", "lower-roman", "upper-roman"] },
           "format": { "type": "string" },
           "target": { "enum": ["html", "markdown", "plain", "ansi", "carve"] },
           "nodeType": { "enum": ["inline", "block"] },
@@ -79,11 +80,13 @@
           },
           {
             "properties": {
-              "code": { "const": "definition-list-flattened" },
+              "code": { "const": "list-style-dropped" },
+              "style": { "enum": ["lower-alpha", "upper-alpha", "lower-roman", "upper-roman"] },
               "target": { "const": "markdown" },
               "nodeType": { "const": "block" },
               "format": false
-            }
+            },
+            "required": ["style"]
           }
         ],
         "additionalProperties": false

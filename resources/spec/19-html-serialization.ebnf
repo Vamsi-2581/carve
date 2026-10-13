@@ -453,10 +453,10 @@
                                PRESENCE is the distinction: a
                                table with no separator row
                                writes no attribute
-        `code_block.label`     `data-carve-label` on `<pre>`:   none
-                               the text between the fence
-                               label's brackets; a block with
-                               no label writes no attribute
+        `code_block.label`     `data-carve-label` on `<pre>`:   the fence marker
+                               the text between the fence       (CARVE-P11-067),
+                               label's brackets; a block with   which also holds
+                               no label writes no attribute     the title
         `list.tight`, where    `data-carve-tight` on `<ul>` or  none
         an item's paragraph    `<ol>`, presence
         keeps its `<p>`
@@ -822,7 +822,7 @@
       reader makes a trust decision about that value.
 
       A VALUE OUTSIDE ITS GRAMMAR OR CARRIER ENUMERATION IS NOT A CARRIER.
-      The reader drops the invalid value with a diagnostic and keeps the
+      The reader drops the invalid value with a warning and keeps the
       reserved name out of the reconstructed document's authored attributes
       (CARVE-P10-021). It does not rebuild syntax from an invalid value.
 

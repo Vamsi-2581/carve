@@ -50286,3 +50286,169 @@ ref[^n]
 ```
 
 ::::
+
+## A comment between a heading and a colon fence leaves the fence an opener
+
+Comments leave block ownership unchanged (CARVE-P0-005, CARVE-P9-053). The colon fence after the heading opens an empty div on its authored base (CARVE-P0-004, CARVE-P0-016).
+
+:::: compare
+
+````carve
+- a
+  - b
+
+    %%%
+  # h
+    %%%
+    :::
+````
+
+```html
+<ul>
+  <li>a
+    <ul>
+      <li>b</li>
+    </ul>
+    <h1 id="h">h</h1>
+    <div>
+
+    </div>
+  </li>
+</ul>
+```
+
+::::
+
+:::: compare
+
+````carve
+- a
+  # h
+      %%%
+      :::
+````
+
+```html
+<ul>
+  <li>a
+    <h1 id="h">h</h1>
+    <div>
+
+    </div>
+  </li>
+</ul>
+```
+
+::::
+
+## A fence past the column after an attribute line opens on its authored base
+
+An attribute line is its own block; the following fence opens on its authored base (CARVE-P0-004). With no paragraph open, the unclosed fence starts a code block (CARVE-P0-014).
+
+:::: compare
+
+````carve
+- t
+  {.c}
+   ````
+  x
+````
+
+```html
+<ul>
+  <li>t
+    <pre class="c"><code>x
+</code></pre>
+  </li>
+</ul>
+```
+
+::::
+
+:::: compare
+
+````carve
+- t
+  {.c}
+  %% c
+   ````
+  x
+````
+
+```html
+<ul>
+  <li>t
+    <pre class="c"><code>x
+</code></pre>
+  </li>
+</ul>
+```
+
+::::
+
+## A comment in a marker-line note changes nothing
+
+A comment is invisible at any column (CARVE-P9-053); at the note's content column it retains nothing (PART 0 X1).
+
+:::: compare
+
+````carve
+- [^n]: text
+    %% c
+    ```
+    code
+    ```
+after [^n]
+````
+
+```html
+<ul>
+  <li></li>
+</ul>
+<p>after <a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>text</p>
+      <pre><code>code
+</code></pre>
+      <p><a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+    </li>
+  </ol>
+</section>
+```
+
+::::
+
+:::: compare
+
+````carve
+- [^n]: text
+
+    %% c
+    ```
+    code
+    ```
+after [^n]
+````
+
+```html
+<ul>
+  <li></li>
+</ul>
+<p>after <a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>text</p>
+      <pre><code>code
+</code></pre>
+      <p><a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+    </li>
+  </ol>
+</section>
+```
+
+::::
