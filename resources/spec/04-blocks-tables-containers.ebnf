@@ -104,9 +104,9 @@ colspan_marker = {space}, '<', {space} ;
    `|<TAB>a<TAB>|` is a cell whose text begins and ends with a tab, and
    `|<TAB>---<TAB>|` is not a delimiter_cell at all - the row is an ordinary
    row and promotes no header. Same for the two span markers: a tab beside
-   the `^` or `<` makes the cell ordinary content rather than a span. What
-   counts as an EMPTY cell is a
-   separate question and is unchanged here. *)
+   the `^` or `<` makes the cell ordinary content rather than a span. So a
+   cell is EMPTY only when nothing but space padding stands in it: `|<TAB>|`
+   holds a tab, while `| |` and `||` are empty (PART 9 §5 CARVE-P9-082). *)
 
 alignment_run = horizontal_alignment, [vertical_alignment]
               | inherited_horizontal_alignment, vertical_alignment ;
@@ -127,8 +127,13 @@ cell_padding = space | (* empty only when the cell carries no marker run *) ;
    center; no vertical value has a one-marker spelling.
    With no alignment run the old unpadded cell spelling remains valid. *)
 
-cell_content = inline_content ;
-(* SEMANTIC CONSTRAINT (PART 9 §5): cell content may not contain an
+cell_content = [inline_content] ;
+(* CELL CONTENT MAY BE EMPTY. `inline_content` is one-or-more, so the option
+   is what lets `| |`, `||` and `|||` be rows of empty cells. A row is valid
+   by its delimiters, never by what its cells hold (PART 9 §5
+   CARVE-P9-082); an empty marked cell still needs `cell_padding`, so `|= |`
+   is an empty header cell and `|=|` a data cell holding `=`.
+   SEMANTIC CONSTRAINT (PART 9 §5): cell content may not contain an
    unescaped `|` outside a code span -- the pipe is the cell separator;
    the exception is not expressible context-free. *)
 

@@ -286,6 +286,7 @@ const MANIFEST = [
   { repo: 'spec', path: 'tests/an-ingested-default-start-is-not-re-emitted.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', guard: 'two-way', optional: true, staleness: 'pin lag is declared and the engine no longer has it - delete PIN_LAG', owner: 'markup-carve/carve-js#1391, markup-carve/carve-rs#1293' },
   { repo: 'spec', path: 'tests/an-unspellable-block-does-not-cancel-list-adjacency.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', guard: 'two-way', optional: true, staleness: 'pin lag is declared and the engine no longer has it - delete PIN_LAG', owner: 'markup-carve/carve#1621' },
   { repo: 'spec', path: 'tests/empty-raw-list-placement.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', prPolicy: 'declared', guard: 'two-way', optional: true, staleness: 'pin lag is declared and the class is no longer missing - delete PIN_LAG', owner: 'markup-carve/carve#2887' },
+  { repo: 'spec', path: 'tests/roundtrip.test.mjs', name: 'PIN_LAG', kind: 'js-string', policy: 'owed', prPolicy: 'declared', guard: 'two-way', optional: true, staleness: 'pin lag is declared and the engine no longer has it - delete PIN_LAG', owner: 'markup-carve/carve#2879' },
   // An engine-pin window scoped to the CAPTION ROWS of CARVE-P11-063, not to
   // the clause: carve#2851's ruling landed spec-first and the pinned build
   // writes no caption marker, while every other row in that file is live. The

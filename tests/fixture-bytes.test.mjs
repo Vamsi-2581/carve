@@ -394,6 +394,7 @@ const INVENTORY = [
   { base: '567-a-description-marker-followed-by-a-no-break-space-has-content', crv: ['NBSP'], html: [] },
   { base: '567-a-description-marker-followed-by-a-no-break-space-has-content-2', crv: ['NBSP'], html: [] },
   { base: '567-a-description-marker-followed-by-a-no-break-space-has-content-3', crv: ['trailing-WS'], html: [] },
+  { base: '589-an-explicitly-delimited-row-of-blank-cells-is-a-table-23', crv: ['trailing-WS'], html: [] },
 ]
 
 function scan(text) {

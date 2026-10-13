@@ -1126,9 +1126,9 @@ inline.
 THE GRID IS THE PIPE FORM'S. The list table has the rows and cell positions
 the import builds for the same table with the option off: the same rows, the
 same span resolution, and a continuation placeholder in each position the pipe
-form puts one. A row whose cells are all empty stays, as a row of empty items:
-the pipe form drops it because Carve reads such a row as text, and a list table
-has no such reading. A row with no cells at all is dropped with a
+form puts one. A row whose cells are all empty stays, as a row of empty items,
+exactly as the pipe form keeps it as a row of empty cells (`| | |`, PART 9 §5
+CARVE-P9-082). A row with no cells at all is dropped with a
 `structure-unspellable` row at `warning`, because a list-table row is the list
 of its cells and an empty one is not a row ListTable reads. Each row is an outer item and each position an inner item, left
 to right. A rowspan placeholder is the item `^`, a colspan placeholder the item

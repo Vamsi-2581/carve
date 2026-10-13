@@ -1573,9 +1573,9 @@ colspan_marker = {space}, '<', {space} ;
    `|<TAB>a<TAB>|` is a cell whose text begins and ends with a tab, and
    `|<TAB>---<TAB>|` is not a delimiter_cell at all - the row is an ordinary
    row and promotes no header. Same for the two span markers: a tab beside
-   the `^` or `<` makes the cell ordinary content rather than a span. What
-   counts as an EMPTY cell is a
-   separate question and is unchanged here. *)
+   the `^` or `<` makes the cell ordinary content rather than a span. So a
+   cell is EMPTY only when nothing but space padding stands in it: `|<TAB>|`
+   holds a tab, while `| |` and `||` are empty (PART 9 §5 CARVE-P9-082). *)
 
 alignment_run = horizontal_alignment, [vertical_alignment]
               | inherited_horizontal_alignment, vertical_alignment ;
@@ -1596,8 +1596,13 @@ cell_padding = space | (* empty only when the cell carries no marker run *) ;
    center; no vertical value has a one-marker spelling.
    With no alignment run the old unpadded cell spelling remains valid. *)
 
-cell_content = inline_content ;
-(* SEMANTIC CONSTRAINT (PART 9 §5): cell content may not contain an
+cell_content = [inline_content] ;
+(* CELL CONTENT MAY BE EMPTY. `inline_content` is one-or-more, so the option
+   is what lets `| |`, `||` and `|||` be rows of empty cells. A row is valid
+   by its delimiters, never by what its cells hold (PART 9 §5
+   CARVE-P9-082); an empty marked cell still needs `cell_padding`, so `|= |`
+   is an empty header cell and `|=|` a data cell holding `=`.
+   SEMANTIC CONSTRAINT (PART 9 §5): cell content may not contain an
    unescaped `|` outside a code span -- the pipe is the cell separator;
    the exception is not expressible context-free. *)
 
@@ -4424,6 +4429,30 @@ EOF = (* end of file *) ;
          The two uses may never disagree: a line the block parser builds a
          table from but the §17 sub-block test calls prose would make a list
          item loose AND fill it with a table.
+
+         A CELL SLOT IS COUNTED, NOT WEIGHED -- NORMATIVE [CARVE-P9-082]. The
+         delimiters are T1's: an escaped `|` and a `|` inside a code span
+         are content. A slot lies between two consecutive delimiters, and
+         EMPTY CONTENT IS VALID CONTENT for it, so a row whose every cell is
+         blank is a row:
+
+             | |    ||        one data cell, empty children
+             | | |  |||       two data cells
+             ||||             three data cells
+             |                no closing delimiter, no slot: prose
+
+         No comment, literal or whitespace node is synthesized for a blank
+         cell. Only ASCII space padding is removed (PART 7); a tab between
+         the pipes is content, so `|<TAB>|` is a cell holding a tab. The rule
+         is the same for data and header cells, at a block start, after an
+         open paragraph and inside a table. An empty MARKED cell still needs
+         T11's space: `|= |` is an empty header cell and `|=|` a data cell
+         holding `=`; `|> |` is an empty right-aligned cell and `|>|` holds
+         `>`; `|{#x} |` is an empty cell with id `x` and `|{#x}|` carries no
+         cell attributes. This gives no spelling to a table with zero rows,
+         and it leaves T6, T7 and T8 as they are: a continuation row still
+         creates no row, and a blank first row above a delimiter row is
+         promoted to an empty header row like any other first row.
       T3 HEADER CELL. A leading `=` GLUED to the cell's opening `|` marks a
          HEADER cell; `\=` yields a data cell whose text starts with `=`.
       T4 SPAN MARKERS. A cell whose WHOLE content is `^` (rowspan) or `<`
@@ -4491,8 +4520,9 @@ EOF = (* end of file *) ;
          continuation makes it decline, including under a native header row.
 
          AN ALL-EMPTY CONTINUATION ROW IS A CONTINUATION ROW. It opens no
-         table and produces no `<tr>`; do not apply T2's standard-row guard.
-         Its empty cells append nothing. `+ | |` below `| a | b |` and `+ |`
+         table and produces no `<tr>`; T2 counts its slots the way it counts
+         a standard row's, and T6 decides what they do. Its empty cells append
+         nothing. `+ | |` below `| a | b |` and `+ |`
          below `| a |` are both absorbed.
 
          A CONTINUATION ROW LEAVES NO PARAGRAPH OPEN -- NORMATIVE [CARVE-P9-003].
@@ -4609,8 +4639,8 @@ EOF = (* end of file *) ;
              |{#x} =R |      data cell with `id="x"`, content `=R`
              |{#x}=R|        data cell, content `{#x}=R`
 
-         A cell with NO run is unchanged -- `| a |`, `|a|` and `||` all mean
-         what they meant.
+         A cell with NO run is unchanged -- `| a |` and `|a|` hold `a`, and
+         `||` is one empty cell (CARVE-P9-082).
 
          THE CLOSING PIPE IS NOT A TERMINATOR. `|=|` and `|{#x}|` carry no
          run; an empty marked cell is `|= |` and `|{#x} |` -- which is what
@@ -9098,6 +9128,13 @@ EOF = (* end of file *) ;
       An EMPTY cell takes a single space (`|= |`, `| |`), not one from each end,
       so a column does not grow a space each time the document is formatted.
 
+      A ROW OF EMPTY CELLS IS WRITTEN AS A ROW. Every AST cell gets one
+      explicit slot, so one empty data cell is `| |` and two are `| | |`; a
+      marked empty cell keeps its prefix and the space after it (`|=~{.x} |`).
+      PART 9 §5 CARVE-P9-082 reads that row back with the same row count,
+      cell count, kinds, alignment, attributes and empty children. A table
+      with zero rows has no spelling, and this clause does not give it one.
+
       THE PREFIX IS GLUED BECAUSE THE READER REQUIRES IT. A space in front of
       `=` or of an attribute block makes it literal cell content (PART 9 §5
       T10, corpus `table cell attributes`), so only the CONTENT side is the
@@ -10286,15 +10323,15 @@ EOF = (* end of file *) ;
 
       ON MARKDOWN IMPORT, an all-empty header with no column alignment is
       omitted, together with its delimiter row. It is the scaffolding this
-      clause writes, not a Carve header row: PART 9 §5 rejects a row whose
-      cells are all blank, even when they carry header markers. The body
-      keeps its GFM column width, and the importer MUST NOT turn the omitted
-      header into a paragraph of pipes. All-blank body rows are likewise
-      omitted rather than splitting the table with paragraph text. A header
-      carrying cell content or column alignment is retained. An omitted row
-      is reported as `structure-unspellable` by the migration fidelity report;
-      a standalone GFM empty header cannot be distinguished from writer
-      scaffolding.
+      clause writes, so keeping it would give every headerless table an
+      empty header row on its way back. The body keeps its GFM column width,
+      and the importer MUST NOT turn the omitted header into a paragraph of
+      pipes. A header carrying cell content or column alignment is retained.
+      The omitted header is reported as `structure-unspellable` by the
+      migration fidelity report; a standalone GFM empty header cannot be
+      distinguished from writer scaffolding. An all-blank BODY row is not
+      scaffolding: it is imported as a row of empty cells, one `| |` slot
+      per cell, and reads back as a row (PART 9 §5 CARVE-P9-082).
 
       A ROW IS A HEADER ROW WHEN EVERY CELL IT OWNS IS A HEADER CELL. A span
       placeholder (a cell carrying `span`) is not a cell of its own: it
