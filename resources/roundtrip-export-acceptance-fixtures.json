@@ -1053,6 +1053,114 @@
         }
       ],
       "exportedHtml": "<section id=\"a.b\" data-carve-explicit-id=\"1\">\n  <h1>Head</h1>\n  <p>See <a href=\"#a.b\" data-carve-xref>Head</a>.</p>\n</section>"
+    },
+    {
+      "id": "bare-div-carrier",
+      "source": ":::\ninside\n:::\n",
+      "carriers": {
+        "data-carve-div": null
+      },
+      "forbiddenExportAttributes": [],
+      "expectedNodes": [
+        {
+          "type": "div"
+        }
+      ],
+      "importModes": [
+        "safe",
+        "semantic",
+        "roundtrip"
+      ],
+      "carrierHosts": [
+        {
+          "attribute": "data-carve-div",
+          "element": "div"
+        }
+      ],
+      "exportedHtml": "<div data-carve-div>\n  <p>inside</p>\n</div>",
+      "aheadOfPin": true
+    },
+    {
+      "id": "line-block-carrier",
+      "source": "::: |\nfirst\nsecond\n:::\n",
+      "carriers": {
+        "data-carve-line-block": null
+      },
+      "forbiddenExportAttributes": [],
+      "expectedNodes": [
+        {
+          "type": "line_block"
+        }
+      ],
+      "importModes": [
+        "safe",
+        "semantic",
+        "roundtrip"
+      ],
+      "carrierHosts": [
+        {
+          "attribute": "data-carve-line-block",
+          "element": "div"
+        }
+      ],
+      "returnedSourceFragments": [
+        "::: |"
+      ],
+      "exportedHtml": "<div data-carve-line-block class=\"line-block\">\n  <p>first<br>\nsecond</p>\n</div>",
+      "aheadOfPin": true
+    },
+    {
+      "id": "line-block-admonition-writes-no-carrier",
+      "source": "::: line-block\nfirst\\\nsecond\n:::\n",
+      "carriers": {},
+      "forbiddenExportAttributes": [
+        "data-carve-line-block"
+      ],
+      "expectedNodes": [
+        {
+          "type": "admonition",
+          "kind": "line-block"
+        }
+      ],
+      "importModes": [
+        "safe",
+        "semantic",
+        "roundtrip"
+      ],
+      "carrierHosts": [],
+      "returnedSourceFragments": [
+        "::: line-block"
+      ],
+      "exportedHtml": "<div class=\"line-block\">\n  <p>first<br>\nsecond</p>\n</div>"
+    },
+    {
+      "id": "substitution-carrier",
+      "source": "a {~old~>new~} b\n",
+      "carriers": {
+        "data-carve-substitution": null
+      },
+      "forbiddenExportAttributes": [],
+      "expectedNodes": [
+        {
+          "type": "substitution"
+        }
+      ],
+      "importModes": [
+        "safe",
+        "semantic",
+        "roundtrip"
+      ],
+      "carrierHosts": [
+        {
+          "attribute": "data-carve-substitution",
+          "element": "span"
+        }
+      ],
+      "returnedSourceFragments": [
+        "{~old~>new~}"
+      ],
+      "exportedHtml": "<p>a <span data-carve-substitution><del>old</del><ins>new</ins></span> b</p>",
+      "aheadOfPin": true
     }
   ],
   "importNegative": [
