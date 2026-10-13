@@ -1142,7 +1142,6 @@
     },
     {
       "id": "invalid-raw-format-in-roundtrip-mode",
-      "aheadOfPin": true,
       "html": "<p><span data-carve-raw=\"x y\">z</span></p>",
       "expectedNodes": [
         {
@@ -1164,7 +1163,6 @@
     },
     {
       "id": "invalid-multichar-escape-in-roundtrip-mode",
-      "aheadOfPin": true,
       "html": "<p><span data-carve-escaped>ab</span></p>",
       "expectedNodes": [
         {
@@ -1869,8 +1867,7 @@
         {
           "type": "definition_list"
         }
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "nested-definition-list-two-levels",
@@ -1896,8 +1893,7 @@
         {
           "type": "definition_list"
         }
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "inline-link-attributes",
@@ -2051,8 +2047,7 @@
           "header": "app.js",
           "label": "Example"
         }
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "list-style-marker-alpha",
@@ -2122,8 +2117,7 @@
       },
       "forbiddenTypes": [
         "definition_list"
-      ],
-      "aheadOfPin": true
+      ]
     },
     {
       "id": "invalid-opener-drops-with-its-closer",
@@ -2169,8 +2163,7 @@
       "expectedDiagnostics": {
         "carrier-marker-dropped": 1,
         "carrier-markers-damaged": 0
-      },
-      "aheadOfPin": true
+      }
     },
     {
       "id": "valid-pair-reports-nothing",
