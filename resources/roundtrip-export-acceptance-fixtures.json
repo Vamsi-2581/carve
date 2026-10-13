@@ -2038,6 +2038,21 @@
         }
       ],
       "inlineMarkers": true
+    },
+    {
+      "id": "code-fence-title-and-label",
+      "source": "```js \"app.js\" [Example]\nlet x = 1\n```\n",
+      "carrierFragments": [
+        "<!-- carve: ```js \"app.js\" [Example] -->"
+      ],
+      "expectedNodes": [
+        {
+          "type": "code_block",
+          "header": "app.js",
+          "label": "Example"
+        }
+      ],
+      "aheadOfPin": true
     }
   ],
   "markdownImportNegative": [

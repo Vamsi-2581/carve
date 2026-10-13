@@ -453,10 +453,10 @@
                                PRESENCE is the distinction: a
                                table with no separator row
                                writes no attribute
-        `code_block.label`     `data-carve-label` on `<pre>`:   none
-                               the text between the fence
-                               label's brackets; a block with
-                               no label writes no attribute
+        `code_block.label`     `data-carve-label` on `<pre>`:   the fence marker
+                               the text between the fence       (CARVE-P11-067),
+                               label's brackets; a block with   which also holds
+                               no label writes no attribute     the title
         `list.tight`, where    `data-carve-tight` on `<ul>` or  none
         an item's paragraph    `<ol>`, presence
         keeps its `<p>`
