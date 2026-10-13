@@ -6322,6 +6322,15 @@ function collectItems(lines, i, list, state, ind, meas) {
           noteListBodyColumn = (authoredBlockBase ?? contentCol) + defBodyIndent + FOOTNOTE_BODY_COLUMN
           noteListChildColumn = nm.indent + nm.markerWidth
         }
+        // An authored block here belongs to the item. Once it interrupts the
+        // note, a later fence at the note body column belongs to the item too.
+        if (markerNoteEligible && i > noteFenceEnd && col >= markerNoteBodyColumn && !nm &&
+            !descendantOwned && !insideFence() && !foldsIntoLeadTerm &&
+            opensAuthoredBase(lm.rest) && !FENCE.test(lm.rest) &&
+            !COMMENT_LINE.test(lm.rest)) {
+          markerNoteEligible = false
+          noteMarkerSeen = false
+        }
         const noteFence = FENCE.exec(lm.rest)
         if (noteFence && noteListBodyColumn !== null && col >= noteListBodyColumn && col < noteListChildColumn) {
           const closer = cachedForwardSearch(noteCloserSearches, `body-child:${noteListBodyColumn}:${col}:${noteFence[1]}`, i + 1, lines.length, (at) => {

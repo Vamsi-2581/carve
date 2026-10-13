@@ -83,3 +83,30 @@ test('item prose below the note body column ends the note extent', () => {
     assert.doesNotMatch(html.slice(html.indexOf('<li id="fn1">')), /<pre>/)
   }
 })
+
+test('an item term at the note body column keeps a later fence in the item', () => {
+  const expectedItem = '<ul><li><dl><dt>t</dt></dl><pre><code>code </code></pre></li></ul><p>after ' + ref + '</p>'
+  const expectedNote = notes('<p>text more' + back + '</p>')
+  for (const run of ['```', '~~~']) for (const depth of [0, 1]) {
+    const lines = ['- [^n]: text', '    more', '    :: t', `    ${run}`, '    code', `    ${run}`, 'after [^n]']
+    const src = lines.map(line => '> '.repeat(depth) + line).join('\n') + '\n'
+    assert.equal(norm(render(src)), quote(expectedItem, depth) + expectedNote, src)
+  }
+})
+
+test('an absorbed comment leaves the note eligible for a later fence', () => {
+  const src = '- [^n]: text\n    %% c\n    ```\n    code\n    ```\nafter [^n]\n'
+  const html = norm(render(src))
+  assert.match(html, /<li id="fn1"><p>text<\/p><pre><code>code <\/code><\/pre>/)
+  assert.doesNotMatch(html.slice(0, html.indexOf('<section')), /<pre>/)
+})
+
+test('an opener-shaped fence payload leaves the note eligible for another fence', () => {
+  for (const payload of ['> q', ':: t']) {
+    const src = `- [^n]: text\n    \`\`\`\n    ${payload}\n    \`\`\`\n    \`\`\`\n    code2\n    \`\`\`\nafter [^n]\n`
+    const html = norm(render(src))
+    assert.match(html, /<li id="fn1"><p>text<\/p><pre><code>/)
+    assert.match(html.slice(html.indexOf('<li id="fn1">')), /<pre><code>code2 <\/code><\/pre>/)
+    assert.doesNotMatch(html.slice(0, html.indexOf('<section')), /<pre>/)
+  }
+})
