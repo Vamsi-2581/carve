@@ -651,7 +651,7 @@ function alphaToInt(s) {
 // agree: an abutting block that yields nothing is not part of a marker (§15 A8),
 // whatever the marker's value.
 function isOrderedMarkerLine(line) {
-  const m = ORDERED.exec(line)
+  const m = ORDERED.exec(trimLineEnd(line))
   if (!m) return false
   return !(m[4] && m[4].replace(/[{} ]/g, '') !== '' && parseAttrList(m[4]) === null)
 }
@@ -1394,7 +1394,7 @@ function isCodeBlockOpener(line) {
 
 function foldablePlainLine(cur) {
   return !isBlank(cur) && !startsVisibleBlock(cur) && !isLinkDef(cur) &&
-    !FOOTNOTE_DEF.test(cur) && !BULLET.test(cur) && !isOrderedMarkerLine(cur) &&
+    !FOOTNOTE_DEF.test(cur) && !BULLET.test(trimLineEnd(cur)) && !isOrderedMarkerLine(cur) &&
     !isCodeBlockOpener(cur) && !isColonBlockOpener(cur) &&
     !CAPTION.test(cur) && !COMMENT_LINE.test(cur) &&
     !/^::? /.test(cur)
@@ -3113,7 +3113,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             !startsVisibleBlock(lines[i]) && !isTableRow(lines[i]) &&
             !COLON_FENCE.test(lines[i]) && !(FENCE.test(lines[i]) && hasCloser(lines, i))) {
           // A retained marker is paragraph text and opens no list (PART 0 X1).
-          bodyLines.push(BULLET.test(measured.rest) || isOrderedMarkerLine(measured.rest) ? LAZY + measured.rest : measured.rest)
+          bodyLines.push(BULLET.test(trimLineEnd(measured.rest)) || isOrderedMarkerLine(measured.rest) ? LAZY + measured.rest : measured.rest)
           afterComment = afterCommentTransition(afterComment, {})
           retainedParagraph = true
           i++
@@ -3280,7 +3280,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         !startsVisibleBlock(cur) &&
         !isLinkDef(cur) &&
         !FOOTNOTE_DEF.test(cur) &&
-        !BULLET.test(cur) &&
+        !BULLET.test(trimLineEnd(cur)) &&
         !isOrderedMarkerLine(cur) &&
         !isCodeBlockOpener(cur) &&
         !CAPTION.test(cur)
@@ -3561,7 +3561,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             if (afterComment && !startsVisibleBlock(cur) &&
                 !isTableRow(cur) && !COLON_FENCE.test(cur) &&
                 !(FENCE.test(cur) && hasCloser(lines, i))) {
-              pushBody(BULLET.test(dedented) || isOrderedMarkerLine(dedented) ? LAZY + dedented : dedented)
+              pushBody(BULLET.test(trimLineEnd(dedented)) || isOrderedMarkerLine(dedented) ? LAZY + dedented : dedented)
               afterComment = afterCommentTransition(afterComment, {})
               retainedParagraph = true
               i++
@@ -3624,7 +3624,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             if (isColonBlockOpener(dedented) || COLON_CLOSER.test(dedented)) break
             const lazyFence = !foldablePlain(dedented) && FENCE.test(dedented) &&
               !(FENCE.test(cur) && hasCloser(lines, i))
-            if ((foldablePlain(dedented) || lazyFence || BULLET.test(dedented) || isOrderedMarkerLine(dedented)) && bodyLeavesParagraphOpen(asRead(bodyLines))) {
+            if ((foldablePlain(dedented) || lazyFence || BULLET.test(trimLineEnd(dedented)) || isOrderedMarkerLine(dedented)) && bodyLeavesParagraphOpen(asRead(bodyLines))) {
               pushBody(lazyFence ? LAZY + dedented : dedented)
               i++
               continue
@@ -4861,7 +4861,7 @@ function foldedDefinitionEnd(lines, start, end, seen) {
       continue
     }
     if (termCol !== null) {
-      if (col > termCol && !BULLET.test(rest) && !isOrderedMarkerLine(rest)) {
+      if (col > termCol && !BULLET.test(trimLineEnd(rest)) && !isOrderedMarkerLine(rest)) {
         // A folded comment fence keeps its body, blank lines included.
         const folded = COMMENT_FENCE_BODY.exec(rest)
         if (folded && commentFenceCloserAhead(lines, k, folded[1])) opaque = { kind: 'comment', run: folded[1] }
@@ -5008,7 +5008,8 @@ function parseListRun(lines, i, blocks, state, peekInterrupts, ind, meas) {
 // already carries.
 function matchMarkerAt(meas) {
   if (meas === undefined) return null
-  const { col, rest: line } = meas
+  const { col, rest } = meas
+  const line = trimLineEnd(rest)
   // The saving is entirely in what this is handed. Given a line with its
   // indentation still on it the patterns match exactly the same way, at
   // exactly the same cost as before - identical output, identical counts, and
