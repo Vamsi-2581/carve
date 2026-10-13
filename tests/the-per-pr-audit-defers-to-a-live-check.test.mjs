@@ -151,9 +151,6 @@ test('per-PR relaxes exactly the engine-lag ledgers and the siblings own lag, no
       // documents and on one placement fixture, each naming the issue.
       ['resources/oracle-divergence.txt', 'owed', 'declared'],
       ['tests/empty-raw-list-placement.test.mjs', 'owed', 'declared'],
-      // The BLANK BODY ROW window of CARVE-P11-056 (carve#2879): the pinned
-      // Markdown importer still drops a blank body row the new rule keeps.
-      ['tests/roundtrip.test.mjs', 'owed', 'declared'],
     ].sort(),
     'a spec ledger other than the engine-lag ones now reads differently per-PR',
   )

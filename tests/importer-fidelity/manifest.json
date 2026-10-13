@@ -2214,25 +2214,6 @@
         ],
         "exit": 0,
         "engines": {
-          "js": {
-            "output": "|= A |= B |\n| x | y |\n",
-            "diagnostics": [
-              {
-                "code": "fidelity-unverified",
-                "severity": "warning",
-                "fidelity": "dropped",
-                "confidence": "fallback"
-              },
-              {
-                "code": "structure-unspellable",
-                "severity": "warning",
-                "fidelity": "dropped",
-                "confidence": "exact",
-                "path": "line:3"
-              }
-            ],
-            "exit": 1
-          },
           "php": {
             "output": "|= A |= B |\n| x | y |\n",
             "diagnostics": [

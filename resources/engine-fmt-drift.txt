@@ -20,4 +20,3 @@
 # engine-pin-drift.txt says the same thing for the same reason.
 #
 # Format: <slug><space><space><reason>
-589-an-explicitly-delimited-row-of-blank-cells-is-a-table-32  the pinned writer spells the promoted empty header row as a paragraph line `| | |` over a separate dash table; CARVE-P11-014 writes it as a row and CARVE-P9-082 reads it back (carve#2879, carve-js#2981)

@@ -39,9 +39,10 @@ engine lags the rule. All three render the six documents as pinned, which is wha
 `check-expected` reports beside them, and the shapes they do not cover are the
 ones the executable spec itself still reads the old way (markup-carve/carve#2860).
 
-Category `589` is outside them because no engine has shipped the rule it pins:
-an explicitly delimited row of blank cells is a table row
-(markup-carve/carve#2879). The same ruling changed four expectations inside
+Category `589` is outside them because it was added after this run. It pins
+an explicitly delimited row of blank cells as a table row
+(markup-carve/carve#2879), which carve-js ships as of `43dd6096` and carve-php
+and carve-rs do not yet. The same ruling changed four expectations inside
 this run's denominators after it was taken, `113-a-pipe-pair-with-no-cell-is-not-a-table`
 and three rows of `453-a-row-whose-every-cell-is-blank-is-not-a-table`, so this
 run's `mismatch=0` no longer holds for them. The other four rows of category
