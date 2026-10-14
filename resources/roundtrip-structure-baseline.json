@@ -1,14 +1,15 @@
 {
   "version": 2,
+  "note": "carve#2878 changes two corpus documents from literal definition text to empty link definitions. Current engine pins lose those two structural round trips until they implement the rule.",
   "engines": {
     "js": {
       "html": {
         "identical": 2006,
-        "strict": 1874,
+        "strict": 1872,
         "total": 2513
       },
       "md": {
-        "identical": 1820,
+        "identical": 1818,
         "strict": 1416,
         "total": 2513
       }
@@ -16,11 +17,11 @@
     "php": {
       "html": {
         "identical": 2040,
-        "strict": 1906,
+        "strict": 1904,
         "total": 2513
       },
       "md": {
-        "identical": 1818,
+        "identical": 1816,
         "strict": 1375,
         "total": 2513
       }
@@ -28,12 +29,12 @@
     "rs": {
       "html": {
         "identical": 1995,
-        "strict": 1864,
+        "strict": 1862,
         "total": 2513
       },
       "md": {
-        "identical": 1843,
-        "strict": 1621,
+        "identical": 1841,
+        "strict": 1619,
         "total": 2513
       }
     }
