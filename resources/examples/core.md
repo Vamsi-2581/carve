@@ -2646,30 +2646,34 @@ A backslash-escaped quote inside the title is a literal quote, exactly as in an 
 
 :::
 
-A reference definition requires a non-empty destination (grammar `reference_definition`). A `[r]:` with nothing after the colon — or only trailing whitespace — is **not** a definition; the line stays literal text.
+A bare `[r]:` is an empty reference definition. Trailing ASCII spaces and
+tabs do not add a destination. The definition is invisible and can resolve a
+later reference to an empty URL.
 
 ::: compare
 
 ```carve
 [r]:
+
+[x][r]
 ```
 
 ```html
-<p>[r]:</p>
+<p><a href="">x</a></p>
 ```
 
 :::
-
-Trailing whitespace after the colon does not create a destination either, so it is still literal.
 
 ::: compare
 
 ```carve
 [r]:   
+
+[x][r]
 ```
 
 ```html
-<p>[r]:</p>
+<p><a href="">x</a></p>
 ```
 
 :::

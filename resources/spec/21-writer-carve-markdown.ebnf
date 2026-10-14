@@ -144,6 +144,30 @@
       string (PART 12 §3), so the writer has nothing to reproduce and must
       CHOOSE.
 
+   6e1. EMPTY DESTINATIONS HAVE A CANONICAL SPELLING -- NORMATIVE
+      [CARVE-P11-070]. A native inline link with `href: ""` and no reference
+      fields writes `[text]()`, or `[]()` when it has no children. A title
+      writes `[text]( "title")`; an image with `src: ""` uses the same
+      destination slot after `![alt]`. The ordinary attribute run follows the
+      close with its existing ownership. The Carve writer inserts no placeholder
+      URL or synthetic child. A metadata-free empty
+      `link_reference_definition` writes `[label]:`, preserving its hoisted
+      node and the `ref`/`rawRef` fields of uses that resolve through it.
+
+      The Markdown target uses angle brackets for an empty destination:
+      `[text](<>)`, `[text](<> "title")`, or the corresponding image form.
+      When it preserves an empty reference definition, it writes
+      `[label]: <>`. These forms read back with an empty destination in
+      CommonMark.
+
+      A supplied empty-definition node with a title or attributes has no
+      native spelling for those fields. A checked writer reports
+      `field-unspellable` for each discarded field under CARVE-P11-046.
+      Importing a foreign reference use as a titled inline link likewise
+      reports any definition node or metadata it discards; a successful
+      visible link is not evidence of complete AST preservation. Canonical
+      writing and a second `fmt` pass preserve all spellable fields.
+
 
    6f. PADDING IS NOT AN ESCAPE WHERE THE PRODUCTION ADMITS PADDING --
       NORMATIVE [CARVE-P11-015]. CARVE-P11-014's padding removes the need for

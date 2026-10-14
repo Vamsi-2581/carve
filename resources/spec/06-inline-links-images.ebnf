@@ -118,11 +118,14 @@ link = inline_link | reference_link | collapsed_reference_link ;
 (* autolink and auto_text_link (crossref) are listed directly in
    inline_element, not here. *)
 
-inline_link = '[', link_text, ']', '(', link_destination, [link_title], ')', [attribute_run] ;
+inline_link = '[', link_text, ']', '(', (link_destination, [link_title]
+                                       | empty_destination), ')', [attribute_run] ;
 reference_link = '[', link_text, ']', '[', reference_label, ']', [attribute_run] ;
 collapsed_reference_link = '[', link_text, ']', '[', ']', [attribute_run] ;
 
-link_text = inline_content ;
+link_text = {inline_element | text_run | literal_special} ;
+(* An empty label is valid independently of the destination: `[]()` has zero
+   inline children, just as the existing `[](/u)` form does. *)
 (* SEMANTIC CONSTRAINT: the link text ends at the matching `]` -- the close
    is balanced-bracket, escape- and LITERAL-SPAN-aware (PART 9 §16's rule for
    inline notes is the same scan); an unescaped bare `]` inside plain text
@@ -188,9 +191,9 @@ link_destination = {destination_escape | balanced_parens | destination_char}+ ;
 balanced_parens = '(', {destination_escape | balanced_parens | destination_char}, ')' ;
 destination_escape = '\', ('(' | ')' | '\') ;
 destination_char = (* any character except '(', ')' and Unicode whitespace *) ;
-(* The destination is a NON-EMPTY run of characters: absolute (`https://…`),
+(* A nonempty destination is a run of characters: absolute (`https://…`),
    relative (`/path`, `./file`), or a bare fragment (`#section`) -- there is
-   no scheme requirement. `[t]()` and `![t]()` are literal text. A quote is
+   no scheme requirement. The empty branch below admits `[t]()` and `![t]()`. A quote is
    an ordinary destination character, since a title opens only after the
    space that ends the destination: `[t](a"b "c")` links to `a"b` with title
    `c`. It ends at the first whitespace (a following
@@ -234,11 +237,11 @@ unicode_url_char = (* any non-whitespace, non-ASCII Unicode character *) ;
    is NOT ignored: the definition is anchored at end of line, so a
    leftover makes the production fail and the whole line is an ordinary
    paragraph -- exactly as `[r]: https://e.com /path` behaves. The separator
-   before the destination is a run of spaces (CARVE-P3-009). Any other
-   whitespace after that run, a tab included, starts the destination slot,
-   which cannot hold it, so the destination is EMPTY and the line is NOT a
-   definition: it stays literal, as `[r]:` and `[r]:` followed only by spaces
-   already do.
+   before a NONEMPTY definition destination is a run of spaces (CARVE-P3-009).
+   Any other whitespace after that run, a tab included, starts the destination
+   slot and makes the line literal. The separate empty-definition branch
+   admits only a bare marker and trailing ASCII spaces or tabs; it does not
+   take the prefix of a line with leftover text.
 
    There is no "trim the ends, keep the interior" variant: `link_destination`
    admits no whitespace at all. *)
@@ -270,6 +273,22 @@ unicode_url_char = (* any non-whitespace, non-ASCII Unicode character *) ;
    that reads `link_title`. *)
 link_title = space, ('"', {escaped_char | literal_backslash | (character - '"' - '\')}, '"')
            | space, ("'", {escaped_char | literal_backslash | (character - "'" - '\')}, "'") ;
+
+(* AN EMPTY DESTINATION IS EXPLICIT -- NORMATIVE [CARVE-P3-024]. This branch
+   consumes no newline. Zero or more ASCII spaces or tabs may precede the
+   closer, but only exactly one ASCII space followed by a quoted run opens a
+   title: `[t]( "T")` has href "" and title T; `[t]("T")` has the
+   nonempty destination `"T"` and no title. Multiple spaces or a tab before
+   a quote do not open a title. A nonempty destination keeps its existing
+   one-space title separator and accepts no trailing padding. Unicode
+   whitespace cannot fill the empty destination's padding slot.
+
+   Empty children, an empty destination, and title presence are independent.
+   An empty link or image stays a node without synthetic text or comments.
+   An authored empty destination emits href="" or src="" in HTML and never
+   produces `destination-denied`. A refused nonempty destination still reports
+   that diagnostic even if its rendered attribute is empty. *)
+empty_destination = link_title, {whitespace} | {whitespace} ;
 
 reference_label = (character - ']' - '@' - newline), {character - ']' - newline} ;
 (* A LABEL SPANS NO LINE BREAK, like `footnote_label`. A collapsed
@@ -317,8 +336,24 @@ reference_label = (character - ']' - '@' - newline), {character - ']' - newline}
    gives href `/u{.c}`), while a TWO-space run cannot -- whitespace ends the
    destination -- so the line is left over at the end-of-line anchor and falls
    back to prose. *)
-reference_definition = '[', reference_label, ']', ':', space+, link_destination,
-                       [link_title], [space, attributes], newline ;
+reference_definition = nonempty_reference_definition | empty_reference_definition ;
+nonempty_reference_definition = '[', reference_label, ']', ':', space+, link_destination,
+                                [link_title], [space, attributes], newline ;
+empty_reference_definition = '[', empty_reference_label, ']', ':', newline ;
+empty_reference_label = (character - ']' - '@' - '^' - newline),
+                        {character - ']' - newline} ;
+(* A bare `[r]:` is a definition with href "" after the usual line-final
+   ASCII space/tab trim (CARVE-P7-001). It has no title or attributes. A line
+   with remaining content must match the nonempty production in FULL or fall
+   back to prose. Caret-led and at-sign-led labels keep their existing
+   footnote/citation/abbreviation precedence. Definition lookup tests whether
+   the normalized key is present, not whether its destination is truthy;
+   duplicate definitions still obey PART 9R R1's last-wins rule. A bare empty
+   definition is valid but produces `empty-reference-definition`, a warning
+   that does not change its AST or rendering. It follows the existing
+   invisible-opener policy and can interrupt a paragraph. An escaped opener
+   remains literal, and a line at a quote column that cannot open a
+   definition remains paragraph text. *)
 (* ANCHORED AT END OF LINE -- NORMATIVE [CARVE-P3-005]. The production ends in `newline`.
    What follows the destination and the optional title is not
    ignored: it makes the production FAIL, and the line is then an ordinary
@@ -417,9 +452,9 @@ reference_definition = '[', reference_label, ']', ':', space+, link_destination,
    blocks and a leading tab is that body's own indentation run (PART 9 §24 C1);
    and a `link_destination` cannot begin with a tab, so `[a]:<SP><TAB>/url` is
    not a reference definition.
-   MARKER REQUIRES CONTENT still applies after the run: `[^f]:` followed by
-   spaces and nothing else is a paragraph, because a line of `whitespace` is
-   blank (PART 1). *)
+   MARKER REQUIRES CONTENT still applies to footnote and abbreviation
+   definitions: `[^f]:` followed by spaces and nothing else is a paragraph.
+   A bare link definition is the explicit exception above. *)
 (* --- Inline Spans --- *)
 (* A bracketed inline run immediately followed by an attribute block
    attaches those attributes to a <span>. Distinguished from links by the
@@ -515,7 +550,8 @@ control_char = (* any character in Unicode General_Category Cc *) ;
 (* An image has the same three forms as a link (inline / reference / collapsed
    reference); only the leading `!` and the `<img src>` output differ. *)
 image = inline_image | reference_image | collapsed_reference_image ;
-inline_image = '!', '[', alt_text, ']', '(', image_source, [image_title], ')', [attribute_run] ;
+inline_image = '!', '[', alt_text, ']', '(', (image_source, [image_title]
+                                               | empty_destination), ')', [attribute_run] ;
 reference_image = '!', '[', alt_text, ']', '[', reference_label, ']', [attribute_run] ;
 collapsed_reference_image = '!', '[', alt_text, ']', '[', ']', [attribute_run] ;
 alt_text = {character} ;

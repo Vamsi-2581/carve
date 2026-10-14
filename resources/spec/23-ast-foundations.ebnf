@@ -206,8 +206,8 @@
          "rawRef":"[getting started][]"}
 
       `ref` is present because the author wrote a reference link (PART 12 §3), `href`
-      is empty because there is no destination, and `rawRef` carries the
-      source. A tree publishing `{"type":"link","href":"#Getting-Started"}`
+      is empty because no definition or heading resolved it, and `rawRef`
+      carries the source. A tree publishing `{"type":"link","href":"#Getting-Started"}`
       for that source has serialized a later stage.
 
       A RESOLVED REFERENCE KEEPS ITS DESTINATION -- NORMATIVE [CARVE-P12-006]. Where the
@@ -216,8 +216,15 @@
         {"type":"link","href":"/start","ref":"getting started",
          "rawRef":"[getting started][]"}
 
-      `href` is empty only where nothing resolved the reference; `ref` and
-      `rawRef` survive either way.
+      `href` may also be empty when the matching hoisted definition has an
+      explicitly empty destination. Resolve by definition membership under
+      PART 9R R1's label key, not by whether `href` is truthy. An inline link
+      with `href: ""` and no `ref`/`rawRef` is an explicit empty destination;
+      a reference with `href: ""` and a matching empty definition is resolved;
+      one without a matching definition is unresolved. These three states
+      survive whole-document JSON encode/decode and rendering. The use node
+      alone cannot distinguish the two reference states; the document retains
+      the hoisted definition. `ref` and `rawRef` survive either way.
 
       THE COLLAPSED FORM'S `ref` IS THE DERIVED LABEL. For `[getting started][]`
       `ref` carries `"getting started"`, the label the reference resolves by;

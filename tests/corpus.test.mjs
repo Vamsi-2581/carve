@@ -36,6 +36,37 @@ import { REFUSED_ALLOW } from '../scripts/spec/refused-allow.mjs'
 
 const oracleHtml = (source) => renderDoc(parse(source)).trim()
 
+const emptyDestinationCases = JSON.parse(readFileSync(resolve('resources/spec/empty-destination-cases.json'), 'utf8'))
+for (const entry of emptyDestinationCases.cases.filter((item) => item.html)) {
+  test(`empty destination: ${entry.id}`, () => {
+    assert.equal(oracleHtml(entry.source), entry.html)
+  })
+}
+for (const entry of emptyDestinationCases.cases.filter((item) => Object.hasOwn(item, 'definition'))) {
+  test(`empty destination definition: ${entry.id}`, () => {
+    if (entry.id === 'reserved-citation-label') {
+      assert.throws(() => parse(entry.source), Refuse)
+      return
+    }
+    const definitions = [...parse(entry.source).linkDefs.values()]
+    if (entry.definition === null) {
+      assert.equal(definitions.length, 0)
+    } else {
+      assert.ok(definitions.some((def) => def.rawLabel === entry.definition.label && def.url === entry.definition.href))
+    }
+  })
+}
+for (const entry of emptyDestinationCases.cases.filter((item) => item.kind && !item.html)) {
+  test(`empty destination shape: ${entry.id}`, () => {
+    const rendered = oracleHtml(entry.source)
+    if (entry.kind === 'link') assert.match(rendered, /<a href=/)
+    else if (entry.kind === 'image') assert.match(rendered, /<img src=/)
+    else {
+      assert.doesNotMatch(rendered, /<a href=|<img src=/)
+    }
+  })
+}
+
 test('a nonzero below-column comment retains its existing item ownership', () => {
   assert.equal(oracleHtml('- intro\n  %% a\n %% b\n  tail\n'),
     '<ul>\n  <li>intro\n    tail\n  </li>\n</ul>')

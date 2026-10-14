@@ -698,7 +698,7 @@ At a storage or process boundary, wrap the tree in an envelope:
 
 ```json
 {
-  "astVersion": "1.1",
+  "astVersion": "2.0",
   "vocabulary": "https://markup-carve.org/ast/core",
   "extensions": [{ "id": "https://markup-carve.org/ext/citations", "version": "1" }],
   "document": { "type": "document", "children": [], "srcByteLength": 0 }

@@ -199,6 +199,7 @@ const QUOTE = /^>(?: (.*)|[ \t]*$)/
 // quote inside the destination (`/u{x} {.c}`, `it's {.c}`) read correctly. With
 // no space the braces are destination (`[a]: /u{.c}`).
 const LINK_DEF = /^\[([^\]@][^\]]*)\]: +(\P{White_Space}+)(?: (?:"((?:\\"|[^"])*)"|'((?:\\'|[^'])*)'))?(?: (\{.*\}))?[ \t]*$/u
+const EMPTY_LINK_DEF = /^\[([^\]@^][^\]]*)\]:[ \t]*$/u
 
 /*
  * The production's own test, and the only spelling of it. Every place that
@@ -207,6 +208,8 @@ const LINK_DEF = /^\[([^\]@][^\]]*)\]: +(\P{White_Space}+)(?: (?:"((?:\\"|[^"])*
  * calls this, so narrowing the rule changes all of them at once (carve#922).
  */
 function matchLinkDef(line) {
+  const empty = EMPTY_LINK_DEF.exec(line)
+  if (empty) return { label: empty[1], url: '', title: undefined, attrs: undefined }
   const m = LINK_DEF.exec(line)
   if (!m) return null
   const url = matchDestination(m[2])

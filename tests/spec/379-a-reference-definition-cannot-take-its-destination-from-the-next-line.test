@@ -5,9 +5,9 @@ A reference definition cannot take its destination from the next line
  :::
 .
 <ul>
-  <li>[d]:
-:::</li>
+  <li></li>
 </ul>
+<p>:::</p>
 ```
 
 ```
@@ -15,9 +15,9 @@ A reference definition cannot take its destination from the next line
  text
 .
 <ul>
-  <li>[d]:
-text</li>
+  <li></li>
 </ul>
+<p>text</p>
 ```
 
 ```

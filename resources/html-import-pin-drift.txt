@@ -1,3 +1,4 @@
 # HTML import fixtures the pinned reference engine does not reproduce.
 # Format: <fixture><two spaces><reason>. Remove entries when the pin catches up.
 # html-import:check rejects both undeclared mismatches and stale entries.
+destination-less-link  ahead of the pin: explicit empty href and src import as native nodes under CARVE-P3-024 (carve#2878)

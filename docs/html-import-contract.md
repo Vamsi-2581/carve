@@ -258,74 +258,39 @@ The AST-returning exit reports no structural loss for valid ruby. The
 source-writing exit uses readable `base(annotation)` fallback and reports
 `structure-unspellable`, because Carve 0.1 cannot retain the pairing.
 
-## A destination Carve cannot carry is not a destination
+## Empty and missing HTML destinations
 
-A `link` node needs a destination and an `image` node needs a source, and Carve
-spells both in the same slot. It has NO spelling for an empty one: `[t]()` and
-`![t]()` are literal text. So an importer that writes the empty slot has not
-written a link, it has written four punctuation characters the HTML never held,
-into the middle of the prose.
+Carve has an explicit empty destination: `[t]()` is a link and `![alt]()` is
+an image. An HTML anchor with `href=""` therefore imports as an empty link;
+an image with `src=""` imports as an empty image. ASCII whitespace around a
+URL value is stripped before this decision. A present whitespace-only value
+has the same empty destination.
 
-THE RULE IS OVER THE DESTINATION, not over the reason it is missing. An `<a>`
-with no `href`, an `<a href="">`, and an `<img>` whose `src` is either of those,
-are ONE shape: the element names no destination the source can carry. For any of
-them the importer produces NO link or image node, and writes what the element's
-CONTENT and its SURVIVING attributes would produce without it - the span where
-an attribute survives, the bare content where none does. That is the
-unwrapped `<div>` boundary one layer down, and it is the same boundary
-because it is the same question: what is the element still needed to hold?
+A missing `href` or `src` is different. The element has no destination field
+to carry, so the importer unwraps it to its visible content and surviving
+attributes. For an image, the visible fallback is its alt text. This loss is
+reported as `element-unwrapped`.
 
 ```html
 <p><a href="">click here</a> and <a id="k">a named one</a></p>
 ```
 
 ```
-click here and [a named one]{#k}
+[click here]() and [a named one]{#k}
 ```
 
-AN IMAGE'S CONTENT IS ITS ALTERNATIVE TEXT. That is what every target with no
-image shows for it, and what a browser shows for one it cannot load, so it is
-the text a reader of this document was going to see either way.
-
-EMPTY IS A PROPERTY OF THE STRING, read the way an HTML URL attribute is read: a
-value of zero length, or of zero length once leading and trailing ASCII
-whitespace is stripped, because that is what a URL parser strips before
-resolving one. A value that is merely unusual is not empty and is kept.
-
-The element is reported as `element-unwrapped`. A link that comes back as prose
-is a lossy decision, and this page requires those to be observable. It is not
-the bare `<div>`'s case, where nothing was lost because nothing was carried: an
-anchor has a slot for a destination, and this one is standing empty.
-
-**THE SECURITY HALF, AND WHY AN IMPORTER MUST NOT REBUILD THE LINK.** This is
-not hypothetical input. It is what Carve's own renderer EMITS: PART 9 §25's URL
-sink denylist blanks a destination whose scheme is dangerous, emitting
-`href=""` or `src=""` while keeping the visible text, because WHAT IS BLANKED IS
-THE DESTINATION, NOT THE TEXT. Seven corpus documents are exactly that output.
-An importer reading a hardened render therefore turned the renderer's deliberate
-half-measure into visible punctuation, and did so on the documents whose output
-had been thought about hardest.
-
-WHAT THE ROUND TRIP OWES THERE IS THE TEXT, and nothing else. The destination is
-gone from the HTML by design: the renderer withheld it and wrote no provenance
-for it, so there is nothing in the document to rebuild it from. An importer MUST
-NOT ATTEMPT TO RECONSTRUCT IT - not from a `title`, not from the anchor's own
-text, not from a Carve provenance attribute in `roundtrip` mode, not from
-anything. Any route that produced a destination here would be reconstructing the
-exact value a security rule removed, which would make the importer a way around
-PART 9 §25 rather than a reader of its output. Keeping the text and writing no
-link is the whole of what is owed, and it is the outcome this rule already
-reaches.
-
-`destination-less-link` pins the anchor, the image and the surviving-attribute
-side.
+A renderer may also emit `href=""` after denying a nonempty URL. Those HTML
+bytes do not reveal the original destination. Importing them as an empty link
+must never restore the denied URL, even from a roundtrip carrier or visible
+text. The link's original destination is lost and any API claiming AST
+fidelity must report that loss when it has the original context.
 
 ## A denied destination is not a destination either
 
 A destination whose scheme PART 9 §25's sink denylist blanks (`javascript`,
 `vbscript`, `data`, `file` and the OS-handler schemes such as `ms-msdt`) is
-imported exactly like an empty one: no link or
-image node, only the content and any surviving attributes (carve#2254). The
+imported like a missing destination: no link or image node, only the
+content and any surviving attributes (carve#2254). The
 scheme is read the way the sink reads it, with controls and whitespace removed
 first, so `java&#9;script:` is denied too.
 
@@ -2408,7 +2373,7 @@ The shared set is deliberately small and each directory has one subject:
 | `unsupported-element-keeps-its-blocks` | unsupported elements around blocks, beside loose text, nested two deep, inside a list item and inside a paragraph, each replaced by its children with one row |
 | `container-label-keeps-the-fence` | a `<div>` kept by its grouping label alone, an id-bearing one whose label comes back on the opener, and one whose label the lift refuses so it unwraps after all |
 | `diagnostic-order` | two losses in one table, whose rows follow the document and not the order the importer builds them in |
-| `destination-less-link` | an anchor and an image with no destination the source can carry, which come back as their content rather than as `[t]()` |
+| `destination-less-link` | an explicit empty `href` or `src` becomes a native node; the anchor missing `href` unwraps. The pinned engine's older output is declared in `html-import-pin-drift.txt`. |
 | `denied-scheme-destination` | a `javascript:` anchor, a split-scheme anchor that keeps its `id`, and a `data:` image, which come back as their content with one warning each |
 | `marker-shaped-cell` | a table cell whose whole payload is a span marker, escaped so the cell survives |
 | `symbol-sigil-escape` | a symbol sigil in imported text, escaped so it stays the text the HTML held |

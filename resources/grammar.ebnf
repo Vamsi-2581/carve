@@ -2300,11 +2300,14 @@ link = inline_link | reference_link | collapsed_reference_link ;
 (* autolink and auto_text_link (crossref) are listed directly in
    inline_element, not here. *)
 
-inline_link = '[', link_text, ']', '(', link_destination, [link_title], ')', [attribute_run] ;
+inline_link = '[', link_text, ']', '(', (link_destination, [link_title]
+                                       | empty_destination), ')', [attribute_run] ;
 reference_link = '[', link_text, ']', '[', reference_label, ']', [attribute_run] ;
 collapsed_reference_link = '[', link_text, ']', '[', ']', [attribute_run] ;
 
-link_text = inline_content ;
+link_text = {inline_element | text_run | literal_special} ;
+(* An empty label is valid independently of the destination: `[]()` has zero
+   inline children, just as the existing `[](/u)` form does. *)
 (* SEMANTIC CONSTRAINT: the link text ends at the matching `]` -- the close
    is balanced-bracket, escape- and LITERAL-SPAN-aware (PART 9 §16's rule for
    inline notes is the same scan); an unescaped bare `]` inside plain text
@@ -2370,9 +2373,9 @@ link_destination = {destination_escape | balanced_parens | destination_char}+ ;
 balanced_parens = '(', {destination_escape | balanced_parens | destination_char}, ')' ;
 destination_escape = '\', ('(' | ')' | '\') ;
 destination_char = (* any character except '(', ')' and Unicode whitespace *) ;
-(* The destination is a NON-EMPTY run of characters: absolute (`https://…`),
+(* A nonempty destination is a run of characters: absolute (`https://…`),
    relative (`/path`, `./file`), or a bare fragment (`#section`) -- there is
-   no scheme requirement. `[t]()` and `![t]()` are literal text. A quote is
+   no scheme requirement. The empty branch below admits `[t]()` and `![t]()`. A quote is
    an ordinary destination character, since a title opens only after the
    space that ends the destination: `[t](a"b "c")` links to `a"b` with title
    `c`. It ends at the first whitespace (a following
@@ -2416,11 +2419,11 @@ unicode_url_char = (* any non-whitespace, non-ASCII Unicode character *) ;
    is NOT ignored: the definition is anchored at end of line, so a
    leftover makes the production fail and the whole line is an ordinary
    paragraph -- exactly as `[r]: https://e.com /path` behaves. The separator
-   before the destination is a run of spaces (CARVE-P3-009). Any other
-   whitespace after that run, a tab included, starts the destination slot,
-   which cannot hold it, so the destination is EMPTY and the line is NOT a
-   definition: it stays literal, as `[r]:` and `[r]:` followed only by spaces
-   already do.
+   before a NONEMPTY definition destination is a run of spaces (CARVE-P3-009).
+   Any other whitespace after that run, a tab included, starts the destination
+   slot and makes the line literal. The separate empty-definition branch
+   admits only a bare marker and trailing ASCII spaces or tabs; it does not
+   take the prefix of a line with leftover text.
 
    There is no "trim the ends, keep the interior" variant: `link_destination`
    admits no whitespace at all. *)
@@ -2452,6 +2455,22 @@ unicode_url_char = (* any non-whitespace, non-ASCII Unicode character *) ;
    that reads `link_title`. *)
 link_title = space, ('"', {escaped_char | literal_backslash | (character - '"' - '\')}, '"')
            | space, ("'", {escaped_char | literal_backslash | (character - "'" - '\')}, "'") ;
+
+(* AN EMPTY DESTINATION IS EXPLICIT -- NORMATIVE [CARVE-P3-024]. This branch
+   consumes no newline. Zero or more ASCII spaces or tabs may precede the
+   closer, but only exactly one ASCII space followed by a quoted run opens a
+   title: `[t]( "T")` has href "" and title T; `[t]("T")` has the
+   nonempty destination `"T"` and no title. Multiple spaces or a tab before
+   a quote do not open a title. A nonempty destination keeps its existing
+   one-space title separator and accepts no trailing padding. Unicode
+   whitespace cannot fill the empty destination's padding slot.
+
+   Empty children, an empty destination, and title presence are independent.
+   An empty link or image stays a node without synthetic text or comments.
+   An authored empty destination emits href="" or src="" in HTML and never
+   produces `destination-denied`. A refused nonempty destination still reports
+   that diagnostic even if its rendered attribute is empty. *)
+empty_destination = link_title, {whitespace} | {whitespace} ;
 
 reference_label = (character - ']' - '@' - newline), {character - ']' - newline} ;
 (* A LABEL SPANS NO LINE BREAK, like `footnote_label`. A collapsed
@@ -2499,8 +2518,24 @@ reference_label = (character - ']' - '@' - newline), {character - ']' - newline}
    gives href `/u{.c}`), while a TWO-space run cannot -- whitespace ends the
    destination -- so the line is left over at the end-of-line anchor and falls
    back to prose. *)
-reference_definition = '[', reference_label, ']', ':', space+, link_destination,
-                       [link_title], [space, attributes], newline ;
+reference_definition = nonempty_reference_definition | empty_reference_definition ;
+nonempty_reference_definition = '[', reference_label, ']', ':', space+, link_destination,
+                                [link_title], [space, attributes], newline ;
+empty_reference_definition = '[', empty_reference_label, ']', ':', newline ;
+empty_reference_label = (character - ']' - '@' - '^' - newline),
+                        {character - ']' - newline} ;
+(* A bare `[r]:` is a definition with href "" after the usual line-final
+   ASCII space/tab trim (CARVE-P7-001). It has no title or attributes. A line
+   with remaining content must match the nonempty production in FULL or fall
+   back to prose. Caret-led and at-sign-led labels keep their existing
+   footnote/citation/abbreviation precedence. Definition lookup tests whether
+   the normalized key is present, not whether its destination is truthy;
+   duplicate definitions still obey PART 9R R1's last-wins rule. A bare empty
+   definition is valid but produces `empty-reference-definition`, a warning
+   that does not change its AST or rendering. It follows the existing
+   invisible-opener policy and can interrupt a paragraph. An escaped opener
+   remains literal, and a line at a quote column that cannot open a
+   definition remains paragraph text. *)
 (* ANCHORED AT END OF LINE -- NORMATIVE [CARVE-P3-005]. The production ends in `newline`.
    What follows the destination and the optional title is not
    ignored: it makes the production FAIL, and the line is then an ordinary
@@ -2599,9 +2634,9 @@ reference_definition = '[', reference_label, ']', ':', space+, link_destination,
    blocks and a leading tab is that body's own indentation run (PART 9 §24 C1);
    and a `link_destination` cannot begin with a tab, so `[a]:<SP><TAB>/url` is
    not a reference definition.
-   MARKER REQUIRES CONTENT still applies after the run: `[^f]:` followed by
-   spaces and nothing else is a paragraph, because a line of `whitespace` is
-   blank (PART 1). *)
+   MARKER REQUIRES CONTENT still applies to footnote and abbreviation
+   definitions: `[^f]:` followed by spaces and nothing else is a paragraph.
+   A bare link definition is the explicit exception above. *)
 (* --- Inline Spans --- *)
 (* A bracketed inline run immediately followed by an attribute block
    attaches those attributes to a <span>. Distinguished from links by the
@@ -2697,7 +2732,8 @@ control_char = (* any character in Unicode General_Category Cc *) ;
 (* An image has the same three forms as a link (inline / reference / collapsed
    reference); only the leading `!` and the `<img src>` output differ. *)
 image = inline_image | reference_image | collapsed_reference_image ;
-inline_image = '!', '[', alt_text, ']', '(', image_source, [image_title], ')', [attribute_run] ;
+inline_image = '!', '[', alt_text, ']', '(', (image_source, [image_title]
+                                               | empty_destination), ')', [attribute_run] ;
 reference_image = '!', '[', alt_text, ']', '[', reference_label, ']', [attribute_run] ;
 collapsed_reference_image = '!', '[', alt_text, ']', '[', ']', [attribute_run] ;
 alt_text = {character} ;
@@ -7261,6 +7297,11 @@ EOF = (* end of file *) ;
       If multiple definitions normalize to one key, the LAST link definition
       wins. A diagnostic on every later colliding definition names both raw
       spellings and the normalized key; raw spelling remains source metadata.
+      A bare `[label]:` is a definition whose URL is the present empty string.
+      Lookup tests key membership, independent of URL truthiness. A use of
+      that key resolves to an empty href or src and retains its reference
+      provenance; an absent key remains unresolved. The existing label key,
+      duplicate precedence, hoisting and container rules apply unchanged.
       Unresolved -> the bracketed run renders as literal source text. Carve
       has NO shortcut reference: a bare [label] or ![alt] never resolves
       (PART 9 §14). A collapsed image `![alt][]` takes its alt text as the
@@ -9225,6 +9266,30 @@ EOF = (* end of file *) ;
       its padding no more than `code_block` records the space before its info
       string (PART 12 §3), so the writer has nothing to reproduce and must
       CHOOSE.
+
+   6e1. EMPTY DESTINATIONS HAVE A CANONICAL SPELLING -- NORMATIVE
+      [CARVE-P11-070]. A native inline link with `href: ""` and no reference
+      fields writes `[text]()`, or `[]()` when it has no children. A title
+      writes `[text]( "title")`; an image with `src: ""` uses the same
+      destination slot after `![alt]`. The ordinary attribute run follows the
+      close with its existing ownership. The Carve writer inserts no placeholder
+      URL or synthetic child. A metadata-free empty
+      `link_reference_definition` writes `[label]:`, preserving its hoisted
+      node and the `ref`/`rawRef` fields of uses that resolve through it.
+
+      The Markdown target uses angle brackets for an empty destination:
+      `[text](<>)`, `[text](<> "title")`, or the corresponding image form.
+      When it preserves an empty reference definition, it writes
+      `[label]: <>`. These forms read back with an empty destination in
+      CommonMark.
+
+      A supplied empty-definition node with a title or attributes has no
+      native spelling for those fields. A checked writer reports
+      `field-unspellable` for each discarded field under CARVE-P11-046.
+      Importing a foreign reference use as a titled inline link likewise
+      reports any definition node or metadata it discards; a successful
+      visible link is not evidence of complete AST preservation. Canonical
+      writing and a second `fmt` pass preserve all spellable fields.
 
 
    6f. PADDING IS NOT AN ESCAPE WHERE THE PRODUCTION ADMITS PADDING --
@@ -11252,8 +11317,8 @@ EOF = (* end of file *) ;
          "rawRef":"[getting started][]"}
 
       `ref` is present because the author wrote a reference link (PART 12 §3), `href`
-      is empty because there is no destination, and `rawRef` carries the
-      source. A tree publishing `{"type":"link","href":"#Getting-Started"}`
+      is empty because no definition or heading resolved it, and `rawRef`
+      carries the source. A tree publishing `{"type":"link","href":"#Getting-Started"}`
       for that source has serialized a later stage.
 
       A RESOLVED REFERENCE KEEPS ITS DESTINATION -- NORMATIVE [CARVE-P12-006]. Where the
@@ -11262,8 +11327,15 @@ EOF = (* end of file *) ;
         {"type":"link","href":"/start","ref":"getting started",
          "rawRef":"[getting started][]"}
 
-      `href` is empty only where nothing resolved the reference; `ref` and
-      `rawRef` survive either way.
+      `href` may also be empty when the matching hoisted definition has an
+      explicitly empty destination. Resolve by definition membership under
+      PART 9R R1's label key, not by whether `href` is truthy. An inline link
+      with `href: ""` and no `ref`/`rawRef` is an explicit empty destination;
+      a reference with `href: ""` and a matching empty definition is resolved;
+      one without a matching definition is unresolved. These three states
+      survive whole-document JSON encode/decode and rendering. The use node
+      alone cannot distinguish the two reference states; the document retains
+      the hoisted definition. `ref` and `rawRef` survive either way.
 
       THE COLLAPSED FORM'S `ref` IS THE DERIVED LABEL. For `[getting started][]`
       `ref` carries `"getting started"`, the label the reference resolves by;
@@ -11703,8 +11775,8 @@ EOF = (* end of file *) ;
    10. A LINK REFERENCE DEFINITION IS A NODE -- NORMATIVE [CARVE-P12-029].
       `type: "link_reference_definition"`, carrying:
         label   the reference label as the author wrote it, unnormalized
-        href    the destination; present and non-empty, since a definition with
-                an empty destination is not a definition but paragraph text
+        href    the destination; present, including the empty string for a
+                bare `[label]:` definition (CARVE-P3-024)
         title   the quoted title, unescaped, when the definition carries one
         attrs   a trailing attribute block on the definition line (CARVE-P3-007)
 
@@ -12647,7 +12719,10 @@ EOF = (* end of file *) ;
       `major.minor` and it does not track the Carve version: the language is
       versioned for authors and this is versioned for readers of a tree. A
       MAJOR bump removes, renames or reinterprets a field or a meaning; a MINOR
-      bump adds a field or a node type. The current contract is 1.1. A leading zero is
+      bump adds a field or a node type. Empty destinations reinterpret an empty
+      `href` on a reference use: it can now be resolved by a matching empty
+      definition rather than always unresolved (CARVE-P12-006). The contract
+      therefore moves to 2.0, even though no field is added. A leading zero is
       refused so the 0.x reading of a major never applies here.
 
       A MINOR SAYS WHAT UPGRADING COSTS, NOT WHAT AN OLD READER TOLERATES. It
