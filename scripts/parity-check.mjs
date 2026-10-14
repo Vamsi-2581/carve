@@ -12,8 +12,6 @@ const js = resolve(process.env.CARVE_JS_DIR ?? resolve(root, '../carve-js'), 'di
 const php = resolve(phpDir(), 'bin/carve')
 const rust = rustBinary()
 const engines = { js: [process.execPath, js], rust: [rust], php: ['php', php] }
-// The pinned php and rust name the row they cannot spell; their mains name the thematic break. Drop at the release pin move.
-const REFUSAL_PIN_LAG = { php: 'table_row', rust: 'table_row' }
 if (![js, php, rust].every(path => path && existsSync(path))) {
   console.error('parity: build all three engines before running this gate')
   process.exit(2)
@@ -121,10 +119,7 @@ try {
   }
   for (const engine of Object.keys(engines)) {
     const refusal = invoke(engine, ['--from-json', '--carve'], table({ blocks: [{ type: 'thematic_break' }] }))
-    const lagged = REFUSAL_PIN_LAG[engine]
-    if (lagged && cleanRefusal(refusal, 'thematic_break')) {
-      failures.push(`${engine}: the pinned engine now names thematic_break - delete its REFUSAL_PIN_LAG entry`)
-    } else if (!cleanRefusal(refusal, lagged ?? 'thematic_break')) {
+    if (!cleanRefusal(refusal, 'thematic_break')) {
       failures.push(`${engine}: an unspellable cell must refuse without output or a stack trace: ${refusal.stderr.trim().split('\n')[0]}`)
     }
   }

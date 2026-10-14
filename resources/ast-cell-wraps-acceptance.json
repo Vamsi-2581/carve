@@ -59,8 +59,7 @@
       "id": "blocked-marker-keeps-span-and-its-joined-text",
       "source": "| ^ | b |\n+ t | u |\n",
       "path": "/children/0/rows/0/cells/0",
-      "expected": { "type": "table_cell", "header": false, "span": "rowspan", "children": [{ "type": "text", "value": "t" }] },
-      "aheadOfPin": { "pinned": { "type": "table_cell", "header": false, "children": [], "span": "rowspan" }, "reason": "CARVE-P12-048 a blocked marker with joined text holds the text (carve#3158); the pinned carve-js drops it" }
+      "expected": { "type": "table_cell", "header": false, "span": "rowspan", "children": [{ "type": "text", "value": "t" }] }
     },
     {
       "id": "blocked-marker-without-text-stays-empty",
@@ -75,7 +74,7 @@
       "path": "/children/0/rows/0/cells/0",
       "continuationLines": 2,
       "expected": { "type": "table_cell", "header": false, "span": "rowspan", "children": [{ "type": "cell_wrap", "line": 2 }, { "type": "text", "value": "t" }] },
-      "aheadOfPin": { "pinned": { "type": "table_cell", "header": false, "children": [], "span": "rowspan" }, "reason": "CARVE-P12-069 the empty first + line contributes nothing and the cell_wrap names the line t came from (carve#3166); the pinned carve-js drops the text (carve-js#3049)" }
+      "aheadOfPin": { "pinned": { "type": "table_cell", "header": false, "children": [{ "type": "text", "value": "t" }], "span": "rowspan" }, "reason": "CARVE-P12-069 the cell_wrap names the second + line t came from (carve#3166); the pinned carve-js keeps t without it (carve-js#3058)" }
     }
   ]
 }
