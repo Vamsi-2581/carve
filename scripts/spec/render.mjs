@@ -65,7 +65,16 @@ export function destValue(dest) {
 // production read from three places (a link tail, an image, the nested-run
 // skip in `brContent`), so its two readers take its parts from here rather
 // than each spelling the slot's children out again.
-const destSlotParts = (slot) => [slot.child(1), slot.child(2)]
+const destSlotParts = (slot) => {
+  const body = slot.child(1).child(0)
+  if (body.ctorName === 'destSlotBody_emptyTitle') {
+    return [{ sourceString: '' }, { numChildren: 1, child: () => body.child(0) }]
+  }
+  if (body.ctorName === 'destSlotBody_empty') {
+    return [{ sourceString: '' }, { numChildren: 0 }]
+  }
+  return [body.child(0), body.child(1)]
+}
 
 // A reference definition's destination is the same `link_destination`: its
 // value, or null when the run is not one (an unbalanced parenthesis).

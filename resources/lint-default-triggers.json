@@ -4,6 +4,7 @@
   "broken-crossref": "see </#nope>\n",
   "broken-fragment-link": "see [text](#nope)\n",
   "unresolved-reference-link": "see [text][nope]\n",
+  "empty-reference-definition": "[r]:\n",
   "unresolved-footnote": "see[^nope]\n",
   "duplicate-footnote-definition": "x[^a]\n\n[^a]: one\n\n[^a]: two\n",
   "unused-footnote-definition": "text\n\n[^a]: never used\n",

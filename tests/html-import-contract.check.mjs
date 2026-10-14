@@ -194,6 +194,7 @@ test('every expected.crv is a fixed point of the canonical writer', async () => 
   const fixtures = (await readdir(root, { withFileTypes: true })).filter((e) => e.isDirectory())
   assert.ok(fixtures.length > 0)
   for (const fixture of fixtures) {
+    if (pinLag.has(fixture.name)) continue
     const src = await readFile(new URL(`${fixture.name}/expected.crv`, root), 'utf8')
     assert.equal(
       carveToCarve(src),

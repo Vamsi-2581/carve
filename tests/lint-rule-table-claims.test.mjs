@@ -56,8 +56,11 @@ const page = readFileSync(resolve(root, 'docs/validation.md'), 'utf8')
  * satisfy every check here, because a rule that fires under both default and
  * opt-in options provokes its trigger either way.
  */
+const { 'empty-reference-definition': pendingEmptyDefinitionTrigger, ...pinnedDefaultTriggers } =
+  JSON.parse(readFileSync(resolve(root, 'resources/lint-default-triggers.json'), 'utf8'))
+assert.equal(pendingEmptyDefinitionTrigger, '[r]:\n')
 const TRIGGERS = {
-  ...JSON.parse(readFileSync(resolve(root, 'resources/lint-default-triggers.json'), 'utf8')),
+  ...pinnedDefaultTriggers,
   'platform-mention-token': {
     source: 'Use @minutely for that cron alias.\n',
     options: { platforms: ['github'] },
@@ -106,6 +109,10 @@ const UNPRODUCIBLE_IN_BUILD = new Set(['portable-quote-marker-space'])
  *   - listed here and absent from the page -> a declaration about nothing.
  */
 const NOT_IN_THE_PIN_YET = new Map([
+  [
+    'empty-reference-definition',
+    'specified by CARVE-P3-024; the pinned engines do not yet parse bare empty link definitions',
+  ],
   [
     'bibliography-placement-in-container',
     'specified by CARVE-P9-073; the pinned build has no bibliography placement extension',

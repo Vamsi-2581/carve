@@ -3,17 +3,17 @@ An empty link destination is not a link
 ```
 [x]()
 .
-<p>[x]()</p>
+<p><a href="">x</a></p>
 ```
 
 ```
 ![x]()
 .
-<p>![x]()</p>
+<img src="" alt="x">
 ```
 
 ```
 [x]( "t")
 .
-<p>[x]( “t”)</p>
+<p><a href="" title="t">x</a></p>
 ```

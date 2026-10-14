@@ -45,6 +45,11 @@
       If multiple definitions normalize to one key, the LAST link definition
       wins. A diagnostic on every later colliding definition names both raw
       spellings and the normalized key; raw spelling remains source metadata.
+      A bare `[label]:` is a definition whose URL is the present empty string.
+      Lookup tests key membership, independent of URL truthiness. A use of
+      that key resolves to an empty href or src and retains its reference
+      provenance; an absent key remains unresolved. The existing label key,
+      duplicate precedence, hoisting and container rules apply unchanged.
       Unresolved -> the bracketed run renders as literal source text. Carve
       has NO shortcut reference: a bare [label] or ![alt] never resolves
       (PART 9 §14). A collapsed image `![alt][]` takes its alt text as the

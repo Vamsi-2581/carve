@@ -11,7 +11,7 @@
     "forced_super", "forced_sub", "addition", "deletion", "figure_group",
     "footnote_definition", "reference_footnote", "escaped_char", "line_block",
     "abbreviation_definition", "autolink", "mention", "tag", "raw_block",
-    "raw_inline", "smart_quote", "reference_definition", "reference_link",
+    "raw_inline", "smart_quote", "nonempty_reference_definition", "empty_reference_definition", "reference_link",
     "collapsed_reference_link", "reference_image", "collapsed_reference_image"
   ],
   "degradedFixtures": [

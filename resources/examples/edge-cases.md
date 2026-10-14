@@ -25150,9 +25150,9 @@ tail
 
 ## A reference definition cannot take its destination from the next line
 
-The destination belongs to the same physical line as the label. An empty
-destination makes the line prose; lazy list collection cannot supply the next
-line as a URL and consume both as an invisible definition.
+The destination belongs to the same physical line as the label. A bare
+definition has an empty destination; lazy list collection cannot supply the
+next line as a URL.
 
 :::: compare
 
@@ -25163,14 +25163,14 @@ line as a URL and consume both as an invisible definition.
 
 ```html
 <ul>
-  <li>[d]:
-:::</li>
+  <li></li>
 </ul>
+<p>:::</p>
 ```
 
 ::::
 
-Ordinary lazy text after the same empty destination remains visible too.
+Ordinary lazy text after the same empty definition remains visible too.
 
 ::: compare
 
@@ -25181,9 +25181,9 @@ Ordinary lazy text after the same empty destination remains visible too.
 
 ```html
 <ul>
-  <li>[d]:
-text</li>
+  <li></li>
 </ul>
+<p>text</p>
 ```
 
 :::
@@ -35768,8 +35768,9 @@ z_ w</p>
 
 ## An empty link destination is not a link
 
-A destination has at least one character, so `[x]()` and `![x]()` stay literal
-text. A title with no destination before it is literal too.
+The generated fixture name keeps its earlier corpus identifier. Under
+CARVE-P3-024, an explicit empty destination is a link or image. One ASCII space before a
+quoted title gives the empty destination a title.
 
 ::: compare
 
@@ -35778,7 +35779,7 @@ text. A title with no destination before it is literal too.
 ```
 
 ```html
-<p>[x]()</p>
+<p><a href="">x</a></p>
 ```
 
 :::
@@ -35790,7 +35791,7 @@ text. A title with no destination before it is literal too.
 ```
 
 ```html
-<p>![x]()</p>
+<img src="" alt="x">
 ```
 
 :::
@@ -35802,7 +35803,7 @@ text. A title with no destination before it is literal too.
 ```
 
 ```html
-<p>[x]( “t”)</p>
+<p><a href="" title="t">x</a></p>
 ```
 
 :::

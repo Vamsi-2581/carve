@@ -962,14 +962,6 @@ const REJECTED = [
     why: 'a heading level outside 1-6',
     doc: { type: 'document', srcByteLength: 0, children: [{ type: 'heading', level: 7, children: [] }] },
   },
-  {
-    why: 'a link reference definition with an empty destination (CARVE-P12-029)',
-    doc: {
-      type: 'document',
-      srcByteLength: 0,
-      children: [{ type: 'link_reference_definition', label: 'a', href: '' }],
-    },
-  },
 ]
 
 for (const { why, doc } of REJECTED) {
@@ -985,6 +977,14 @@ test('the schema accepts a minimal document', () => {
     validate({ type: 'document', children: [], srcByteLength: 0 }),
     `an empty document must validate: ${firstErrors()}`,
   )
+})
+
+test('the schema accepts an authored empty link reference definition', () => {
+  assert.equal(validate({
+    type: 'document',
+    srcByteLength: 0,
+    children: [{ type: 'link_reference_definition', label: 'a', href: '' }],
+  }), true)
 })
 
 /*

@@ -1475,6 +1475,12 @@
       "scope": "canonical-writing"
     },
     {
+      "id": "CARVE-P11-070",
+      "part": "11",
+      "title": "EMPTY DESTINATIONS HAVE A CANONICAL SPELLING",
+      "scope": "canonical-writing"
+    },
+    {
       "id": "CARVE-P11-036",
       "part": "11",
       "title": "A HARD LIST BOUNDARY IS WRITTEN AS EXACTLY THREE BLANK LINES",
@@ -2030,6 +2036,12 @@
       "id": "CARVE-P3-023",
       "part": "3",
       "title": "SMART QUOTE DIRECTION",
+      "scope": "parsing"
+    },
+    {
+      "id": "CARVE-P3-024",
+      "part": "3",
+      "title": "AN EMPTY DESTINATION IS EXPLICIT",
       "scope": "parsing"
     },
     {

@@ -446,7 +446,10 @@ CarveCore {
   // ONE SPELLING of the parenthesized destination slot, read from the link
   // tail, the image and the nested-run skip above. It was written out twice
   // and the skip would have been a third copy.
-  destSlot   = "(" dest destTitle? ")"
+  destSlot   = "(" destSlotBody ")"
+  destSlotBody = dest destTitle? -- nonempty
+               | destTitle (" " | "\t")* -- emptyTitle
+               | (" " | "\t")* -- empty
   refTail    = "[" refLabel? "]" attrRun?
   refLabel   = (~"]" ~newline any)+
   // A destination's parentheses BALANCE (grammar link_destination), so a URL
