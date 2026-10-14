@@ -271,6 +271,7 @@ export default defineConfig({
             { text: 'Whitespace Across Formats', link: '/portable-whitespace' },
             { text: 'Markup Language Comparison', link: '/markup-languages' },
             { text: 'Compare Implementations', link: '/implementation-comparison' },
+            { text: 'Supported CLI Paths', link: '/supported-path-matrix' },
             { text: 'Security', link: '/security' },
             { text: 'Output Without JavaScript', link: '/graceful-degradation' },
             { text: 'Static Output Recipes', link: '/static-rendering-recipes' },

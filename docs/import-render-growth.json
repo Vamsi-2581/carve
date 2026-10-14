@@ -1,0 +1,1560 @@
+{
+  "builds": {
+    "js": {
+      "commit": "94fd3bb1f6df072c58cc0acdebf3f1ad50aa0448",
+      "artifactScope": "dist/",
+      "artifactHash": "56a58015e1693f9d1a759035ca60a6c184a6f99df3e4d1d0fe7be4ff5c9c7d44"
+    },
+    "php": {
+      "commit": "162f1c6946efbee2fe8fee1aa0daaf3286fe955e",
+      "artifactScope": "src/, bin/carve, composer.lock",
+      "artifactHash": "5cc36f520e43b5cfa7f4d7f8ab82e2fda6b445e88f2739f047f3775b2cc39b0f"
+    },
+    "rs": {
+      "commit": "bf67f3c6cca94ac95cdbbed14cfd05d41b9c1237",
+      "artifactScope": "CLI binary",
+      "artifactHash": "1837a5e03a300518897e5ecdd0ab712d9bdc03b9392fedd6295c6d300ceaf46f",
+      "profile": "debug"
+    }
+  },
+  "rows": [
+    {
+      "case": "djot-references",
+      "n": 100,
+      "engine": "js",
+      "cpu": [
+        0.35,
+        0.39,
+        0.41
+      ],
+      "median": 0.39,
+      "bytes": 2021,
+      "hash": "638efdc7de2b25f917f76d058d9bc36fa0b2be75cd840ed45c3aaaf0367acafe",
+      "loadavg": "17.99 21.36 19.13 13/8850 211279"
+    },
+    {
+      "case": "djot-references",
+      "n": 100,
+      "engine": "php",
+      "cpu": [
+        0.13,
+        0.12000000000000001,
+        0.17
+      ],
+      "median": 0.13,
+      "bytes": 2021,
+      "hash": "638efdc7de2b25f917f76d058d9bc36fa0b2be75cd840ed45c3aaaf0367acafe",
+      "loadavg": "17.99 21.36 19.13 14/8864 211425"
+    },
+    {
+      "case": "djot-references",
+      "n": 100,
+      "engine": "rs",
+      "cpu": [
+        0.15,
+        0.14,
+        0.14
+      ],
+      "median": 0.14,
+      "bytes": 2021,
+      "hash": "638efdc7de2b25f917f76d058d9bc36fa0b2be75cd840ed45c3aaaf0367acafe",
+      "loadavg": "17.43 21.19 19.09 21/8855 211467"
+    },
+    {
+      "case": "djot-references",
+      "n": 200,
+      "engine": "js",
+      "cpu": [
+        0.6,
+        0.52,
+        0.51
+      ],
+      "median": 0.52,
+      "bytes": 4121,
+      "hash": "9fb88db1b1735f51f2ce7feea53dae42acddefe8d3d64dee9f2fdf22272a67b1",
+      "loadavg": "17.43 21.19 19.09 13/8869 211571"
+    },
+    {
+      "case": "djot-references",
+      "n": 200,
+      "engine": "php",
+      "cpu": [
+        0.23,
+        0.25,
+        0.23
+      ],
+      "median": 0.23,
+      "bytes": 4121,
+      "hash": "9fb88db1b1735f51f2ce7feea53dae42acddefe8d3d64dee9f2fdf22272a67b1",
+      "loadavg": "17.43 21.19 19.09 15/8863 211716"
+    },
+    {
+      "case": "djot-references",
+      "n": 200,
+      "engine": "rs",
+      "cpu": [
+        0.19,
+        0.22,
+        0.21000000000000002
+      ],
+      "median": 0.21000000000000002,
+      "bytes": 4121,
+      "hash": "9fb88db1b1735f51f2ce7feea53dae42acddefe8d3d64dee9f2fdf22272a67b1",
+      "loadavg": "17.43 21.19 19.09 19/8842 211812"
+    },
+    {
+      "case": "djot-references",
+      "n": 400,
+      "engine": "js",
+      "cpu": [
+        0.6799999999999999,
+        0.7,
+        0.6699999999999999
+      ],
+      "median": 0.6799999999999999,
+      "bytes": 8321,
+      "hash": "3508d62c1620d79692ab42f8ff02307822b2abda37bb0e9519e66b150ebc0763",
+      "loadavg": "17.47 21.14 19.08 11/8834 211882"
+    },
+    {
+      "case": "djot-references",
+      "n": 400,
+      "engine": "php",
+      "cpu": [
+        0.36,
+        0.41,
+        0.39999999999999997
+      ],
+      "median": 0.39999999999999997,
+      "bytes": 8321,
+      "hash": "3508d62c1620d79692ab42f8ff02307822b2abda37bb0e9519e66b150ebc0763",
+      "loadavg": "17.47 21.14 19.08 11/8868 212139"
+    },
+    {
+      "case": "djot-references",
+      "n": 400,
+      "engine": "rs",
+      "cpu": [
+        0.34,
+        0.37,
+        0.37
+      ],
+      "median": 0.37,
+      "bytes": 8321,
+      "hash": "3508d62c1620d79692ab42f8ff02307822b2abda37bb0e9519e66b150ebc0763",
+      "loadavg": "17.47 21.14 19.08 26/8969 212500"
+    },
+    {
+      "case": "djot-shared-attributes",
+      "n": 100,
+      "engine": "js",
+      "cpu": [
+        0.42,
+        0.44,
+        0.4
+      ],
+      "median": 0.42,
+      "bytes": 907,
+      "hash": "73914a337753ceb02a9e0afb9f6652b34f8138107a7dcf6bab00e4d80dd85bec",
+      "loadavg": "14.52 16.11 13.00 13/8933 121506"
+    },
+    {
+      "case": "djot-shared-attributes",
+      "n": 100,
+      "engine": "php",
+      "cpu": [
+        0.17,
+        0.19,
+        0.18
+      ],
+      "median": 0.18,
+      "bytes": 907,
+      "hash": "73914a337753ceb02a9e0afb9f6652b34f8138107a7dcf6bab00e4d80dd85bec",
+      "loadavg": "14.47 16.08 13.00 12/8916 121643"
+    },
+    {
+      "case": "djot-shared-attributes",
+      "n": 100,
+      "engine": "rs",
+      "cpu": [
+        0.17,
+        0.16,
+        0.15
+      ],
+      "median": 0.16,
+      "bytes": 907,
+      "hash": "73914a337753ceb02a9e0afb9f6652b34f8138107a7dcf6bab00e4d80dd85bec",
+      "loadavg": "14.47 16.08 13.00 13/8922 121729"
+    },
+    {
+      "case": "djot-shared-attributes",
+      "n": 200,
+      "engine": "js",
+      "cpu": [
+        0.54,
+        0.52,
+        0.48
+      ],
+      "median": 0.52,
+      "bytes": 1907,
+      "hash": "761e27a706f684b52e8a167e740a2a566ccf1c1e45d300202d0cf50ff51fd79b",
+      "loadavg": "14.47 16.08 13.00 13/8926 121849"
+    },
+    {
+      "case": "djot-shared-attributes",
+      "n": 200,
+      "engine": "php",
+      "cpu": [
+        0.22,
+        0.25,
+        0.28
+      ],
+      "median": 0.25,
+      "bytes": 1907,
+      "hash": "761e27a706f684b52e8a167e740a2a566ccf1c1e45d300202d0cf50ff51fd79b",
+      "loadavg": "14.47 16.08 13.00 11/8864 122020"
+    },
+    {
+      "case": "djot-shared-attributes",
+      "n": 200,
+      "engine": "rs",
+      "cpu": [
+        0.2,
+        0.18,
+        0.21
+      ],
+      "median": 0.2,
+      "bytes": 1907,
+      "hash": "761e27a706f684b52e8a167e740a2a566ccf1c1e45d300202d0cf50ff51fd79b",
+      "loadavg": "14.47 16.08 13.00 11/8871 122145"
+    },
+    {
+      "case": "djot-shared-attributes",
+      "n": 400,
+      "engine": "js",
+      "cpu": [
+        0.55,
+        0.6000000000000001,
+        0.6599999999999999
+      ],
+      "median": 0.6000000000000001,
+      "bytes": 3907,
+      "hash": "ef1bea1b1840102ed0dfb97f9dc0cf920c323749d372c9f7f11bb3f7099c70d9",
+      "loadavg": "14.12 15.98 12.99 9/8856 122222"
+    },
+    {
+      "case": "djot-shared-attributes",
+      "n": 400,
+      "engine": "php",
+      "cpu": [
+        0.49,
+        0.49,
+        0.48
+      ],
+      "median": 0.49,
+      "bytes": 3907,
+      "hash": "ef1bea1b1840102ed0dfb97f9dc0cf920c323749d372c9f7f11bb3f7099c70d9",
+      "loadavg": "14.12 15.98 12.99 38/8981 122553"
+    },
+    {
+      "case": "djot-shared-attributes",
+      "n": 400,
+      "engine": "rs",
+      "cpu": [
+        0.47000000000000003,
+        0.41,
+        0.43
+      ],
+      "median": 0.43,
+      "bytes": 3907,
+      "hash": "ef1bea1b1840102ed0dfb97f9dc0cf920c323749d372c9f7f11bb3f7099c70d9",
+      "loadavg": "14.12 15.98 12.99 17/9033 122968"
+    },
+    {
+      "case": "html-containers",
+      "n": 100,
+      "engine": "js",
+      "cpu": [
+        0.36,
+        0.35,
+        0.33
+      ],
+      "median": 0.35,
+      "bytes": 2479,
+      "hash": "fcbfeffb91a8d46de132f1116f27329910db1a91b9027085132fe6c43063b49a",
+      "loadavg": "16.35 16.41 13.14 23/9032 123122"
+    },
+    {
+      "case": "html-containers",
+      "n": 100,
+      "engine": "php",
+      "cpu": [
+        0.41,
+        0.38,
+        0.41
+      ],
+      "median": 0.41,
+      "bytes": 2479,
+      "hash": "fcbfeffb91a8d46de132f1116f27329910db1a91b9027085132fe6c43063b49a",
+      "loadavg": "16.35 16.41 13.14 30/9058 123306"
+    },
+    {
+      "case": "html-containers",
+      "n": 100,
+      "engine": "rs",
+      "cpu": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "median": 0.02,
+      "bytes": 2479,
+      "hash": "fcbfeffb91a8d46de132f1116f27329910db1a91b9027085132fe6c43063b49a",
+      "loadavg": "17.28 16.60 13.22 37/9072 123421"
+    },
+    {
+      "case": "html-containers",
+      "n": 200,
+      "engine": "js",
+      "cpu": [
+        0.44,
+        0.45,
+        0.45
+      ],
+      "median": 0.45,
+      "bytes": 5179,
+      "hash": "614c65d20a72e9f9df9d1eb73c57cdb767277504fc3f74be2c5f72ddd2425778",
+      "loadavg": "17.28 16.60 13.22 44/9079 123468"
+    },
+    {
+      "case": "html-containers",
+      "n": 200,
+      "engine": "php",
+      "cpu": [
+        0.49,
+        0.5,
+        0.51
+      ],
+      "median": 0.5,
+      "bytes": 5179,
+      "hash": "614c65d20a72e9f9df9d1eb73c57cdb767277504fc3f74be2c5f72ddd2425778",
+      "loadavg": "19.90 17.16 13.42 54/9101 123819"
+    },
+    {
+      "case": "html-containers",
+      "n": 200,
+      "engine": "rs",
+      "cpu": [
+        0.03,
+        0.04,
+        0.03
+      ],
+      "median": 0.03,
+      "bytes": 5179,
+      "hash": "614c65d20a72e9f9df9d1eb73c57cdb767277504fc3f74be2c5f72ddd2425778",
+      "loadavg": "19.90 17.16 13.42 44/9052 124039"
+    },
+    {
+      "case": "html-containers",
+      "n": 400,
+      "engine": "js",
+      "cpu": [
+        0.5700000000000001,
+        0.57,
+        0.61
+      ],
+      "median": 0.5700000000000001,
+      "bytes": 10579,
+      "hash": "d01cb0dd88fe2d74632603314347eec9426ee58d4ed34a2e77e9bd4e24970ef3",
+      "loadavg": "22.47 17.74 13.63 44/9066 124154"
+    },
+    {
+      "case": "html-containers",
+      "n": 400,
+      "engine": "php",
+      "cpu": [
+        0.73,
+        0.7,
+        0.7
+      ],
+      "median": 0.7,
+      "bytes": 10579,
+      "hash": "d01cb0dd88fe2d74632603314347eec9426ee58d4ed34a2e77e9bd4e24970ef3",
+      "loadavg": "24.20 18.17 13.79 52/9057 124517"
+    },
+    {
+      "case": "html-containers",
+      "n": 400,
+      "engine": "rs",
+      "cpu": [
+        0.08,
+        0.07,
+        0.07
+      ],
+      "median": 0.07,
+      "bytes": 10579,
+      "hash": "d01cb0dd88fe2d74632603314347eec9426ee58d4ed34a2e77e9bd4e24970ef3",
+      "loadavg": "25.94 18.63 13.96 48/9064 125103"
+    },
+    {
+      "case": "html-containers-render",
+      "n": 100,
+      "engine": "js",
+      "cpu": [
+        0.5700000000000001,
+        0.49,
+        0.5800000000000001
+      ],
+      "median": 0.5700000000000001,
+      "bytes": 8280,
+      "hash": "c576886ad5c48580a73576e895d9ee07f98228a3bcaaed4d1f03a1957e8569f1",
+      "loadavg": "15.32 20.64 15.97 11/8913 145138"
+    },
+    {
+      "case": "html-containers-render",
+      "n": 100,
+      "engine": "php",
+      "cpu": [
+        0.37,
+        0.39,
+        0.41000000000000003
+      ],
+      "median": 0.39,
+      "bytes": 8280,
+      "hash": "c576886ad5c48580a73576e895d9ee07f98228a3bcaaed4d1f03a1957e8569f1",
+      "loadavg": "15.77 20.65 16.00 9/8919 145338"
+    },
+    {
+      "case": "html-containers-render",
+      "n": 100,
+      "engine": "rs",
+      "cpu": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "median": 0.01,
+      "bytes": 8280,
+      "hash": "c576886ad5c48580a73576e895d9ee07f98228a3bcaaed4d1f03a1957e8569f1",
+      "loadavg": "15.77 20.65 16.00 8/8905 145436"
+    },
+    {
+      "case": "html-containers-render",
+      "n": 200,
+      "engine": "js",
+      "cpu": [
+        0.63,
+        0.6699999999999999,
+        0.6699999999999999
+      ],
+      "median": 0.6699999999999999,
+      "bytes": 16780,
+      "hash": "268b2bfbf31d3b11ce51d37f135ab26ce9ebc19906e1cff6d7741be2c5dedf01",
+      "loadavg": "15.77 20.65 16.00 10/8889 145517"
+    },
+    {
+      "case": "html-containers-render",
+      "n": 200,
+      "engine": "php",
+      "cpu": [
+        0.62,
+        0.7,
+        0.6699999999999999
+      ],
+      "median": 0.6699999999999999,
+      "bytes": 16780,
+      "hash": "268b2bfbf31d3b11ce51d37f135ab26ce9ebc19906e1cff6d7741be2c5dedf01",
+      "loadavg": "15.71 20.56 15.99 11/8888 145730"
+    },
+    {
+      "case": "html-containers-render",
+      "n": 200,
+      "engine": "rs",
+      "cpu": [
+        0.04,
+        0.04,
+        0.03
+      ],
+      "median": 0.04,
+      "bytes": 16780,
+      "hash": "268b2bfbf31d3b11ce51d37f135ab26ce9ebc19906e1cff6d7741be2c5dedf01",
+      "loadavg": "15.71 20.56 15.99 19/8913 146044"
+    },
+    {
+      "case": "html-containers-render",
+      "n": 400,
+      "engine": "js",
+      "cpu": [
+        0.9099999999999999,
+        0.97,
+        1
+      ],
+      "median": 0.97,
+      "bytes": 33780,
+      "hash": "a4c9c6e6d11beb03111c46333135331bcdf470dc4c2d75f14b55bef99e3b8390",
+      "loadavg": "15.71 20.56 15.99 12/8902 146168"
+    },
+    {
+      "case": "html-containers-render",
+      "n": 400,
+      "engine": "php",
+      "cpu": [
+        1.02,
+        1.02,
+        0.99
+      ],
+      "median": 1.02,
+      "bytes": 33780,
+      "hash": "a4c9c6e6d11beb03111c46333135331bcdf470dc4c2d75f14b55bef99e3b8390",
+      "loadavg": "15.97 20.53 16.01 58/9045 147033"
+    },
+    {
+      "case": "html-containers-render",
+      "n": 400,
+      "engine": "rs",
+      "cpu": [
+        0.12,
+        0.11,
+        0.1
+      ],
+      "median": 0.11,
+      "bytes": 33780,
+      "hash": "a4c9c6e6d11beb03111c46333135331bcdf470dc4c2d75f14b55bef99e3b8390",
+      "loadavg": "16.94 20.65 16.07 17/9076 147484"
+    },
+    {
+      "case": "html-nested-containers",
+      "n": 8,
+      "engine": "js",
+      "cpu": [
+        0.91,
+        0.88,
+        0.84
+      ],
+      "median": 0.88,
+      "bytes": 25889,
+      "hash": "7fd0e725324abc88ee866bd6e73778ddf5dbf10a94cd765d29be45e86af2d3fb",
+      "loadavg": "25.94 18.63 13.96 44/9070 125300"
+    },
+    {
+      "case": "html-nested-containers",
+      "n": 8,
+      "engine": "php",
+      "cpu": [
+        1.4300000000000002,
+        1.4100000000000001,
+        1.4500000000000002
+      ],
+      "median": 1.4300000000000002,
+      "bytes": 25889,
+      "hash": "7fd0e725324abc88ee866bd6e73778ddf5dbf10a94cd765d29be45e86af2d3fb",
+      "loadavg": "29.80 19.70 14.36 48/9116 126270"
+    },
+    {
+      "case": "html-nested-containers",
+      "n": 8,
+      "engine": "rs",
+      "cpu": [
+        0.22,
+        0.23,
+        0.23
+      ],
+      "median": 0.23,
+      "bytes": 25889,
+      "hash": "7fd0e725324abc88ee866bd6e73778ddf5dbf10a94cd765d29be45e86af2d3fb",
+      "loadavg": "32.93 20.70 14.74 54/9082 126832"
+    },
+    {
+      "case": "html-nested-containers",
+      "n": 16,
+      "engine": "js",
+      "cpu": [
+        0.98,
+        1,
+        0.99
+      ],
+      "median": 0.99,
+      "bytes": 41889,
+      "hash": "11bf4c3ee6b23a7b356b95654fad8f2cb3aefd93c3538ac2b5895be148a07696",
+      "loadavg": "35.58 21.45 15.02 46/9061 127193"
+    },
+    {
+      "case": "html-nested-containers",
+      "n": 16,
+      "engine": "php",
+      "cpu": [
+        2.15,
+        2.17,
+        2.19
+      ],
+      "median": 2.17,
+      "bytes": 41889,
+      "hash": "11bf4c3ee6b23a7b356b95654fad8f2cb3aefd93c3538ac2b5895be148a07696",
+      "loadavg": "38.54 22.56 15.45 37/9050 127953"
+    },
+    {
+      "case": "html-nested-containers",
+      "n": 16,
+      "engine": "rs",
+      "cpu": [
+        0.39,
+        0.37,
+        0.39
+      ],
+      "median": 0.39,
+      "bytes": 41889,
+      "hash": "11bf4c3ee6b23a7b356b95654fad8f2cb3aefd93c3538ac2b5895be148a07696",
+      "loadavg": "40.59 23.79 15.97 63/9081 129072"
+    },
+    {
+      "case": "html-nested-containers",
+      "n": 32,
+      "engine": "js",
+      "cpu": [
+        1.1300000000000001,
+        1.1800000000000002,
+        1.1300000000000001
+      ],
+      "median": 1.1300000000000001,
+      "bytes": 73889,
+      "hash": "151792f56cf6fcd1967ea801ceacadcc2bab50706fbd287045650f6e5ed60846",
+      "loadavg": "41.59 24.27 16.17 58/9116 129612"
+    },
+    {
+      "case": "html-nested-containers",
+      "n": 32,
+      "engine": "php",
+      "cpu": [
+        3.8600000000000003,
+        3.79,
+        3.44
+      ],
+      "median": 3.79,
+      "bytes": 73889,
+      "hash": "151792f56cf6fcd1967ea801ceacadcc2bab50706fbd287045650f6e5ed60846",
+      "loadavg": "41.14 24.76 16.41 13/9113 130710"
+    },
+    {
+      "case": "html-nested-containers",
+      "n": 32,
+      "engine": "rs",
+      "cpu": [
+        0.6900000000000001,
+        0.65,
+        0.6900000000000001
+      ],
+      "median": 0.6900000000000001,
+      "bytes": 73889,
+      "hash": "151792f56cf6fcd1967ea801ceacadcc2bab50706fbd287045650f6e5ed60846",
+      "loadavg": "35.39 24.29 16.39 22/8965 132259"
+    },
+    {
+      "case": "html-nested-containers-render",
+      "n": 8,
+      "engine": "js",
+      "cpu": [
+        1.6,
+        1.56,
+        1.6099999999999999
+      ],
+      "median": 1.6,
+      "bytes": 219390,
+      "hash": "0aca6733307f327af17cae58f0d6c4ec2f31a677301a45547378127d74d05cd6",
+      "loadavg": "21.38 21.47 16.39 60/9106 148302"
+    },
+    {
+      "case": "html-nested-containers-render",
+      "n": 8,
+      "engine": "php",
+      "cpu": [
+        2.3800000000000003,
+        2.4400000000000004,
+        2.41
+      ],
+      "median": 2.41,
+      "bytes": 219390,
+      "hash": "0aca6733307f327af17cae58f0d6c4ec2f31a677301a45547378127d74d05cd6",
+      "loadavg": "32.40 23.99 17.32 47/9203 149704"
+    },
+    {
+      "case": "html-nested-containers-render",
+      "n": 8,
+      "engine": "rs",
+      "cpu": [
+        0.33999999999999997,
+        0.39,
+        0.37
+      ],
+      "median": 0.37,
+      "bytes": 219390,
+      "hash": "0aca6733307f327af17cae58f0d6c4ec2f31a677301a45547378127d74d05cd6",
+      "loadavg": "36.70 25.33 17.87 47/9268 150870"
+    },
+    {
+      "case": "html-nested-containers-render",
+      "n": 16,
+      "engine": "js",
+      "cpu": [
+        1.88,
+        1.8900000000000001,
+        1.92
+      ],
+      "median": 1.8900000000000001,
+      "bytes": 543390,
+      "hash": "0ed33843a3c3c335617b3b319db3d2c5e820f4c5c1dd87a0680b376147defbd4",
+      "loadavg": "37.76 25.74 18.04 40/9099 151322"
+    },
+    {
+      "case": "html-nested-containers-render",
+      "n": 16,
+      "engine": "php",
+      "cpu": [
+        3.83,
+        3.8499999999999996,
+        3.6900000000000004
+      ],
+      "median": 3.83,
+      "bytes": 543390,
+      "hash": "0ed33843a3c3c335617b3b319db3d2c5e820f4c5c1dd87a0680b376147defbd4",
+      "loadavg": "41.31 27.35 18.74 55/9147 152959"
+    },
+    {
+      "case": "html-nested-containers-render",
+      "n": 16,
+      "engine": "rs",
+      "cpu": [
+        0.64,
+        0.64,
+        0.61
+      ],
+      "median": 0.64,
+      "bytes": 543390,
+      "hash": "0ed33843a3c3c335617b3b319db3d2c5e820f4c5c1dd87a0680b376147defbd4",
+      "loadavg": "42.30 28.53 19.32 27/9132 154609"
+    },
+    {
+      "case": "html-nested-containers-render",
+      "n": 32,
+      "engine": "js",
+      "cpu": [
+        1.9300000000000002,
+        2,
+        2.0500000000000003
+      ],
+      "median": 2,
+      "bytes": 1575390,
+      "hash": "a464150e82e1c15de0bd100376e46b13d16305059d1d5d7d63f06c78d581c380",
+      "loadavg": "42.30 28.53 19.32 20/9131 155166"
+    },
+    {
+      "case": "html-nested-containers-render",
+      "n": 32,
+      "engine": "php",
+      "cpu": [
+        6.68,
+        6.62,
+        6.54
+      ],
+      "median": 6.62,
+      "bytes": 1575390,
+      "hash": "a464150e82e1c15de0bd100376e46b13d16305059d1d5d7d63f06c78d581c380",
+      "loadavg": "37.16 28.07 19.31 23/9049 156824"
+    },
+    {
+      "case": "html-nested-containers-render",
+      "n": 32,
+      "engine": "rs",
+      "cpu": [
+        1.1400000000000001,
+        1.1099999999999999,
+        1.06
+      ],
+      "median": 1.1099999999999999,
+      "bytes": 1575390,
+      "hash": "a464150e82e1c15de0bd100376e46b13d16305059d1d5d7d63f06c78d581c380",
+      "loadavg": "32.46 27.59 19.34 12/8979 160035"
+    },
+    {
+      "case": "js-footnotes",
+      "n": 100,
+      "engine": "js",
+      "cpu": [
+        0.31,
+        0.32,
+        0.32
+      ],
+      "median": 0.32,
+      "bytes": 20136,
+      "hash": "326a900a93742f97e7ca93f345f3d551ed28c1b506123c954d4a519d7132306d",
+      "loadavg": "35.39 24.29 16.39 18/8959 132570"
+    },
+    {
+      "case": "js-footnotes",
+      "n": 100,
+      "engine": "php",
+      "cpu": [
+        0.17,
+        0.17,
+        0.18
+      ],
+      "median": 0.17,
+      "bytes": 20136,
+      "hash": "326a900a93742f97e7ca93f345f3d551ed28c1b506123c954d4a519d7132306d",
+      "loadavg": "33.76 24.14 16.39 17/8962 132733"
+    },
+    {
+      "case": "js-footnotes",
+      "n": 100,
+      "engine": "rs",
+      "cpu": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "median": 0.01,
+      "bytes": 20136,
+      "hash": "326a900a93742f97e7ca93f345f3d551ed28c1b506123c954d4a519d7132306d",
+      "loadavg": "33.76 24.14 16.39 19/8967 132803"
+    },
+    {
+      "case": "js-footnotes",
+      "n": 200,
+      "engine": "js",
+      "cpu": [
+        0.35,
+        0.34,
+        0.35
+      ],
+      "median": 0.35,
+      "bytes": 40836,
+      "hash": "c00ba43d2ac7e585401a71035f506b48fd53c1ae2925ebd68a65654037479579",
+      "loadavg": "33.76 24.14 16.39 25/8967 132846"
+    },
+    {
+      "case": "js-footnotes",
+      "n": 200,
+      "engine": "php",
+      "cpu": [
+        0.21000000000000002,
+        0.19,
+        0.22
+      ],
+      "median": 0.21000000000000002,
+      "bytes": 40836,
+      "hash": "c00ba43d2ac7e585401a71035f506b48fd53c1ae2925ebd68a65654037479579",
+      "loadavg": "33.76 24.14 16.39 28/8944 133009"
+    },
+    {
+      "case": "js-footnotes",
+      "n": 200,
+      "engine": "rs",
+      "cpu": [
+        0.02,
+        0.02,
+        0.02
+      ],
+      "median": 0.02,
+      "bytes": 40836,
+      "hash": "c00ba43d2ac7e585401a71035f506b48fd53c1ae2925ebd68a65654037479579",
+      "loadavg": "33.76 24.14 16.39 16/8951 133089"
+    },
+    {
+      "case": "js-footnotes",
+      "n": 400,
+      "engine": "js",
+      "cpu": [
+        0.41000000000000003,
+        0.41,
+        0.42
+      ],
+      "median": 0.41000000000000003,
+      "bytes": 82236,
+      "hash": "d5db282a0f94d756c9f1b8d811f47aa0e2fa853594d419d9d869cb006be14151",
+      "loadavg": "33.76 24.14 16.39 20/8968 133165"
+    },
+    {
+      "case": "js-footnotes",
+      "n": 400,
+      "engine": "php",
+      "cpu": [
+        0.3,
+        0.27999999999999997,
+        0.31
+      ],
+      "median": 0.3,
+      "bytes": 82236,
+      "hash": "d5db282a0f94d756c9f1b8d811f47aa0e2fa853594d419d9d869cb006be14151",
+      "loadavg": "32.50 24.04 16.39 29/8963 133398"
+    },
+    {
+      "case": "js-footnotes",
+      "n": 400,
+      "engine": "rs",
+      "cpu": [
+        0.04,
+        0.05,
+        0.04
+      ],
+      "median": 0.04,
+      "bytes": 82236,
+      "hash": "d5db282a0f94d756c9f1b8d811f47aa0e2fa853594d419d9d869cb006be14151",
+      "loadavg": "32.50 24.04 16.39 22/8964 133510"
+    },
+    {
+      "case": "js-footnotes-stress",
+      "n": 100,
+      "engine": "js",
+      "cpu": [
+        0.3,
+        0.3,
+        0.29
+      ],
+      "median": 0.3,
+      "bytes": 16305,
+      "hash": "b47d7ec3563b103da30a25391e7b988025d26ae18856fc2e7219aed3c26aef89",
+      "loadavg": "32.50 24.04 16.39 25/8962 133610"
+    },
+    {
+      "case": "js-footnotes-stress",
+      "n": 100,
+      "engine": "php",
+      "cpu": [
+        0.14,
+        0.14,
+        0.13
+      ],
+      "median": 0.14,
+      "bytes": 16305,
+      "hash": "b47d7ec3563b103da30a25391e7b988025d26ae18856fc2e7219aed3c26aef89",
+      "loadavg": "32.50 24.04 16.39 19/8945 133720"
+    },
+    {
+      "case": "js-footnotes-stress",
+      "n": 100,
+      "engine": "rs",
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "median": 0,
+      "bytes": 16305,
+      "hash": "b47d7ec3563b103da30a25391e7b988025d26ae18856fc2e7219aed3c26aef89",
+      "loadavg": "32.50 24.04 16.39 18/8948 133754"
+    },
+    {
+      "case": "js-footnotes-stress",
+      "n": 200,
+      "engine": "js",
+      "cpu": [
+        0.29,
+        0.29,
+        0.27
+      ],
+      "median": 0.29,
+      "bytes": 32905,
+      "hash": "53c909a23b9e11e5317001074b1258ca495daac43b0ab504d28fe559aabff21c",
+      "loadavg": "31.66 24.00 16.42 15/8955 133824"
+    },
+    {
+      "case": "js-footnotes-stress",
+      "n": 200,
+      "engine": "php",
+      "cpu": [
+        0.15,
+        0.16,
+        0.16
+      ],
+      "median": 0.16,
+      "bytes": 32905,
+      "hash": "53c909a23b9e11e5317001074b1258ca495daac43b0ab504d28fe559aabff21c",
+      "loadavg": "31.66 24.00 16.42 19/8904 133922"
+    },
+    {
+      "case": "js-footnotes-stress",
+      "n": 200,
+      "engine": "rs",
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "median": 0,
+      "bytes": 32905,
+      "hash": "53c909a23b9e11e5317001074b1258ca495daac43b0ab504d28fe559aabff21c",
+      "loadavg": "31.66 24.00 16.42 21/8907 134019"
+    },
+    {
+      "case": "js-footnotes-stress",
+      "n": 400,
+      "engine": "js",
+      "cpu": [
+        0.32,
+        0.31,
+        0.32
+      ],
+      "median": 0.32,
+      "bytes": 66105,
+      "hash": "e55088258fe85c7cb8173b8017a06df84ca9d5feadc2f442e131c72136fd8eb2",
+      "loadavg": "31.66 24.00 16.42 17/8905 134081"
+    },
+    {
+      "case": "js-footnotes-stress",
+      "n": 400,
+      "engine": "php",
+      "cpu": [
+        0.16,
+        0.16,
+        0.17
+      ],
+      "median": 0.16,
+      "bytes": 66105,
+      "hash": "e55088258fe85c7cb8173b8017a06df84ca9d5feadc2f442e131c72136fd8eb2",
+      "loadavg": "31.66 24.00 16.42 23/8926 134239"
+    },
+    {
+      "case": "js-footnotes-stress",
+      "n": 400,
+      "engine": "rs",
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "median": 0,
+      "bytes": 66105,
+      "hash": "e55088258fe85c7cb8173b8017a06df84ca9d5feadc2f442e131c72136fd8eb2",
+      "loadavg": "31.66 24.00 16.42 11/8931 134303"
+    },
+    {
+      "case": "js-brackets",
+      "n": 100,
+      "engine": "js",
+      "cpu": [
+        0.25,
+        0.24000000000000002,
+        0.26
+      ],
+      "median": 0.25,
+      "bytes": 4487,
+      "hash": "aa7dabe39ecb7a1425b73a6aac03c599aebf47d4563c5e5e588d44cdea7a6c8b",
+      "loadavg": "31.66 24.00 16.42 12/8923 134334"
+    },
+    {
+      "case": "js-brackets",
+      "n": 100,
+      "engine": "php",
+      "cpu": [
+        0.15,
+        0.14,
+        0.13
+      ],
+      "median": 0.14,
+      "bytes": 4487,
+      "hash": "aa7dabe39ecb7a1425b73a6aac03c599aebf47d4563c5e5e588d44cdea7a6c8b",
+      "loadavg": "30.08 23.80 16.40 12/8948 134501"
+    },
+    {
+      "case": "js-brackets",
+      "n": 100,
+      "engine": "rs",
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "median": 0,
+      "bytes": 4487,
+      "hash": "aa7dabe39ecb7a1425b73a6aac03c599aebf47d4563c5e5e588d44cdea7a6c8b",
+      "loadavg": "30.08 23.80 16.40 24/8950 134542"
+    },
+    {
+      "case": "js-brackets",
+      "n": 200,
+      "engine": "js",
+      "cpu": [
+        0.28,
+        0.28,
+        0.3
+      ],
+      "median": 0.28,
+      "bytes": 9187,
+      "hash": "9fc3ea3c7f0e61a6041216de1cdf5f12d07af88123c4b28057d47c3e91271539",
+      "loadavg": "30.08 23.80 16.40 20/8951 134586"
+    },
+    {
+      "case": "js-brackets",
+      "n": 200,
+      "engine": "php",
+      "cpu": [
+        0.15,
+        0.12,
+        0.17
+      ],
+      "median": 0.15,
+      "bytes": 9187,
+      "hash": "9fc3ea3c7f0e61a6041216de1cdf5f12d07af88123c4b28057d47c3e91271539",
+      "loadavg": "30.08 23.80 16.40 20/8949 134708"
+    },
+    {
+      "case": "js-brackets",
+      "n": 200,
+      "engine": "rs",
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "median": 0,
+      "bytes": 9187,
+      "hash": "9fc3ea3c7f0e61a6041216de1cdf5f12d07af88123c4b28057d47c3e91271539",
+      "loadavg": "30.08 23.80 16.40 13/8954 134765"
+    },
+    {
+      "case": "js-brackets",
+      "n": 400,
+      "engine": "js",
+      "cpu": [
+        0.29,
+        0.31,
+        0.3
+      ],
+      "median": 0.3,
+      "bytes": 18587,
+      "hash": "baaedc9895b23315e68540047ccc4ae70ca38ec5c7b0942ce2ed90c9cd292c3e",
+      "loadavg": "30.08 23.80 16.40 12/8947 134799"
+    },
+    {
+      "case": "js-brackets",
+      "n": 400,
+      "engine": "php",
+      "cpu": [
+        0.17,
+        0.15,
+        0.2
+      ],
+      "median": 0.17,
+      "bytes": 18587,
+      "hash": "baaedc9895b23315e68540047ccc4ae70ca38ec5c7b0942ce2ed90c9cd292c3e",
+      "loadavg": "30.08 23.80 16.40 16/8951 134908"
+    },
+    {
+      "case": "js-brackets",
+      "n": 400,
+      "engine": "rs",
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "median": 0,
+      "bytes": 18587,
+      "hash": "baaedc9895b23315e68540047ccc4ae70ca38ec5c7b0942ce2ed90c9cd292c3e",
+      "loadavg": "30.08 23.80 16.40 11/8952 134960"
+    },
+    {
+      "case": "js-brackets-stress",
+      "n": 100,
+      "engine": "js",
+      "cpu": [
+        0.27,
+        0.26,
+        0.24000000000000002
+      ],
+      "median": 0.26,
+      "bytes": 246,
+      "hash": "0afdb9bd36c87087263d2d2280ea217a22c21699f4bfacf2cd9fd05cf66ff208",
+      "loadavg": "30.08 23.80 16.40 14/8951 134985"
+    },
+    {
+      "case": "js-brackets-stress",
+      "n": 100,
+      "engine": "php",
+      "cpu": [
+        0.12,
+        0.14,
+        0.16
+      ],
+      "median": 0.14,
+      "bytes": 246,
+      "hash": "0afdb9bd36c87087263d2d2280ea217a22c21699f4bfacf2cd9fd05cf66ff208",
+      "loadavg": "28.80 23.64 16.39 15/8942 135140"
+    },
+    {
+      "case": "js-brackets-stress",
+      "n": 100,
+      "engine": "rs",
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "median": 0,
+      "bytes": 246,
+      "hash": "0afdb9bd36c87087263d2d2280ea217a22c21699f4bfacf2cd9fd05cf66ff208",
+      "loadavg": "28.80 23.64 16.39 11/8947 135183"
+    },
+    {
+      "case": "js-brackets-stress",
+      "n": 200,
+      "engine": "js",
+      "cpu": [
+        0.28,
+        0.22,
+        0.28
+      ],
+      "median": 0.28,
+      "bytes": 446,
+      "hash": "c793d103d0fd24852e582da732328015835107a8c07bd802ffa5f1e3b9013fc7",
+      "loadavg": "28.80 23.64 16.39 15/8944 135212"
+    },
+    {
+      "case": "js-brackets-stress",
+      "n": 200,
+      "engine": "php",
+      "cpu": [
+        0.15,
+        0.13,
+        0.18
+      ],
+      "median": 0.15,
+      "bytes": 446,
+      "hash": "c793d103d0fd24852e582da732328015835107a8c07bd802ffa5f1e3b9013fc7",
+      "loadavg": "28.80 23.64 16.39 21/8946 135329"
+    },
+    {
+      "case": "js-brackets-stress",
+      "n": 200,
+      "engine": "rs",
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "median": 0,
+      "bytes": 446,
+      "hash": "c793d103d0fd24852e582da732328015835107a8c07bd802ffa5f1e3b9013fc7",
+      "loadavg": "28.80 23.64 16.39 15/8930 135364"
+    },
+    {
+      "case": "js-brackets-stress",
+      "n": 400,
+      "engine": "js",
+      "cpu": [
+        0.28,
+        0.25,
+        0.3
+      ],
+      "median": 0.28,
+      "bytes": 846,
+      "hash": "385fa29b99953b7498707cdf7fd8ccc833bc1bee2b956039eedbfd37dee7bd83",
+      "loadavg": "28.80 23.64 16.39 13/8920 135442"
+    },
+    {
+      "case": "js-brackets-stress",
+      "n": 400,
+      "engine": "php",
+      "cpu": [
+        0.22,
+        0.15,
+        0.17
+      ],
+      "median": 0.17,
+      "bytes": 846,
+      "hash": "385fa29b99953b7498707cdf7fd8ccc833bc1bee2b956039eedbfd37dee7bd83",
+      "loadavg": "28.80 23.64 16.39 19/8913 135555"
+    },
+    {
+      "case": "js-brackets-stress",
+      "n": 400,
+      "engine": "rs",
+      "cpu": [
+        0,
+        0,
+        0
+      ],
+      "median": 0,
+      "bytes": 846,
+      "hash": "385fa29b99953b7498707cdf7fd8ccc833bc1bee2b956039eedbfd37dee7bd83",
+      "loadavg": "28.80 23.64 16.39 14/8910 135613"
+    },
+    {
+      "case": "markdown-destinations",
+      "n": 100,
+      "engine": "js",
+      "cpu": [
+        0.41,
+        0.41,
+        0.4
+      ],
+      "median": 0.41,
+      "bytes": 3379,
+      "hash": "7ce7375cdb83d496d0a1f7561d95d4c5c87ad020df79dddac7a57f16f76f029a",
+      "loadavg": "27.77 23.51 16.38 21/8910 135676"
+    },
+    {
+      "case": "markdown-destinations",
+      "n": 100,
+      "engine": "php",
+      "cpu": [
+        0.2,
+        0.2,
+        0.21000000000000002
+      ],
+      "median": 0.2,
+      "bytes": 3379,
+      "hash": "7ce7375cdb83d496d0a1f7561d95d4c5c87ad020df79dddac7a57f16f76f029a",
+      "loadavg": "27.77 23.51 16.38 18/8920 135895"
+    },
+    {
+      "case": "markdown-destinations",
+      "n": 100,
+      "engine": "rs",
+      "cpu": [
+        0.02,
+        0.03,
+        0.03
+      ],
+      "median": 0.03,
+      "bytes": 3380,
+      "hash": "9cf4929d2ce2ca7d2922c04b0c046a1761254c58663782d40389d49989426fb6",
+      "loadavg": "27.77 23.51 16.38 16/8915 135954"
+    },
+    {
+      "case": "markdown-destinations",
+      "n": 200,
+      "engine": "js",
+      "cpu": [
+        0.47000000000000003,
+        0.45,
+        0.47000000000000003
+      ],
+      "median": 0.47000000000000003,
+      "bytes": 6979,
+      "hash": "628f3423ae5a8d8f85f603bfc6e3a148744495f30f52b2eb824d27349d7e526e",
+      "loadavg": "27.77 23.51 16.38 15/8908 136009"
+    },
+    {
+      "case": "markdown-destinations",
+      "n": 200,
+      "engine": "php",
+      "cpu": [
+        0.22999999999999998,
+        0.21000000000000002,
+        0.23
+      ],
+      "median": 0.22999999999999998,
+      "bytes": 6979,
+      "hash": "628f3423ae5a8d8f85f603bfc6e3a148744495f30f52b2eb824d27349d7e526e",
+      "loadavg": "27.77 23.51 16.38 17/8903 136156"
+    },
+    {
+      "case": "markdown-destinations",
+      "n": 200,
+      "engine": "rs",
+      "cpu": [
+        0.04,
+        0.04,
+        0.04
+      ],
+      "median": 0.04,
+      "bytes": 6980,
+      "hash": "f24d8238438150d1e29d0fdb56ebf9d0b75ea1b6965e1167655082cb6ae7b753",
+      "loadavg": "26.99 23.42 16.39 18/8913 136282"
+    },
+    {
+      "case": "markdown-destinations",
+      "n": 400,
+      "engine": "js",
+      "cpu": [
+        0.6100000000000001,
+        0.56,
+        0.56
+      ],
+      "median": 0.56,
+      "bytes": 14179,
+      "hash": "4013f9479f4ed6875cec23f730d3c3802520038663541009a9a0e16d24f67476",
+      "loadavg": "26.99 23.42 16.39 11/8925 136385"
+    },
+    {
+      "case": "markdown-destinations",
+      "n": 400,
+      "engine": "php",
+      "cpu": [
+        0.28,
+        0.24,
+        0.24000000000000002
+      ],
+      "median": 0.24000000000000002,
+      "bytes": 14179,
+      "hash": "4013f9479f4ed6875cec23f730d3c3802520038663541009a9a0e16d24f67476",
+      "loadavg": "26.99 23.42 16.39 9/8948 136746"
+    },
+    {
+      "case": "markdown-destinations",
+      "n": 400,
+      "engine": "rs",
+      "cpu": [
+        0.08,
+        0.08,
+        0.08
+      ],
+      "median": 0.08,
+      "bytes": 14180,
+      "hash": "0423942a75609fede95b3ac718884894d1c4018198deabd3aa6274b9ed248505",
+      "loadavg": "26.99 23.42 16.39 12/8940 136845"
+    }
+  ],
+  "beforeAfter2821": {
+    "beforeCommit": "481e23f88ffd54ee32a887f5805adcdc729c745c",
+    "afterCommit": "b359fcb1aa0ecc1286800774b76197c51ba4b5e2",
+    "beforeDistHash": "e55f1f1c37466c3fcf88f0f164dfa1e300749da12410fc53c091e5f8457aac89",
+    "afterDistHash": "5a226ad0ee468a27c0e666dfbdb6892640b852bebe0769df79a9661b47127d40",
+    "pairedRows": [
+      {
+        "n": 400,
+        "rep": 0,
+        "variant": "before",
+        "cpu": 0.41,
+        "hash": "4013f9479f4ed6875cec23f730d3c3802520038663541009a9a0e16d24f67476",
+        "loadavg": "18.78 18.20 19.85 5/8877 302711"
+      },
+      {
+        "n": 400,
+        "rep": 0,
+        "variant": "after",
+        "cpu": 0.42,
+        "hash": "4013f9479f4ed6875cec23f730d3c3802520038663541009a9a0e16d24f67476",
+        "loadavg": "17.59 17.96 19.76 3/8882 302737"
+      },
+      {
+        "n": 400,
+        "rep": 1,
+        "variant": "after",
+        "cpu": 0.43,
+        "hash": "4013f9479f4ed6875cec23f730d3c3802520038663541009a9a0e16d24f67476",
+        "loadavg": "17.59 17.96 19.76 7/8885 302767"
+      },
+      {
+        "n": 400,
+        "rep": 1,
+        "variant": "before",
+        "cpu": 0.42,
+        "hash": "4013f9479f4ed6875cec23f730d3c3802520038663541009a9a0e16d24f67476",
+        "loadavg": "17.59 17.96 19.76 14/8905 302885"
+      },
+      {
+        "n": 400,
+        "rep": 2,
+        "variant": "before",
+        "cpu": 0.44,
+        "hash": "4013f9479f4ed6875cec23f730d3c3802520038663541009a9a0e16d24f67476",
+        "loadavg": "17.59 17.96 19.76 5/8877 302906"
+      },
+      {
+        "n": 400,
+        "rep": 2,
+        "variant": "after",
+        "cpu": 0.39999999999999997,
+        "hash": "4013f9479f4ed6875cec23f730d3c3802520038663541009a9a0e16d24f67476",
+        "loadavg": "17.59 17.96 19.76 6/8890 302940"
+      },
+      {
+        "n": 800,
+        "rep": 0,
+        "variant": "before",
+        "cpu": 0.52,
+        "hash": "397ab02030251f5e82a54e71a5081d70d745be77bbc272d3e8b0627e5a16b66e",
+        "loadavg": "17.59 17.96 19.76 7/8879 303017"
+      },
+      {
+        "n": 800,
+        "rep": 0,
+        "variant": "after",
+        "cpu": 0.56,
+        "hash": "397ab02030251f5e82a54e71a5081d70d745be77bbc272d3e8b0627e5a16b66e",
+        "loadavg": "17.59 17.96 19.76 6/8885 303041"
+      },
+      {
+        "n": 800,
+        "rep": 1,
+        "variant": "after",
+        "cpu": 0.51,
+        "hash": "397ab02030251f5e82a54e71a5081d70d745be77bbc272d3e8b0627e5a16b66e",
+        "loadavg": "17.59 17.96 19.76 19/8877 303079"
+      },
+      {
+        "n": 800,
+        "rep": 1,
+        "variant": "before",
+        "cpu": 0.52,
+        "hash": "397ab02030251f5e82a54e71a5081d70d745be77bbc272d3e8b0627e5a16b66e",
+        "loadavg": "17.59 17.96 19.76 9/8872 303142"
+      },
+      {
+        "n": 800,
+        "rep": 2,
+        "variant": "before",
+        "cpu": 0.51,
+        "hash": "397ab02030251f5e82a54e71a5081d70d745be77bbc272d3e8b0627e5a16b66e",
+        "loadavg": "17.59 17.96 19.76 7/8864 303161"
+      },
+      {
+        "n": 800,
+        "rep": 2,
+        "variant": "after",
+        "cpu": 0.5,
+        "hash": "397ab02030251f5e82a54e71a5081d70d745be77bbc272d3e8b0627e5a16b66e",
+        "loadavg": "17.59 17.96 19.76 6/8865 303179"
+      },
+      {
+        "n": 1600,
+        "rep": 0,
+        "variant": "before",
+        "cpu": 0.72,
+        "hash": "8a5a57ff932fe1b54ba4629d0e6c67696ec95a79007ad01bc38cbee9dd125760",
+        "loadavg": "16.42 17.71 19.67 3/8866 303277"
+      },
+      {
+        "n": 1600,
+        "rep": 0,
+        "variant": "after",
+        "cpu": 0.76,
+        "hash": "8a5a57ff932fe1b54ba4629d0e6c67696ec95a79007ad01bc38cbee9dd125760",
+        "loadavg": "16.42 17.71 19.67 4/8860 303308"
+      },
+      {
+        "n": 1600,
+        "rep": 1,
+        "variant": "after",
+        "cpu": 0.73,
+        "hash": "8a5a57ff932fe1b54ba4629d0e6c67696ec95a79007ad01bc38cbee9dd125760",
+        "loadavg": "16.42 17.71 19.67 5/8856 303340"
+      },
+      {
+        "n": 1600,
+        "rep": 1,
+        "variant": "before",
+        "cpu": 0.73,
+        "hash": "8a5a57ff932fe1b54ba4629d0e6c67696ec95a79007ad01bc38cbee9dd125760",
+        "loadavg": "16.42 17.71 19.67 3/8855 303372"
+      },
+      {
+        "n": 1600,
+        "rep": 2,
+        "variant": "before",
+        "cpu": 0.69,
+        "hash": "8a5a57ff932fe1b54ba4629d0e6c67696ec95a79007ad01bc38cbee9dd125760",
+        "loadavg": "16.42 17.71 19.67 3/8859 303396"
+      },
+      {
+        "n": 1600,
+        "rep": 2,
+        "variant": "after",
+        "cpu": 0.72,
+        "hash": "8a5a57ff932fe1b54ba4629d0e6c67696ec95a79007ad01bc38cbee9dd125760",
+        "loadavg": "16.42 17.71 19.67 3/8873 303433"
+      }
+    ]
+  }
+}
