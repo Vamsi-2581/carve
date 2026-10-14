@@ -312,6 +312,7 @@ function renderBlock(b, depth, ctx) {
         const esc0 = b.text
           .replace(/[\u202A-\u202E\u2066-\u2069\uE000\uE001\u0002]/g, '')
           .replaceAll('&', '&amp;')
+          .replaceAll('\u00a0', '&nbsp;')
           .replaceAll('<', '&lt;')
           .replaceAll('>', '&gt;')
         return `${pad}<figure${ba}>\n${pad}  <pre${title}><code${cls}>${esc0}</code></pre>\n${pad}  <figcaption>${renderInline(cap)}</figcaption>\n${pad}</figure>`
@@ -319,6 +320,7 @@ function renderBlock(b, depth, ctx) {
       const esc = b.text
         .replace(/[‪-‮⁦-⁩]/g, '')
         .replaceAll('&', '&amp;')
+        .replaceAll('\u00a0', '&nbsp;')
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;')
       return `${pad}<pre${title}${ba}><code${cls}>${esc}</code></pre>`
