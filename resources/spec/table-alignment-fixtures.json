@@ -1,0 +1,37 @@
+[
+  {
+    "name": "wide text and continuation",
+    "canonical": "|= Name |= Score |= Note |\n| Ada | 9 | first try |\n| 山田太郎 | 10 | a longer note |\n+ | | that wraps |\n| Total | 19 | < |\n",
+    "aligned": "|= Name    |= Score |= Note         |\n| Ada      | 9      | first try     |\n| 山田太郎 | 10     | a longer note |\n+          |        | that wraps    |\n| Total    | 19     | <             |\n"
+  },
+  {
+    "name": "attributes spans and empty cells",
+    "canonical": "|={.total} Total |=> Qty |\n| 長い | 7 |\n| ^ | < |\n| | |\n",
+    "aligned": "|={.total} Total |=> Qty |\n| 長い           | 7     |\n| ^              | <     |\n|                |       |\n"
+  },
+  {
+    "name": "authored separator",
+    "canonical": "| A | B |\n|---|---|\n| x | yy |\n",
+    "aligned": "| A | B  |\n|---|--- |\n| x | yy |\n"
+  },
+  {
+    "name": "colspan continuation",
+    "canonical": "| a | longer |\n| < | c |\n+ x | y |\n",
+    "aligned": "| a | longer |\n| < | c      |\n+ x | y      |\n"
+  },
+  {
+    "name": "rowspan continuation",
+    "canonical": "| a | longer |\n| ^ | c |\n+ x | y |\n",
+    "aligned": "| a | longer |\n| ^ | c      |\n+ x | y      |\n"
+  },
+  {
+    "name": "graphemes escaped pipe row attributes and caption",
+    "canonical": "|= Name |= Mark |{.head}\n| · | 👩‍💻 |\n| é \\| x | y |{.tail}\n^ Caption\n",
+    "aligned": "|= Name  |= Mark |{.head}\n| ·      | 👩‍💻    |\n| é \\| x | y     |{.tail}\n^ Caption\n"
+  },
+  {
+    "name": "separator colons",
+    "canonical": "| A | B |\n|:--|--:|\n| x | right |\n",
+    "aligned": "| A | B     |\n|:--|--:    |\n| x | right |\n"
+  }
+]

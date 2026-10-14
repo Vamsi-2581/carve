@@ -169,6 +169,56 @@
       writing and a second `fmt` pass preserve all spellable fields.
 
 
+   6e2. OPTIONAL TABLE ALIGNMENT -- NORMATIVE [CARVE-P11-071].
+      An implementation MAY offer an `alignTables` formatting mode. It is
+      opt-in; without it, CARVE-P11-014 remains the canonical table spelling.
+      An implementation that offers the mode MUST use the following spelling.
+      An implementation without the mode MUST reject a request for it rather
+      than silently writing the canonical spelling.
+
+      For each physical row line, form each cell segment from the glued prefix
+      of CARVE-P11-014, one space, its content as the canonical writer spells
+      it on that line and one trailing space. An empty cell has only the space
+      after its prefix. Measure the written source segment, including escapes,
+      inline markers and entity spellings. Measure the
+      display width of each segment separately. The width of a grid column is
+      the greatest segment width in that column across every physical line of
+      the table. Add spaces after the segment and before its closing pipe until
+      it reaches that width. Do not add padding before content, even for right
+      or center aligned cells. A span marker `<` or `^` occupies its own source
+      cell and contributes to that grid column's width; it does not divide its
+      width among columns.
+
+      A separator line (CARVE-P11-066) has no cell content segment. Measure each
+      separator segment by its authored dash run and alignment colons. It
+      contributes to the column width. Add only trailing spaces to reach that
+      width: do not change its dash count or colon placement, which the tree
+      records. An extra separator entry beyond the last header cell contributes
+      to its own grid column. The same rule applies when a delimiter separator
+      is required to preserve a header containing span markers.
+
+      A `+` continuation line participates as a physical row line. Preserve
+      the line split and position recorded by `cell_wrap.row`, `.line`, `.col`
+      and `cellWraps[].offset` (PART 12 CARVE-P12-069); measure and pad its
+      cells by the same rule as
+      ordinary row lines. The leading `+` replaces the leading pipe and is
+      outside the first cell segment. A row attribute block following the last
+      closing pipe, a caption and material outside the table do not enter any
+      column width.
+
+      Display width uses Unicode 18.0.0 extended grapheme clusters (UAX #29).
+      A cluster has width two if any code point in it has East_Asian_Width W or
+      F in Unicode 18.0.0 (UAX #11); every other cluster has width one,
+      including ambiguous-width A. Spaces added for padding have width one.
+      Implementations MUST use these pinned property values regardless of the
+      host runtime's Unicode version.
+
+      Alignment changes only spelling: parsing an aligned table yields the
+      same tree as parsing its canonical form. Formatting an aligned table
+      again with `alignTables` yields identical bytes. A formatter's `--check`
+      operation with this mode compares the source against aligned output.
+      The byte fixtures are in `resources/spec/table-alignment-fixtures.json`.
+
    6f. PADDING IS NOT AN ESCAPE WHERE THE PRODUCTION ADMITS PADDING --
       NORMATIVE [CARVE-P11-015]. CARVE-P11-014's padding removes the need for
       `<`/`>`/`~`/`{` guards because its three prefix slots are read GLUED to
