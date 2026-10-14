@@ -27,7 +27,7 @@ test('lint refuses crashes, malformed output, unknown paths and inconsistent exi
 test('exact declarations reject new, changed and resolved differences', () => {
   assert.deepEqual(reconcile({ [file]: answers }, ledger(answers)), [])
   assert.match(reconcile({ [file]: answers }, { version: 1, differences: [] })[0], /NEW/)
-  assert.match(reconcile({}, ledger(answers))[0], /STALE/)
+  assert.match(reconcile({}, ledger(answers))[0], /^STALE lint declaration: .* drop its entry from resources\/lint-corpus-drift\.json$/)
   for (const changed of [[['broken-crossref', 2, 4]], [tuple, tuple], [['unresolved-footnote', 2, 3]]]) {
     assert.match(reconcile({ [file]: { ...answers, js: changed } }, ledger(answers))[0], /CHANGED/)
   }

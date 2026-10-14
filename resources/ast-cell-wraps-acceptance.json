@@ -68,6 +68,14 @@
       "path": "/children/0/rows/0/cells/0",
       "expected": { "type": "table_cell", "header": false, "span": "rowspan", "children": [] },
       "html": "<td></td>"
+    },
+    {
+      "id": "blocked-marker-text-on-a-later-plus-line-names-that-line",
+      "source": "| ^ | b |\n+   | u |\n+ t | v |\n",
+      "path": "/children/0/rows/0/cells/0",
+      "continuationLines": 2,
+      "expected": { "type": "table_cell", "header": false, "span": "rowspan", "children": [{ "type": "cell_wrap", "line": 2 }, { "type": "text", "value": "t" }] },
+      "aheadOfPin": { "pinned": { "type": "table_cell", "header": false, "children": [], "span": "rowspan" }, "reason": "CARVE-P12-069 the empty first + line contributes nothing and the cell_wrap names the line t came from (carve#3166); the pinned carve-js drops the text (carve-js#3049)" }
     }
   ]
 }

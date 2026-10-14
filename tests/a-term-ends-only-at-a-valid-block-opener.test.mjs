@@ -73,3 +73,11 @@ test('a div at the top-level term column ends the term', () => {
   assert.equal(document.blocks[0].items[0].dt, 'term')
   assert.equal(document.blocks[1].t, 'colon-div')
 })
+
+for (const [marker, ends] of [['abc.', false], ['1.', true], ['a.', true], ['iv.', true]]) {
+  test(`an ordered marker ends a term only when a dialect claims it: ${marker}`, () => {
+    const html = renderDoc(parse(`:: term\n${marker} item\n`))
+    if (ends) assert.match(html, /<dt>term<\/dt>/)
+    else assert.match(html, new RegExp(`<dt>term\\n${marker.replace('.', '\\.')} item</dt>`))
+  })
+}

@@ -104,3 +104,23 @@ test('a bare fence after the blank interrupts, because the absorption did not su
     '<ul><li>item :::note <div><p>body</p></div></li></ul><p>tail</p>',
   )
 })
+
+const exactHtml = (src) => renderDoc(parse(src)).trim()
+
+for (const [source, expected] of [
+    ['- one\n::: \tnote\n+\n', '<ul>\n  <li>one\n::: \tnote</li>\n</ul>'],
+    ['    - c\n::::>\n', '<ul>\n  <li>c\n::::&gt;</li>\n</ul>'],
+    ['    - second\n   tail\n::: \t[First]\n', '<ul>\n  <li>second\ntail\n::: \t[First]</li>\n</ul>'],
+    ['- b\n:::>\n     ```\n y\n', '<ul>\n  <li>b\n:::&gt;\n<code>\ny</code></li>\n</ul>'],
+  ]) {
+  test(`rejected colon opener stays in list paragraph: ${JSON.stringify(source)}`, () => {
+    assert.equal(exactHtml(source), expected)
+  })
+}
+
+test('a valid colon opener still interrupts a list paragraph', () => {
+  assert.equal(
+    exactHtml('- one\n::: note\n+\n'),
+    '<ul>\n  <li>one</li>\n</ul>\n<aside class="admonition note" aria-label="Note">\n  <p>+</p>\n</aside>',
+  )
+})
