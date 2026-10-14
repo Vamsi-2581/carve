@@ -204,8 +204,6 @@
 #     cross_convert_diffs=0
 #
 # The run named exactly these two lines as STALE and failed the converter gate
-# on nothing else. THIS FILE IS EMPTY OF DECLARATIONS AGAIN.
+# on nothing else. Both declarations were removed.
 
-# CARVE-P11-033 T1 (carve#3120): the Markdown import reads a `*[TERM]:` line
-# back as a definition. carve-js ships it at the pin; the pinned carve-php
-# (be7dd4e7) and carve-rs (a0d6c790) still keep the line as text.
+rust/53-markdown-a-bullet-change-starts-a-second-list  carve-rs writes + y for the second Markdown list, which the pinned renderer reads as a paragraph; markup-carve/carve-rs#2725

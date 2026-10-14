@@ -326,15 +326,13 @@ test('a row with a count but no reference is malformed, not declared', () => {
 //
 // Re-measured 2026-10-13 from run 38318003635 at carve 96979ed9 against the
 // pinned engines; sections 556 to 575 moved the counts below.
-// Re-measured again from run 38442138189 at carve-js dc90931a.
+// Re-measured 2026-10-14 at the pinned JS, PHP and Rust revisions.
 const LAST_MEASURED = new Map([
-  ['list (extent)', 10],
-  ['list_item (extent)', 10],
-  ['paragraph (extent)', 3],
-  ['text (extent)', 4],
+  ['list (extent)', 1],
+  ['list_item (extent)', 1],
+  ['paragraph (extent)', 1],
+  ['text (extent)', 1],
   ['footnote (extent)', 1],
-  ['code_block (extent)', 1],
-  ['admonition (extent)', 1],
 ])
 
 const asMeasured = (counts) =>

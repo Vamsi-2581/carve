@@ -48,21 +48,11 @@
 # and neither engine has a row to answer for. The document arrived with
 # markup-carve/carve#2426.
 
-list (extent)  10  carve-php opens at the parent content column in section 503, both conformant under markup-carve/carve#1928; the rest are sections 277, 358, 446, 482, 517 and 557, where carve-js reads these documents as the corpus does since 672d0a0a and the pinned carve-php and carve-rs do not; markup-carve/carve-php#3240, markup-carve/carve-php#3241, markup-carve/carve-php#3242, markup-carve/carve-php#3255, markup-carve/carve-rs#2592, markup-carve/carve#3014 where an engine main already does; sections 578, 580 and 581 are ahead of the pins: 578 is markup-carve/carve-php#3280 and markup-carve/carve-rs#2621, 580 is markup-carve/carve-js#2934 and markup-carve/carve-php#3244, 581 is markup-carve/carve-js#2927, 585 is markup-carve/carve-js#2948
-list_item (extent)  10  the same documents as the `list` row; markup-carve/carve#1928, markup-carve/carve-php#3240, markup-carve/carve-php#3241, markup-carve/carve-php#3242, markup-carve/carve-php#3255, markup-carve/carve-rs#2592, markup-carve/carve#3014, markup-carve/carve-php#3280, markup-carve/carve-rs#2621, markup-carve/carve-js#2934, markup-carve/carve-php#3244, markup-carve/carve-js#2927, markup-carve/carve-js#2948
+list (extent)  1  carve-php opens the section 503 list at its parent content column; all three spans conform under markup-carve/carve#1928
+list_item (extent)  1  the section 503 list item has the same conformant column difference as its list; markup-carve/carve#1928
 
-# THE ROWS BELOW are not that case. On each the engines read the source into
-# different trees, because the corpus is ahead of one or more of them, and the
-# spans differ as a result. Every one closes with the parser fix its reference
-# names; none is a position defect of its own. Sections 556, 557, 560 and 566.
-#
-# The same parse differences also put seven more documents on the two rows
-# above. Those are NOT declared: .ast-span-exempt keys the conformant reading on
-# the count of one, so the rows read COUNT in `npm run ast:check` until
-# markup-carve/carve-rs#2533, markup-carve/carve-php#3240,
-# markup-carve/carve-js#2772 and the pin move past markup-carve/carve-js#2838.
-paragraph (extent)  3  sections 435, 572, 573 and 580; carve-js reads these documents as the corpus does since 672d0a0a and the pinned carve-php and carve-rs do not; markup-carve/carve-php#3240, markup-carve/carve-php#3255, markup-carve/carve-rs#2592, markup-carve/carve-js#2882, markup-carve/carve#3014 where an engine main already does; section 580 is markup-carve/carve-js#2934 and markup-carve/carve-php#3244
-text (extent)  4  the text inside the `paragraph` rows, sections 435, 566, 572, 573 and 580; carve-js reads these documents as the corpus does since 672d0a0a and the pinned carve-php and carve-rs do not; markup-carve/carve-php#3241, markup-carve/carve-php#3255, markup-carve/carve-rs#2592, markup-carve/carve-js#2882, markup-carve/carve#3014 where an engine main already does; section 580 is markup-carve/carve-js#2934 and markup-carve/carve-php#3244
+# The three rows below are section 573. carve-php gives the note, its
+# paragraph, and its text different extents from carve-js and carve-rs.
+paragraph (extent)  1  section 573: carve-php places the note-body paragraph earlier than carve-js and carve-rs; markup-carve/carve-js#2882
+text (extent)  1  section 573: carve-php places the text inside that paragraph earlier than carve-js and carve-rs; markup-carve/carve-js#2882
 footnote (extent)  1  carve-php ends a note referenced from link text early, section 573; markup-carve/carve-js#2882
-code_block (extent)  1  the fence that leaves a closed nested item, section 581; carve-js reads it as the corpus does and the pinned carve-php and carve-rs do not; markup-carve/carve-php#3307, markup-carve/carve-rs#2636
-admonition (extent)  1  carve-rs runs the admonition onto the line below its closed block, section 556; markup-carve/carve-rs#2668

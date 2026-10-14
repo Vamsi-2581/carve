@@ -71,7 +71,6 @@ const OPT_IN_ONLY = {
 const ENGINE_ROLLOUT_PENDING = {
   'raw_inline.cellWraps': 'continuation join inside an atomic inline (CARVE-P12-069): produced once the pinned carve-js ships markup-carve/carve-js#2998',
   'math.cellWraps': 'continuation join inside an atomic inline (CARVE-P12-069): produced once the pinned carve-js ships markup-carve/carve-js#2998',
-  'cell_wrap.col': 'a `<` part in the cell it widens (CARVE-P12-069): corpus 593 produces it once the pinned carve-js ships it (carve#3151)',
   'figure.shortCaption': 'structural publishing field: Carve 0.1 source has no spelling; produced only by AST/Pandoc consumers',
   'small_caps.*': 'structural publishing node: Carve 0.1 source has no spelling; produced only by AST and format-bridge consumers',
   'ruby.*': 'structural publishing node: Carve 0.1 source has no spelling; produced only by AST and HTML-import consumers',
