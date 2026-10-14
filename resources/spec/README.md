@@ -51,6 +51,12 @@ rule belongs to exactly one scope, and `npm run spec:rules:write` generates the
 focused pages under `docs/rules/`. Run `npm run spec:rules:check` to validate the
 registry and reject stale generated pages.
 
+The optional table-alignment mode has byte fixtures in
+`table-alignment-fixtures.json`. Engines that offer it check their output and
+fixed point against these cases. The fixture checker uses the W/F ranges in
+`table-width-wide-18.json`, generated from Unicode 18.0.0
+`EastAsianWidth.txt` (Unicode, Inc., https://www.unicode.org/terms_of_use.html).
+
 ## What belongs elsewhere
 
 The normative modules contain productions, state, algorithms, invariants and
