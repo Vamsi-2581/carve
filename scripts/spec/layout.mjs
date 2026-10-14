@@ -652,7 +652,7 @@ function alphaToInt(s) {
 // whatever the marker's value.
 function isOrderedMarkerLine(line) {
   const m = ORDERED.exec(trimLineEnd(line))
-  if (!m) return false
+  if (!m || classifyOrdered(m[2]).length === 0) return false
   return !(m[4] && m[4].replace(/[{} ]/g, '') !== '' && parseAttrList(m[4]) === null)
 }
 
