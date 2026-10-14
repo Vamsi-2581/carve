@@ -16,6 +16,7 @@ import { defaultKeymap, history, historyKeymap, indentMore, indentLess } from '@
 import type { Command } from '@codemirror/view'
 import { parse } from '@markup-carve/carve'
 import {
+  BARE_CONTINUATION_MARKER,
   bareMarkerItem,
   continuationPrefix,
   listContinuationEdits,
@@ -167,7 +168,10 @@ const continueOnEnter: Command = (v) => {
     return true
   }
   const prefix = continuationPrefix(text, line.number)
-  if (!prefix || inCodeBlock(text, line.number)) return false
+  // The server checks closers against code itself, and a new fence opener reads as inside its own block.
+  if (!prefix || (!prefix.startsWith('\n') && inCodeBlock(text, line.number))) return false
+  // A pipe-led line that is neither a table row nor a line-block line is text.
+  if (/^[ \t]*\| $/.test(prefix) && !isTableRow(line.text) && !/^[ \t]*\| /.test(line.text)) return false
   // A container closer (`\n:::`) goes below the cursor; a quote or table prefix goes before it.
   applyEdits(v, [{ range: { start: position, end: position }, newText: prefix }], base, prefix.startsWith('\n') ? -1 : 1)
   return true
@@ -187,7 +191,9 @@ function outsideCode(command: Command): Command {
 }
 
 // A content-less marker as the continuation writes it: `- `, `- [ ] `, `2. `, `b) `.
-const BARE_MARKER = /^(?:[-*] [ \t]*(?:\[[ xX_>?-]\] [ \t]*)?|(?:\.|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]) [ \t]*)$/
+const BARE_LIST_MARKER = /^(?:[-*] [ \t]*(?:\[[ xX_>?-]\] [ \t]*)?|(?:\.|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]) [ \t]*)$/
+// Checked task boxes too, plus the server's own set, which adds a bare description `: `.
+const BARE_MARKER = { test: (rest: string) => BARE_LIST_MARKER.test(rest) || BARE_CONTINUATION_MARKER.test(rest) }
 
 // Backspace at the end of an empty item removes the whole marker, keeping the
 // indent and any quote prefix, instead of one separator space at a time.

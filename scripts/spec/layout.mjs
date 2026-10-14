@@ -652,7 +652,7 @@ function alphaToInt(s) {
 // whatever the marker's value.
 function isOrderedMarkerLine(line) {
   const m = ORDERED.exec(trimLineEnd(line))
-  if (!m) return false
+  if (!m || classifyOrdered(m[2]).length === 0) return false
   return !(m[4] && m[4].replace(/[{} ]/g, '') !== '' && parseAttrList(m[4]) === null)
 }
 
@@ -1923,7 +1923,7 @@ function hostAdvance(h, line, paraOpen, belowFenceLazy = false) {
   const lazyItemLine = retainedFenceText || paraOpen && h.kinds.at(-1) === 'item' &&
     (h.columns.length === 2 || h.colons?.length ||
       h.kinds.at(-2) === 'item') && matchMarkerAt(meas) === null &&
-    (!FENCE.test(meas.rest) || belowFenceLazy && meas.col < h.columns.at(-1)) && !COLON_FENCE.test(meas.rest) &&
+    (!FENCE.test(meas.rest) || belowFenceLazy && meas.col < h.columns.at(-1)) && !isColonBlockOpener(meas.rest) &&
     !DEFLIST_TERM.test(meas.rest) && opensParagraph(meas.rest)
   // A marker at or left of an item's own marker column ends that item and
   // opens a list: it is not text of the paragraph the item held (SS24 C3).
@@ -3156,7 +3156,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           afterComment = afterCommentTransition(afterComment, { comment: true, belowComment: measured.col < FOOTNOTE_BODY_COLUMN })
         } else if (afterComment &&
             !startsVisibleBlock(lines[i]) && !isTableRow(lines[i]) &&
-            !COLON_FENCE.test(lines[i]) && !(FENCE.test(lines[i]) && hasCloser(lines, i))) {
+            !isColonBlockOpener(lines[i]) && !(FENCE.test(lines[i]) && hasCloser(lines, i))) {
           // A retained marker is paragraph text and opens no list (PART 0 X1).
           bodyLines.push(BULLET.test(trimLineEnd(measured.rest)) || isOrderedMarkerLine(measured.rest) ? LAZY + measured.rest : measured.rest)
           afterComment = afterCommentTransition(afterComment, {})
@@ -3351,8 +3351,10 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             const cur = lines[i] ?? ''
             // A term has no content column, so no indentation ends it: a line
             // past the column folds whatever it would open (carve#2411).
+            // A lone `+` is no marker here: a term holds no blocks for it to
+            // attach, so it is a plain line and folds (CARVE-P2-028, carve#3145).
             if (isEntry(cur) || cur.startsWith(LAZY) && /^: /.test(unlazy(cur)) ||
-                isBlank(cur) || CONT_MARKER.test(cur)) break
+                isBlank(cur)) break
             // A comment at the container's column ends the term. Past it the
             // comment stays a comment, fence body included, and the term goes
             // on (carve#2411). Inline content never reaches across it, so it
@@ -3615,7 +3617,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
               continue
             }
             if (afterComment && !startsVisibleBlock(cur) &&
-                !isTableRow(cur) && !COLON_FENCE.test(cur) &&
+                !isTableRow(cur) && !isColonBlockOpener(cur) &&
                 !(FENCE.test(cur) && hasCloser(lines, i))) {
               pushBody(BULLET.test(trimLineEnd(dedented)) || isOrderedMarkerLine(dedented) ? LAZY + dedented : dedented)
               afterComment = afterCommentTransition(afterComment, {})
@@ -3672,16 +3674,17 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
              *
              * `foldablePlain` here tests neither, so a `:::` below the column
              * folded and the `dd` kept a column-zero run its list-item twin ends
-             * at. The ITEM collector spells the same refusal `!COLON_FENCE.test`,
-             * which also catches `:::note` - an INVALID opener, so ordinary prose
-             * that both readers fold in this host. The predicate is the validating
-             * one for that reason, not the shape test.
+             * at. Both collectors use the validated opener test so malformed
+             * colon lines remain ordinary prose in the open paragraph.
              */
             if (isColonBlockOpener(dedented) || COLON_CLOSER.test(dedented)) break
             if (!top && authoredCol > 0 && isCodeBlockOpener(dedented) &&
                 hasCloser([dedented, ...lines.slice(i + 1)], 0)) break
             const lazyFence = !foldablePlain(dedented) && FENCE.test(dedented) &&
               !(FENCE.test(cur) && hasCloser(lines, i))
+            // A table row interrupts the paragraph (PART 9 §10 I1), so below
+            // the body's column it ends the body rather than folding (carve#3145).
+            if (isTableRow(dedented)) break
             if ((foldablePlain(dedented) || lazyFence || BULLET.test(trimLineEnd(dedented)) || isOrderedMarkerLine(dedented)) && bodyLeavesParagraphOpen(asRead(bodyLines))) {
               pushBody(lazyFence ? LAZY + dedented : dedented)
               i++
@@ -5275,7 +5278,7 @@ function collectItems(lines, i, list, state, ind, meas) {
      * position, and choosing it is now the caller's.
      */
     const opensBlockAt = (text, idx) =>
-      startsVisibleBlock(text) || isTableRow(text) || COLON_FENCE.test(text) ||
+      startsVisibleBlock(text) || isTableRow(text) || isColonBlockOpener(text) ||
       (FENCE.test(text) && hasCloser(lines, idx))
     /*
      * Q3. WHICH CONTAINER OWNS A COLUMN?

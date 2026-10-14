@@ -3,38 +3,38 @@
   "engines": {
     "js": {
       "html": {
-        "identical": 1992,
-        "strict": 1861,
-        "total": 2492
+        "identical": 1999,
+        "strict": 1868,
+        "total": 2508
       },
       "md": {
-        "identical": 1804,
-        "strict": 1401,
-        "total": 2492
+        "identical": 1809,
+        "strict": 1406,
+        "total": 2508
       }
     },
     "php": {
       "html": {
-        "identical": 2029,
-        "strict": 1895,
-        "total": 2492
+        "identical": 1987,
+        "strict": 1875,
+        "total": 2508
       },
       "md": {
-        "identical": 1790,
-        "strict": 1350,
-        "total": 2492
+        "identical": 1714,
+        "strict": 1300,
+        "total": 2508
       }
     },
     "rs": {
       "html": {
-        "identical": 1987,
-        "strict": 1856,
-        "total": 2492
+        "identical": 1901,
+        "strict": 1793,
+        "total": 2508
       },
       "md": {
-        "identical": 1826,
-        "strict": 1595,
-        "total": 2492
+        "identical": 1705,
+        "strict": 1513,
+        "total": 2508
       }
     }
   }

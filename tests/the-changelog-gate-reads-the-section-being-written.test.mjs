@@ -210,3 +210,16 @@ test('the exempt file closes out the commit the gate reports', () => {
     '.changelog-exempt does not cover 0512ccfd, so the gate still reports it as an open question.',
   )
 })
+
+test('a pull request merged with a merge commit is read like a squash merge', () => {
+  const { pullRequest } = __internals
+  assert.equal(pullRequest('spec: keep the text (#3152)'), '3152')
+  assert.equal(pullRequest('Merge pull request #3017 from markup-carve/ci/formatter-in-process'), '3017')
+  assert.equal(pullRequest('spec: a direct push to main'), undefined)
+  assert.equal(pullRequest('spec: names carve#12 mid-subject'), undefined)
+})
+
+test('the gate walks first parents, so a merge answers for the commits it brings in', () => {
+  const source = readFileSync(resolve(repo, 'scripts/changelog-completeness.mjs'), 'utf8')
+  assert.match(source, /git\('log', '--first-parent', `--format=%H\$\{RECORD\}%s`, range\)/)
+})

@@ -4020,6 +4020,26 @@ the safe destination is kept and the override is ignored:
 
 :::
 
+An unused link definition is written on the plain-text target, and a denied
+destination in it is blanked there too (CARVE-P9-054); the allowed `[x]: /u`
+is kept. HTML drops an unused definition:
+
+::: compare no-render
+
+```carve
+Text.
+
+[x]: /u
+
+[y]: javascript:alert(3)
+```
+
+```html
+<p>Text.</p>
+```
+
+:::
+
 ## Link destination parentheses balance
 
 A `(` inside a `(...)` destination is matched against a later `)`, so the
@@ -17323,6 +17343,30 @@ a [t[^1]][r] c [^1] b
   <ol>
     <li id="fn1">
       <p>n<a href="#fnref1" role="doc-backlink" aria-label="Back to reference 1">↩<sup>1</sup></a> <a href="#fnref1-2" role="doc-backlink" aria-label="Back to reference 2">↩<sup>2</sup></a></p>
+    </li>
+  </ol>
+</section>
+```
+
+:::
+
+::: compare
+
+```carve
+a [t[^1]{#z}][r] [^1]{#y}
+
+[r]: /u
+
+[^1]: n
+```
+
+```html
+<p>a <a href="/u">t<sup id="z">1</sup></a> <a id="y" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>n<a href="#z" role="doc-backlink" aria-label="Back to reference 1">↩<sup>1</sup></a> <a href="#y" role="doc-backlink" aria-label="Back to reference 2">↩<sup>2</sup></a></p>
     </li>
   </ol>
 </section>
@@ -51973,3 +52017,191 @@ tail
 ````
 
 ::::
+
+## A table row ends a description body and a lone plus folds into a term
+
+A table row interrupts a paragraph (PART 9 §10 I1), so at column 0 under a
+description it ends the body and the list; the table follows the list
+(markup-carve/carve#3145):
+
+::: compare
+
+```carve
+:: t
+: a
+| t |
+```
+
+```html
+<dl>
+  <dt>t</dt>
+  <dd>a</dd>
+</dl>
+<table>
+  <tbody>
+    <tr><td>t</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+
+A term holds no blocks, so a lone `+` under it attaches nothing. It is a plain
+line, and a term folds a plain line (CARVE-P2-028):
+
+::: compare
+
+```carve
+:: term
++
+: d
+```
+
+```html
+<dl>
+  <dt>term
++</dt>
+  <dd>d</dd>
+</dl>
+```
+
+:::
+
+
+The same after a wrapped term:
+
+::: compare
+
+```carve
+:: A term that
+   wraps
++
+: d
+```
+
+```html
+<dl>
+  <dt>A term that
+   wraps
++</dt>
+  <dd>d</dd>
+</dl>
+```
+
+:::
+
+
+## A continuation on a span marker joins the cell the marker resolves into
+
+A `+` fragment on a `^` or `<` column joins the cell the T5 walk resolves that
+marker into, in row-major order (T6). On a `<` that is the cell it widens.
+
+A BLOCKED marker is a cell of its own (T5). It renders no marker, and the
+fragments on it are its content (markup-carve/carve#3151). A `<` in the first
+column has no cell to widen:
+
+::: compare
+
+```carve
+| a | b |
+| < | c |
++ x | y |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td>a</td><td>b</td></tr>
+    <tr><td>x</td><td>c y</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+
+A `^` in the first row has no cell to extend:
+
+::: compare
+
+```carve
+| ^ | b |
++ x | y |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td>x</td><td>b y</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+
+A `^` under a cell two columns wide would cover `b`:
+
+::: compare
+
+```carve
+| a | < |
+| ^ | b |
++ x | y |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td colspan="2">a</td></tr>
+    <tr><td>x</td><td>b y</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+
+A `<` beside a cell that started in an earlier row would cover `c`:
+
+::: compare
+
+```carve
+| a | b |
+| ^ | c |
+| < | d |
++ x | y |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td rowspan="2">a</td><td>b</td></tr>
+    <tr><td>c</td></tr>
+    <tr><td>x</td><td>d y</td></tr>
+  </tbody>
+</table>
+```
+
+:::
+
+
+A blocked cell is widened like any other, and the `<` brings its fragment along:
+
+::: compare
+
+```carve
+| ^ | < |
++ x | y |
+```
+
+```html
+<table>
+  <tbody>
+    <tr><td colspan="2">x y</td></tr>
+  </tbody>
+</table>
+```
+
+:::

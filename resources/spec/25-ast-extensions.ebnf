@@ -333,9 +333,20 @@
 
       A MARKER THAT FOUND NO ORIGIN CONTRIBUTES NOTHING. The walk is a total
       function: a `^` in the first row, a `<` in the first column, or a marker
-      every intermediate position of which is consumed renders as an empty
-      cell and extends nobody, so no cell's count moves. The marker is still
-      published, still carrying `span`.
+      every intermediate position of which is consumed extends nobody, so no
+      cell's count moves. The marker is still published, still carrying
+      `span`. With no joined text it renders as an empty cell. A marker that
+      carries joined `+` text (PART 9 §5 T6) keeps `span`, holds that text as
+      its children, and renders a cell holding that text; a Carve writer
+      writes the marker back on the standard row and the text on its `+` line
+      ([carve#3158](https://github.com/markup-carve/carve/issues/3158)).
+
+        | ^ | b |
+        + t | u |
+
+        table_row{ continuationLines: 1, cells: [
+          table_cell{ span: "rowspan" }[ "t" ],
+          table_cell[ "b", cell_wrap{line:1}, "u" ] ] }
 
       WHY IT IS PUBLISHED AT ALL: PART 12 §5 publishes resolution results alongside
       authored constructs so consumers need not reimplement the resolution

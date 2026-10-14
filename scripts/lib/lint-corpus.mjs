@@ -66,6 +66,6 @@ export function reconcile(actual, declarations) {
     if (!entry) failures.push(`NEW lint difference: ${file}`)
     else if (lintEngines.some(engine => JSON.stringify(entry.diagnostics[engine]) !== JSON.stringify(answers[engine]))) failures.push(`CHANGED lint difference: ${file}`)
   }
-  for (const file of declared.keys()) if (!Object.hasOwn(actual, file)) failures.push(`STALE lint declaration: ${file}`)
+  for (const file of declared.keys()) if (!Object.hasOwn(actual, file)) failures.push(`STALE lint declaration: ${file} - every engine now agrees on it; drop its entry from resources/lint-corpus-drift.json`)
   return failures
 }

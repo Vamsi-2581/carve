@@ -93,12 +93,12 @@ Return to the [rule index](./) or read the complete [formal grammar](../grammar)
 | [`CARVE-P7-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L132) | 7 | ONE WHITESPACE DEFINITION, IN EVERY CONSTRUCT |
 | [`CARVE-P7-004`](https://github.com/markup-carve/carve/blob/main/resources/spec/11-lexical.ebnf#L191) | 7 | ESCAPE CONTEXTS |
 | [`CARVE-P9-002`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L234) | 9 | T5 SPAN WALK |
-| [`CARVE-P9-069`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L272) | 9 | THE ROW ABOVE IS A LINE, NOT A `<tr>` |
-| [`CARVE-P9-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L300) | 9 | A CONTINUATION ROW LEAVES NO PARAGRAPH OPEN |
-| [`CARVE-P9-004`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L316) | 9 | T7 GFM DELIMITER ROW |
-| [`CARVE-P9-005`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L343) | 9 | T8 ROW ATTRIBUTES |
-| [`CARVE-P9-007`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L388) | 9 | T10 CELL ATTRIBUTES BIND LAST |
-| [`CARVE-P9-008`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L407) | 9 | T11 A MARKER RUN ENDS AT A SPACE |
+| [`CARVE-P9-069`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L276) | 9 | THE ROW ABOVE IS A LINE, NOT A `<tr>` |
+| [`CARVE-P9-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L304) | 9 | A CONTINUATION ROW LEAVES NO PARAGRAPH OPEN |
+| [`CARVE-P9-004`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L320) | 9 | T7 GFM DELIMITER ROW |
+| [`CARVE-P9-005`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L347) | 9 | T8 ROW ATTRIBUTES |
+| [`CARVE-P9-007`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L392) | 9 | T10 CELL ATTRIBUTES BIND LAST |
+| [`CARVE-P9-008`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L411) | 9 | T11 A MARKER RUN ENDS AT A SPACE |
 | [`CARVE-P9-013`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L126) | 9 | AN INVISIBLE LINE IS ONE CLASSIFICATION |
 | [`CARVE-P9-014`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L254) | 9 | N1a HARD BOUNDARY AFTER THREE BLANK LINES |
 | [`CARVE-P9-016`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L312) | 9 | A COLON-FENCE LINE THAT FAILS THE OPENER TEST LEAVES THE PARAGRAPH EXPECTING A CLOSER |
