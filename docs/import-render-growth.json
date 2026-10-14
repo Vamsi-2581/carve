@@ -13,7 +13,8 @@
     "rs": {
       "commit": "bf67f3c6cca94ac95cdbbed14cfd05d41b9c1237",
       "artifactScope": "CLI binary",
-      "artifactHash": "1837a5e03a300518897e5ecdd0ab712d9bdc03b9392fedd6295c6d300ceaf46f"
+      "artifactHash": "1837a5e03a300518897e5ecdd0ab712d9bdc03b9392fedd6295c6d300ceaf46f",
+      "profile": "debug"
     }
   },
   "rows": [

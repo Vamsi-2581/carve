@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Reproducible CLI CPU measurements for issue #3175.
-// Set CARVE_JS_BASE_DIR and CARVE_JS_AFTER_DIR to built parent/merge checkouts of #2821.
+// Set CARVE_JS_BASE_DIR and CARVE_JS_AFTER_DIR to built parent/merge checkouts of markup-carve/carve-js#2821.
 import { spawnSync } from 'node:child_process'
-import { readFileSync, writeFileSync, mkdtempSync, rmSync, readdirSync, statSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdtempSync, rmSync, readdirSync, statSync, realpathSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join, resolve } from 'node:path'
+import { join, resolve, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { dirname } from 'node:path'
 import { createHash } from 'node:crypto'
@@ -50,6 +50,7 @@ if (filters.case && !(filters.case in cases)) throw new Error(`Unknown growth ca
 if (filters.engine && !(filters.engine in engines)) throw new Error(`Unknown engine: ${filters.engine}`)
 if (sizes.length < 3 || sizes.some((n, i) => !Number.isSafeInteger(n) || n < 1 || (i > 0 && n !== sizes[i - 1] * 2))) throw new Error('Sizes must be at least three positive doubling integers')
 if (Boolean(process.env.CARVE_JS_BASE_DIR) !== Boolean(process.env.CARVE_JS_AFTER_DIR)) throw new Error('Both historical JavaScript checkout paths are required')
+if (!process.env.CARVE_GROWTH_OUTPUT && !process.env.CARVE_JS_BASE_DIR) throw new Error('The full artifact requires both historical JavaScript checkout paths')
 const selectedEngines = Object.fromEntries(Object.entries(engines).filter(([name]) => !filters.engine || filters.engine === name))
 if (selectedEngines.rs && !selectedEngines.rs[0]) throw new Error('A checkout-matching Rust binary is required')
 const dir = mkdtempSync(join(tmpdir(), 'carve-growth-'))
@@ -58,7 +59,8 @@ const builds = Object.fromEntries(Object.entries(selectedEngines).map(([name, [c
   const commit = spawnSync('git', ['rev-parse', 'HEAD'], { cwd, encoding: 'utf8' }).stdout.trim()
   const artifactScope = name === 'js' ? 'dist/' : name === 'php' ? 'src/, bin/carve, composer.lock' : 'CLI binary'
   const artifactHash = name === 'js' ? treeHash(cwd, ['dist']) : name === 'php' ? treeHash(cwd, ['bin/carve', 'composer.lock', 'src']) : createHash('sha256').update(readFileSync(cmd)).digest('hex')
-  return [name, { commit, artifactScope, artifactHash }]
+  const profile = name === 'rs' ? basename(dirname(realpathSync(cmd))) : undefined
+  return [name, { commit, artifactScope, artifactHash, ...(profile ? { profile } : {}) }]
 }))
 try {
   for (const [caseName, make] of Object.entries(cases)) for (const n of (!process.env.CARVE_GROWTH_SIZES && caseName.startsWith('html-nested-containers') ? [8, 16, 32] : sizes)) {
@@ -96,7 +98,7 @@ try {
     const afterDir = resolve(process.env.CARVE_JS_AFTER_DIR)
     const beforeCommit = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: baseDir, encoding: 'utf8' }).stdout.trim()
     const afterCommit = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: afterDir, encoding: 'utf8' }).stdout.trim()
-    if (beforeCommit !== '481e23f88ffd54ee32a887f5805adcdc729c745c' || afterCommit !== 'b359fcb1aa0ecc1286800774b76197c51ba4b5e2') throw new Error('Historical checkouts are not the parent and merge commit of #2821')
+    if (beforeCommit !== '481e23f88ffd54ee32a887f5805adcdc729c745c' || afterCommit !== 'b359fcb1aa0ecc1286800774b76197c51ba4b5e2') throw new Error('Historical checkouts are not the parent and merge commit of markup-carve/carve-js#2821')
     const beforeDistHash = treeHash(baseDir, ['dist'])
     const afterDistHash = treeHash(afterDir, ['dist'])
     const pairedRows = []
