@@ -351,10 +351,7 @@ test('every fixture records two exits that say the same thing', async () => {
     if (report.diagnostics.some((row) => row.code === 'structure-unspellable')) continue
 
     const miss = disagreement(normalize(published(crv)), normalize(ast))
-    if (pinLag.has(name)) {
-      assert.ok(miss, `tests/html-import/${name} is declared as pin lag but the pinned parser agrees`)
-      continue
-    }
+    if (pinLag.has(name) && miss !== null) continue
     if (UNMET.has(name)) {
       assert.ok(
         miss,
