@@ -1,40 +1,40 @@
 {
   "version": 2,
-  "note": "Corpus 601 adds eight documents (carve#3217). Every engine gains eight HTML and two Markdown identical round trips, and seven HTML and one Markdown strict ones. All counts were measured with the pinned engines.",
+  "note": "At pins js f51a0ce9, php 19a6bf4c, and rs 31202ddd, HTML identical falls by one in each engine. JS HTML strict falls by one, Markdown identical rises by one, and Markdown strict falls by four. PHP HTML strict falls by two and Markdown strict falls by six. Rust Markdown identical and strict each rise by one. All counts were measured locally across 2,544 documents per target with the pinned engines.",
   "engines": {
     "js": {
       "html": {
-        "identical": 2045,
-        "strict": 1905,
+        "identical": 2044,
+        "strict": 1904,
         "total": 2544
       },
       "md": {
-        "identical": 1841,
-        "strict": 1435,
+        "identical": 1842,
+        "strict": 1431,
         "total": 2544
       }
     },
     "php": {
       "html": {
-        "identical": 2076,
-        "strict": 1934,
+        "identical": 2075,
+        "strict": 1932,
         "total": 2544
       },
       "md": {
         "identical": 1838,
-        "strict": 1394,
+        "strict": 1388,
         "total": 2544
       }
     },
     "rs": {
       "html": {
-        "identical": 2034,
+        "identical": 2033,
         "strict": 1893,
         "total": 2544
       },
       "md": {
-        "identical": 1860,
-        "strict": 1638,
+        "identical": 1861,
+        "strict": 1639,
         "total": 2544
       }
     }
