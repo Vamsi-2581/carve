@@ -1,40 +1,40 @@
 {
   "version": 2,
-  "note": "carve#2878 changes two corpus documents from literal definition text to empty link definitions. Current engine pins lose those two structural round trips until they implement the rule.",
+  "note": "At the PHP pin, corpus 595, 596, and 598 now parse unresolved cross-references as heading_ref nodes. Their earlier parser shapes counted as identical; the heading_ref nodes lose identity through HTML import. Corpus 469 gains an identical round trip, leaving PHP/HTML two lower overall. All counts were remeasured with the pinned engines.",
   "engines": {
     "js": {
       "html": {
-        "identical": 2015,
-        "strict": 1881,
+        "identical": 2017,
+        "strict": 1887,
         "total": 2525
       },
       "md": {
-        "identical": 1825,
-        "strict": 1421,
+        "identical": 1829,
+        "strict": 1428,
         "total": 2525
       }
     },
     "php": {
       "html": {
-        "identical": 2051,
-        "strict": 1915,
+        "identical": 2049,
+        "strict": 1916,
         "total": 2525
       },
       "md": {
         "identical": 1826,
-        "strict": 1380,
+        "strict": 1387,
         "total": 2525
       }
     },
     "rs": {
       "html": {
-        "identical": 2004,
-        "strict": 1870,
+        "identical": 2006,
+        "strict": 1875,
         "total": 2525
       },
       "md": {
         "identical": 1849,
-        "strict": 1626,
+        "strict": 1628,
         "total": 2525
       }
     }
