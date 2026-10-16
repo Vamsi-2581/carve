@@ -170,8 +170,8 @@ function foldTmpInText(text, baseReal) {
  *   - `message`: host-worded prose, not a cross-engine contract.
  *   - `detail`: the raw resolver error (I7 forbids surfacing it; host-dependent).
  *   - line/column/start/end: source offsets are NOT pinned as a §19 contract and
- *     are the field most likely to diverge; including them would manufacture
- *     false divergences. Attribution travels through `file` (I4), which IS stable.
+ *     are the field most likely to diverge. Attribution travels through `file`
+ *     (I4), which IS stable. A vector may separately opt into a source-site check.
  */
 function normalizeWarnings(warnings, baseReal) {
   return warnings.map((w) => {
@@ -292,6 +292,15 @@ export function runVector(vector, carve) {
       ...(vector.checkFlattened ? { flattened } : {}),
       ...(vector.checkCarveTarget ? { carveTarget } : {}),
       warnings: normalizeWarnings(result.warnings, baseReal),
+      ...(vector.checkWarningLocations
+        ? { warningLocations: result.warnings.map((w) => ({
+            rule: w.rule,
+            ...(w.file !== undefined
+              ? { file: baseReal ? normalizeFsPath(w.file, baseReal) : w.file }
+              : {}),
+            line: w.line,
+          })) }
+        : {}),
       dependencies: normalizeDependencies(result.dependencies, baseReal),
       rawWarningMessages: result.warnings.map((w) => w.message),
     }
