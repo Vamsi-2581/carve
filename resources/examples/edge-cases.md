@@ -53634,3 +53634,221 @@ x \</#x~>y> y
 ```
 
 ::::::
+
+## An item comment or attribute line closes the item's paragraph
+
+An item line under an item's paragraph starts the next item and reads its
+content. A comment or block-attribute line there closes the paragraph, so an
+unclosed fence on the next line has something to interrupt, and A CLOSER IS
+REQUIRED ends it at the note's own closer. Bullet, ordered and nested items
+all read it:
+
+:::::: compare
+
+````carve
+::: note
+- para
+- %% c
+```
+code
+::::
+:::
+after *b*
+````
+
+```html
+<aside class="admonition note" aria-label="Note">
+  <ul>
+    <li>para</li>
+    <li></li>
+  </ul>
+  <pre><code>code
+::::
+</code></pre>
+</aside>
+<p>after <strong>b</strong></p>
+```
+
+::::::
+
+:::::: compare
+
+````carve
+::: note
+- para
+- {#x}
+```
+code
+::::
+:::
+after *b*
+````
+
+```html
+<aside class="admonition note" aria-label="Note">
+  <ul>
+    <li>para</li>
+    <li></li>
+  </ul>
+  <pre><code>code
+::::
+</code></pre>
+</aside>
+<p>after <strong>b</strong></p>
+```
+
+::::::
+
+:::::: compare
+
+````carve
+::: note
+1. para
+2. %% c
+```
+code
+::::
+:::
+after *b*
+````
+
+```html
+<aside class="admonition note" aria-label="Note">
+  <ol>
+    <li>para</li>
+    <li></li>
+  </ol>
+  <pre><code>code
+::::
+</code></pre>
+</aside>
+<p>after <strong>b</strong></p>
+```
+
+::::::
+
+:::::: compare
+
+````carve
+::: note
+- para
+  - {#x}
+```
+code
+::::
+:::
+after *b*
+````
+
+```html
+<aside class="admonition note" aria-label="Note">
+  <ul>
+    <li>para
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+  <pre><code>code
+::::
+</code></pre>
+</aside>
+<p>after <strong>b</strong></p>
+```
+
+::::::
+
+Item text keeps the paragraph open, so the fence line folds into it and opens
+nothing; the colon lines below it are then openers:
+
+:::::: compare
+
+````carve
+::: note
+- para
+- text
+```
+code
+::::
+:::
+after *b*
+````
+
+```html
+<aside class="admonition note" aria-label="Note">
+  <ul>
+    <li>para</li>
+    <li>text
+<code>
+code</code></li>
+  </ul>
+  <div>
+    <div>
+      <p>after <strong>b</strong></p>
+    </div>
+  </div>
+</aside>
+```
+
+::::::
+
+Under a plain paragraph an item line is lazy text (PART 9 §10 I2) and reads no
+content, so a comment there keeps the paragraph open too, quoted or not:
+
+:::::: compare
+
+````carve
+::: note
+para
+- %% c
+```
+code
+::::
+:::
+after *b*
+````
+
+```html
+<aside class="admonition note" aria-label="Note">
+  <p>para
+-
+<code>
+code</code></p>
+  <div>
+    <div>
+      <p>after <strong>b</strong></p>
+    </div>
+  </div>
+</aside>
+```
+
+::::::
+
+:::::: compare
+
+````carve
+::: note
+> para
+> - %% c
+```
+code
+::::
+:::
+after *b*
+````
+
+```html
+<aside class="admonition note" aria-label="Note">
+  <blockquote><p>para
+-
+<code>
+code</code></p></blockquote>
+  <div>
+    <div>
+      <p>after <strong>b</strong></p>
+    </div>
+  </div>
+</aside>
+```
+
+::::::
