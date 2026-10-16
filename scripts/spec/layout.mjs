@@ -2577,6 +2577,16 @@ export function normalizeAuthoredBodyBases(lines, state = {}, footnoteBody = fal
       return text
     })
     let relativeEnd = Math.max(1, firstBlockEnd(candidate, 0, candidate.length, state, candidateColumns))
+    const firstItem = footnoteBody && measured.col === 0 ? matchMarkerAt(measured) : null
+    if (firstItem) {
+      for (let at = index + 1; at < index + relativeEnd; at++) {
+        const next = indentCols(lines[at])
+        if (next.col > 0 && next.col < firstItem.markerWidth && opensAuthoredBase(next.rest)) {
+          relativeEnd = at - index
+          break
+        }
+      }
+    }
     const noteChild = footnoteBody && noteListOpens && matchMarkerAt(measured)
     if (noteChild) {
       let childColumn = measured.col + noteChild.markerWidth
@@ -3588,6 +3598,32 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // `more`.
             const dedented = stripIndent(cur).replace(/[ \t]+$/, '')
             const authoredCol = indentCols(cur).col
+            // A block closed inside a nested description, item or marked quote
+            // leaves no paragraph for a column-zero continuation (CARVE-P0-011).
+            // An unmarked quote follower stays paragraph text under X2.
+            if (authoredCol === 0 && bodyLines.length > 1) {
+              const lead = bodyLines[0]
+              const lastLine = indentCols(bodyLines.at(-1))
+              const nestedDefinition = DEFLIST_TERM.test(lead)
+                ? /^:( +)/.exec(bodyLines.find((line) => /^: +/.test(line)) ?? '')
+                : null
+              const nestedDescriptionClosed = DEFLIST_TERM.test(lead) &&
+                nestedDefinition && lastLine.col >= 1 + nestedDefinition[1].length &&
+                (HEADING.test(lastLine.rest) || HR.test(lastLine.rest) ||
+                  isTableRow(lastLine.rest) || isDefinitionOrAttributeLine(lastLine.rest))
+              const nestedItemClosed = matchMarkerAt(indentCols(lead)) &&
+                lastLine.col >= matchMarkerAt(indentCols(lead)).markerWidth &&
+                isDefinitionOrAttributeLine(lastLine.rest)
+              const quotedLead = QUOTE.exec(lead)?.[1] ?? null
+              const quotedLast = QUOTE.exec(lastLine.rest)?.[1] ?? null
+              const quotedLeadItem = quotedLead === null ? null : matchMarkerAt(indentCols(quotedLead))
+              const nestedQuoteClosed = quotedLast !== null &&
+                ((quotedLead !== null && FOOTNOTE_DEF.test(quotedLead) &&
+                  indentCols(quotedLast).col >= FOOTNOTE_BODY_COLUMN) ||
+                 (quotedLeadItem && indentCols(quotedLast).col >= quotedLeadItem.markerWidth &&
+                  isDefinitionOrAttributeLine(indentCols(quotedLast).rest)))
+              if (nestedDescriptionClosed || nestedItemClosed || nestedQuoteClosed) break
+            }
             /*
              * AN INVISIBLE CONSTRUCT AT DOCUMENT COLUMN 0 IS NOT LAZY TEXT --
              * the same test the item fold makes at §24 C3, for the same reason
@@ -3612,17 +3648,11 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
              * §7 recognizes one only as a direct child of the DOCUMENT, and a
              * `dd` is not the document however its columns line up.
              */
+            // The item owns an attribute below the description body column;
+            // it ends the paragraph there and cannot fold into the description.
+            if (inItem && authoredCol > 0 && tryAttrLine([dedented], 0)) break
             if (authoredCol === 0 &&
-                isDefinitionOrAttributeLine(dedented)) break
-            // A COLUMN-0 LINE AFTER A DESCRIPTION-HOSTED NOTE IS A DOCUMENT
-            // SIBLING (carve#1974). The note absorbed its floor-reaching opener,
-            // so the body's only open paragraph is the note's, at body column 2;
-            // column 0 does not reach it (PART 0 owner selection). The fold below
-            // reads the absorbed continuation as an open paragraph and pulled the
-            // line into the `dd`. Column-dependent by design - lines at the body's
-            // own columns still fold, which is why the test is made here and not
-            // in `bodyLeavesParagraphOpen`.
-            if (authoredCol === 0 && descriptionBodyEndsInAbsorbedNote(asRead(bodyLines))) break
+                (isDefinitionOrAttributeLine(dedented) || (inItem && matchMarkerAt(indentCols(dedented))))) break
             if (COMMENT_LINE.test(dedented) && !bodyHoldsOpenCommentSpan(asRead(sinceComment()))) {
               openFence = bodyHasFenceCandidate
                 ? descriptionOpenFenceAt(asRead(bodyLines), lines, i, bodyColumn, endsBodyAt)
@@ -3636,6 +3666,11 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
               i++
               continue
             }
+            // A line below the description body column cannot reach a paragraph
+            // held only by its marker-line note (CARVE-P0-011). Check the note
+            // shape first so ordinary long descriptions avoid a backward scan.
+            if (authoredCol < bodyColumn && FOOTNOTE_DEF.test(bodyLines[0] ?? '') &&
+                descriptionBodyEndsInAbsorbedNote(asRead(bodyLines))) break
             if (classifyLayoutComment(lines, i) !== null) {
               if (authoredCol === 0 && commentFenceOpensSpan(lines, i)) break
               if (!afterComment && !retainedParagraph && !bodyLeavesParagraphOpen(asRead(sinceComment()))) break
@@ -3720,14 +3755,19 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // the body's column it ends the body rather than folding (carve#3145).
             if (isTableRow(dedented)) break
             if ((foldablePlain(dedented) || lazyFence || BULLET.test(trimLineEnd(dedented)) || isOrderedMarkerLine(dedented)) && bodyLeavesParagraphOpen(asRead(bodyLines))) {
-              pushBody(lazyFence ? LAZY + dedented : dedented)
+              // The marker is below the lead item's content column, so it
+              // continues that paragraph even when the description dedents it.
+              const leadItem = matchMarkerAt(indentCols(bodyLines[0] ?? ''))
+              const belowLeadItem = leadItem && authoredCol > 0 && authoredCol < bodyColumn + leadItem.markerWidth &&
+                matchMarkerAt(indentCols(dedented))
+              pushBody(lazyFence || belowLeadItem ? LAZY + dedented : dedented)
               i++
               continue
             }
             break
           }
           const normalizedBody = state.authoredBodyBases
-            ? normalizeAuthoredBodyBases(bodyLines, state)
+            ? normalizeAuthoredBodyBases(bodyLines, state, FOOTNOTE_DEF.test(bodyLines[0] ?? ''))
             : bodyLines
           if (bodyOrigins && normalizedBody !== bodyLines) measurement.origins.set(normalizedBody, bodyOrigins)
           if (openFence !== -1) (state.fenceOpensAt ??= new WeakMap()).set(normalizedBody, new Set([openFence]))
@@ -4579,7 +4619,8 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         // UNFRAMED for exactly this reason, so a comment reaching a nested quote
         // still arrives as itself.
         if (lines[i] !== undefined && qOpenPara && !bodyEndsWrappedAttr(inner) && !isBlank(lines[i]) &&
-            !COMMENT_LINE.test(lines[i]) && (!qTermOpen || foldablePlainLine(stripLazy(lines[i]))) &&
+            !COMMENT_LINE.test(lines[i]) && (!qTermOpen || foldablePlainLine(stripLazy(lines[i])) ||
+              (FENCE.test(lines[i]) && !hasCloser(lines, i))) &&
             !peekInterrupts(i) && !COLON_CLOSER.test(lines[i]) && !CAPTION.test(lines[i])) {
           // lazy continuation folds into the open quoted paragraph (SS10 I6)
           //
@@ -5508,6 +5549,8 @@ function collectItems(lines, i, list, state, ind, meas) {
      */
     const deepestParagraphOpen = () => {
       if (!paragraphIsOpen()) return false
+      if (bodyQuote.at === i - 1 && bodyQuote.open &&
+          !COLON_CLOSER.test(QUOTE.exec(ind(i - 1)?.rest ?? '')?.[1] ?? '')) return true
       // An authored block the block reader has already ended holds nothing
       // open for the line below (a description ending on a code block).
       if (!deepestIsDescendant && authoredContainer && authoredBlockLimit !== null && i >= authoredBlockLimit) return false
@@ -5905,6 +5948,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         const host = bodyQuote.hosts[depth] ??= hostLadder()
         if (hostFenceStep(host, text)) { opaque = true; break }
         const { inner, blockStart, popped } = hostAdvance(host, text, continues && bodyQuote.open)
+        if (host.kinds.at(-1) === 'note') { opaque = true; break }
         const opener = hostFenceOpener(host, inner, () => blockStart || !continues || !bodyQuote.open)
         if (opener) {
           host.fence = { run: opener[1], column: inner.col, host: host.columns.at(-1) }
@@ -5921,7 +5965,11 @@ function collectItems(lines, i, list, state, ind, meas) {
       bodyQuote.at = idx
       return bodyQuote.open
     }
-    if (QUOTE.test(head.text) && !paragraphIsOpen()) advanceBodyQuote(head.text, i)
+    // Seed from an open-paragraph head only when a marked line follows; a
+    // single-line nest would otherwise re-walk every level (quadratic).
+    if (QUOTE.test(head.text) && (!paragraphIsOpen() || QUOTE.test(stripIndent(lines[headIndex + 1] ?? '')))) {
+      advanceBodyQuote(head.text, headIndex)
+    }
     {
       // A fence can open on the MARKER LINE (`- ``` `), where its opener is the
       // marker-line content, not a collected continuation line -- seed from it.
@@ -6031,6 +6079,7 @@ function collectItems(lines, i, list, state, ind, meas) {
       }
     }
     let paragraphOpenBeforeComments = false
+    let markedQuoteCommentClaim = false
     let captureParagraphState = true
     // Keep a marker-line note's comment at its authored body column, including
     // a terminated span. A comment-shaped line inside its code fence is payload.
@@ -6968,6 +7017,12 @@ function collectItems(lines, i, list, state, ind, meas) {
         i++
         continue
       }
+      if (!nm && DEFLIST_TERM.test(head.text) && authoredContainer && lm.col > baseIndent && lm.col < contentCol &&
+          tryAttrLine([lm.rest], 0)) {
+        closePara()
+        i++
+        continue
+      }
       // Comments are recognized before visible ownership, at every column.
       // Keep the token in this collector so the nested parse records its node
       // and source extent, but never frame it as lazy text.
@@ -7004,6 +7059,7 @@ function collectItems(lines, i, list, state, ind, meas) {
       if (!nm && lm.rest.startsWith('%%') && itemLines.length > 0) {
         if (!afterComment && !(deepestParagraphOpen() || paragraphOpenBeforeComments) && fence.opaque?.kind !== 'comment' &&
             nestedOpaque?.kind !== 'comment' && !bodyHoldsLiveCommentSpan()) break
+        markedQuoteCommentClaim = bodyQuote.at === i - 1 && bodyQuote.open
         // KEEP ONE COLUMN of the original indentation. Stripping it entirely
         // told the item's own parse that a line indented in the source had
         // been written flush left, and the rule above cannot then tell an
@@ -7059,6 +7115,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           if (run && belowSpan !== null && run[1].length === belowSpan.run.length) { belowSpan = null; belowSpanClosed = true }
           else if (run && belowSpan === null) belowSpan = { run: run[1] }
         }
+        if (markedQuoteCommentClaim) afterComment = true
         i++
         continue
       }
@@ -7101,7 +7158,7 @@ function collectItems(lines, i, list, state, ind, meas) {
       // Document column zero remains owned by the document.
       // Q1 (or a frame surviving a comment, which Q3 answers), Q3, then Q2 at
       // the frame's own column 0 - the anchor the raw line carries.
-      if (!nm && (deepestParagraphOpen() || (afterComment && !atFrameColumn(lm.col))) &&
+      if (!nm && (deepestParagraphOpen() || (afterComment && (!atFrameColumn(lm.col) || markedQuoteCommentClaim))) &&
           itemLines.length > 0 && !opensBlockAt(line, i)) {
         // lazy fold into the open item paragraph (SS10 I2 / SS24 C3). A column-0
         // fence with a closer INTERRUPTS (I4), exactly as a column-0 quote/
@@ -7128,7 +7185,13 @@ function collectItems(lines, i, list, state, ind, meas) {
           deepestIsDescendant = false
         }
         belowSpanClosed = false
-        pushLine(LAZY + lm.rest, LAZY_MEAS(lm.rest))
+        // The retained description reads this as a new code block. A lazy
+        // sentinel would turn the unclosed fence into inline code (carve#3285).
+        if (FENCE.test(lm.rest) && DEFLIST_TERM.test(head.text) &&
+            itemMeas.at(-1)?.belowComment === true &&
+            COMMENT_LINE.test(indentCols(itemLines.at(-1) ?? '').rest)) {
+          pushLine(lm.rest, lm)
+        } else pushLine(LAZY + lm.rest, LAZY_MEAS(lm.rest))
         i++
         continue
       }
