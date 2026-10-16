@@ -55519,3 +55519,96 @@ A caption line below a description body's column folds into a quoted paragraph t
 ```
 
 ::::::
+
+A comment-retained list item reads an unclosed fence as a code block, and its unprefixed payload leaves the item (carve#3285).
+:::::: compare
+
+````carve
+- para
+%% c
+```
+x
+````
+
+```html
+<ul>
+  <li>para
+    <pre><code></code></pre>
+  </li>
+</ul>
+<p>x</p>
+```
+
+::::::
+
+A note in a comment-retained list item reads an unclosed fence as a code block too (carve#3285).
+:::::: compare
+
+````carve
+- ::: note
+  more
+ %% c
+```
+````
+
+```html
+<ul>
+  <li>
+    <aside class="admonition note" aria-label="Note">
+      <p>more</p>
+      <pre><code></code></pre>
+    </aside>
+  </li>
+</ul>
+```
+
+::::::
+
+After a quoted paragraph, the retained code block still leaves no paragraph, so `x` reaches the document (carve#3285).
+:::::: compare
+
+````carve
+- > para
+  > more
+%% c
+```
+x
+````
+
+```html
+<ul>
+  <li>
+    <blockquote><p>para
+more</p></blockquote>
+    <pre><code></code></pre>
+  </li>
+</ul>
+<p>x</p>
+```
+
+::::::
+
+A blank line inside a retained code block does not loosen the item (carve#3285).
+:::::: compare
+
+````carve
+- para
+%% c
+```
+  x
+
+  y
+````
+
+```html
+<ul>
+  <li>para
+    <pre><code>x
+
+y
+</code></pre>
+  </li>
+</ul>
+```
+
+::::::
