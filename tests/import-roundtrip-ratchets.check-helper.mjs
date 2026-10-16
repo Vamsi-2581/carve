@@ -322,6 +322,10 @@ const visibleText = (html) =>
 // points and preserve their text. HTML round-trips row 2 only: the base row
 // keeps a comment and row 3 folds soft breaks. Markdown drops the note.
 
+// Corpus 610 adds seven documents (carve#3265); all seven import, are fixed
+// points and preserve their text. HTML round-trips two of them and Markdown
+// none: the Markdown target drops the note.
+
 test('HTML import and render/import round trips cannot drift silently', async () => {
   const names = (await readdir(root)).filter((name) => name.endsWith('.crv')).sort()
   const measured = {
