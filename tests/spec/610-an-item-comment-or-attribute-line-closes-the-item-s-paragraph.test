@@ -1,0 +1,163 @@
+An item comment or attribute line closes the item's paragraph
+
+````
+::: note
+- para
+- %% c
+```
+code
+::::
+:::
+after *b*
+.
+<aside class="admonition note" aria-label="Note">
+  <ul>
+    <li>para</li>
+    <li></li>
+  </ul>
+  <pre><code>code
+::::
+</code></pre>
+</aside>
+<p>after <strong>b</strong></p>
+````
+
+````
+::: note
+- para
+- {#x}
+```
+code
+::::
+:::
+after *b*
+.
+<aside class="admonition note" aria-label="Note">
+  <ul>
+    <li>para</li>
+    <li></li>
+  </ul>
+  <pre><code>code
+::::
+</code></pre>
+</aside>
+<p>after <strong>b</strong></p>
+````
+
+````
+::: note
+1. para
+2. %% c
+```
+code
+::::
+:::
+after *b*
+.
+<aside class="admonition note" aria-label="Note">
+  <ol>
+    <li>para</li>
+    <li></li>
+  </ol>
+  <pre><code>code
+::::
+</code></pre>
+</aside>
+<p>after <strong>b</strong></p>
+````
+
+````
+::: note
+- para
+  - {#x}
+```
+code
+::::
+:::
+after *b*
+.
+<aside class="admonition note" aria-label="Note">
+  <ul>
+    <li>para
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+  <pre><code>code
+::::
+</code></pre>
+</aside>
+<p>after <strong>b</strong></p>
+````
+
+````
+::: note
+- para
+- text
+```
+code
+::::
+:::
+after *b*
+.
+<aside class="admonition note" aria-label="Note">
+  <ul>
+    <li>para</li>
+    <li>text
+<code>
+code</code></li>
+  </ul>
+  <div>
+    <div>
+      <p>after <strong>b</strong></p>
+    </div>
+  </div>
+</aside>
+````
+
+````
+::: note
+para
+- %% c
+```
+code
+::::
+:::
+after *b*
+.
+<aside class="admonition note" aria-label="Note">
+  <p>para
+-
+<code>
+code</code></p>
+  <div>
+    <div>
+      <p>after <strong>b</strong></p>
+    </div>
+  </div>
+</aside>
+````
+
+````
+::: note
+> para
+> - %% c
+```
+code
+::::
+:::
+after *b*
+.
+<aside class="admonition note" aria-label="Note">
+  <blockquote><p>para
+-
+<code>
+code</code></p></blockquote>
+  <div>
+    <div>
+      <p>after <strong>b</strong></p>
+    </div>
+  </div>
+</aside>
+````
