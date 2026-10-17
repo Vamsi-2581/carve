@@ -1385,6 +1385,12 @@
       "scope": "canonical-writing"
     },
     {
+      "id": "CARVE-P11-072",
+      "part": "11",
+      "title": "A LIST ITEM'S CONTINUATION BLOCKS SIT AT ITS CONTENT COLUMN",
+      "scope": "canonical-writing"
+    },
+    {
       "id": "CARVE-P11-047",
       "part": "11",
       "title": "THE MARKDOWN TARGET KEEPS A LIST'S TIGHTNESS",

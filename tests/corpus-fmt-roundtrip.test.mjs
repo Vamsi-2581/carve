@@ -64,7 +64,14 @@ import assert from 'node:assert/strict'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { carveToAstJson, carveToCarve, carveToHtml } from '@markup-carve/carve'
+import {
+  carveToAnsi,
+  carveToAstJson,
+  carveToCarve,
+  carveToHtml,
+  carveToMarkdown,
+  carveToPlainText,
+} from '@markup-carve/carve'
 import { parse as parseSpec } from '../scripts/spec/layout.mjs'
 import { renderDoc } from '../scripts/spec/html.mjs'
 import { loadDeclaredFmtDrift, loadWriterOnlyDrift } from './fmt-drift.mjs'
@@ -87,6 +94,8 @@ const documents = readdirSync(corpusDir)
   .map((f) => ({ slug: f.replace(/\.crv$/, ''), source: readFileSync(resolve(corpusDir, f), 'utf8') }))
 
 const declaredDrift = loadDeclaredFmtDrift(here)
+
+const TARGET_WRITERS = { md: carveToMarkdown, txt: carveToPlainText, ansi: carveToAnsi }
 
 test('the corpus is non-empty, so a broken glob cannot pass as a clean run', () => {
   assert.ok(documents.length > 100, `found ${documents.length} corpus documents`)
@@ -679,7 +688,13 @@ test('every writer-drift line still names a document the pin writes wrongly', ()
     // that sweep green. A PART 11 §1c wrapper loss is NOT drift, it is what the
     // clause forgives, so the SHAPE and not the tree is what is asked.
     const reparseDiffers = astShape(once) !== astShape(source)
-    if (!changesMeaning && !unsettled && !oracleChanges && !fmtBytesDiffer && !reparseDiffers) {
+    // A FIFTH WAY: a target sidecar the pin does not write. corpus-render-sidecars
+    // skips a slug declared here, so a target writer's lag is declared here too.
+    const sidecarDiffers = Object.entries(TARGET_WRITERS).some(([ext, write]) => {
+      const path = resolve(corpusDir, `${slug}.${ext}`)
+      return existsSync(path) && write(source) !== readFileSync(path, 'utf8')
+    })
+    if (!changesMeaning && !unsettled && !oracleChanges && !fmtBytesDiffer && !reparseDiffers && !sidecarDiffers) {
       stale.push(`${slug} (round-trips clean)`)
     }
   }

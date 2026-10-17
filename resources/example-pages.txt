@@ -271,6 +271,8 @@ index: examples/edge-cases/index.md
   05-lists-26
   05-lists-27
   05-lists-28
+  05-lists-29
+  05-lists-30
   ordered-marker-vs-prose
   parenthesized-ordered-marker
   list-nesting-and-looseness

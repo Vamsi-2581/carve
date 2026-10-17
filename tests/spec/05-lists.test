@@ -371,3 +371,63 @@ lazy</li>
   </blockquote>
 </blockquote>
 ```
+
+````
+- item one
+
+  second para
+
+  ```
+  code
+  ```
+
+  > quote
+
+  - nested
+.
+<ul>
+  <li><p>item one</p>
+    <p>second para</p>
+    <pre><code>code
+</code></pre>
+    <blockquote><p>quote</p></blockquote>
+    <ul>
+      <li>nested</li>
+    </ul>
+  </li>
+</ul>
+````
+
+````
+1. setup
+
+   para
+
+   - nested
+
+     deep para
+
+     ```
+     a
+
+     b
+     ```
+
+2. build
+.
+<ol>
+  <li><p>setup</p>
+    <p>para</p>
+    <ul>
+      <li><p>nested</p>
+        <p>deep para</p>
+        <pre><code>a
+
+b
+</code></pre>
+      </li>
+    </ul>
+  </li>
+  <li><p>build</p></li>
+</ol>
+````
