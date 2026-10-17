@@ -10577,6 +10577,47 @@ EOF = (* end of file *) ;
       this clause's silence about the others never granted one -- the MARKDOWN
       target keeps tightness under CARVE-P11-047.
 
+  10h2. A LIST ITEM'S CONTINUATION BLOCKS SIT AT ITS CONTENT COLUMN --
+      NORMATIVE [CARVE-P11-072]. In the plain-text target, every block of a
+      list item after its first -- a paragraph, a code block, a block quote,
+      or any other block -- is written at the item's CONTENT COLUMN. That is
+      the column CARVE-P11-035 already gives a nested list item under the same
+      item: two ASCII spaces deeper than the item's marker. A nested list is
+      one continuation block among the others, so the two rules put a
+      paragraph and a sublist of one item at the same column.
+
+        - item one               is written as:   - item one
+
+          second para                               second para
+
+          ```                                       code
+          code
+          ```                                       "quote"
+
+          > quote                                   - nested
+
+          - nested
+
+      THE COLUMN DOES NOT FOLLOW THE MARKER'S WIDTH. An ordered item takes the
+      same two-space step as a bullet, because a nested item under it does:
+      `1. setup` writes its continuation blocks at column 2, not at the width
+      of `1. `, and an item at depth two (its marker at column 2) writes them
+      at column 4.
+
+      EVERY LINE OF THE BLOCK IS INDENTED, and only those lines. A block that
+      already indents in this target, such as a definition's body, keeps that
+      indentation inside the column. A line that is empty stays empty: the
+      column is never written as trailing whitespace.
+
+      ANSI follows plain text: the same column, written ahead of the block's
+      own styling and of a block quote's bar. The MARKDOWN target is outside
+      this clause; it already writes an item's blocks at CommonMark's content
+      column.
+
+      THE FIRST BLOCK IS NOT DECIDED HERE. It is written on the marker line,
+      and this clause does not place its own later lines (the line after a
+      hard break, or the second line of a code block that opens the item).
+
   10i. A HARD LIST BOUNDARY IS WRITTEN AS EXACTLY THREE BLANK LINES --
       NORMATIVE [CARVE-P11-036]. The writer normalizes a run of blank lines between two blocks
       to ONE. A run that is PART 9 §11 N1a's hard list boundary is the

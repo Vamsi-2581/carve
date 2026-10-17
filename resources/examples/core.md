@@ -1221,6 +1221,86 @@ whitespace-ONLY lines can tell `> >` from `> > `.
 
 :::
 
+In the plain-text and ANSI targets an item's continuation blocks keep the
+item's content column, the same two-space step a nested item takes (PART 11
+§10h2). The `.txt` and `.ansi` sidecars hold those outputs.
+
+::: compare
+
+````carve
+- item one
+
+  second para
+
+  ```
+  code
+  ```
+
+  > quote
+
+  - nested
+````
+
+```html
+<ul>
+  <li><p>item one</p>
+    <p>second para</p>
+    <pre><code>code
+</code></pre>
+    <blockquote><p>quote</p></blockquote>
+    <ul>
+      <li>nested</li>
+    </ul>
+  </li>
+</ul>
+```
+
+:::
+
+An ordered marker does not widen the column: `1. ` still puts its blocks at
+column 2, and the nested item's blocks go to column 4. The blank line inside
+the code block stays empty.
+
+::: compare
+
+````carve
+1. setup
+
+   para
+
+   - nested
+
+     deep para
+
+     ```
+     a
+
+     b
+     ```
+
+2. build
+````
+
+```html
+<ol>
+  <li><p>setup</p>
+    <p>para</p>
+    <ul>
+      <li><p>nested</p>
+        <p>deep para</p>
+        <pre><code>a
+
+b
+</code></pre>
+      </li>
+    </ul>
+  </li>
+  <li><p>build</p></li>
+</ol>
+```
+
+:::
+
 
 ## Task lists
 
