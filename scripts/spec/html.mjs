@@ -15,6 +15,7 @@ export const rawPassthrough = content => /^\n*$/.test(content) ? content : conte
 
 import { Refuse, TIER1, TERM_COMMENT, bracketRunEnd } from './layout.mjs'
 import { labelKey } from './label-key.mjs'
+import { delimitedRowCount } from './delimited-table.mjs'
 
 /*
  * THE WORDS THE ENGINE WRITES ITSELF (PART 9 SS16a, carve#1456).
@@ -1071,6 +1072,13 @@ function renderTable(node, depth, ctx) {
     }
     if (keep.length) ordinaryAttrs.push(keep)
   }
+  if (node.sourceFormat) {
+    const foot = delimitedRowCount(tableKeys.get('footer-rows')) ?? 0
+    tableKeys.set('footer-rows', String(foot))
+    const head = delimitedRowCount(tableKeys.get('header-rows'))
+      ?? Math.min(1, Math.max(0, node.rows.length - foot))
+    tableKeys.set('header-rows', String(head))
+  }
   const rows = node.rows
   const hasBody = ['body-rows', 'body-header-rows', 'body-header-cols'].some(key => tableKeys.has(key))
   const groups = hasBody ? tableBodyGroups(tableKeys, rows.length) : null
@@ -1102,7 +1110,7 @@ function renderTable(node, depth, ctx) {
   // carve#1463). The attribute block is what makes the cell ordinary
   // content, so the `<` is the literal character and the attributes stay on
   // the cell that carries them.
-  const bareMarker = (cell) => (cell.content === '<' || cell.content === '^') && cell.align === null && cell.attrs == null
+  const bareMarker = (cell) => !cell.literal && (cell.content === '<' || cell.content === '^') && cell.align === null && cell.attrs == null
   const absorb = (origin, cell, r, c) => {
     consumed.add(key(r, c))
     cover.set(key(r, c), origin)
@@ -1239,7 +1247,7 @@ function renderTable(node, depth, ctx) {
       if (valign) declarations.push(`vertical-align: ${valign};`)
       a += ` style="${declarations.join(' ')}"`
     }
-    const content = cell.content === '' ? '' : renderInline(cell.content)
+    const content = cell.content === '' ? '' : cell.literal ? escapeHtml(cell.content) : renderInline(cell.content)
     return `<${tag}${a}>${content}</${tag}>`
   }
   const renderRow = (row, r) => {
