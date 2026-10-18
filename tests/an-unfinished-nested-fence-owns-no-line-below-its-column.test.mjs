@@ -56,3 +56,46 @@ test('a closed nested fence in a description does not hide the item\'s own secon
   assert.equal(parse(source).blocks[0].tight, false)
   assert.match(renderDoc(parse(source)).replace(/\s+/g, ''), /<p>tail<\/p><p>second<\/p><\/li>/)
 })
+
+test('a new outer-item paragraph after a nested fence stores its own lazy claim', () => {
+  const source = '- - - ```\n  tail\ntail\n'
+  const ast = parse(source)
+  assert.equal(ast.blocks.length, 1)
+  assert.deepEqual(ast.blocks[0].items[0].blocks.at(-1), { t: 'para', lines: ['tail', 'tail'] })
+})
+
+test('an invalid fence opener starts a paragraph with a lazy claim', () => {
+  const source = '- - ```\n  ```foo bar\ntail\n'
+  const ast = parse(source)
+  assert.equal(ast.blocks.length, 1)
+  assert.deepEqual(ast.blocks[0].items[0].blocks.at(-1), { t: 'para', lines: ['```foo bar', 'tail'] })
+})
+
+test('a new outer-item fence after a nested fence stores no lazy claim', () => {
+  const source = '- - ```\n  ```\ntail\n'
+  const ast = parse(source)
+  assert.deepEqual(ast.blocks.at(-1), { t: 'para', lines: ['tail'] })
+  assert.equal(ast.blocks[0].items[0].blocks.at(-1).t, 'code')
+  assert.equal(ast.blocks[0].items[0].blocks.at(-1).text, '')
+})
+
+test('an outer-item fence with payload still ends at its host column', () => {
+  const source = '- - ```\n  ```\n  x\ntail\n'
+  const ast = parse(source)
+  assert.deepEqual(ast.blocks.at(-1), { t: 'para', lines: ['tail'] })
+  assert.equal(ast.blocks[0].items[0].blocks.at(-1).text, 'x\n')
+})
+
+test('a quoted outer-item paragraph stores its own claim after a nested fence', () => {
+  const source = '> - - - ```\n>   tail\n> tail\n'
+  const html = renderDoc(parse(source))
+  assert.match(html, /      tail\ntail\n    <\/li>/)
+  assert.doesNotMatch(html, /<p>tail<\/p>/)
+})
+
+test('quote padding does not change the outer-item paragraph claim', () => {
+  const source = '>  - - - ```\n>    tail\n>  tail\n'
+  const html = renderDoc(parse(source))
+  assert.match(html, /      tail\ntail\n    <\/li>/)
+  assert.doesNotMatch(html, /<p>tail<\/p>/)
+})

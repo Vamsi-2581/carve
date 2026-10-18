@@ -5483,10 +5483,10 @@ function collectItems(lines, i, list, state, ind, meas) {
       }
       return hasCloser(body, 0)
     }
-    const bodyFenceOpens = (idx, dedented, blockBase = contentCol) => {
+    const bodyFenceOpens = (idx, dedented, blockBase = contentCol, endedDescendant = false) => {
       const m = FENCE.exec(dedented)
       if (!m || parseFenceInfo(m[2]) === null) return false // INVALID-FENCE FALLBACK
-      if (!paragraphIsOpen()) return true // at block start it runs to the end of the container
+      if (endedDescendant || !paragraphIsOpen()) return true // at block start it runs to the end of the container
       // An ANCESTOR collector already answered §10 I4 for this source line, over
       // lines its own break then removed from this body. One line, one answer.
       if (state.nestedFenceOpensAt?.get(lines)?.has(idx)) return true
@@ -6690,7 +6690,8 @@ function collectItems(lines, i, list, state, ind, meas) {
           if (openerBase === contentCol) pendingAuthoredBlock = i
           else authoredBlockLimit = authoredBlockEnd(lines, i, openerBase, state)
         }
-        const opens = bodyFenceOpens(i, dedented, localBase)
+        // The old descendant cannot supply a paragraph to an ancestor's new fence.
+        const opens = bodyFenceOpens(i, dedented, localBase, nestedOpaque?.kind === 'code' && !descendantOwned)
         // The item's own parse asks I4 over the item's lines, and a closer the
         // lookahead found past a below-column line is not among them. Hand it
         // the answer given here so the line is read one way (carve#1399).
@@ -6797,7 +6798,7 @@ function collectItems(lines, i, list, state, ind, meas) {
         // and the same correction carve#891 already made one construct over for
         // the colon fence. This branch tested the line's SHAPE, so an
         // unterminated fence the paragraph had ABSORBED closed it anyway.
-        else if (FENCE.test(dedented)) {
+        else if (isCodeBlockOpener(dedented)) {
           if (inPayload || fence.opaque?.payload) openParaWith(dedented)
           else if (fence.opaque && fence.opaque.kind === 'code' && fence.opaque.opens === false) {
             openParaWith(dedented)
@@ -6947,8 +6948,12 @@ function collectItems(lines, i, list, state, ind, meas) {
         // (CARVE-P0-013, CARVE-P0-014). The branches above classify the line in
         // THIS item's coordinates, where a descendant's fence and its payload
         // are ordinary text, so they record a paragraph the deepest structure
-        // does not hold.
-        if (nestedVerbatim() || wasNested?.kind === 'code') closePara()
+        // does not hold. A line outside that descendant's column closes its
+        // host and can start an ancestor paragraph with a new claim. A new
+        // fence on that line leaves no claim, even if the old descendant was
+        // still open when the line arrived.
+        if ((descendantOwned || isCodeBlockOpener(dedented)) &&
+            (nestedVerbatim() || wasNested?.kind === 'code')) closePara()
         // The note body keeps its reach past the closed paragraph (CARVE-P0-013).
         if (markerNoteCommentSeen && inNoteBody) {
           const noteBody = defBodyIndent
@@ -7039,7 +7044,7 @@ function collectItems(lines, i, list, state, ind, meas) {
       // surviving ancestor the run's column reaches, and carries no depth term,
       // so a descendant's open body ends this container too and the run is
       // classified where the column puts it (carve#2490).
-      if (!commentTokenBelow && (nestedVerbatim() || fenceUnderAbsorbed !== null || (fence.opaque && !fence.opaque.payload && fence.opaque.opens !== false))) break
+      if (!commentTokenBelow && (nestedVerbatim() || fenceUnderAbsorbed !== null || (fence.opaque && fence.opaque.opens !== false))) break
       if (nm && columnOwner(nm.indent) === 'outer') {
         // §17 L1, first clause: the item WAS followed by a blank line before
         // this sibling marker - an invisible attachment in between does not

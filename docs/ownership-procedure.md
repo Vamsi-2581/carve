@@ -9,7 +9,7 @@ a transition table and three named exceptions. This page follows that order and
 names the clauses each step decides. It adds no rule. The source clauses in
 `resources/spec/01-layout.ebnf` are authoritative, and the
 [machine-readable map](https://github.com/markup-carve/carve/blob/main/resources/spec/ownership-procedure.json)
-lists all 22 Part 0 rule IDs with the checker helpers that implement each step.
+lists the Part 0 rule IDs with the checker helpers that implement each step.
 Those helpers are implementation entry points, not a public parser API.
 
 Some examples and historical material cite the earlier step names: S1 is O1,
@@ -22,6 +22,15 @@ uses O1 to O4.
 Strip a leading byte order mark, and replace every NUL and every ill-formed
 sequence with U+FFFD, before the first line is read. Columns are measured on the
 result. Rules: CARVE-P0-001, CARVE-P0-002 and CARVE-P0-023.
+
+## Block structure decision order
+
+CARVE-P0-024 gives the order for each line: identify blanks, match prefixes,
+let an opaque body take its payload, then classify comments. For a visible
+line, select an owner, recognize its form in that owner's coordinates and
+decide interruption or lazy continuation. If it does not fold, close missed
+frames and classify it in the owner. The `parse` entry point runs these
+decisions. Rule: CARVE-P0-024.
 
 ## O1 Strip prefixes
 
@@ -52,6 +61,8 @@ paragraph and its continuation claim, a noninterrupting line folds into it
 whatever prefixes it missed. T supplies the paragraph state; an ancestor's
 earlier paragraph cannot supply a missing claim. Recognition uses O2's owner,
 coordinates and scope, including the fence's valid metadata and closer guard.
+A new paragraph at an enclosing list item's content column stores its own
+claim after an ended descendant; it can take the next lazy line.
 A fold closes nothing. Definition-term continuation follows CARVE-P2-028.
 Rules: CARVE-P0-006, CARVE-P0-007, CARVE-P0-009, CARVE-P0-014, CARVE-P0-015,
 CARVE-P0-016, CARVE-P0-017 and CARVE-P0-018.
