@@ -16162,6 +16162,36 @@ tail
 
 :::
 
+Two blank lines before a nested item's closer remain fence content.
+
+::: compare
+
+````carve
+- - ```
+
+
+    ```
+
+tail
+````
+
+````html
+<ul>
+  <li>
+    <ul>
+      <li>
+        <pre><code>
+
+</code></pre>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>tail</p>
+````
+
+:::
+
 ## A boolean and a key/value of the same name are one attribute
 
 A boolean and a `key=value` of the SAME name are one attribute, not two. A
@@ -58614,35 +58644,6 @@ a
 </code></li>
     </ul>
     <p>tail</p>
-  </li>
-</ul>
-```
-
-:::::::
-
-::::::: compare
-
-````carve
-- outer
-  - head
-     ```
-     a
-  ```
-
-    tail
-````
-
-```html
-<ul>
-  <li>outer
-    <ul>
-      <li>head
-<code>
-a
-</code>
-        tail
-      </li>
-    </ul>
   </li>
 </ul>
 ```

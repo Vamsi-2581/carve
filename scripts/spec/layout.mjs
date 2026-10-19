@@ -5965,7 +5965,7 @@ function collectItems(lines, i, list, state, ind, meas) {
       // its body is the descendant's verbatim body like any other (CARVE-P0-013).
       if (matchMarkerAt(dmeas)) {
         const lead = markerFenceSummary(dmeas.rest, prefixMemo(state, lines, idx).markerFence ??= new Map())
-        if (lead) return { kind: 'code', run: lead.run, col: dmeas.col + lead.col }
+        if (lead) return { kind: 'code', run: lead.run, col: dmeas.col + lead.col, markerLine: true }
       }
       if (dmeas.col === 0 || !descendantOwned) return null
       const comment = COMMENT_FENCE_BODY.exec(dmeas.rest)
@@ -6044,7 +6044,7 @@ function collectItems(lines, i, list, state, ind, meas) {
       else {
         nestedOpaque = markerComment(head.text.trimStart(), i)
         const lead = markerFenceSummary(head.text, prefixMemo(state, lines, i).markerFence ??= new Map())
-        if (!nestedOpaque && headSubMarker && lead) nestedOpaque = { kind: 'code', run: lead.run, col: lead.col }
+        if (!nestedOpaque && headSubMarker && lead) nestedOpaque = { kind: 'code', run: lead.run, col: lead.col, markerLine: true }
       }
     }
     i++
@@ -6276,11 +6276,16 @@ function collectItems(lines, i, list, state, ind, meas) {
         // decide with the NEXT content line
         let j = i + 1
         while (j < n && ind(j).rest === '') j++
+        const nextCloser = j < n && nestedOpaque?.markerLine && ind(j).col >= nestedOpaque.col
+          ? PURE_FENCE.exec(ind(j).rest) : null
         const descendantFence = bodyHasOpenCodeFence(itemLines, residueFence, itemLines.length, (k) => itemMeas[k], hasFutureCommentCloser)
-        if (descendantFence || nestedOpaque?.kind === 'code' && !CONT_MARKER.test(lines[i - 1] ?? '') &&
-            (j >= n || ind(j).col < contentCol)) {
-          // A descendant's unfinished fence owns the run even when the next
-          // line returns to this item or leaves it altogether.
+        const closedMarkerFence = nestedOpaque?.kind === 'code' && nestedOpaque.markerLine &&
+          nextCloser && nextCloser[1][0] === nestedOpaque.run[0] && nextCloser[1].length >= nestedOpaque.run.length
+        const unfinishedDescendantFence = nestedOpaque?.kind === 'code' && !CONT_MARKER.test(lines[i - 1] ?? '') &&
+          (j >= n || ind(j).col < contentCol)
+        if (descendantFence || unfinishedDescendantFence || closedMarkerFence) {
+          // A descendant fence owns the full blank run, including one before
+          // its closer. An unfinished fence also owns the run at its boundary.
           for (let k = i; k < j; k++) {
             const dd = dedentMeasured(ind(k), lines[k], authoredBlockBase ?? contentCol)
             pushLine(dd.text, dd.meas)
@@ -6339,7 +6344,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           // A paragraph inside a held container is not the item's own
           // second paragraph (PART 9 section 17 L1, carve#2988).
           if (authoredContainer && authoredBlockLimit !== null && j < authoredBlockLimit) {
-            if (!descendantFence) pushLine('', BLANK_MEAS)
+            if (!descendantFence && !closedMarkerFence) pushLine('', BLANK_MEAS)
             closePara()
             i = j
             continue
@@ -6350,7 +6355,7 @@ function collectItems(lines, i, list, state, ind, meas) {
             // not loosen this (ancestor) item (carve#322). Attach, stay tight;
             // the recursive parse of itemLines decides the sub-list's looseness.
             //
-            if (!descendantFence) {
+            if (!descendantFence && !closedMarkerFence) {
               const blanks = CAPTION.test(jm.rest) ? j - i : 1
               for (let k = 0; k < blanks; k++) pushLine('', BLANK_MEAS)
             }
@@ -6388,7 +6393,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           const defBase = authoredBlockLimit !== null && j >= authoredBlockLimit ? null : authoredBlockBase ?? contentCol
           if (defBodyIndent !== null && defBase !== null && jm.col - defBase > defBodyIndent) {
             const defBody = defBodyIndent
-            if (!descendantFence) {
+            if (!descendantFence && !closedMarkerFence) {
               const blanks = CAPTION.test(jm.rest) ? j - i : 1
               for (let k = 0; k < blanks; k++) pushLine('', BLANK_MEAS)
             }
@@ -6398,7 +6403,7 @@ function collectItems(lines, i, list, state, ind, meas) {
             continue
           }
           if (CAPTION.test(jm.rest)) {
-            if (!descendantFence) {
+            if (!descendantFence && !closedMarkerFence) {
               for (let k = i; k < j; k++) pushLine('', BLANK_MEAS)
               closePara()
               if (j > i + 1) list.tight = false
@@ -6409,7 +6414,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           }
           if (opensSubBlock(dedented)) {
             // sub-BLOCK after a blank: attaches, stays tight (SS17 L2)
-            if (!descendantFence) pushLine('', BLANK_MEAS)
+            if (!descendantFence && !closedMarkerFence) pushLine('', BLANK_MEAS)
             closePara()
             i = j
             continue
@@ -6430,7 +6435,7 @@ function collectItems(lines, i, list, state, ind, meas) {
             // + `  %% c` rendered `<li><p>a</p></li>` - an item wrapped because
             // of a line that produces no output at all. carve-rs renders every
             // one of these tight; carve-js does for two of the three.
-            if (!descendantFence) pushLine('', BLANK_MEAS)
+            if (!descendantFence && !closedMarkerFence) pushLine('', BLANK_MEAS)
             closePara()
             blankBeforeInvisible = true
             // §17 L1b: the invisible line is not a separator either, so the
@@ -6445,7 +6450,7 @@ function collectItems(lines, i, list, state, ind, meas) {
             continue
           }
           // a second PARAGRAPH inside the item -> loose (SS17 L1)
-          if (!descendantFence) pushLine('', BLANK_MEAS)
+          if (!descendantFence && !closedMarkerFence) pushLine('', BLANK_MEAS)
           list.tight = false
           if (col === contentCol) subCol = -1
           startPara()
@@ -6477,7 +6482,7 @@ function collectItems(lines, i, list, state, ind, meas) {
           // the top level split. Attaching still keeps THIS item tight - that
           // is L2 and is unchanged; what the run decides is whether the marker
           // below it joins the sub-list, which is the nested parse's question.
-          if (!descendantFence) for (let k = i; k < j; k++) pushLine('', BLANK_MEAS)
+          if (!descendantFence && !closedMarkerFence) for (let k = i; k < j; k++) pushLine('', BLANK_MEAS)
           closePara()
           i = j
           continue
