@@ -35,6 +35,7 @@ docs/includes.md :: PART 6 I9 :: is ordinary LITERAL text and is NEVER resolved 
 docs/includes.md :: PART 6 I9a :: CONTIGUOUS RUN of inline nodes :: A processor MUST therefore recognize a directive over a
 docs/includes.md :: PART 6 I12 :: MUST NOT escape the braces of a well-formed directive :: I12: the writer preserves a directive verbatim. A Carve writer
 docs/includes.md :: PART 6 I15 :: the expansion pass MUST NOT run :: I15: a processor targeting Carve source MUST NOT expand.
+docs/includes.md :: PART 6 I16 :: A linter MUST expand include directives when :: I16: lint expands includes. A linter MUST expand include
 docs/includes.md :: PART 6 I3 :: off for untrusted input unless it has satisfied :: - The resolver is opt-in and MUST be off for untrusted input
 docs/includes.md :: PART 6 I11 :: Two spellings that name the same document MUST return the same id :: Two spellings that name the same document MUST return the same
 docs/includes.md :: PART 6 I10 :: MUST NOT default to the process working directory :: The root MUST NOT default to the process working directory:

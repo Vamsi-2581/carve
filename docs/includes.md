@@ -9,7 +9,7 @@ normative: true
 This page gives the normative rules for Carve's file-inclusion (transclusion) directive,
 <code v-pre>{{ … }}</code>. Inclusion is a processor feature. The core parser does not
 expand files and leaves the directive as text. The syntax is defined in
-`resources/grammar.ebnf` PART 6, and so are its rules (`CARVE-P6-001`, I1 to I15); this page states them with examples.
+`resources/grammar.ebnf` PART 6, and so are its rules (`CARVE-P6-001`, I1 to I16); this page states them with examples.
 
 ## What inclusion is (and is not)
 
@@ -510,6 +510,62 @@ engine and the author's source on the other two.
 This says nothing about other targets. Rendering the same document to HTML with
 a resolver configured expands normally; it is the Carve target specifically that
 round-trips.
+
+## Linting included content
+
+**I16: lint expands includes.** A linter MUST expand include directives when
+the caller gives it an include root or a resolver. Expansion for lint follows
+the rendering rules: the same root containment, byte budget, resolver-call
+bound, depth limit and cycle guard. Without a root or a resolver the linter
+reads no include target and reports nothing about one, as it did before this
+rule.
+
+What runs:
+
+- The top-level document is linted as it is without includes.
+- Every Carve-mode include the expansion accepts is linted with every rule and
+  with the top-level document's lint options, over the source the expansion
+  parsed: the whole file, the `@lines` range or the `@region` region. A
+  `#section` selection lints the whole file and keeps the findings on the
+  selected lines.
+- A `@code` include's block gets the rules that read a block's payload, once
+  the attribute line above the directive applies to it. Today those are
+  `delimited-table-malformed` and `delimited-table-wide-row` on a
+  `{table}`-marked `csv` or `tsv` code include.
+
+A finding in included content names the included file and a line and column in
+that file, plus the include chain that reached it, top-level directive first. A
+payload finding points at column 1 of the line where the offending record
+starts. Given `data/plans.csv`:
+
+~~~text
+Plan,Seats,Price
+Starter,1,"$0"
+Team,10,"$49" billed yearly
+~~~
+
+and `doc.crv`:
+
+~~~carve
+{table}
+{{ data/plans.csv @code:csv }}
+~~~
+
+the linter reports `delimited-table-malformed` at `data/plans.csv:3:1`, reached
+from the directive at `doc.crv:2:1`. Line 3 is the record whose quoting cannot
+be read.
+
+A finding in included content is reported once per distinct file, line, column
+and rule; the first reach in document order supplies the chain. A file included
+twice reports each finding once. Two selections of different ranges of one file
+each report their own range, and `@shift` does not make a range distinct.
+
+Every include Warning that leaves a directive literal is a finding under its
+own rule id (`include-unresolved`, `include-non-text`, `include-region-invalid`,
+`include-selection-conflict`, `include-cycle` and the rest), at the directive in
+the file that wrote it. Renames and heading clamps do not leave a directive
+literal and are not lint findings. The shared vectors in
+`tests/lint-include-conformance/` pin all of the above across engines.
 
 ## The host resolver
 
