@@ -41,3 +41,6 @@ gate does.
 
 `tests/lint-include-conformance.test.mjs` checks the vectors against the schema
 and a few invariants in `npm test`; it does not need an engine.
+`tests/lint-include-conformance.proof.mjs` runs every vector through the
+carve-js build named in `resources/include-reference-pin.txt`, in the CI job
+that runs `npm run test:includes`.
