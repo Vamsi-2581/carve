@@ -291,9 +291,9 @@ server.listen(3000)
   ```
 
   Data with malformed quoting stays a code block, as it does in an authored
-  fence. `carve lint` does not yet report the `delimited-table-*` diagnostics
-  for included data, because it checks the document without expanding its
-  includes.
+  fence. Given an include root, `carve lint` reports the `delimited-table-*`
+  diagnostics for included data too (see
+  [Linting included content](#linting-included-content)).
 - **Block only.** A code block is block structure, so `@code` inside a sentence
   is an `include-block-in-inline` error. `@shift` has no effect, since the code
   holds no headings.

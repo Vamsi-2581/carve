@@ -242,8 +242,8 @@ cells and reports `delimited-table-wide-row`. See [Validation](/validation).
 The data can also live in its own file: put `{table}` above a
 <code v-pre>{{ data/plans.csv @code:csv }}</code> include, as shown in
 [Including source as code](/includes#including-source-as-code-code).
-`carve lint` does not yet report the `delimited-table-*` diagnostics for
-included data.
+Linting included data is covered in
+[Linting included content](/includes#linting-included-content).
 
 ### Aligned source formatting
 
