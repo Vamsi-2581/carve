@@ -354,6 +354,7 @@ const MANIFEST = [
   // staleness half re-runs each declared vector and fails when every golden
   // agrees again.
   { repo: 'carve-php', path: 'tests/TestCase/Transform/IncludeConformanceTest.php', name: 'KNOWN_DIFFERENCES', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'testEveryKnownDifferenceStillDiffers', owner: 'tests/TestCase/Transform/IncludeConformanceTest.php' },
+  { repo: 'carve-php', path: 'tests/TestCase/Transform/IncludeConformanceTest.php', name: 'AHEAD_OF_PIN', kind: 'php', policy: 'owed', guard: 'two-way', staleness: 'the golden caught up - delete its AHEAD_OF_PIN entry', owner: 'tests/TestCase/Transform/IncludeConformanceTest.php' },
   // The include-security adapter carve-php#1954 added. KNOWN_KEYS is a
   // capability list in KNOWN_KEYWORDS' direction, not an exemption: a corpus
   // member it does not name FAILS the adapter, which is what keeps a newly
