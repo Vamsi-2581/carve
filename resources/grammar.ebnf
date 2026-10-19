@@ -4196,7 +4196,51 @@ include_unquoted_value = ( character - '}' - '|' - '"' - "'" - '\' - '@' - ' ' -
    I15 A PROCESSOR TARGETING CARVE SOURCE DOES NOT EXPAND. When the output
       target is Carve source (`fmt`, a `--carve` render, any pipeline whose
       product is Carve), the expansion pass MUST NOT run, whether or not a
-      resolver is configured. Other targets expand as usual. *)
+      resolver is configured. Other targets expand as usual.
+
+   I16 LINT EXPANDS INCLUDES. A linter MUST expand include directives when
+      the caller gives it an include root or a resolver, and MUST NOT read
+      any include target when the caller gives neither; without one it
+      reports nothing about include targets. Expansion for lint follows the
+      same rules as expansion for rendering: root containment (I10), the
+      byte budget, the resolver-call bound, the depth limit and the cycle
+      guard (I6).
+      WHAT RUNS. The top-level document is linted as it is without
+      includes. Every Carve-mode include the expansion accepts is linted
+      with every lint rule and with the options the top-level document is
+      linted with, over the source the expansion parsed for it: the whole
+      file, the `@lines` range or the `@region` region. For a `#section`
+      selection the whole file is linted and only the findings on the
+      selected lines are kept, from the first line of the selected heading
+      or block through the last line of the last selected block. A rule
+      that reads the payload of a block also runs on a `@code` include's
+      block, once the attribute line above the directive applies to it
+      (I1c): `delimited-table-malformed` and `delimited-table-wide-row` run
+      on a `{table}`-marked `csv` or `tsv` code include.
+      WHERE A FINDING POINTS. A finding in included content names the
+      included file by its I11 identity, with a line and a column counted
+      in that file, so content selected by `@lines` or `@region` keeps its
+      source coordinates. A payload finding points at column 1 of the line
+      where the offending record starts: for `delimited-table-malformed` the
+      first record whose quoting cannot be read, for
+      `delimited-table-wide-row` the first record with more fields than the
+      first record. A finding in included content also carries its INCLUDE
+      CHAIN: the directives that reached the file, the top-level document's
+      directive first, each named by its file, line and column.
+      DUPLICATES. A finding in included content is reported once per
+      distinct file, line, column and rule. When one position is reached
+      more than once, the first reach in document order supplies the chain.
+      A file included twice therefore reports each finding once, while two
+      selections of different ranges of one file each report the findings
+      in their own range. A transform option such as `@shift` does not make
+      a range distinct.
+      INCLUDE ERRORS. Every Warning that leaves a directive literal (I7) is
+      a lint finding under its own rule id (`include-unresolved`,
+      `include-non-text`, `include-region-invalid`,
+      `include-selection-conflict`, `include-cycle` and the rest), at the
+      directive in the file that wrote it, with the chain that reached that
+      file. Duplicates collapse as above. The order in which findings are
+      reported is not part of this rule. *)
 (* ============================================================================
    PART 7: LEXICAL ELEMENTS
    ============================================================================ *)

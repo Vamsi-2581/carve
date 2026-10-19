@@ -58,6 +58,32 @@ report nothing without it:
 carve lint --platform github doc.crv
 ```
 
+### Included content
+
+Pass `--include-root DIR` to lint what a document pulls in through
+<code v-pre>{{ ... }}</code> as well:
+
+```sh
+carve lint --include-root . doc.crv
+```
+
+With a root, the linter expands includes under the same containment, size,
+depth and cycle rules as `carve render`, and runs every rule on each Carve-mode
+include. A `{table}`-marked `csv` or `tsv` `@code` include also gets the
+`delimited-table-*` rules. A finding in an included file names that file,
+relative to the root, and the directive that reached it:
+
+```txt
+data/plans.csv:3:1 delimited-table-malformed — This marked CSV/TSV record has malformed quoting, so the include remains a code block. (included from doc.crv:2:1)
+```
+
+An include that fails (a missing file, a cycle, an invalid region, conflicting
+selections) is reported at its directive under its `include-*` rule id. A file
+included twice reports each finding once. Without `--include-root` nothing is
+expanded and lint reports what it always has: the include root is never
+inferred from the input path here, unlike `carve render`. The rules are
+CARVE-P6-001 I16; see [Linting included content](./includes#linting-included-content).
+
 ## Automatic Repair
 
 `carve fmt --migrate` rewrites the case-only reference misses that have exactly
@@ -107,6 +133,14 @@ to the linter so cross-reference validation uses the same slug policy:
 
 ```ts
 lintCarve(source, { asciiHeadingIds: true })
+```
+
+To lint included content, pass the resolver you render with. A warning from an
+included file carries `file` (the resolver's id for it) and `includedBy`, the
+directives that reached it, top-level directive first:
+
+```ts
+lintCarve(source, { includes: { resolve: fileSystemResolver(root), sourcePath } })
 ```
 
 ## Editor Diagnostics
