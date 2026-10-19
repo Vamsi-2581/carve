@@ -1,0 +1,7 @@
+- - text
+  ::: figure
+  ![a](b.png)
+  :::
+
+  ^ cap
+- c
