@@ -152,6 +152,22 @@ const AHEAD_OF_PIN = {
     engines: ['rust'],
     rust: { output: '[https://e.com/a[b]](https://e.com/a%5Bb%5D)\n' },
   },
+  // carve#3389: an autolink that falls back to an explicit link keeps its brackets.
+  'markdown-autolink-fallback-keeps-its-brackets': {
+    engines: ['js', 'rust', 'php'],
+    pinned: { output: '[https://example.com/\\\\\\[\\\\](https://example.com/%5C%5B%5C)\n', diagnostics: [UNVERIFIED], exit: 1 },
+    rust: { output: '[https://example.com/\\\\\\[\\\\](https://example.com/%5C%5B%5C)\n' },
+  },
+  // carve#3390: an angle-bracket destination is assessed like any other link.
+  'markdown-angle-destination-is-assessed': {
+    engines: ['js', 'php'],
+    pinned: { diagnostics: [UNVERIFIED], exit: 1 },
+  },
+  // carve#3391: a bare URL's link text escapes a bracket only where the parse needs it.
+  'markdown-bare-url-label-escapes-only-what-it-must': {
+    engines: ['php'],
+    php: { output: 'see [https://example.com/\\[a\\]b](https://example.com/%5Ba%5Db) here\n' },
+  },
   'link-fragment-case-rewritten': {
     engines: ['rust', 'php'],
     pinned: {
