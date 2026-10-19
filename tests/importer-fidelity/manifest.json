@@ -702,6 +702,107 @@
       ]
     },
     {
+      "id": "markdown-autolink-fallback-keeps-its-brackets",
+      "sourceFormat": "markdown",
+      "runner": "core",
+      "repository": "markup-carve/carve",
+      "input": "<https://example.com/\\[\\>\n",
+      "expected": {
+        "output": "[https://example.com/\\\\\\[\\\\](https://example.com/%5C[%5C)\n",
+        "diagnostics": [
+          {
+            "code": "markdown-paragraph",
+            "severity": "info",
+            "fidelity": "preserved",
+            "confidence": "exact",
+            "path": "line:1"
+          },
+          {
+            "code": "markdown-autolink",
+            "severity": "info",
+            "fidelity": "normalized",
+            "confidence": "exact",
+            "path": "line:1"
+          }
+        ],
+        "exit": 0
+      },
+      "constructs": [
+        "paragraph",
+        "autolink"
+      ]
+    },
+    {
+      "id": "markdown-angle-destination-is-assessed",
+      "sourceFormat": "markdown",
+      "runner": "core",
+      "repository": "markup-carve/carve",
+      "input": "[a](</x y>) and ![b](<p.png> \"t\")\n",
+      "expected": {
+        "output": "[a](/x%20y) and ![b](p.png \"t\")\n",
+        "diagnostics": [
+          {
+            "code": "markdown-paragraph",
+            "severity": "info",
+            "fidelity": "preserved",
+            "confidence": "exact",
+            "path": "line:1"
+          },
+          {
+            "code": "markdown-link",
+            "severity": "info",
+            "fidelity": "preserved",
+            "confidence": "exact",
+            "path": "line:1"
+          },
+          {
+            "code": "markdown-image",
+            "severity": "info",
+            "fidelity": "preserved",
+            "confidence": "exact",
+            "path": "line:1"
+          }
+        ],
+        "exit": 0
+      },
+      "constructs": [
+        "paragraph",
+        "link",
+        "image"
+      ]
+    },
+    {
+      "id": "markdown-bare-url-label-escapes-only-what-it-must",
+      "sourceFormat": "markdown",
+      "runner": "core",
+      "repository": "markup-carve/carve",
+      "input": "see https://example.com/[a]b here\n",
+      "expected": {
+        "output": "see [https://example.com/[a]b](https://example.com/%5Ba%5Db) here\n",
+        "diagnostics": [
+          {
+            "code": "markdown-paragraph",
+            "severity": "info",
+            "fidelity": "preserved",
+            "confidence": "exact",
+            "path": "line:1"
+          },
+          {
+            "code": "markdown-bare-autolink",
+            "severity": "info",
+            "fidelity": "normalized",
+            "confidence": "exact",
+            "path": "line:1"
+          }
+        ],
+        "exit": 0
+      },
+      "constructs": [
+        "paragraph",
+        "bare-autolink"
+      ]
+    },
+    {
       "id": "markdown-reference",
       "sourceFormat": "markdown",
       "runner": "core",
