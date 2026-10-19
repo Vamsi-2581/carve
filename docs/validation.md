@@ -74,7 +74,7 @@ include. A `{table}`-marked `csv` or `tsv` `@code` include also gets the
 relative to the root, and the directive that reached it:
 
 ```txt
-data/plans.csv:3:1 delimited-table-malformed - This marked CSV/TSV record has malformed quoting, so the include remains a code block. (included from doc.crv:2:1)
+data/plans.csv:3:1 delimited-table-malformed — This marked CSV/TSV record has malformed quoting, so the include remains a code block. (included from doc.crv:2:1)
 ```
 
 An include that fails (a missing file, a cycle, an invalid region, conflicting
