@@ -323,7 +323,7 @@
       "name": "section-selection-reports-only-its-lines",
       "description": "A #section selection lints the whole file and keeps the findings on the selected lines.",
       "resolver": "virtual",
-      "entry": "{{ part.crv #b }}\n",
+      "entry": "{{ part.crv #B }}\n",
       "files": {
         "part.crv": "# A\n\n>in-a\n\n# B\n\n>in-b\n"
       },
