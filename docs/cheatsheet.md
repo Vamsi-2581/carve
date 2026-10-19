@@ -239,6 +239,12 @@ after a closing quote). The malformed case reports `delimited-table-malformed`
 in `carve lint`. A record with more fields than the first one keeps its extra
 cells and reports `delimited-table-wide-row`. See [Validation](/validation).
 
+The data can also live in its own file: put `{table}` above a
+<code v-pre>{{ data/plans.csv @code:csv }}</code> include, as shown in
+[Including source as code](/includes#including-source-as-code-code).
+Linting included data is covered in
+[Linting included content](/includes#linting-included-content).
+
 ### Aligned source formatting
 
 `carve fmt` writes one space on each side of a cell, whatever the column width.

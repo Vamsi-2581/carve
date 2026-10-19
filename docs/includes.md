@@ -258,6 +258,42 @@ server.listen(3000)
 
   renders `<pre class="diff" title="server.js">`. Extensions that read a code
   block, such as callouts, read this one too.
+- **Delimited data.** A `{table}` flag above a `@code:csv` or `@code:tsv`
+  include turns the included data into a table, the same way it does for an
+  authored `csv` or `tsv` fence (see
+  [CSV and TSV data](/cheatsheet#csv-and-tsv-data)). Given `data/plans.csv`:
+
+  ```csv
+  Plan,Seats
+  Starter,1
+  "Team, annual",10
+  ```
+
+  the lines
+
+  ```carve
+  {table}
+  {{ data/plans.csv @code:csv }}
+  ```
+
+  render
+
+  ```html
+  <table>
+    <thead>
+      <tr><th scope="col">Plan</th><th scope="col">Seats</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Starter</td><td>1</td></tr>
+      <tr><td>Team, annual</td><td>10</td></tr>
+    </tbody>
+  </table>
+  ```
+
+  Data with malformed quoting stays a code block, as it does in an authored
+  fence. Given an include root, `carve lint` reports the `delimited-table-*`
+  diagnostics for included data too (see
+  [Linting included content](#linting-included-content)).
 - **Block only.** A code block is block structure, so `@code` inside a sentence
   is an `include-block-in-inline` error. `@shift` has no effect, since the code
   holds no headings.
