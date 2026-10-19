@@ -57,7 +57,7 @@
     "test:conformance": "npm run corpus:build && npm test",
     "examples:snapshot": "UPDATE_EXAMPLES=1 node --test tests/examples.test.mjs",
     "include:gen": "node scripts/gen-include-conformance.mjs",
-    "test:includes": "node --test tests/include-conformance.proof.mjs",
+    "test:includes": "node --test tests/include-conformance.proof.mjs tests/lint-include-conformance.proof.mjs",
     "test:quality-cases": "node scripts/check-quality-cases.mjs",
     "import:compare": "node scripts/import-comparison.mjs import",
     "ast:ingest": "node scripts/import-comparison.mjs ingest",
