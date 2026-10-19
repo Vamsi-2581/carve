@@ -332,6 +332,12 @@ const visibleText = (html) =>
 // breaks and loses its empty nested divs. Markdown drops the note. Markdown
 // rises by one anyway: the carve-js pin moves to 2199e58e in the same change.
 
+// Corpus 618 adds sixteen caption/list documents. All sixteen import, remain
+// fixed points and keep their visible text. Fourteen return through HTML; the
+// equation caption loses its caret and the multiline caption loses its line
+// break. The orphan and fenced-code controls return through Markdown; attached
+// captions do not. Pin 20ef54b4 adds one HTML round trip on this corpus.
+
 test('HTML import and render/import round trips cannot drift silently', async () => {
   const names = (await readdir(root)).filter((name) => name.endsWith('.crv')).sort()
   const measured = {
