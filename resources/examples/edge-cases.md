@@ -16162,6 +16162,36 @@ tail
 
 :::
 
+Two blank lines before a nested item's closer remain fence content.
+
+::: compare
+
+````carve
+- - ```
+
+
+    ```
+
+tail
+````
+
+````html
+<ul>
+  <li>
+    <ul>
+      <li>
+        <pre><code>
+
+</code></pre>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>tail</p>
+````
+
+:::
+
 ## A boolean and a key/value of the same name are one attribute
 
 A boolean and a `key=value` of the SAME name are one attribute, not two. A
@@ -58473,3 +58503,149 @@ cap</code></li>
 ```
 
 :::
+
+## A fence run folded into a child paragraph loosens the outer item when it closes at the outer column
+
+::::::: compare
+
+````carve
+- outer
+  - head
+     ```
+     a
+  ```
+
+  tail
+````
+
+```html
+<ul>
+  <li><p>outer</p>
+    <ul>
+      <li>head
+<code>
+a
+</code></li>
+    </ul>
+    <p>tail</p>
+  </li>
+</ul>
+```
+
+:::::::
+
+::::::: compare
+
+`````carve
+- outer
+  - head
+     ````
+     a
+  ````
+
+  tail
+`````
+
+```html
+<ul>
+  <li><p>outer</p>
+    <ul>
+      <li>head
+<code>
+a
+</code></li>
+    </ul>
+    <p>tail</p>
+  </li>
+</ul>
+```
+
+:::::::
+
+::::::: compare
+
+````carve
+1. outer
+   - head
+      ```
+      a
+   ```
+
+   tail
+````
+
+```html
+<ol>
+  <li><p>outer</p>
+    <ul>
+      <li>head
+<code>
+a
+</code></li>
+    </ul>
+    <p>tail</p>
+  </li>
+</ol>
+```
+
+:::::::
+
+::::::: compare
+
+````carve
+> - outer
+>   - head
+>      ```
+>      a
+>   ```
+>
+>   tail
+````
+
+```html
+<blockquote>
+  <ul>
+    <li><p>outer</p>
+      <ul>
+        <li>head
+<code>
+a
+</code></li>
+      </ul>
+      <p>tail</p>
+    </li>
+  </ul>
+</blockquote>
+```
+
+:::::::
+
+::::::: compare
+
+````carve
+- outer
+  - head
+    more
+    ```
+    a
+   ```
+
+  tail
+````
+
+```html
+<ul>
+  <li><p>outer</p>
+    <ul>
+      <li>head
+more
+<code>
+a
+</code></li>
+    </ul>
+    <p>tail</p>
+  </li>
+</ul>
+```
+
+:::::::
