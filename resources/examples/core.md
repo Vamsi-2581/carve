@@ -1760,8 +1760,6 @@ print("hi")
 
 :::
 
-A long block can be bounded in height with `{.scroll}` on the line above the fence. That is a stylesheet recipe, not syntax; see [Scrolling code blocks](https://markup-carve.github.io/carve/recipes#scrolling-code-blocks).
-
 Literal tabs in code content are preserved verbatim (a tab is not the same as spaces; display width is a CSS `tab-size` concern). Opt in to tab→space expansion with a tab-normalize extension.
 
 ::: compare
@@ -1988,6 +1986,8 @@ print("hi")
 `````
 
 :::
+
+To bound the height of a long block, put `{.scroll}` on the line above the fence. That is a stylesheet recipe, not syntax; see [Scrolling code blocks](../recipes#scrolling-code-blocks).
 
 Code-block content is never parsed for Carve syntax — emphasis, headings, and tags inside are literal.
 
