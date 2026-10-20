@@ -990,13 +990,13 @@
       ]
     },
     {
-      "id": "markdown-autolink-in-link-brackets-stays-text",
+      "id": "markdown-autolink-in-link-text-keeps-the-link",
       "sourceFormat": "markdown",
       "runner": "core",
       "repository": "markup-carve/carve",
       "input": "[x <https://e.com/a]b> y](/u)\n",
       "expected": {
-        "output": "[x <https://e.com/a]b> y]\\(/u)\n",
+        "output": "[x <https://e.com/a]b> y](/u)\n",
         "diagnostics": [
           {
             "code": "fidelity-unverified",

@@ -198,8 +198,8 @@ const AHEAD_OF_PIN = {
     php: { output: "see [https://e.com/ü](https://e.com/%C3%BC) here\n" },
     rust: { output: "see [https://e.com/ü](https://e.com/%C3%BC) here\n" },
   },
-  // carve#3399: the ( after a bracket run around an autolink stays escaped.
-  'markdown-autolink-in-link-brackets-stays-text': {
+  // carve#3399: a link whose text holds an autolink stays a link.
+  'markdown-autolink-in-link-text-keeps-the-link': {
     engines: ['js', 'php', 'rust'],
     js: { output: "[x [https://e.com/a\\]b](https://e.com/a%5Db) y](/u)\n" },
     php: { output: "[x [https://e.com/a\\]b](https://e.com/a%5Db) y]\\(/u)\n" },
