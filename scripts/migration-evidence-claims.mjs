@@ -152,6 +152,26 @@ const AHEAD_OF_PIN = {
     engines: ['rust'],
     rust: { output: '[https://e.com/a[b]](https://e.com/a%5Bb%5D)\n' },
   },
+  // carve#3413: every engine assesses these Markdown shapes completely.
+  'markdown-destination-pipe-in-a-table-cell-stays-encoded': {
+    engines: ['js', 'php'],
+    pinned: { exit: 1, diagnostics: [UNVERIFIED] },
+  },
+  'markdown-paragraph-holding-a-pipe-is-assessed': {
+    engines: ['js', 'php'],
+    pinned: { exit: 1, diagnostics: [UNVERIFIED] },
+  },
+  // The pins also predate the literal destination (carve#3390).
+  'markdown-link-destination-holding-a-pipe-is-assessed': {
+    engines: ['js', 'rust', 'php'],
+    pinned: { output: '[c](/a%7Cb)\n', exit: 1, diagnostics: [UNVERIFIED] },
+    rust: { output: '[c](/a%7Cb)\n' },
+  },
+  'markdown-bracket-that-opens-no-link-is-assessed': {
+    engines: ['js', 'rust', 'php'],
+    pinned: { output: 'a [b [https://e.com/\\]](https://e.com/%5D) c\n', exit: 1, diagnostics: [UNVERIFIED] },
+    rust: { output: 'a [b [https://e.com/\\]](https://e.com/%5D) c\n' },
+  },
   // carve#3389: an autolink that falls back to an explicit link keeps its brackets.
   'markdown-autolink-fallback-keeps-its-brackets': {
     engines: ['js', 'rust', 'php'],
