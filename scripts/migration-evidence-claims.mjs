@@ -59,53 +59,7 @@ const classes = new Map([
 // Rows whose ruled report the pinned engines do not write yet. `pinned` is what they
 // write instead, compared exactly; once an engine writes the ruled report the row fails
 // until that engine is removed here, in the commit that moves its pin.
-const UNVERIFIED = { code: 'fidelity-unverified', severity: 'warning', fidelity: 'dropped', confidence: 'fallback' }
-const AHEAD_OF_PIN = {
-  // carve#3341: one attribution reading across the three BBCode importers.
-  'bbcode-quote-attribution-nothing-left': {
-    engines: ['php'],
-    php: { output: '> y\n^\n', diagnostics: [UNVERIFIED] },
-  },
-  'bbcode-quote-attribution-unknown-field': {
-    engines: ['php'],
-    php: { output: '> q3\n^ "alice"    foo=bar (2023-11-14) #12\n', diagnostics: [UNVERIFIED] },
-  },
-  'bbcode-quote-attribution-only-unknown-field': {
-    engines: ['php'],
-    php: { output: '> x\n^ foo=bar\n', diagnostics: [UNVERIFIED] },
-  },
-  'bbcode-quote-attribution-unix-time-wins': {
-    engines: ['php'],
-    php: { diagnostics: [UNVERIFIED] },
-  },
-  'bbcode-quote-attribution-post-id-wins': {
-    engines: ['php'],
-    php: { diagnostics: [UNVERIFIED] },
-  },
-  'bbcode-quote-attribution-leading-id-loses': {
-    engines: ['php'],
-    php: { diagnostics: [UNVERIFIED] },
-  },
-  'bbcode-quote-attribution-repeated-name': {
-    engines: ['php'],
-    php: { diagnostics: [UNVERIFIED] },
-  },
-  'bbcode-quote-attribution-text-beside-name': {
-    engines: ['php'],
-    php: { diagnostics: [UNVERIFIED] },
-  },
-  'bbcode-quote-attribution-text-runs-beside-name': {
-    engines: ['php'],
-    pinned: { diagnostics: [UNVERIFIED] },
-  },
-  'link-fragment-case-rewritten-names-the-authored-spelling': {
-    engines: ['php'],
-    pinned: {
-      output: '# Über Uns\n\nSee [a](#%C3%BCber-uns).\n',
-      diagnostics: [{ code: 'fidelity-unverified', severity: 'warning', fidelity: 'dropped', confidence: 'fallback' }],
-    },
-  },
-}
+const AHEAD_OF_PIN = {}
 // The fixup message each row pins (CARVE-P2-031): the old fragment as the link wrote it.
 const FIXUP_MESSAGES = {
   'link-fragment-case-rewritten': 'Rewrote link fragment #install-steps to #Install-Steps, the one heading id it matches without regard to case.',
