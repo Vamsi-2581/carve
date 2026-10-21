@@ -11,6 +11,9 @@
  * --check gates identical and strict counts against resources/roundtrip-structure-baseline.json.
  * Inspect improvements, then --write with all pinned engines to raise the baseline.
  * Missing engines are skipped; --check and --write fail if a selected engine is missing.
+ * The JS pin 52bb3c2e parses corpus 638's outer list as loose. Its roundtrip
+ * HTML contains only a nested list, so HTML import cannot recover that unused
+ * tightness bit. This accounts for the strict baseline moving 2290 to 2289.
  */
 import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
