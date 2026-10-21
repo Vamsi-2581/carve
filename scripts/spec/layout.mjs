@@ -5936,6 +5936,8 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
     const headSubCol = headSubMarker
       ? contentCol + headSubMarker.indent + headSubMarker.markerWidth
       : -1
+    // The marker-line child owns this column until an outer authored block opens.
+    let headSubActive = headSubCol >= 0
     let subCol = -1
     /*
      * PER-DESCENDANT QUESTION 1 (carve#2746).
@@ -6835,7 +6837,8 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
             i = j
             continue
           }
-          if ((subCol >= 0 && col >= subCol) || (headSubCol >= 0 && col >= headSubCol)) {
+          if (headSubActive && jm.col < headSubCol && opensAuthoredBase(jm.rest) && !COMMENT_LINE.test(jm.rest)) headSubActive = false
+          if ((subCol >= 0 && col >= subCol) || (headSubActive && col >= headSubCol)) {
             // Content at or past the first sub-list's content column belongs to
             // the SUB-LIST, not this item -- a blank inside the sub-list must
             // not loosen this (ancestor) item (carve#322). Attach, stay tight;
@@ -6977,6 +6980,13 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
         break
       }
       const { col } = lm
+      const priorContent = (lines[previousVisible(i - 1)] ?? '').replace(/^(?:[ \t]*>[ \t]?)+/, '')
+      const childCol = subCol >= 0 ? subCol : (headSubActive ? headSubCol : -1)
+      const foldedChildFence = markerLineFence === null && !isBlank(priorContent) && !PURE_FENCE.test(priorContent.trimStart()) && descLive && deepestParagraphOpen() && col < childCol && FENCE.test(lm.rest) &&
+        !fenceCloserFollows(i, dedentMeasured(lm, lines[i], col).text, col)
+      if (headSubActive && col < headSubCol && opensAuthoredBase(lm.rest) && !COMMENT_LINE.test(lm.rest) && !foldedChildFence && !insideFence()) {
+        headSubActive = false
+      }
       if (lm.rest !== '') {
         while (noteFrames.length && col < noteFrames.at(-1).body) noteFrames.pop()
       }
@@ -7011,7 +7021,7 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
         // Leave its authored indentation intact here so the recursive list
         // parser, which knows the descendant's content column, rebases it.
         // Rebasing it against this ancestor would hoist the block one level.
-        const descendantOwned = (subCol >= 0 && col >= subCol) || (headSubCol >= 0 && col >= headSubCol)
+        const descendantOwned = (subCol >= 0 && col >= subCol) || (headSubActive && col >= headSubCol)
         // A footnote definition is invisible and leaves no paragraph open. Its
         // body starts two columns past the definition, so a block opener one
         // column past it is the item's next block, not definition residue.
@@ -7075,9 +7085,6 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
           else absorbedNoteFence = true
         }
         const inNoteBody = i <= noteFenceEnd || absorbedNoteFence
-        const priorContent = (lines[previousVisible(i - 1)] ?? '').replace(/^(?:[ \t]*>[ \t]?)+/, '')
-        const foldedChildFence = markerLineFence === null && !isBlank(priorContent) && !PURE_FENCE.test(priorContent.trimStart()) && descLive && deepestParagraphOpen() && col < (subCol >= 0 ? subCol : headSubCol) && FENCE.test(lm.rest) &&
-          !fenceCloserFollows(i, dedentMeasured(lm, lines[i], col).text, col)
         const mayOpenAuthoredBlock = !inNoteBody && !foldsIntoLeadTerm && !descendantOwned &&
           !foldedChildFence &&
           (!insideFence() || inOpenColonOnly) && opensAuthoredBase(lm.rest)
@@ -7112,6 +7119,9 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
               !bodyLeavesParagraphOpen([ind(i - 1).rest])) closePara()
           authoredBlockBase = null
           authoredBlockLimit = null
+        }
+        if (noteBodyBoundary !== null && col < noteBodyBoundary && lm.rest !== '' && !insideFence()) {
+          pendingAuthoredBlock = null
         }
         // A separator at the item's content column but below the current
         // definition list's column is paragraph text. It ends that list's
