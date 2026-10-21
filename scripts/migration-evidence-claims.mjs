@@ -60,7 +60,7 @@ const classes = new Map([
 // write instead, compared exactly; once an engine writes the ruled report the row fails
 // until that engine is removed here, in the commit that moves its pin.
 const AHEAD_OF_PIN = {}
-// The fixup message each row pins (CARVE-P2-031): the old fragment as the link wrote it.
+// Link-fragment fixup messages name the authored spelling (CARVE-P2-031).
 const FIXUP_MESSAGES = {
   'link-fragment-case-rewritten': 'Rewrote link fragment #install-steps to #Install-Steps, the one heading id it matches without regard to case.',
   'link-fragment-case-rewritten-names-the-authored-spelling': 'Rewrote link fragment #über-uns to #Über-Uns, the one heading id it matches without regard to case.',
