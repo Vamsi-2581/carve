@@ -3021,6 +3021,7 @@ export function parse(src, { authoredBodyBases = true, stateSink = null } = {}) 
   // object's own shape, which a structural test deep-compares.
   if (stateSink) state.descendantQ1Log = (stateSink.descendantQ1 = [])
   if (stateSink) stateSink.refusedPlusLines = refusedPlusLines
+  if (stateSink) state.markerFenceProbeSteps = 0
   // frontmatter (PART 1): consumed; renders nothing. The closer-lookahead
   // guard: with no closing --- the line is an ordinary thematic break.
   // The slot before the format token is PADDING and takes `space` (PART 7;
@@ -3104,6 +3105,8 @@ export function parse(src, { authoredBodyBases = true, stateSink = null } = {}) 
   delete state.quoteAttachmentOrigins
   delete state.markerLineColumns
   delete state.sourceHasLonePlus
+  if (stateSink) stateSink.markerFenceProbeSteps = state.markerFenceProbeSteps
+  delete state.markerFenceProbeSteps
   delete state.ordinaryPlusSentinel
   delete state.refusedSiblingSentinel
   return { blocks, ...state }
@@ -3890,7 +3893,9 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
               // `  para` pulled a column-2 line into the `<dd>` while the
               // comment spelling of the same document left it outside.
               i++
-              if (!attachesFlushLeft(ind(i), sourceDescriptionCol)) break
+              // A nested description was rebased to column zero. Its marker
+              // and follower still meet at their authored column (carve#3482).
+              if ((sourceColumns?.[i] ?? ind(i).L?.col ?? ind(i).col) !== sourceDescriptionCol) break
               pushBody('')
               pullPending = true
               continue
@@ -3934,7 +3939,8 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // flush-left line: either the block pulled in by a preceding `+` /
             // first-block marker, or a lazy continuation of the open paragraph.
             if (pullPending) {
-              const end = attachedBlockEnd(lines, i, state, attachmentBoundary(lines), ind(i), sourceDescriptionCol)
+              const sourceColumn = sourceColumns?.[i] ?? ind(i).L?.col ?? ind(i).col
+              const end = attachedBlockEnd(lines, i, state, attachmentBoundary(lines), { col: sourceColumn }, sourceDescriptionCol)
               for (let k = i; k < end; k++) pushBody(lines[k], k)
               pullPending = false
               i = end
@@ -6250,11 +6256,18 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
     // in. `%%%` is excluded by the family 1 ruling and FENCE spells only the
     // backtick and tilde kinds, the `=html` raw form among them.
     let nestedOpaque = null
+    // The follower must be measured at the marker's source column. Column
+    // zero here is the nested body's rebased column, not its marker column.
+    const refusedNestedMarker = (at, measured = ind(at)) => {
+      if (state.markerFenceProbeSteps !== undefined) state.markerFenceProbeSteps++
+      return nestedOpaque?.kind === 'code' && CONT_MARKER.test(measured.rest) &&
+        measured.col === (nestedOpaque.hostCol ?? nestedOpaque.col) &&
+        (at + 1 === n || isBlank(lines[at + 1]) ||
+          !attachesFlushLeft(ind(at + 1), measured.L?.col ?? measured.col))
+    }
     const nextFenceVisible = (at) => {
       at = nextVisible(at)
-      while (at < n && nestedOpaque?.kind === 'code' && CONT_MARKER.test(ind(at).rest) &&
-          ind(at).col === (nestedOpaque.hostCol ?? nestedOpaque.col) &&
-          (at + 1 === n || isBlank(lines[at + 1]) || !attachesFlushLeft(ind(at + 1)))) {
+      while (at < n && refusedNestedMarker(at)) {
         skipped.add(at)
         at = nextVisible(at + 1)
       }
@@ -6747,9 +6760,7 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
         while (j < n) {
           if (ind(j).rest === '') { j = nextFenceVisible(j + 1); continue }
           const candidate = ind(j)
-          if (nestedOpaque?.kind === 'code' && CONT_MARKER.test(candidate.rest) &&
-              candidate.col === (nestedOpaque.hostCol ?? nestedOpaque.col) &&
-              (j + 1 === n || isBlank(lines[j + 1]) || !attachesFlushLeft(ind(j + 1)))) {
+          if (refusedNestedMarker(j, candidate)) {
             skipped.add(j)
             j = nextVisible(j + 1)
             continue
@@ -6781,7 +6792,9 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
             jm.col >= contentCol && jm.col <= Math.max(nestedOpaque.col, contentCol)) {
           // §17 L3: a descendant's marker ends its fence after every blank payload line.
           for (let k = i; k < j; k++) pushLine('', BLANK_MEAS)
-          if (jm.col === contentCol && matchMarkerAt(ind(j + 1))?.indent === baseIndent) list.tight = false
+          // The attached block follows a blank in this item's child, so its
+          // own paragraph is loose even when the follower is not a sibling.
+          if (jm.col === contentCol) list.tight = false
           i = j
           continue
         }

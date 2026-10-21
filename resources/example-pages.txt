@@ -464,6 +464,9 @@ index: examples/edge-cases/index.md
   637-definition-body-note-and-fence-owner-boundaries-4
   637-definition-body-note-and-fence-owner-boundaries-5
   637-definition-body-note-and-fence-owner-boundaries-6
+  638-nested-plus-below-fence-and-description
+  638-nested-plus-below-fence-and-description-2
+  638-nested-plus-below-fence-and-description-3
   an-invisible-fenced-block-is-not-a-list-paragraph
   05-lists-2
   05-lists-3
