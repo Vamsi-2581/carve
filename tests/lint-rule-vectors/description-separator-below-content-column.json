@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "rule": "description-separator-below-content-column",
+  "vectors": [
+    {
+      "name": "list-intervening-column",
+      "description": "A separator between an item's marker and its definition list column cannot continue the list.",
+      "source": "- a\n  :: term\n : detail\n",
+      "expected": {
+        "findings": [
+          { "line": 3, "column": 2, "includes": ["column 2"] }
+        ]
+      }
+    },
+    {
+      "name": "outer-marker-column",
+      "description": "A separator at the outer item's marker column has left that item.",
+      "source": "- a\n  :: term\n: detail\n",
+      "expected": { "findings": [] }
+    },
+    {
+      "name": "double-colon",
+      "description": "A term marker below a nested definition list's column is also misleading.",
+      "source": "- a\n  :: term\n :: next\n",
+      "expected": {
+        "findings": [
+          { "line": 3, "column": 2, "includes": ["column 2"] }
+        ]
+      }
+    },
+    {
+      "name": "quoted-list",
+      "description": "A quote prefix does not erase the nested list's authored column.",
+      "source": "> - a\n>   :: term\n>  : detail\n",
+      "expected": {
+        "findings": [
+          { "line": 3, "column": 4, "includes": ["column 4"] }
+        ]
+      }
+    },
+    {
+      "name": "after-blank",
+      "description": "After a blank, a below-column separator has left the item.",
+      "source": "- a\n  :: term\n\n : detail\n",
+      "expected": { "findings": [] }
+    },
+    {
+      "name": "nested-item",
+      "description": "The innermost surviving item's definition list supplies the target column.",
+      "source": "- a\n  - b\n    :: term\n   : detail\n",
+      "expected": {
+        "findings": [
+          { "line": 4, "column": 4, "includes": ["column 4"] }
+        ]
+      }
+    },
+    {
+      "name": "at-list-column",
+      "description": "A separator at the definition list column adds a description.",
+      "source": "- a\n  :: term\n  : detail\n",
+      "expected": { "findings": [] }
+    },
+    {
+      "name": "within-description",
+      "description": "An indented separator can open a nested definition list inside a description.",
+      "source": "- a\n  :: term\n  : detail\n    :: nested\n    : value\n",
+      "expected": { "findings": [] }
+    },
+    {
+      "name": "escaped-separator",
+      "description": "An escaped colon is literal text.",
+      "source": "- a\n  :: term\n \\: detail\n",
+      "expected": { "findings": [] }
+    },
+    {
+      "name": "code-payload",
+      "description": "A separator-shaped code line is payload, not a separator.",
+      "source": "- a\n  :: term\n  ```\n  : detail\n  ```\n",
+      "expected": { "findings": [] }
+    },
+    {
+      "name": "outside-container",
+      "description": "A top-level separator-shaped line has no displaced nested list.",
+      "source": ":: term\n: detail\n",
+      "expected": { "findings": [] }
+    }
+  ]
+}
