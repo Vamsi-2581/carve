@@ -347,6 +347,10 @@ const visibleText = (html) =>
 // points and keep their visible text; four more return through HTML and five
 // through Markdown. Pin 38549364 moves no count on its own.
 
+// The JS pin from 34ba9eeb to 52bb3c2e gains eleven Markdown round trips
+// and loses none over the same 2,963 documents. The gains are one each in
+// corpus 88, 326, 349, 361, 368 and 589; two in 535; and three in 634.
+
 test('HTML import and render/import round trips cannot drift silently', async () => {
   const names = (await readdir(root)).filter((name) => name.endsWith('.crv')).sort()
   const measured = {

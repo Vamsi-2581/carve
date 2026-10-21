@@ -129,8 +129,7 @@ const AHEAD_OF_PIN = {
   // carve#3373: an image alone in its paragraph is a block image, assessed like any paragraph.
   // carve#3378: carve-js now keeps this destination as written; the other pins still encode it.
   'markdown-image-alone-in-its-paragraph': {
-    engines: ['rust', 'php'],
-    rust: { output: '![x](/%C3%BC.png)\n', exit: 1, diagnostics: [UNVERIFIED] },
+    engines: ['php'],
     php: { output: '![x](/%C3%BC.png)\n', exit: 1, diagnostics: [UNVERIFIED] },
   },
   // carve#3378: the importer keeps a non-ASCII destination as written.
