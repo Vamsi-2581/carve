@@ -4,36 +4,36 @@
     "js": {
       "html": {
         "identical": 2435,
-        "strict": 2290,
+        "strict": 2289,
         "total": 2963
       },
       "md": {
-        "identical": 2190,
-        "strict": 1670,
+        "identical": 2208,
+        "strict": 1683,
         "total": 2963
       }
     },
     "php": {
       "html": {
-        "identical": 2454,
-        "strict": 2310,
+        "identical": 2460,
+        "strict": 2313,
         "total": 2963
       },
       "md": {
-        "identical": 2147,
-        "strict": 1599,
+        "identical": 2163,
+        "strict": 1617,
         "total": 2963
       }
     },
     "rs": {
       "html": {
-        "identical": 2396,
-        "strict": 2258,
+        "identical": 2424,
+        "strict": 2284,
         "total": 2963
       },
       "md": {
-        "identical": 2233,
-        "strict": 1925,
+        "identical": 2251,
+        "strict": 1961,
         "total": 2963
       }
     }

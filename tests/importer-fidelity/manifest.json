@@ -2713,25 +2713,6 @@
         "engines": {
           "php": {
             "output": ">\n\n[a]: /u\n"
-          },
-          "rust": {
-            "output": ">\n\n[a]: /u\n",
-            "diagnostics": [
-              {
-                "code": "markdown-reference-definition",
-                "confidence": "exact",
-                "fidelity": "normalized",
-                "path": "line:1",
-                "severity": "info"
-              },
-              {
-                "code": "markdown-block-quote",
-                "confidence": "exact",
-                "fidelity": "preserved",
-                "path": "line:1",
-                "severity": "info"
-              }
-            ]
           }
         }
       },
@@ -2937,18 +2918,18 @@
                 "severity": "info"
               },
               {
-                "code": "markdown-paragraph",
-                "confidence": "exact",
-                "fidelity": "preserved",
-                "path": "line:3",
-                "severity": "info"
-              },
-              {
                 "code": "structure-unspellable",
                 "confidence": "exact",
                 "fidelity": "dropped",
                 "path": "line:3",
                 "severity": "warning"
+              },
+              {
+                "code": "markdown-paragraph",
+                "confidence": "exact",
+                "fidelity": "preserved",
+                "path": "line:3",
+                "severity": "info"
               }
             ]
           }
@@ -3337,50 +3318,7 @@
             "confidence": "fallback"
           }
         ],
-        "exit": 1,
-        "engines": {
-          "rust": {
-            "output": "|= a |\n| [x]: /u |\n",
-            "diagnostics": [
-              {
-                "code": "markdown-table",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:1"
-              },
-              {
-                "code": "markdown-table-row",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:1"
-              },
-              {
-                "code": "markdown-table-cell",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:1"
-              },
-              {
-                "code": "markdown-table-row",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:3"
-              },
-              {
-                "code": "markdown-table-cell",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:3"
-              }
-            ],
-            "exit": 0
-          }
-        }
+        "exit": 1
       },
       "constructs": [
         "table"
@@ -3833,10 +3771,25 @@
         "output": "# Über Uns\n\nSee [a](#Über-Uns).\n",
         "diagnostics": [
           {
-            "code": "fidelity-unverified",
-            "severity": "warning",
-            "fidelity": "dropped",
-            "confidence": "fallback"
+            "code": "markdown-atx-heading",
+            "severity": "info",
+            "fidelity": "preserved",
+            "confidence": "exact",
+            "path": "line:1"
+          },
+          {
+            "code": "markdown-paragraph",
+            "severity": "info",
+            "fidelity": "preserved",
+            "confidence": "exact",
+            "path": "line:3"
+          },
+          {
+            "code": "markdown-link",
+            "severity": "info",
+            "fidelity": "preserved",
+            "confidence": "exact",
+            "path": "line:3"
           },
           {
             "code": "link-fragment-case-rewritten",
@@ -3846,75 +3799,7 @@
             "path": "link:#über-uns"
           }
         ],
-        "exit": 1,
-        "engines": {
-          "js": {
-            "diagnostics": [
-              {
-                "code": "markdown-atx-heading",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:1"
-              },
-              {
-                "code": "markdown-paragraph",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:3"
-              },
-              {
-                "code": "markdown-link",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:3"
-              },
-              {
-                "code": "link-fragment-case-rewritten",
-                "severity": "info",
-                "fidelity": "normalized",
-                "confidence": "inferred",
-                "path": "link:#über-uns"
-              }
-            ],
-            "exit": 0
-          },
-          "rust": {
-            "diagnostics": [
-              {
-                "code": "markdown-atx-heading",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:1"
-              },
-              {
-                "code": "markdown-paragraph",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:3"
-              },
-              {
-                "code": "markdown-link",
-                "severity": "info",
-                "fidelity": "preserved",
-                "confidence": "exact",
-                "path": "line:3"
-              },
-              {
-                "code": "link-fragment-case-rewritten",
-                "severity": "info",
-                "fidelity": "normalized",
-                "confidence": "inferred",
-                "path": "link:#über-uns"
-              }
-            ],
-            "exit": 0
-          }
-        }
+        "exit": 0
       }
     }
   ]
