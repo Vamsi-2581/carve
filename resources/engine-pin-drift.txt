@@ -30,3 +30,4 @@
 637-definition-body-note-and-fence-owner-boundaries  The definition body fence ruling is ahead of the pinned carve-js build (markup-carve/carve#3446).
 637-definition-body-note-and-fence-owner-boundaries-3  The invisible footnote body ruling is ahead of the pinned carve-js build (markup-carve/carve#3448).
 637-definition-body-note-and-fence-owner-boundaries-5  The definition fence payload ruling is ahead of the pinned carve-js build (markup-carve/carve#3452).
+638-nested-plus-below-fence-and-description  The nested fence marker owner ruling is ahead of the pinned carve-js build (markup-carve/carve#3482).
