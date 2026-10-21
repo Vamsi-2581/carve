@@ -10,6 +10,58 @@ Releases before 0.1.6 are archived in
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-10-21
+
+### Changed
+
+- A lone `+` follows the column-zero or first-element-after-opener continuation
+  rule, including task checkboxes, nested containers and relative columns.
+  Refused markers stay text and receive lint. Explicit ordered-list column
+  traps and markers below the content column have defined diagnostics (#3409,
+  #3433, #3436, #3441, #3442, #3443, #3445, #3456).
+- Fence runs and nested markers keep their source list owner. A folded fence
+  line, lazy closer, blank below a marker-line fence or unattached `+` can
+  affect list tightness, code content and where later blocks land. Caption
+  gaps follow the same boundaries (#3325, #3368, #3376, #3381, #3386,
+  #3387, #3395, #3402, #3404, #3411, #3416, #3417, #3497, #3498).
+- Description, definition, footnote and list boundaries follow the reached
+  source column. Container examples, invisible-note controls, nested marker
+  ownership and the corpus 620 separator correction pin the resulting HTML
+  and AST ownership (#3377, #3397, #3458, #3483, #3485, #3492).
+- Includes can select a whole file or a region as code. Region markers keep
+  their line; definitions and blank lines stay inside the region. A BOM before
+  a line-one marker, repeated option and out-of-range selection have explicit
+  error rules. Code includes retain a blank final line and selected-line span;
+  lint expands included content and reports consumed-key near misses (#3326,
+  #3337, #3343, #3345, #3346, #3347, #3360, #3361, #3365, #3366, #3367,
+  #3371).
+
+### Fixed
+
+- The canonical writer aligns escaped table cells and closes a nested fence
+  when a dedent ended it (#3329, #3494).
+- Markdown migration resolves heading fragments by exact and case-only
+  matches and reports rewritten or unresolved targets. Destinations retain
+  brackets, non-ASCII characters and literal Carve characters. Standalone
+  images, pointy autolinks and autolinks in link text have shared fidelity
+  controls (#3331, #3338, #3374, #3380, #3383, #3398, #3414, #3419,
+  #3422, #3460).
+- BBCode quote attribution has one importer reading and a
+  `bbcode-quote-field-dropped` fidelity code for fields the target cannot
+  carry (#3327, #3357).
+
+### Tooling and documentation
+
+- Block structure is stated as one ordered normative procedure. The
+  duplicate outline and optional writer escape strategy leave the spec text;
+  the completed empty-destination rollout marker is cleared (#3313, #3315,
+  #3317, #3318).
+- Engine pins, structural roundtrip and Markdown import baselines, lint drift
+  and conformance integration now match the ruled language (#3314, #3435,
+  #3459, #3461, #3465, #3486, #3487, #3504).
+- Reader paths and guidance for scrolling long code blocks are clearer
+  (#3423, #3425, #3428).
+
 ## [0.1.10] - 2026-10-17
 
 ### Breaking
@@ -747,6 +799,7 @@ references and external fragment links need manual review. See the
   inside the cell** (carve#2113), the §1b case the engines diverged on while
   the fixture reported them conformant.
 
+[0.1.11]: https://github.com/markup-carve/carve/compare/0.1.10...0.1.11
 [0.1.10]: https://github.com/markup-carve/carve/compare/0.1.9...0.1.10
 [0.1.9]: https://github.com/markup-carve/carve/compare/0.1.8...0.1.9
 [0.1.8]: https://github.com/markup-carve/carve/compare/0.1.7...0.1.8
