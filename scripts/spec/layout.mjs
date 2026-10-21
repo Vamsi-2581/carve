@@ -5979,6 +5979,8 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
     // indented fence this item's own paragraph absorbed sits at a descendant's
     // column with no descendant open (carve#2746's absorbed-fence row).
     let descLive = false
+    // A fence folded into a child's paragraph keeps its lazy owner for later lines.
+    let foldedChildParagraph = false
     /*
      * ONE DESCENDANT LINE'S OWN Q1 -- CARVE-P0-009. The descendant's last block
      * answers, exactly as this item's own does for itself: a heading, a
@@ -6982,7 +6984,14 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
       const { col } = lm
       const priorContent = (lines[previousVisible(i - 1)] ?? '').replace(/^(?:[ \t]*>[ \t]?)+/, '')
       const childCol = subCol >= 0 ? subCol : (headSubActive ? headSubCol : -1)
-      const foldedChildFence = markerLineFence === null && !isBlank(priorContent) && !PURE_FENCE.test(priorContent.trimStart()) && descLive && deepestParagraphOpen() && col < childCol && FENCE.test(lm.rest) &&
+      // A line reaching the child's column is parsed there without a lazy claim.
+      if (foldedChildParagraph && col >= childCol) {
+        foldedChildParagraph = false
+        descLive = false
+      }
+      const descendantParagraphBefore = descLive && deepestParagraphOpen()
+      if (!descendantParagraphBefore) foldedChildParagraph = false
+      const foldedChildFence = markerLineFence === null && !isBlank(priorContent) && !nestedVerbatim() && descendantParagraphBefore && col < childCol && FENCE.test(lm.rest) &&
         !fenceCloserFollows(i, dedentMeasured(lm, lines[i], col).text, col)
       if (headSubActive && col < headSubCol && opensAuthoredBase(lm.rest) && !COMMENT_LINE.test(lm.rest) && !foldedChildFence && !insideFence()) {
         headSubActive = false
@@ -7316,7 +7325,13 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
           }
           if (dmeas.rest !== '') {
             if (nm && nm.indent >= contentCol && !inDefBody) descLive = true
-            else if (!descendantOwned && !COMMENT_LINE.test(dedented)) descLive = false
+            else if (!descendantOwned && !COMMENT_LINE.test(dedented)) {
+              if (foldedChildFence) foldedChildParagraph = true
+              if (!foldedChildParagraph || !descendantParagraphBefore || mayOpenAuthoredBlock) {
+                descLive = false
+                foldedChildParagraph = false
+              }
+            }
             deepestIsDescendant = descLive
           }
         }
