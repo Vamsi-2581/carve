@@ -35,6 +35,9 @@ Releases before 0.1.6 are archived in
   lint expands included content and reports consumed-key near misses (#3326,
   #3337, #3343, #3345, #3346, #3347, #3360, #3361, #3365, #3366, #3367,
   #3371).
+- `description-separator-below-content-column` reports a `:` or `::` below
+  the column of the definition list it would continue inside a container
+  (#3477).
 
 ### Fixed
 
