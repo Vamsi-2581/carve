@@ -16,12 +16,12 @@
     "php": {
       "html": {
         "identical": 2469,
-        "strict": 2323,
+        "strict": 2322,
         "total": 2972
       },
       "md": {
         "identical": 2169,
-        "strict": 1623,
+        "strict": 1622,
         "total": 2972
       }
     },
