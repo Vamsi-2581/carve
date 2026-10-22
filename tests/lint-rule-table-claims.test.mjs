@@ -114,7 +114,7 @@ const UNPRODUCIBLE_IN_BUILD = new Set(['portable-quote-marker-space'])
 const NOT_IN_THE_PIN_YET = new Map([
   [
     'description-separator-below-content-column',
-    'specified by markup-carve/carve#3455; the pinned build does not emit it yet',
+    'specified by markup-carve/carve#3455; no engine emits it yet',
   ],
   [
     'bibliography-placement-in-container',
