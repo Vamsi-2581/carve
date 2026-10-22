@@ -24,3 +24,5 @@
 # Emptying this file is the normal end state after `npm run bump-carve-pin`.
 #
 # Format: <slug><space><space><reason>
+643-a-first-block-marker-does-not-pull-a-column-zero-list-into-a-note-or-description  JS first-block footnote list fix pending (markup-carve/carve#3482).
+643-a-first-block-marker-does-not-pull-a-column-zero-list-into-a-note-or-description-2  JS first-block description list fix pending (markup-carve/carve#3482).

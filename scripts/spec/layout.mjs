@@ -3410,7 +3410,8 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
       const absorbedNoteMarker = i === 0 && state.absorbedMarkerNotes?.has(lines)
       const bodyLines = [m[2]]
       i++
-      if (CONT_MARKER.test(m[2]) && i < n && !isBlank(lines[i]) && attachesFlushLeft(ind(i), sourceDefCol)) {
+      if (CONT_MARKER.test(m[2]) && i < n && !isBlank(lines[i]) &&
+          !matchMarkerAt(ind(i)) && attachesFlushLeft(ind(i), sourceDefCol)) {
         const attached = takeOneBlock(lines, i, state, ind(i), sourceDefCol)
         bodyLines[0] = ''
         bodyLines.push(...attached.rawMarker, '')
@@ -3431,6 +3432,8 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
       while (i < n) {
         const measured = ind(i)
         if (measured.col === 0 && FOOTNOTE_DEF.test(measured.rest)) break
+        if (CONT_MARKER.test(m[2]) && bodyLines.length === 1 &&
+            measured.col === 0 && matchMarkerAt(measured)) break
         if (isBlank(lines[i])) afterComment = false
         if (measured.col >= FOOTNOTE_BODY_COLUMN || isBlank(lines[i])) retainedParagraph = false
         if (isFootnoteContinuationLine(lines[i])) {
@@ -3937,6 +3940,9 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // flush-left line: either the block pulled in by a preceding `+` /
             // first-block marker, or a lazy continuation of the open paragraph.
             if (pullPending) {
+              // The first-block form takes one non-list block. A list at the
+              // description's marker column begins after the empty <dd>.
+              if (matchMarkerAt(ind(i))) break
               const sourceColumn = sourceColumns?.[i] ?? ind(i).L?.col ?? ind(i).col
               const end = attachedBlockEnd(lines, i, state, attachmentBoundary(lines), { col: sourceColumn }, sourceDescriptionCol)
               for (let k = i; k < end; k++) pushBody(lines[k], k)
