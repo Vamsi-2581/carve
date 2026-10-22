@@ -50,7 +50,9 @@ Releases before 0.1.6 are archived in
   `bbcode-quote-field-dropped` fidelity code for fields the target cannot
   carry (#3327, #3357).
 - A lazy colon-shaped line in a quote paragraph keeps no indentation
-  (#3506).
+  (#3493, #3506).
+- A first-block `+` in a footnote or description leaves a column-zero list
+  at document scope (#3482, #3507).
 
 ### Tooling and documentation
 
@@ -60,7 +62,7 @@ Releases before 0.1.6 are archived in
   #3317, #3318).
 - Engine pins, structural roundtrip and Markdown import baselines, lint drift
   and conformance integration now match the ruled language (#3314, #3435,
-  #3459, #3461, #3465, #3486, #3487, #3504).
+  #3459, #3461, #3465, #3486, #3487, #3504, #3508).
 - Reader paths and guidance for scrolling long code blocks are clearer
   (#3423, #3425, #3428).
 
