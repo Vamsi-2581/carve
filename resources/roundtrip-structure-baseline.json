@@ -9,19 +9,19 @@
       },
       "md": {
         "identical": 2214,
-        "strict": 1689,
+        "strict": 1688,
         "total": 2972
       }
     },
     "php": {
       "html": {
         "identical": 2469,
-        "strict": 2322,
+        "strict": 2323,
         "total": 2972
       },
       "md": {
         "identical": 2169,
-        "strict": 1622,
+        "strict": 1623,
         "total": 2972
       }
     },

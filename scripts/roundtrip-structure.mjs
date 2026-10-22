@@ -14,6 +14,10 @@
  * The JS pin 52bb3c2e parses corpus 638's outer list as loose. Its roundtrip
  * HTML contains only a nested list, so HTML import cannot recover that unused
  * tightness bit. This accounts for the strict baseline moving 2290 to 2289.
+ * The JS 52aedcc8 pin keeps corpus 643's column-zero list outside its
+ * footnote. Markdown roundtrip escapes the footnote's literal `+`, leaving
+ * the normalized tree equal but changing text to escaped_text in the strict
+ * carrier comparison. This moves JS/md strict from 1689 to 1688.
  */
 import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
