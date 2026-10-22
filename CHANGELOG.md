@@ -62,7 +62,7 @@ Releases before 0.1.6 are archived in
   #3317, #3318).
 - Engine pins, structural roundtrip and Markdown import baselines, lint drift
   and conformance integration now match the ruled language (#3314, #3435,
-  #3459, #3461, #3465, #3486, #3487, #3504, #3508).
+  #3459, #3461, #3465, #3486, #3487, #3504, #3508, #3510).
 - Reader paths and guidance for scrolling long code blocks are clearer
   (#3423, #3425, #3428).
 
