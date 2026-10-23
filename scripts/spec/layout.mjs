@@ -3232,6 +3232,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
   let i = 0
   const n = lines.length
   const sourceColumns = state.descriptionSourceColumns?.get(lines)
+  const relativeTermColumns = state.itemRelativeTermColumns?.has(lines) ?? false
   layoutWork.lineVisits += n
 
   // Measurements for these lines, memoized per index and SEEDED by the
@@ -3742,7 +3743,8 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // past the column folds whatever it would open (carve#2411).
             // A lone `+` is no marker here: a term holds no blocks for it to
             // attach, so it is a plain line and folds (CARVE-P2-028, carve#3145).
-            if (isEntry(cur) || isBlank(cur) || cur.startsWith(LAZY) &&
+            if (isEntry(cur) && (!relativeTermColumns ||
+                (sourceColumns?.[i] ?? ind(i).L?.col ?? ind(i).col) >= sourceTermCol) || isBlank(cur) || cur.startsWith(LAZY) &&
                 /^: (?=[ \t]*[^ \t])/.test(unlazy(cur)) &&
                 (sourceColumns?.[i] ?? ind(i).L?.col ?? ind(i).col) >= sourceTermCol) break
             // A comment at the container's column ends the term. Past it the
@@ -4928,10 +4930,18 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
         const itemContent = QUOTE.test(l) ? undefined : BULLET.exec(l)?.[6] ?? ORDERED.exec(l)?.[6]
         const itemClosesPara = qOpenPara && qItemPara && itemContent !== undefined &&
           leavesParagraphOpen([itemContent], 0, false) === false
+        const quotedAttribute = l[0] === '{' && tryAttrLine(new Proxy([], {
+          get(_, key) {
+            if (key === 'length') return n - idx
+            if (typeof key !== 'string' || !/^\d+$/.test(key)) return undefined
+            const offset = Number(key)
+            return offset === 0 ? l : QUOTE.exec(lines[idx + offset] ?? '')?.[1] ?? ''
+          },
+        }), 0) !== null
         if (!absorbedColon &&
             (isBlank(l) || HEADING.test(l) || HR.test(l) || isOpener || hostedBlock || itemClosesPara ||
              isColonParagraphInterrupt(l) || COLON_CLOSER.test(l) ||
-             isTableRow(l) || l[0] === '{' || contRow || nestedQuoteEnds || nestedItemEnds ||
+             isTableRow(l) || quotedAttribute || contRow || nestedQuoteEnds || nestedItemEnds ||
              isLinkDef(l) || DEFLIST_TERM.test(l) || COMMENT_LINE.test(l) ||
              FOOTNOTE_DEF.test(l) || qNoteBodyCol !== null)) {
           qOpenPara = false
@@ -5041,6 +5051,9 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           continue
         }
         if (lines[i] !== undefined && CONT_MARKER.test(ind(i).rest) &&
+            // A quoted item's rebased `+` keeps its source column when a list follows.
+            !(qOpenPara && matchMarkerAt(ind(i + 1)) &&
+              (ind(i).L?.col ?? ind(i).col) > sourceQuoteCol) &&
             (ind(i).col === 0 || (ind(i).L?.col ?? ind(i).col) === sourceQuoteCol)) {
           // PART 9 SS17 L4: `+` at column 0 attaches ONE following block
           i++
@@ -5808,7 +5821,8 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
     // synthesized, or one whose run held a tab - and the inner parse walks it
     // once. Every push goes through `pushLine` so the two arrays cannot drift.
     const itemMeas = []
-    const termSourceColumns = DEFLIST_TERM.test(head.text) ? [] : null
+    const itemSourceRows = []
+    let itemHasTerm = DEFLIST_TERM.test(head.text)
     const measurement = state.opaqueMeasurement
     const parentOrigins = measurement?.origins.get(lines)
     const itemOrigins = parentOrigins === undefined ? undefined : []
@@ -5821,15 +5835,16 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
     let tableOpen = false
     let lastListBlock = DEFLIST_TERM.test(head.text) ? 'term' : 'item'
     let lastTermSourceCol = DEFLIST_TERM.test(head.text) ? contentCol : null
-    const pushLine = (text, m = null) => {
+    const pushLine = (text, m = null, row = i) => {
       itemLines.push(text)
       itemMeas.push(m)
+      itemSourceRows.push(row)
       if (text.startsWith(LAZY) && itemLines.length > 1) {
         recordLazyFollower(itemLines, lines[i]?.startsWith(LAZY)
           ? lazyFollowerEligible.get(lines)?.[i]
           : [0, state.markerLineColumns?.get(lines)?.get(headIndex) ?? sourceMarkerCol, sourceQuoteCol].includes(ind(i).L?.col ?? ind(i).col))
       }
-      if (termSourceColumns) termSourceColumns.push(itemLines.length === 1 ? contentCol : ind(i).L?.col ?? ind(i).col)
+      if (itemLines.length > 1 && DEFLIST_TERM.test(ind(row)?.rest ?? '')) itemHasTerm = true
       if (itemOrigins) itemOrigins.push(text === '' ? undefined :
         typeof parentOrigins === 'number' ? parentOrigins + i : parentOrigins[i])
       tableOpen = tableRunStep(tableOpen, text)
@@ -6884,7 +6899,7 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
           for (let k = i; k < j; k++) {
             if (skipped.has(k)) continue
             const dd = dedentMeasured(ind(k), lines[k], authoredBlockBase ?? contentCol)
-            pushLine(dd.text, dd.meas)
+            pushLine(dd.text, dd.meas, k)
           }
         }
         if (j >= n) { i = j; break }
@@ -8016,7 +8031,15 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
      * carve#2746 asks to be readable at the descendant's column.
      */
     if (descendantQ1.col >= 0) state.descendantQ1Log?.push({ col: descendantQ1.col, ...descendantQ1At(descendantQ1.col) })
-    if (termSourceColumns) (state.descriptionSourceColumns ??= new WeakMap()).set(itemLines, termSourceColumns)
+    if (itemHasTerm) {
+      // Definition terms compare columns after the item's dedent, for spaces and tabs alike.
+      const relativeColumns = itemSourceRows.map((row, index) =>
+        index === 0 || !lines[row] || !ind(row) ? 0 :
+          ind(row).col < contentCol ? ind(row).col - contentCol :
+            dedentMeasured(ind(row), lines[row], contentCol).meas.col);
+      (state.descriptionSourceColumns ??= new WeakMap()).set(itemLines, relativeColumns);
+      (state.itemRelativeTermColumns ??= new WeakSet()).add(itemLines)
+    }
     item.blocks = parseBlocks(inheritFinalBreak(lines, itemLines, i, state), state, false, true, itemMeas)
     let beforeBlock = item.blocks.length
     for (let gap = captionGaps.length - 1; gap >= 0; gap--) {
