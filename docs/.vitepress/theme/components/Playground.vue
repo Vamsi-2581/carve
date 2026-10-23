@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, defineAsyncComponent } from 'vue'
 import { withBase } from 'vitepress'
-import { carveToHtml, markdownToCarve } from '@markup-carve/carve'
+import { carveToCarve, carveToHtml, markdownToCarve } from '@markup-carve/carve'
 import { diffCodeTransformer } from '@markup-carve/carve-grammars/shiki/diff'
 // @ts-expect-error - local ESM helper without TS resolution context
 import { carveExtensions } from '../../carve-extensions.js'
@@ -11,6 +11,8 @@ import { PLAYGROUND_CODE_LANGUAGES, playgroundDataGrammars } from '../../playgro
 import { renderMathIn } from '../../render-math.js'
 // @ts-expect-error - local ESM helper without TS resolution context
 import { encodeShare, decodeShare } from '../../share-link.js'
+// @ts-expect-error - local ESM helper without TS resolution context
+import { formatCarve, wasmWriter } from '../../playground-format.js'
 
 // Render the JS engine with every documented extension enabled, so the demo
 // showcases the full feature set (real Mermaid extension, wikilinks, tabs,
@@ -85,13 +87,13 @@ const sharedFellBackToJs = computed<boolean>(
 
 const sharedNoteText = computed<string>(() =>
   sharedFellBackToJs.value
-    ? 'shared link: raw HTML off, JavaScript engine'
+    ? 'shared link: raw HTML off, JS engine'
     : 'shared link: raw HTML off',
 )
 
 const sharedNoteTitle = computed<string>(() =>
   sharedFellBackToJs.value
-    ? 'This document arrived in a link made in Rust (WASM) mode. This vendored WASM build cannot turn raw HTML off, so it renders here on the JavaScript engine instead - which carries a few extensions carve-rs does not, so the output can differ from what the sender saw.'
+    ? 'This document arrived in a link made in Rust (WASM) mode. This vendored WASM build cannot turn raw HTML off, so it renders here on the JS engine instead - which carries a few extensions carve-rs does not, so the output can differ from what the sender saw.'
     : 'This document arrived in a link, so raw HTML is not rendered',
 )
 
@@ -154,6 +156,42 @@ function confirmImport(): void {
   void nextTick(() => editorRef.value?.focus())
 }
 
+// --- Format: rewrite the source through the selected engine's canonical writer. ---
+const alignTables = ref(true)
+const formatNote = ref('')
+// The text the last format produced; any other edit clears the note.
+let formattedText: string | null = null
+const FORMAT_FALLBACK_NOTE = 'formatted with the JS engine: the bundled Rust build only renders'
+
+async function formatSource(): Promise<void> {
+  if (engine.value === 'rust') await ensureWasm()
+  const before = source.value
+  try {
+    const result = formatCarve(before, {
+      engine: engine.value,
+      alignTables: alignTables.value,
+      jsFormat: carveToCarve,
+      wasmFormat,
+    })
+    formattedText = result.text
+    editorRef.value?.replaceAll(result.text)
+    // The view may still be mounting; it then starts from `source`.
+    source.value = result.text
+    formatNote.value = result.fellBack
+      ? FORMAT_FALLBACK_NOTE
+      : result.text === before
+        ? 'already formatted'
+        : 'formatted'
+  } catch (err) {
+    formattedText = before
+    formatNote.value = `format failed: ${err instanceof Error ? err.message : String(err)}`
+  }
+}
+
+watch(source, (value) => {
+  if (value !== formattedText) formatNote.value = ''
+})
+
 // --- Engine selection: JS (default, in-page) or Rust/WASM (in-page, lazy). ---
 type Engine = 'js' | 'rust'
 const engine = ref<Engine>('js')
@@ -162,6 +200,9 @@ const engine = ref<Engine>('js')
 // ../../carve-wasm). It is loaded lazily on first selection so the JS-only
 // experience never pays for the ~250 KB module download.
 let wasmRender: ((source: string, options: object) => string) | null = null
+// The build's canonical writer, or null: the rendering-only profile omits it.
+let wasmFormat: ((source: string, options: object) => string) | null = null
+const wasmCanFormat = ref(false)
 const wasmReady = ref(false)
 const wasmError = ref<string | null>(null)
 // Whether the vendored build honors `rawHtml: false`. See the probe below.
@@ -186,6 +227,8 @@ async function ensureWasm(): Promise<void> {
     wasmCanDisableRawHtml.value = !render(RAW_HTML_PROBE, { rawHtml: false }).includes(
       '<b>probe</b>',
     )
+    wasmFormat = wasmWriter(mod)
+    wasmCanFormat.value = wasmFormat !== null
     wasmRender = render
     wasmReady.value = true
     // A shared document selected Rust before this probe could run. If the build
@@ -221,6 +264,7 @@ const CarveEditor = defineAsyncComponent(() => import('./CarveEditor.vue'))
 const previewSource = ref<string | null>(null)
 const editorRef = ref<{
   focus: () => void
+  replaceAll: (text: string) => void
   scroller: () => HTMLElement | null
   topLine: () => number
   lineOffset: (line: number) => number
@@ -443,7 +487,7 @@ const renderStatus = computed<string>(() => {
   }
   // The engine that RENDERED, which is not always the one selected: a shared
   // document falls back when the vendored build cannot turn raw HTML off.
-  const label = engine.value === 'rust' && rustMayRender.value ? 'Rust (WASM)' : 'JavaScript'
+  const label = engine.value === 'rust' && rustMayRender.value ? 'Rust (WASM)' : 'JS'
   const ms = mounted.value ? rendered.value.ms : null
   return ms === null ? label : `${label}: ${ms < 1 ? ms.toFixed(3) : ms.toFixed(2)} ms`
 })
@@ -775,7 +819,7 @@ void mermaidInit
           :aria-pressed="engine === 'js'"
           @click="engine = 'js'"
         >
-          JavaScript
+          JS
         </button>
         <button
           class="pg-engine"
@@ -849,6 +893,46 @@ void mermaidInit
           </svg>
         </button>
         <span class="pg-sr-only" role="status" aria-live="polite">{{ shareMessage }}</span>
+        <div class="pg-split" role="group" aria-label="Format">
+          <button
+            class="pg-btn"
+            type="button"
+            :title="
+              engine === 'rust' && !wasmCanFormat
+                ? 'Format the source. The bundled Rust build only renders, so this uses the JS formatter.'
+                : 'Format the source with the canonical Carve writer (Ctrl+Z undoes it)'
+            "
+            @click="formatSource"
+          >
+            Format
+          </button>
+          <button
+            class="pg-btn pg-icon-btn"
+            type="button"
+            :class="{ active: alignTables }"
+            :aria-pressed="alignTables"
+            :title="alignTables ? 'Align tables when formatting: on' : 'Align tables when formatting: off'"
+            aria-label="Align tables"
+            @click="alignTables = !alignTables"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="4" width="18" height="16" rx="1.5" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+              <line x1="9.5" y1="4" x2="9.5" y2="20" />
+              <line x1="15" y1="4" x2="15" y2="20" />
+            </svg>
+          </button>
+        </div>
         <button class="pg-btn pg-import" type="button" @click="openImport">
           Import Markdown
         </button>
@@ -906,7 +990,10 @@ void mermaidInit
     </div>
     <div class="pg-grid">
       <div class="pane">
-        <label>Carve source</label>
+        <div class="pane-label-row">
+          <label>Carve source</label>
+          <span v-if="formatNote" class="pg-shared-note" role="status">{{ formatNote }}</span>
+        </div>
         <div
           class="carve-editor-wrap"
           @pointerenter="claimScroll(sourceEl)"
@@ -986,9 +1073,10 @@ void mermaidInit
 }
 .pg-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem 1rem;
   margin-bottom: 0.6rem;
 }
 .pg-engines {
@@ -1033,7 +1121,7 @@ void mermaidInit
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.8rem;
+  gap: 0.4rem;
 }
 .pg-status {
   font-size: 0.78rem;
@@ -1100,6 +1188,27 @@ void mermaidInit
    Stated rather than hidden: silence would read as a rendering bug. It sits in
    the rendered pane's label row, beside what it describes, because a sentence
    in the toolbar wraps the button row onto a second line. */
+.pg-split {
+  display: inline-flex;
+}
+.pg-split > .pg-btn:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.pg-split > .pg-btn:last-child {
+  margin-left: -1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+/* Every toolbar control shares one height, whatever its content. */
+.pg-engine,
+.pg-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  height: 2rem;
+  line-height: 1;
+}
 .pg-shared-note {
   font-size: 0.75rem;
   color: var(--vp-c-text-2);
