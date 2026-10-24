@@ -131,7 +131,14 @@
       `align` or `valign` attributes.
 
       THE WRITER RETAINS THE MOST LOCAL AVAILABLE SPELLING. A headed table
-      keeps native column markers. A headerless aligned table emits `aligns`.
+      keeps native column markers where a head cell starts in the aligned
+      column. A covered column, or a head row promoted by `header-rows` with
+      plain cell markers, cannot carry that native default: the writer uses
+      `aligns` and `valigns` for the affected physical columns. A delimiter
+      row generated to preserve a header span carries each explicit horizontal
+      head default in its origin column's colon, leaving a covered placeholder
+      unaligned unless that physical column has its own default.
+      A headerless aligned table emits `aligns`.
       Widths emit percentages with trailing zeroes removed. Metadata a target
       cannot spell is omitted and reported by conversion diagnostics.
 
@@ -156,8 +163,12 @@
       `?v` contribute no cell-level `align`, so that field resolves from the
       column while the run contributes `top`, `middle` or `bottom` as the
       cell-level `valign`. A lone `?`, a reversed vertical-plus-`?` pair and
-      every other `?` run are ordinary visible content. A header-cell run supplies
-      column defaults; a body-cell run supplies only that cell. A run with no
+      every other `?` run are ordinary visible content. A native `|=` run
+      supplies a default only for its starting physical column. A marker on
+      a GFM-promoted head-row cell overrides the delimiter default only in
+      that same column. Its colspan does not copy the default into covered
+      columns. A plain `|` run supplies only that cell, including when
+      `header-rows` later promotes the row to HTML headers. A run with no
       following space is not alignment: this deliberately changes the glued
       `|>text` family so marker runs have an unambiguous terminator. `lint`
       reports the old glued form and `fmt --migrate` inserts the space.

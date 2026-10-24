@@ -398,6 +398,12 @@ const visibleText = (html) =>
 // points and keep their visible text; four more return through HTML and five
 // through Markdown. Pin 38549364 moves no count on its own.
 
+// Corpus 659 adds nine table cases. All import and keep visible text. Pin
+// 4f2bb27e makes rows 3-5 canonical fixed points by preserving local head
+// alignment and putting generated delimiter defaults in colons. Rows 1, 2, 5
+// and 6 round-trip through HTML; none round-trip through Markdown. The pin
+// changes no count on older corpus documents.
+
 // The JS pin from 34ba9eeb to 52bb3c2e gains eleven Markdown round trips
 // and loses none over the same 2,963 documents. The gains are one each in
 // corpus 88, 326, 349, 361, 368 and 589; two in 535; and three in 634.

@@ -872,11 +872,14 @@ whitespace-delimited *content* (`| < |`, `| ^ |`) is a colspan / rowspan
 marker (see below) and is unchanged. Exactly one optional marker character is
 recognized; a repeated character (`|=<<`) is content. An escaped pipe (`\|`)
 never opens a cell and so never carries a marker.
+After a kind or alignment run has been consumed, the lone glyph is literal
+cell content: `|= <|` and `|?^ <|` do not make spans.
 
 **Rules.**
 
-- A header marker sets the whole column's default (its `<th>` and every
-  `<td>` in that column).
+- A header marker sets the default of its starting physical column (its
+  `<th>` and every `<td>` in that column). A colspan placeholder does not
+  copy it into the columns the header covers.
 - A body-cell marker overrides the column default for that cell only. This
   per-cell override is a **Carve extension beyond djot-php**, which is
   column-only.
@@ -885,6 +888,9 @@ never opens a cell and so never carries a marker.
 - With multiple header rows, the column default is the marker on the last
   header row that specifies one for that column (later wins; omission does
   not reset).
+- A plain-pipe marker stays a cell override when `header-rows` promotes its
+  row to headers. A GFM-promoted head-row marker can override its delimiter
+  column, but not a different column covered by a colspan.
 - A spanning (colspan / rowspan) cell uses its own marker, otherwise the
   default of its origin (leftmost) column.
 - `+` multi-line continuation lines carry no markers; alignment follows the
