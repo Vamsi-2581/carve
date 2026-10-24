@@ -378,13 +378,12 @@
          SEVERAL HEAD ROWS, THE LAST EXPLICIT MARKER IN A COLUMN SETS THE
          COLUMN, and an omitted marker does not reset an earlier one, the
          order CARVE-P11-031 reads for the Markdown delimiter; each head cell
-         keeps its own marker. A colspan marker has no alignment run:
-         a header cell spanning several columns sets a default only for its
-         ORIGIN column. A delimiter colon in a covered column remains that
-         column's default; the origin's marker does not overwrite it.
-         So `|=> a |` over `|=< b |` over `| 1 |`
-         left-aligns the body cell. Corpus
-         09-tables-3 pins effect 2.
+         keeps its own marker. So `|=> a |` over `|=< b |` over `| 1 |`
+         left-aligns the body cell. Corpus 09-tables-3 pins effect 2.
+         A colspan marker has no alignment run: a header cell spanning several
+         columns sets a default only for its ORIGIN column. A delimiter colon
+         in a covered column remains that column's default; the origin's marker
+         does not overwrite it. Corpus 659 pins this covered-column rule.
       T8 ROW ATTRIBUTES -- NORMATIVE [CARVE-P9-005]. A `{…}` GLUED to a row's closing `|`
          (no intervening space) sets that row's `<tr>` attributes -- the
          row-level twin of a cell's attribute block, same syntax, same

@@ -135,7 +135,9 @@
       column. A covered column, or a head row promoted by `header-rows` with
       plain cell markers, cannot carry that native default: the writer uses
       `aligns` and `valigns` for the affected physical columns. A delimiter
-      row needed to preserve a header span may carry horizontal defaults too.
+      row generated to preserve a header span carries each explicit horizontal
+      head default in its origin column's colon, leaving a covered placeholder
+      unaligned unless that physical column has its own default.
       A headerless aligned table emits `aligns`.
       Widths emit percentages with trailing zeroes removed. Metadata a target
       cannot spell is omitted and reported by conversion diagnostics.
