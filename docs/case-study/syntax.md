@@ -872,6 +872,8 @@ whitespace-delimited *content* (`| < |`, `| ^ |`) is a colspan / rowspan
 marker (see below) and is unchanged. Exactly one optional marker character is
 recognized; a repeated character (`|=<<`) is content. An escaped pipe (`\|`)
 never opens a cell and so never carries a marker.
+After a kind or alignment run has been consumed, the lone glyph is literal
+cell content: `|= <|` and `|?^ <|` do not make spans.
 
 **Rules.**
 
