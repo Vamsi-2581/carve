@@ -34,3 +34,4 @@ docs/public/importer-fidelity-manifest.json
 docs/public/markdown-import-inventory.json
 docs/examples/
 docs/.vitepress/generated-examples.json
+_*.crv
