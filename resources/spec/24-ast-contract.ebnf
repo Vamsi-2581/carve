@@ -441,6 +441,10 @@
       header rows to a column-header cell; native `|=` cells outside that head
       remain header cells and default to row scope. The attributes are consumed
       in HTML, where the three ranges render as `thead`, `tbody`, and `tfoot`.
+      Promotion changes the HTML cell kind and row group, not the source
+      marker run: a plain `|>` in an explicit header row remains a cell-only
+      override and creates no column default. A native `|=>` still sets its
+      starting column's default, even in an explicit header row.
 
       A pipe table MAY additionally carry `body-rows="N,..."`. Each entry
       gives the number of data rows in one body, in source order. An empty

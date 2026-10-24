@@ -4874,7 +4874,12 @@ EOF = (* end of file *) ;
       T4 SPAN MARKERS. A cell whose WHOLE content is `^` (rowspan) or `<`
          (colspan) is a span marker; ANY other content disqualifies it --
          `{.x} <` is an ordinary cell with literal text `{.x} <` (no
-         attributed span marker exists).
+         attributed span marker exists). Leading or trailing U+0020 padding
+         does not disqualify the marker. `| <|` and `| < |` are spans; `|< |`
+         is instead a terminated left-alignment run on an empty cell (T11).
+         Any consumed marker run disqualifies a span. Thus `|= <|` and
+         `|= ^|` are header cells holding literal `<` and `^`, while
+         `|?^ <|` is a vertically aligned cell holding literal `<`.
       T5 SPAN WALK -- NORMATIVE [CARVE-P9-002], a total function. Markers
          resolve in row-major order. Every position belongs to the cell whose
          rectangle covers it; a span never covers a position another cell
@@ -4979,13 +4984,17 @@ EOF = (* end of file *) ;
          dash). Native `|=` header cells and `<`/`>`/`~` alignment markers
          may COEXIST with a delimiter row. Where one column carries both, THE
          MARKER WINS OVER THE DELIMITER COLON (CARVE-P12-039): a marker on a
-         head-row cell sets the whole column, header and body cells, and a
+         head-row cell sets its own physical column, header and body cells, and a
          marker on a body cell sets that cell alone. So `|=> a |` over
          `|:-- |` right-aligns column a in the header and the body. WITH
          SEVERAL HEAD ROWS, THE LAST EXPLICIT MARKER IN A COLUMN SETS THE
          COLUMN, and an omitted marker does not reset an earlier one, the
          order CARVE-P11-031 reads for the Markdown delimiter; each head cell
-         keeps its own marker. So `|=> a |` over `|=< b |` over `| 1 |`
+         keeps its own marker. A colspan marker has no alignment run:
+         a header cell spanning several columns sets a default only for its
+         ORIGIN column. A delimiter colon in a covered column remains that
+         column's default; the origin's marker does not overwrite it.
+         So `|=> a |` over `|=< b |` over `| 1 |`
          left-aligns the body cell. Corpus
          09-tables-3 pins effect 2.
       T8 ROW ATTRIBUTES -- NORMATIVE [CARVE-P9-005]. A `{…}` GLUED to a row's closing `|`
@@ -12642,6 +12651,10 @@ EOF = (* end of file *) ;
       header rows to a column-header cell; native `|=` cells outside that head
       remain header cells and default to row scope. The attributes are consumed
       in HTML, where the three ranges render as `thead`, `tbody`, and `tfoot`.
+      Promotion changes the HTML cell kind and row group, not the source
+      marker run: a plain `|>` in an explicit header row remains a cell-only
+      override and creates no column default. A native `|=>` still sets its
+      starting column's default, even in an explicit header row.
 
       A pipe table MAY additionally carry `body-rows="N,..."`. Each entry
       gives the number of data rows in one body, in source order. An empty
@@ -12866,7 +12879,12 @@ EOF = (* end of file *) ;
       `align` or `valign` attributes.
 
       THE WRITER RETAINS THE MOST LOCAL AVAILABLE SPELLING. A headed table
-      keeps native column markers. A headerless aligned table emits `aligns`.
+      keeps native column markers where a head cell starts in the aligned
+      column. A covered column, or a head row promoted by `header-rows` with
+      plain cell markers, cannot carry that native default: the writer uses
+      `aligns` and `valigns` for the affected physical columns. A delimiter
+      row needed to preserve a header span may carry horizontal defaults too.
+      A headerless aligned table emits `aligns`.
       Widths emit percentages with trailing zeroes removed. Metadata a target
       cannot spell is omitted and reported by conversion diagnostics.
 
@@ -12891,8 +12909,12 @@ EOF = (* end of file *) ;
       `?v` contribute no cell-level `align`, so that field resolves from the
       column while the run contributes `top`, `middle` or `bottom` as the
       cell-level `valign`. A lone `?`, a reversed vertical-plus-`?` pair and
-      every other `?` run are ordinary visible content. A header-cell run supplies
-      column defaults; a body-cell run supplies only that cell. A run with no
+      every other `?` run are ordinary visible content. A native `|=` run
+      supplies a default only for its starting physical column. A marker on
+      a GFM-promoted head-row cell overrides the delimiter default only in
+      that same column. Its colspan does not copy the default into covered
+      columns. A plain `|` run supplies only that cell, including when
+      `header-rows` later promotes the row to HTML headers. A run with no
       following space is not alignment: this deliberately changes the glued
       `|>text` family so marker runs have an unambiguous terminator. `lint`
       reports the old glued form and `fmt --migrate` inserts the space.

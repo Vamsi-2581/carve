@@ -1110,7 +1110,9 @@ function renderTable(node, depth, ctx) {
   // carve#1463). The attribute block is what makes the cell ordinary
   // content, so the `<` is the literal character and the attributes stay on
   // the cell that carries them.
-  const bareMarker = (cell) => !cell.literal && (cell.content === '<' || cell.content === '^') && cell.align === null && cell.attrs == null
+  const bareMarker = (cell) => !cell.literal && !cell.kindMarker &&
+    (cell.content === '<' || cell.content === '^') &&
+    (cell.align === null || cell.align === cell.delimiterAlign) && cell.valign === null && cell.attrs == null
   const absorb = (origin, cell, r, c) => {
     consumed.add(key(r, c))
     cover.set(key(r, c), origin)
@@ -1192,6 +1194,7 @@ function renderTable(node, depth, ctx) {
   }
   for (const row of rows.slice(0, headCount)) {
     row.cells.forEach((cell, column) => {
+      if (!cell.kindMarker && !row.gfmHead) return
       if (cell.align) colAlign[column] = cell.align
       if (cell.valign) colValign[column] = cell.valign
     })

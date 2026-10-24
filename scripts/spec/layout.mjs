@@ -1259,13 +1259,14 @@ function readMarkerRun(seg) {
 
 // classify one raw cell segment
 function parseCell(seg) {
-  const cell = { header: false, align: null, valign: null, attrs: null, content: '' }
+  const cell = { header: false, kindMarker: false, align: null, valign: null, attrs: null, content: '' }
   const run = readMarkerRun(seg)
   // `\=` needs no case of its own: it is not `=`, so it opens no run and the
   // inline pass unescapes it into a literal `=` data cell.
   let s = seg
   if (run) {
     cell.header = run.header
+    cell.kindMarker = run.header
     cell.align = run.align
     cell.valign = run.valign
     cell.attrs = run.attrs
@@ -4409,6 +4410,7 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             if (left && right) col.align = 'center'
             else if (left) col.align = 'left'
             else if (right) col.align = 'right'
+            col.delimiterAlign = col.align
           })
           afterDelimiterRow = true
           i++
