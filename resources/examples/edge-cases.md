@@ -65046,3 +65046,20 @@ An all-header row after body data stays in `tbody` without a `thead`, and its al
 ```
 
 :::
+
+## A tab after a comment marker stays in its text
+
+::: compare
+
+```carve
+a
+%%	x
+b
+```
+
+```html
+<p>a</p>
+<p>b</p>
+```
+
+:::
