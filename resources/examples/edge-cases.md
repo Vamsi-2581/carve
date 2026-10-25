@@ -65063,3 +65063,28 @@ b
 ```
 
 :::
+
+## A titled admonition skips an authored heading id
+
+:::: compare
+
+```carve
+{#adm-1}
+# H
+
+::: warning "Careful"
+body
+:::
+```
+
+```html
+<section id="adm-1">
+  <h1>H</h1>
+  <aside class="admonition warning" aria-labelledby="adm-1-2">
+    <p class="admonition-title" id="adm-1-2">Careful</p>
+    <p>body</p>
+  </aside>
+</section>
+```
+
+::::
