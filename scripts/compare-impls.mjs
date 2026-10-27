@@ -24,6 +24,7 @@ import {
 import { phpDir, rustBinary, rustDir } from './lib/engine-locations.mjs'
 import { comparisonGateHasFailures } from './lib/comparison-gate.mjs'
 import { comparisonRevisions, printComparisonRevisions } from './lib/comparison-revisions.mjs'
+import { parseTargetDrift, targetDriftKey } from './lib/target-drift.mjs'
 import { miscount, shortfall } from './spec/participants.mjs'
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
@@ -1300,6 +1301,11 @@ const fmtLayout = corpusName === 'core'
   : { entries: new Map(), failures: [] }
 const fmtLayoutOutputs = new Map()
 let declaredFmtLayout = 0
+const targetDrift = corpusName === 'core'
+  ? parseTargetDrift(join(root, 'resources/engine-target-drift.txt'))
+  : new Map()
+const seenTargetDrift = new Set()
+const usedTargetDrift = new Set()
 const offeredCases = availableCaseCount()
 const selectedCases = Number.isFinite(limit) ? Math.min(limit, offeredCases) : offeredCases
 const expectedShardCases = selectedCases <= shardIndex
@@ -1460,7 +1466,7 @@ if (enginePopulation !== null) {
 const stats = Object.fromEntries(
   active.map((i) => [
     i.name,
-    { ok: 0, mismatch: 0, error: 0, skipped: 0, ms: 0, runnable: 0, mismatched: [] },
+    { ok: 0, declared: 0, mismatch: 0, error: 0, skipped: 0, ms: 0, runnable: 0, mismatched: [] },
   ]),
 )
 /*
@@ -1578,6 +1584,30 @@ for (const pair of pairs) {
     // real divergences.
 
     const unique = new Set(outputs.map(([, out]) => out))
+    if (outputs.length === 3 && outputs.every(([, out]) => !out.startsWith('ERROR:'))) {
+      for (const [engine] of outputs) {
+        const key = `${target}/${engine}/${pair.slug}`
+        if (targetDrift.has(key)) seenTargetDrift.add(key)
+      }
+    }
+    const declaredTarget = unique.size > 1
+      ? targetDriftKey(target, pair.slug, outputs, targetDrift)
+      : null
+    const declaredOutlier = declaredTarget?.split('/')[1]
+    const fixtureAgreesWithPeers = expected === null || outputs
+      .filter(([engine]) => engine !== declaredOutlier)
+      .every(([, output]) => output === expected)
+    if (declaredTarget !== null && fixtureAgreesWithPeers) {
+      if (expected !== null) {
+        const score = stats[declaredOutlier]
+        score.mismatch--
+        score.declared++
+        score.mismatched = score.mismatched.filter((item) => item !== `${target} ${pair.slug}`)
+      }
+      usedTargetDrift.add(declaredTarget)
+      console.log(`DECLARED [${target}] ${pair.slug} (${pair.feature}): ${agreementPartition(outputs)} - ${declaredTarget}`)
+      continue
+    }
     if (unique.size > 1 && target === 'carve' && judgeFmtLayout(pair.slug, outputs, fmtLayout.entries).excused) {
       declaredFmtLayout++
       console.log(
@@ -1684,10 +1714,15 @@ if (roundtrip) {
       if (rendered.length < 2) continue
       roundtripCompared++
       if (new Set(rendered.map(([, out]) => out)).size > 1) {
-        roundtripDiffs++
-        console.log(
-          `ROUNDTRIP DIFF ${pair.slug} (${pair.feature}): ${rendered.map(([name]) => name).join(', ')}`,
-        )
+        const declared = targetDriftKey('html', pair.slug, rendered, targetDrift)
+        if (declared !== null && usedTargetDrift.has(declared)) {
+          console.log(`DECLARED ROUNDTRIP ${pair.slug} (${pair.feature}): ${declared}`)
+        } else {
+          roundtripDiffs++
+          console.log(
+            `ROUNDTRIP DIFF ${pair.slug} (${pair.feature}): ${rendered.map(([name]) => name).join(', ')}`,
+          )
+        }
       }
     }
   } finally {
@@ -1720,7 +1755,7 @@ for (const impl of active) {
   // changing - and printing one here would invite pasting it onto a page that
   // already says the timings are not a benchmark (carve#836).
   console.log(
-    `${impl.name}: pass=${s.ok}/${s.ok + s.mismatch} mismatch=${s.mismatch} error=${s.error} skipped=${s.skipped} runs=${s.runnable}${countsOnly ? '' : ` avg_ms=${avg}`}`,
+    `${impl.name}: pass=${s.ok}/${s.ok + s.declared + s.mismatch} declared_drift=${s.declared} mismatch=${s.mismatch} error=${s.error} skipped=${s.skipped} runs=${s.runnable}${countsOnly ? '' : ` avg_ms=${avg}`}`,
   )
   // NAME the mismatching cases. `rust: pass=594/595 mismatch=1` was a number
   // with nothing to act on: the run took twenty minutes and finding the one
@@ -1741,6 +1776,17 @@ console.log(`cross_impl_diffs=${crossImplDiffs}`)
 const fmtLayoutBlocker = fmtLayout.entries.size > 0
   ? fmtLayoutStaleBlocker(revisions, JSON.parse(readFileSync(process.env.CARVE_ENGINE_PINS_FILE ?? join(root, 'resources/engine-pins.json'), 'utf8')).engines)
   : null
+const targetDriftBlocker = targetDrift.size > 0
+  ? fmtLayoutStaleBlocker(revisions, JSON.parse(readFileSync(process.env.CARVE_ENGINE_PINS_FILE ?? join(root, 'resources/engine-pins.json'), 'utf8')).engines)
+  : null
+const staleTargetDrift = targetDriftBlocker === null
+  ? [...seenTargetDrift].filter((key) => !usedTargetDrift.has(key))
+  : []
+if (targetDrift.size > 0) {
+  console.log(`target_drift_declared=${usedTargetDrift.size} target_drift_stale=${staleTargetDrift.length}`)
+  if (targetDriftBlocker !== null) console.log(`  target drift lines not judged stale: ${targetDriftBlocker}`)
+  for (const key of staleTargetDrift) console.log(`  STALE target drift ${key}`)
+}
 const fmtLayoutStale = [
   ...fmtLayout.failures,
   ...staleFmtLayout(
@@ -1971,9 +2017,9 @@ if (reportPath) {
   console.log(`\nWrote ${reportPath}.`)
 }
 
-// The gate. In roundtrip mode a diff means an engine's formatter changed what a
-// document says, which is wrong under any reading of PART 11 - there is no
-// design question behind it. In the default mode a diff means the engines
+// The gate. In roundtrip mode a new diff means an engine's formatter changed what a
+// document says, which is wrong under PART 11. An exact declared HTML outlier
+// that survives formatting is counted separately. In the default mode a diff means the engines
 // disagree about a target's output; whether every one of those is a defect is
 // still open (carve#474), so gate that mode only once they are resolved.
 if (failOnDiff) {
@@ -2003,6 +2049,10 @@ if (failOnDiff) {
   const mismatches = roundtrip
     ? 0
     : active.reduce((total, impl) => total + stats[impl.name].mismatch, 0)
+  if (staleTargetDrift.length > 0) {
+    console.error(`${staleTargetDrift.length} declared target difference(s) are stale; delete their ledger rows.`)
+    process.exit(1)
+  }
   if (staleUnreachable.length > 0) {
     console.error(
       `\n${staleUnreachable.length} UNREACHABLE_REASONS entr(ies) describe nothing any more: ` +
