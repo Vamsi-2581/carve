@@ -22,10 +22,10 @@ Return to the [rule index](./) or read the complete [formal grammar](../grammar)
 | [`CARVE-P9-001`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L62) | 9 | A COMPOSITE FIGURE GROUPS ITS PANELS UNDER ONE CAPTION |
 | [`CARVE-P9-006`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L401) | 9 | T9 A HEADER CELL STATES WHAT IT HEADS |
 | [`CARVE-P9-010`](https://github.com/markup-carve/carve/blob/main/resources/spec/13-semantics-foundations.ebnf#L497) | 9 | SMART TYPOGRAPHY RUNS BY DEFAULT |
-| [`CARVE-P9-015`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L267) | 9 | BLOCK RENDERING |
-| [`CARVE-P9-018`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L383) | 9 | AN ADMONITION LANDMARK CARRIES AN ACCESSIBLE NAME |
-| [`CARVE-P9-072`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L413) | 9 | A DIRECTIVE'S TITLE AND LABEL ACCOMPANY THE REGION IT PLACES |
-| [`CARVE-P9-019`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L469) | 9 | HEADING SECTION WRAPPING |
+| [`CARVE-P9-015`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L268) | 9 | BLOCK RENDERING |
+| [`CARVE-P9-018`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L384) | 9 | AN ADMONITION LANDMARK CARRIES AN ACCESSIBLE NAME |
+| [`CARVE-P9-072`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L414) | 9 | A DIRECTIVE'S TITLE AND LABEL ACCOMPANY THE REGION IT PLACES |
+| [`CARVE-P9-019`](https://github.com/markup-carve/carve/blob/main/resources/spec/14-semantics-blocks.ebnf#L470) | 9 | HEADING SECTION WRAPPING |
 | [`CARVE-P9-025`](https://github.com/markup-carve/carve/blob/main/resources/spec/15-semantics-resolution-rendering.ebnf#L2) | 9 | FOOTNOTES |
 | [`CARVE-P9-026`](https://github.com/markup-carve/carve/blob/main/resources/spec/15-semantics-resolution-rendering.ebnf#L37) | 9 | THE BACKLINK CARRIES AN ACCESSIBLE NAME |
 | [`CARVE-P9-027`](https://github.com/markup-carve/carve/blob/main/resources/spec/15-semantics-resolution-rendering.ebnf#L47) | 9 | THE ENDNOTES SECTION CARRIES AN ACCESSIBLE NAME |
@@ -38,8 +38,8 @@ Return to the [rule index](./) or read the complete [formal grammar](../grammar)
 | [`CARVE-P9-037`](https://github.com/markup-carve/carve/blob/main/resources/spec/15a-semantics-math-crossrefs.ebnf#L24) | 9 | A MATH SPAN CARRIES ROLE MATH |
 | [`CARVE-P9-040`](https://github.com/markup-carve/carve/blob/main/resources/spec/15a-semantics-math-crossrefs.ebnf#L86) | 9 | RAW PASSTHROUGH |
 | [`CARVE-P9-059`](https://github.com/markup-carve/carve/blob/main/resources/spec/17-semantics-unicode-controls.ebnf#L36) | 9 | INLINE LITERAL |
-| [`CARVE-P9-061`](https://github.com/markup-carve/carve/blob/main/resources/spec/17-semantics-unicode-controls.ebnf#L115) | 9 | C0 CONTROLS ON THE RENDER TARGETS |
-| [`CARVE-P9-062`](https://github.com/markup-carve/carve/blob/main/resources/spec/17-semantics-unicode-controls.ebnf#L133) | 9 | U+0000 IS NOT ONE OF THOSE CONTROLS |
+| [`CARVE-P9-061`](https://github.com/markup-carve/carve/blob/main/resources/spec/17-semantics-unicode-controls.ebnf#L112) | 9 | C0 CONTROLS ON THE RENDER TARGETS |
+| [`CARVE-P9-062`](https://github.com/markup-carve/carve/blob/main/resources/spec/17-semantics-unicode-controls.ebnf#L130) | 9 | U+0000 IS NOT ONE OF THOSE CONTROLS |
 | [`CARVE-P9R-001`](https://github.com/markup-carve/carve/blob/main/resources/spec/18-resolution.ebnf#L82) | 9R | THE EXPLICIT FORM DOES NOT REACH THE INDEX |
 | [`CARVE-P9R-002`](https://github.com/markup-carve/carve/blob/main/resources/spec/18-resolution.ebnf#L130) | 9R | R1a A DEFINITION IS COLLECTED FROM A LINE THE BLOCK STRUCTURE KEEPS |
 | [`CARVE-P9R-003`](https://github.com/markup-carve/carve/blob/main/resources/spec/18-resolution.ebnf#L174) | 9R | R1b A MATCHER'S COORDINATES ARE LOCAL, NOT ABSOLUTE |
