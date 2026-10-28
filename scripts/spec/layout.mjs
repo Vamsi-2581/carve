@@ -3910,7 +3910,10 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
               dt += '\n' + TERM_COMMENT
               continue
             }
-            if (!foldablePlain(cur) && !/^: +[ \t]*$/.test(cur)) break
+            const sourceColumn = sourceColumns?.[i] ?? ind(i).L?.col ?? ind(i).col
+            const pastColumnDefinition = sourceColumn > (descriptionOwnerColumn ?? sourceTermCol) &&
+              (isLinkDef(indentCols(cur).rest) || FOOTNOTE_DEF.test(indentCols(cur).rest))
+            if (!foldablePlain(cur) && !pastColumnDefinition && !/^: +[ \t]*$/.test(cur)) break
             if (isTableRow(cur) || colonFenceInterrupts(cur, [dt]) || (cur[0] === '{' && tryAttrLine(lines, i))) break
             // A line folded into an item BELOW its content column arrives here
             // LAZY-prefixed (the item-fold pass at C3). Strip that framing marker
@@ -3925,7 +3928,10 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
             // is dropped before the soft break (PART 2, NO TRAILING WHITESPACE,
             // which names a definition term). Leading over-indent is a separate
             // question and is preserved by the branch above.
-            dt += '\n' + cc.replace(/[ \t]+$/, '')
+            const sourceIndent = sourceColumns && descriptionOwnerColumn !== null &&
+              !cur.startsWith(LAZY) && sourceColumn > sourceTermCol
+              ? Math.max(0, sourceColumn - sourceTermCol - indentCols(cc).col) : 0
+            dt += '\n' + ' '.repeat(sourceIndent) + cc.replace(/[ \t]+$/, '')
             i++
           }
           node.items.push({ dt })
@@ -6004,7 +6010,7 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
     // block, and the blank a blank-line branch pushes, which ends the run.
     let tableOpen = false
     let lastListBlock = DEFLIST_TERM.test(head.text) ? 'term' : 'item'
-    let lastTermSourceCol = DEFLIST_TERM.test(head.text) ? contentCol : null
+    let lastTermSourceCol = DEFLIST_TERM.test(head.text) ? authoredMarkerCol + head.markerWidth : null
     const pushLine = (text, m = null, row = i) => {
       itemLines.push(text)
       itemMeas.push(m)
