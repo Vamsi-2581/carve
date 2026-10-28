@@ -3860,9 +3860,9 @@ function parseBlocksImpl(lines, state, top, inItem = false, seeded = undefined, 
           i++
         } else if (!isBlank(lines[i]) && measured.col < FOOTNOTE_BODY_COLUMN &&
             (lazyParagraphOpen ??= paragraphOpenSince(bodyLines, commentScanFrom)) &&
-            !startsVisibleBlock(measured.rest) && !isTableRow(measured.rest) &&
-            !isColonBlockOpener(measured.rest) && !COLON_CLOSER.test(measured.rest) &&
-            !(FENCE.test(measured.rest) && hasCloser(lines, i)) &&
+            !startsVisibleBlock(lines[i]) && !isTableRow(lines[i]) &&
+            !isColonBlockOpener(lines[i]) && !COLON_CLOSER.test(lines[i]) &&
+            !(FENCE.test(lines[i]) && hasCloser(lines, i)) &&
             !(measured.col === 0 && commentFenceOpensSpan(lines, i)) &&
             !(measured.col === 0 && (isDefinitionOrAttributeLine(measured.rest) ||
               tryAttrLine(lines, i)))) {
@@ -6402,6 +6402,26 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
     // A blank line was seen, and only invisible lines have followed it so far
     // (§17 L1b). The next PARAGRAPH closes the separation and loosens.
     let pendingSeparation = false
+    let noteOpenerLine = null
+    const noteClaimsLazyLine = (at) => {
+      if (noteOpenerLine === null || noteBodyBoundary === null) return false
+      const opener = FOOTNOTE_DEF.exec(ind(noteOpenerLine).rest)
+      if (!opener) return false
+      const body = [opener[2]]
+      for (let k = noteOpenerLine + 1; k < at; k++) {
+        const measured = ind(k)
+        if (measured.rest === '') {
+          body.push('')
+        } else if (measured.col >= noteBodyBoundary) {
+          body.push(dedentMeasured(measured, lines[k], noteBodyBoundary).text)
+        } else if (body.at(-1) !== '' && foldablePlainLine(measured.rest)) {
+          body.push(measured.rest)
+        } else {
+          return false
+        }
+      }
+      return body.at(-1)?.trim() !== '' && bodyLeavesParagraphOpen(body)
+    }
     // §11 N1's hard boundary fired: this item is the list's last. Set where the
     // run is measured, acted on after the item is pushed.
     let hardListBoundary = false
@@ -7658,6 +7678,8 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
           else absorbedNoteFence = true
         }
         const inNoteBody = i <= noteFenceEnd || absorbedNoteFence
+        const noteClaimsBelow = defBodyIndent !== null && noteBodyBoundary !== null &&
+          col < noteBodyBoundary && noteClaimsLazyLine(i)
         const mayOpenAuthoredBlock = !inNoteBody && !foldsIntoLeadTerm && !descendantOwned &&
           !foldedChildFence &&
           (!insideFence() || inOpenColonOnly) && opensAuthoredBase(lm.rest)
@@ -7779,6 +7801,7 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
           !FOOTNOTE_DEF.test(dedented) &&
           !isLinkDef(dedented) &&
           !(noteBodyBoundary !== null && col >= noteBodyBoundary) &&
+          !noteClaimsBelow &&
           parseAttrList(trimLineEnd(dedented)) === null
         ) {
           // §17 L1b: a second paragraph, still blank-line-separated.
@@ -8104,6 +8127,7 @@ function collectItems(lines, i, list, state, ind, meas, inItem) {
           if (FOOTNOTE_DEF.test(lm.rest)) {
             defBodyIndent = dmeas.col
             noteBodyBoundary = col + FOOTNOTE_BODY_COLUMN
+            noteOpenerLine = i
             const outerNote = noteFrames.at(-1)
             if (outerNote) outerNote.ownerBase = outerNote.marker
             noteFrames.push({ marker: col, body: noteBodyBoundary, ownerBase: outerNote?.marker ?? null,

@@ -35019,9 +35019,9 @@ after
 
 :::
 
-A line that opens NOTHING is the control: `prose` one column past the
-definition is an ordinary paragraph in the item, and the item is loose because a
-blank line separates it from `body`. This is the answer that does not move.
+A line that opens nothing is the control. `prose` is below the note's body
+column, but its open paragraph claims the line lazily. It adds no second
+paragraph to the item, which stays tight.
 
 ::: compare
 
@@ -35036,7 +35036,7 @@ after
 
 ```html
 <ul>
-  <li><p>body</p></li>
+  <li>body</li>
 </ul>
 <p>after</p>
 ```
@@ -68446,3 +68446,33 @@ see[^n]
 ```
 
 ::::
+
+## A below-column term stays in the footnote paragraph
+
+The note's content column is two. At column one, `:: term` is ordinary text.
+The open note paragraph claims it before block recognition. A blank line then
+ends the note, leaving the reference in the document.
+
+::: compare
+
+```carve
+[^f]: alpha
+ :: term
+
+See[^f]
+```
+
+```html
+<p>See<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a></p>
+<section role="doc-endnotes" aria-label="Footnotes">
+  <hr>
+  <ol>
+    <li id="fn1">
+      <p>alpha
+:: term<a href="#fnref1" role="doc-backlink" aria-label="Back to reference">↩</a></p>
+    </li>
+  </ol>
+</section>
+```
+
+:::
