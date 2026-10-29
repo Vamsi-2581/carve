@@ -2383,6 +2383,13 @@
 790-a-braced-opener-whose-closers-the-spans-inside-it-take-stays-text
 790-a-braced-opener-whose-closers-the-spans-inside-it-take-stays-text-2
 790-a-braced-opener-whose-closers-the-spans-inside-it-take-stays-text-3
+791-the-empty-block-is-a-member-of-a-bracketed-span-s-attribute-run
+791-the-empty-block-is-a-member-of-a-bracketed-span-s-attribute-run-2
+791-the-empty-block-is-a-member-of-a-bracketed-span-s-attribute-run-3
+791-the-empty-block-is-a-member-of-a-bracketed-span-s-attribute-run-4
+791-the-empty-block-is-a-member-of-a-bracketed-span-s-attribute-run-5
+791-the-empty-block-is-a-member-of-a-bracketed-span-s-attribute-run-6
+791-the-empty-block-is-a-member-of-a-bracketed-span-s-attribute-run-7
 80-trailing-attribute-block-edge-cases
 80-trailing-attribute-block-edge-cases-2
 80-trailing-attribute-block-edge-cases-3
