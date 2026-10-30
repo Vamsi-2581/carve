@@ -988,10 +988,11 @@ Most Djot source needs only mechanical changes:
    applies them to it. If you relied on the Djot reading, the attributes now
    land on something. This is the one form on this list that silently CHANGED
    meaning rather than becoming an error (section 18).
-10. **Indented block openers and tab separators.** ` # H` is prose in Carve and
-   `>\tq` is prose too - the opener must start at column 0 and the separator is
-   a literal space. Both are invisible in most editors, so search for them
-   rather than reading for them (section 15).
+10. **Indented block openers and tab separators.** ` # H` is a heading in Carve;
+   indentation past the required content column triggers `block-opener-overindented`.
+   `>\tq` is prose because the separator must be a literal space. Both spellings
+   are invisible in most editors, so search for them rather than reading for
+   them (section 15).
 11. **`-{.c} x`** is a list item with attributes in Carve and a paragraph in
    Djot. Nothing is lost, but the block structure changes (section 17).
 12. Nested containers mostly carry over: equal-length fences nest in both
